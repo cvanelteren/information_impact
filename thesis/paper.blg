@@ -1,0 +1,36 @@
+[0] Config.pm:302> INFO - This is Biber 2.9
+[0] Config.pm:305> INFO - Logfile is 'paper.blg'
+[31] biber:313> INFO - === Mon Sep  3, 2018, 12:22:12
+[50] Biber.pm:371> INFO - Reading 'paper.bcf'
+[113] Biber.pm:857> INFO - Found 29 citekeys in bib section 0
+[128] Biber.pm:3981> INFO - Processing section 0
+[138] Biber.pm:4154> INFO - Looking for bibtex format file '/home/casper/biblatex/computational_science.bib' for section 0
+[154] bibtex.pm:1468> INFO - LaTeX decoding ...
+[356] bibtex.pm:1294> INFO - Found BibTeX data source '/home/casper/biblatex/computational_science.bib'
+[440] Utils.pm:169> WARN - ISBN '1476-4687 (Electronic)$\backslash$r0028-0836 (Linking)' in entry 'Liu2016a' is invalid - run biber with '--validate_datamodel' for details.
+[455] Utils.pm:169> WARN - ISBN '1434-6028' in entry 'Sikic2013' is invalid - run biber with '--validate_datamodel' for details.
+[465] Utils.pm:169> WARN - ISBN '1932-6203' in entry 'Cowan2012' is invalid - run biber with '--validate_datamodel' for details.
+[477] Utils.pm:169> WARN - ISBN '1553-734x' in entry 'Muldoon2016' is invalid - run biber with '--validate_datamodel' for details.
+[490] Utils.pm:169> WARN - ISBN '0008-5472 (Print)$\backslash$r0008-5472 (Linking)' in entry 'Yan2017' is invalid - run biber with '--validate_datamodel' for details.
+[499] Utils.pm:169> WARN - month field 'jan' in entry 'Pequito2017' is not an integer - this will probably not sort properly.
+[505] Utils.pm:169> WARN - ISBN 'doi:10.1038/srep24456' in entry 'Gates2016' is invalid - run biber with '--validate_datamodel' for details.
+[515] Utils.pm:169> WARN - ISBN '0031-9007' in entry 'Yan2012' is invalid - run biber with '--validate_datamodel' for details.
+[522] Utils.pm:169> WARN - ISBN '1742-5689' in entry 'Quax2013' is invalid - run biber with '--validate_datamodel' for details.
+[531] Utils.pm:169> WARN - month field 'jun' in entry 'Eichler2006' is not an integer - this will probably not sort properly.
+[543] Utils.pm:169> WARN - ISBN '0219-5259' in entry 'AY2008' is invalid - run biber with '--validate_datamodel' for details.
+[551] Utils.pm:169> WARN - ISBN '1364-6613 (Print)$\backslash$r1364-6613 (Linking)' in entry 'Tishby2000' is invalid - run biber with '--validate_datamodel' for details.
+[551] Utils.pm:169> WARN - month field 'apr' in entry 'Tishby2000' is not an integer - this will probably not sort properly.
+[566] Utils.pm:169> WARN - ISBN '0378-8733' in entry 'Borgatti2005' is invalid - run biber with '--validate_datamodel' for details.
+[571] Utils.pm:169> WARN - ISBN '0378-8733' in entry 'Borgatti2006' is invalid - run biber with '--validate_datamodel' for details.
+[589] Utils.pm:169> WARN - ISBN '0021-843X' in entry 'Fried2015' is invalid - run biber with '--validate_datamodel' for details.
+[602] Utils.pm:169> WARN - ISBN '2045-2322' in entry 'VanBorkulo2014' is invalid - run biber with '--validate_datamodel' for details.
+[609] Utils.pm:169> WARN - BibTeX subsystem: /tmp/WGmfzYq1PE/computational_science.bib_8330.utf8, line 6, warning: 172 characters of junk seen at toplevel
+[610] Utils.pm:169> WARN - I didn't find a database entry for 'Gibbs1996' (section 0)
+[636] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[636] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[636] Biber.pm:3809> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en-US'
+[636] Biber.pm:3815> INFO - No sort tailoring available for locale 'en-US'
+[659] bbl.pm:617> INFO - Writing 'paper.bbl' with encoding 'ascii'
+[659] bbl.pm:618> INFO - Converting UTF-8 to TeX macros on output to .bbl
+[704] bbl.pm:720> INFO - Output to paper.bbl
+[704] Biber.pm:110> INFO - WARNINGS: 19

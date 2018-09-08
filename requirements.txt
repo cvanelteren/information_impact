@@ -1,0 +1,9 @@
+numpy
+networkx
+scipy
+matplotlib
+tqdm
+seaborn
+tqdm
+cython
+h5py
