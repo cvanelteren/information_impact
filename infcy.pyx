@@ -8,8 +8,8 @@ from cython import parallel
 # cimport cython
 import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
 fastIsing
-from pathos import multiprocessing as mp
-# import multiprocessing as mp
+# from pathos import multiprocessing as mp
+import multiprocessing as mp
 from tqdm import tqdm   #progress bar
 #from joblib import Parallel, delayed, Memory
 
@@ -69,7 +69,7 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
     nSamples, model = sampleModel
     model.burnin(burninSamples) # start from random state
 
-    
+
     cdef dict snap = {}
     # init generator
     cdef int n = int(nSamples * step)

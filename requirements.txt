@@ -7,3 +7,4 @@ seaborn
 tqdm
 cython
 h5py
+scikit-learn  
