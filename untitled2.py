@@ -24,20 +24,23 @@ if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
 #
-    dataDir = 'Psycho' # relative path careful
-    df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
-    h     = IO.readCSV('{}/External_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
+#     dataDir = 'Psycho' # relative path careful
+#     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
+#     h     = IO.readCSV('{}/External_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
+# #
+#     graph   = nx.from_pandas_adjacency(df) # weights done, but needs to remap to J or adjust in Ising
+#     #
+#     attr = {}
+#     for node, row in h.iterrows():
+#         attr[node] = dict(H = row['externalField'], nudges = 0)
+#     nx.set_node_attributes(graph, attr)
 #
-    graph   = nx.from_pandas_adjacency(df) # weights done, but needs to remap to J or adjust in Ising
-    #
-    attr = {}
-    for node, row in h.iterrows():
-        attr[node] = dict(H = row['externalField'], nudges = 0)
-    nx.set_node_attributes(graph, attr)
 
-    # nx.set_edge_attributes(graph, 1, 'weight')
-    # for i, j in graph.edges():
-        # print(graph[i][j])
+    tmp = 'weighted_person-person_projection_anonymous_combined.graphml'
+    fn  = f'{os.getcwd()}/Data/bn/{tmp}'
+
+    graph = nx.read_graphml(fn)
+    # nx.set_edge_attributes(graph, 1, 'weight') # set this to off
     # assert 0
 
     # for i, j in graph.edges():
@@ -46,7 +49,12 @@ if __name__ == '__main__':
     from time import time
     s = time()
     print(time() - s)
-
+    g = graph.copy()
+    theta = 40
+    for i in graph.nodes():
+        if graph.degree(i) < theta:
+            g.remove_node(i)
+    graph = g
 
     now = datetime.datetime.now()
     targetDirectory = f'{os.getcwd()}/Data/{now}'
@@ -73,7 +81,7 @@ if __name__ == '__main__':
         kSamples = 100
         deltas   = 20
         step     = 10
-        nSamples = 1000
+        nSamples = 100000
         burninSamples = 5
         conditions = {(tuple(model.nodeIDs), (i,)) : \
         idx for idx, i in enumerate(model.nodeIDs)}
@@ -90,7 +98,7 @@ if __name__ == '__main__':
                 globals()[i] = j
         else:
             magRange = linspace(.9, .8, 5) # .5 to .2 seems to be a good range; especially .2
-            magRange = array([.2])
+            magRange = array([.8])
             temps = linspace(0, 10, 100)
 
             temps, mag, sus = model.matchMagnetization(  temps = temps,\
@@ -140,7 +148,7 @@ if __name__ == '__main__':
         #     snapshots[tuple(state)] = 1 / N
         for t in temperatures:
             print(f'Setting {t}')
-            model.t = t
+            model.t = -t
             # if os.path.isfile(fileName):
                 # if input('Do you want to remove this file Y/N') == 'Y':
                     # os.remove(fileName)

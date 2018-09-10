@@ -8,13 +8,15 @@ from tqdm import tqdm_notebook as tqdm
 #%autoreload 2
 # %%
 close('all')
+
+
 res = {}
 d = f'{os.getcwd()}/Data/'
 def newest(path):
     files = os.listdir(path)
     paths = [os.path.join(path, basename) for basename in files]
     return sorted(paths, key=os.path.getctime)
-d = newest(d)[-1]
+d = newest(d)[-4]
 
 # d = newest(d)
 print(d)
@@ -44,7 +46,7 @@ from tqdm import tqdm
 tmp = rres[k[0]]
 
 H = zeros((34, 2))
-func = lambda x, a, b, c, d, e, f : a + b * exp(-c*x)  + d * exp(-e *(x - f))
+func = lambda x, a, b, c, d, e, f : a + b * exp(-c*x)  # + d * exp(-e *(x - f))
 fr   = lambda x, a, b : func(x, *a) + b
 
 
@@ -64,7 +66,7 @@ for idx, (i, j) in enumerate(tqdm(tmp.items())):
         x = arange(len(MI))
         a, b = scipy.optimize.curve_fit(func, x, MI, maxfev = 1000000)
 #        print(a)
-        l =  a[0] + .001
+        l =  a[0] + .1
 #        l = .001
     #         l = .2 * max(MI)
     #             l = 2/np.e
@@ -89,8 +91,8 @@ for idx, (i, j) in enumerate(tqdm(tmp.items())):
 #    if i != '{}':
 #        close()
 # %%
-fig, ax = subplots()
-[ax.scatter(*H[idx, :], color = colors[idx]) for idx in range(model.nNodes)]
+#fig, ax = subplots()
+#[ax.scatter(*H[idx, :], color = colors[idx]) for idx in range(model.nNodes)]
 
 ii = min(H[:,0]), max(H[:, 0])
 ax.plot(ii,ii , '--k', alpha = .2)
@@ -107,19 +109,19 @@ for node, deg in degs.items():
 #     ax.scatter(*H[idx, :], color = colors[idx])
 #ax.set_yscale('log')
 setp(ax, **dict(xlabel = 'degree', ylabel = 'abs IDT'))
-ax.legend()
+ax.legend(bbox_to_anchor = (1.01, 1))
 
 show()
 
 
 # %%
-fig, ax = subplots()
-degs = dict ( nx.degree(model.graph))
-for i, j in degs.items():
-    idx = model.mapping[i]
-    ax.scatter(j, mi[0, idx])
-setp(ax, **dict(xlabel = 'degree', ylabel = 'entropy'))
-# %%
+#fig, ax = subplots()
+#degs = dict ( nx.degree(model.graph))
+#for i, j in degs.items():
+#    idx = model.mapping[i]
+#    ax.scatter(j, mi[0, idx])
+#setp(ax, **dict(xlabel = 'degree', ylabel = 'entropy'))
+## %%
 pxs = {}
 for i, j in tmp.items():
     shape = list(joint.values())[0].shape
