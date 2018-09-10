@@ -19,6 +19,7 @@ import os, pickle, IO, h5py, sys
 import IO, multiprocessing as mp
 import datetime
 from artNet import Net
+from time import time
 close('all')
 if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
@@ -35,26 +36,26 @@ if __name__ == '__main__':
 #         attr[node] = dict(H = row['externalField'], nudges = 0)
 #     nx.set_node_attributes(graph, attr)
 #
-
-    tmp = 'weighted_person-person_projection_anonymous_combined.graphml'
-    fn  = f'{os.getcwd()}/Data/bn/{tmp}'
-
-    graph = nx.read_graphml(fn)
+    ## prisoner graph
+    # tmp = 'weighted_person-person_projection_anonymous_combined.graphml'
+    # fn  = f'{os.getcwd()}/Data/bn/{tmp}'
+    # graph = nx.read_graphml(fn)
+    # from time import time
+    # s = time()
+    # print(time() - s)
+    # g = graph.copy()
+    # theta = 40
+    # for i in graph.nodes():
+    #     if graph.degree(i) < theta:
+    #         g.remove_node(i)
+    # graph = g
     # nx.set_edge_attributes(graph, 1, 'weight') # set this to off
     # assert 0
-
+    graph = nx.krackhardt_kite_graph()
     # for i, j in graph.edges():
     #     graph[i][j]['weight'] = 1
     # # %%
-    from time import time
-    s = time()
-    print(time() - s)
-    g = graph.copy()
-    theta = 40
-    for i in graph.nodes():
-        if graph.degree(i) < theta:
-            g.remove_node(i)
-    graph = g
+
 
     now = datetime.datetime.now()
     targetDirectory = f'{os.getcwd()}/Data/{now}'
@@ -148,11 +149,11 @@ if __name__ == '__main__':
         #     snapshots[tuple(state)] = 1 / N
         for t in temperatures:
             print(f'Setting {t}')
-            model.t = -t
+            model.t = t
             # if os.path.isfile(fileName):
                 # if input('Do you want to remove this file Y/N') == 'Y':
                     # os.remove(fileName)
-            s = time()
+            # s = time()
             # if os.path.isfile(fileName) == False:
         #        mis = {}
             from multiprocessing import cpu_count

@@ -1,0 +1,6 @@
+Data/
+*.c
+*.so
+*.pickle
+*.html
+build/
