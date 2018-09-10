@@ -32,11 +32,11 @@ if __name__ == '__main__':
     graph   = nx.from_pandas_adjacency(df) # weights done, but needs to remap to J or adjust in Ising
     #
     attr = {}
-    for node, row in h.iterrows():
-        attr[node] = dict(H = row['externalField'], nudges = 0)
-    nx.set_node_attributes(graph, attr)
+    # for node, row in h.iterrows():
+        # attr[node] = dict(H = row['externalField'], nudges = 0)
+    # nx.set_node_attributes(graph, attr)
     # for i, j in graph.edges():
-        # graph[i][j]['weight'] = sign(graph[i][j]['weight'])
+        # graph[i][j]['weight'] = 1 # sign(graph[i][j]['weight'])
     ## prisoner graph
     # tmp = 'weighted_person-person_projection_anonymous_combined.graphml'
     # fn  = f'{os.getcwd()}/Data/bn/{tmp}'
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # graph = g
     # nx.set_edge_attributes(graph, 1, 'weight') # set this to off
     # assert 0
-    # graph = nx.krackhardt_kite_graph()
+    graph = nx.florentine_families_graph()
     # for i, j in graph.edges():
     #     graph[i][j]['weight'] = 1
     # # %%
