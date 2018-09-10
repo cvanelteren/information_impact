@@ -25,17 +25,18 @@ if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
 #
-#     dataDir = 'Psycho' # relative path careful
-#     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
-#     h     = IO.readCSV('{}/External_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
-# #
-#     graph   = nx.from_pandas_adjacency(df) # weights done, but needs to remap to J or adjust in Ising
-#     #
-#     attr = {}
-#     for node, row in h.iterrows():
-#         attr[node] = dict(H = row['externalField'], nudges = 0)
-#     nx.set_node_attributes(graph, attr)
+    dataDir = 'Psycho' # relative path careful
+    df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
+    h     = IO.readCSV('{}/External_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
 #
+    graph   = nx.from_pandas_adjacency(df) # weights done, but needs to remap to J or adjust in Ising
+    #
+    attr = {}
+    for node, row in h.iterrows():
+        attr[node] = dict(H = row['externalField'], nudges = 0)
+    nx.set_node_attributes(graph, attr)
+    # for i, j in graph.edges():
+        # graph[i][j]['weight'] = sign(graph[i][j]['weight'])
     ## prisoner graph
     # tmp = 'weighted_person-person_projection_anonymous_combined.graphml'
     # fn  = f'{os.getcwd()}/Data/bn/{tmp}'
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     # graph = g
     # nx.set_edge_attributes(graph, 1, 'weight') # set this to off
     # assert 0
-    graph = nx.krackhardt_kite_graph()
+    # graph = nx.krackhardt_kite_graph()
     # for i, j in graph.edges():
     #     graph[i][j]['weight'] = 1
     # # %%
@@ -79,8 +80,8 @@ if __name__ == '__main__':
         model = fastIsing.Ising(graph = graph, \
                                 temperature = 0, \
                                 updateMethod = 'glauber', mode = 'sync')
-        kSamples = 100
-        deltas   = 20
+        kSamples = 200
+        deltas   = 5
         step     = 10
         nSamples = 100000
         burninSamples = 5
@@ -99,7 +100,7 @@ if __name__ == '__main__':
                 globals()[i] = j
         else:
             magRange = linspace(.9, .8, 5) # .5 to .2 seems to be a good range; especially .2
-            magRange = array([.8])
+            magRange = array([.9])
             temps = linspace(0, 10, 100)
 
             temps, mag, sus = model.matchMagnetization(  temps = temps,\
@@ -173,7 +174,7 @@ if __name__ == '__main__':
             #     snapshots[tuple(i)] = snapshots.get(tuple(i), 0) + j
 
 
-            pulseSize = inf
+            pulseSize = 1
             pulses = {node : pulseSize for node in model.graph.nodes()}
             pulse  = {}
             joint = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
