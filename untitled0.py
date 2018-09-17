@@ -110,20 +110,21 @@ for temp in k:
     
     ii = min(H[:,0]), max(H[:, 0])
     ax.plot(ii,ii , '--k', alpha = .2)
-    fig, ax = subplots()
+   
     w = None
     w = 'weight'
     degs = dict(nx.degree(model.graph, weight = w))
     degs = {}
-    for node in model.graph.nodes():
-        f = []
-        for n in model.graph.neighbors(node):
-            f.append(model.graph[node][n]['weight'])
-        degs[node] = sum(f)
-#    degs = dict(nx.betweenness_centrality(model.graph, normalized = 1))
+#    for node in model.graph.nodes():
+#        f = []
+#        for n in model.graph.neighbors(node):
+#            f.append(model.graph[node][n]['weight'])
+#        degs[node] = sum(f)
+    
+    degs = dict(nx.betweenness_centrality(model.graph, normalized = 1))
     #
 #    degs = dict(nx.closeness_centrality(model.graph))
-    #degs = dict(nx.eigenvector_centrality(model.graph))
+    degs = dict(nx.eigenvector_centrality(model.graph))
     #print(degs)
     #tmp1 = degs.copy()
     #tt = abs(array(list(degs.values())))
@@ -139,16 +140,25 @@ for temp in k:
 #        idx = model.mapping[key]
 #        ax.scatter( degs[key], value, color = colors[idx, :])
     # %%
-    
-    for node, deg in degs.items():
-        idx = model.mapping[node]
-        ax.scatter(deg, H[idx, 0], color = colors[idx], label = node)
-    #     ax.scatter(*H[idx, :], color = colors[idx])
-    #ax.set_yscale('log')
-    setp(ax, **dict(xlabel = 'centrality', ylabel = 'abs IDT'))
-    ax.legend(bbox_to_anchor = (1.01, 1))
-    ax.set_title(f'T = {temp}')
-    
+    from functools import partial
+    centralities = dict(deg = partial(nx.degree, weight = w), cent = nx.betweenness_centrality, close = nx.closeness_centrality, eig = nx.eigenvector_centrality)
+    for centr, entrality in centralities.items():
+        degs = dict(centrality(model.graph))
+        fig, ax = subplots()
+        x = []
+        for node, deg in degs.items():
+            idx = model.mapping[node]
+            ax.scatter(deg, H[idx, 0], color = colors[idx], label = node)
+            x.append((deg, H[idx, 0]))
+            
+        x = array(x)
+        xx = scipy.stats.linregress(*x.T)
+        #     ax.scatter(*H[idx, :], color = colors[idx])
+        #ax.set_yscale('log')
+        setp(ax, **dict(xlabel = 'centrality', ylabel = 'abs IDT'))
+        ax.legend(bbox_to_anchor = (1.01, 1))
+        ax.set_title(f'T = {temp}')
+        
     show()
     # %%
     #fig, ax = subplots()
