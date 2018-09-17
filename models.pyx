@@ -203,6 +203,8 @@ class Model:
                 self.nudges = copyNudge # reset the copy
                 if self.nudgeMode == 'pulse':
                   pulse = {}
+                elif self.nudgeMode == 'constant' and sampleCounter == nSamples // 2:
+                  pulse = {}
             if stepCounter % step == 0: # if stepCounter starts at zero 1 step is already made
                 simulationResults[sampleCounter, :] = self.states
                 # for i in range(n):

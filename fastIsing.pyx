@@ -25,7 +25,7 @@ cdef extern from "limits.h":
 class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = False, \
                  betaThreshold = 1e-2, agentStates = [-1 ,1],
-                 mode = 'async', verbose = False, updateMethod = 'glauber', \
+                 mode = 'async', verbose = False, \
                  nudgeMode = 'constant'):
 
         super(Ising, self).__init__(\
@@ -52,7 +52,6 @@ class Ising(Model):
         self._t             = temperature
         self.states         = np.float16(self.states) # enforce low memory
 
-        self.updateMethod   = updateMethod
         # define the update method
         # self.updateMethods  = dict(glauber = self.energy_default, \
                               # glauber_neighbor = self.energy_neighbor)
@@ -142,7 +141,7 @@ class Ising(Model):
         # cdef float H = 0
         # loop declaration
         # compute hamiltonian
-
+        # tmp = neighborStates.dot(interaction) / states[node]
         tmp = states[node] * neighborStates.dot(interaction)
         # tmp = neighborStates.sum()
 

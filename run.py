@@ -24,7 +24,13 @@ close('all')
 if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
-#
+    kSamples = 100
+    deltas   = 30
+    step     = 10
+    nSamples = 1000
+    burninSamples = 20
+    pulseSize = 1
+
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
     h     = IO.readCSV('{}/External_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
@@ -32,12 +38,13 @@ if __name__ == '__main__':
     graph   = nx.from_pandas_adjacency(df) # weights done, but needs to remap to J or adjust in Ising
     #
     attr = {}
-    # for node, row in h.iterrows():
-        # attr[node] = dict(H = row['externalField'], nudges = 0)
-    # nx.set_node_attributes(graph, attr)
+    for node, row in h.iterrows():
+        attr[node] = dict(H = row['externalField'], nudges = 0)
+    nx.set_node_attributes(graph, attr)
+    #
     # for i, j in graph.edges():
-        # graph[i][j]['weight'] = 1 # sign(graph[i][j]['weight'])
-    ## prisoner graph
+    #     graph[i][j]['weight'] = 1 # random.randn() # sign(graph[i][j]['weight'])
+    # ## prisoner graph
     # tmp = 'weighted_person-person_projection_anonymous_combined.graphml'
     # fn  = f'{os.getcwd()}/Data/bn/{tmp}'
     # graph = nx.read_graphml(fn)
@@ -52,39 +59,24 @@ if __name__ == '__main__':
     # graph = g
     # nx.set_edge_attributes(graph, 1, 'weight') # set this to off
     # assert 0
-    graph = nx.florentine_families_graph()
+    # graph = nx.florentine_families_graph()
     # for i, j in graph.edges():
     #     graph[i][j]['weight'] = 1
     # # %%
 
-
+    # graph = nx.krackhardt_kite_graph()
+    # graph = nx.watts_strogatz_graph(20, 2, .3)
     now = datetime.datetime.now()
     targetDirectory = f'{os.getcwd()}/Data/{now}'
     os.mkdir(targetDirectory)
-    # %%
-    # graph = nx.karate_club_graph()
-    # graph = nx.grid_2d_graph(10,10, periodic = True)
 
-    # s = nx.utils.powerlaw_sequence(100, 1.6) #100 nodes, power-law exponent 2.5\n",
-    # graph = nx.expected_degree_graph(s, selfloops=False)
-    # graph = nx.krackhardt_kite_graph()
-    # graph = nx.frucht_graph()
-    # graph = nx.karate_club_graph()
-    # graph = nx.path_graph(5, nx.DiGraph())
-    # graph = nx.path_graph(5)
-    # graph = nx.florentine_families_graph()
-    # print(graph.number_of_nodes())
-    # graph = nx.barabasi_albert_graph(10, 4)
     for i in range(1):
         # graph = nx.barabasi_albert_graph(10, 3)
         model = fastIsing.Ising(graph = graph, \
                                 temperature = 0, \
-                                updateMethod = 'glauber', mode = 'sync')
-        kSamples = 200
-        deltas   = 5
-        step     = 10
-        nSamples = 100000
-        burninSamples = 5
+                                mode = 'async')
+
+
         conditions = {(tuple(model.nodeIDs), (i,)) : \
         idx for idx, i in enumerate(model.nodeIDs)}
 
@@ -99,15 +91,15 @@ if __name__ == '__main__':
             for i, j in tmp.items():
                 globals()[i] = j
         else:
-            magRange = linspace(.9, .8, 5) # .5 to .2 seems to be a good range; especially .2
-            magRange = array([.9])
+            magRange = linspace(.9, .2, 4) # .5 to .2 seems to be a good range; especially .2
+            # magRange = array([.9, .2])
             temps = linspace(0, 10, 100)
 
             temps, mag, sus = model.matchMagnetization(  temps = temps,\
              n = 1000, burninSamples = 0)
 
-            # func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
-            func = lambda x, a, b, c : a + b*exp(-c * x)
+            func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
+            # func = lambda x, a, b, c : a + b*exp(-c * x)
             a, b = scipy.optimize.curve_fit(func, temps, mag, maxfev = 10000)
             # g = gp(normalize_y = True)
             # g.fit(temps[:, None], mag)
@@ -174,7 +166,7 @@ if __name__ == '__main__':
             #     snapshots[tuple(i)] = snapshots.get(tuple(i), 0) + j
 
 
-            pulseSize = 1
+
             pulses = {node : pulseSize for node in model.graph.nodes()}
             pulse  = {}
             joint = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
@@ -185,7 +177,7 @@ if __name__ == '__main__':
             print('Computing MI')
             mi = infcy.mutualInformation_alt(joint)
             # mi   = infcy.mutualInformation(joint, conditions, deltas)
-            fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}_{model.updateMethod}.pickle'
+            fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
             IO.savePickle(fileName, dict(mi = mi, joint = joint, model = model,\
                                             snapshots = snapshots))
 
@@ -197,7 +189,7 @@ if __name__ == '__main__':
                 print('Computing MI')
                 print(type(joint))
                 mi = infcy.mutualInformation_alt(joint)
-                fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}_{model.updateMethod}.pickle'
+                fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 IO.savePickle(fileName, dict(mi = mi, joint = joint, model = model,\
                                         snapshots = snapshots))
 
