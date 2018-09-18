@@ -24,12 +24,12 @@ close('all')
 if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
-    kSamples = 100
-    deltas   = 30
-    step     = 10
+    kSamples = 300
+    deltas   = 19
+    step     = 1
     nSamples = 1000
     burninSamples = 20
-    pulseSize = 1
+    pulseSize = 10
 
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     # # %%
 
     # graph = nx.krackhardt_kite_graph()
-    # graph = nx.watts_strogatz_graph(20, 2, .3)
+    graph = nx.barabasi_albert_graph(12, 3)
     now = datetime.datetime.now()
     targetDirectory = f'{os.getcwd()}/Data/{now}'
     os.mkdir(targetDirectory)
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             for i, j in tmp.items():
                 globals()[i] = j
         else:
-            magRange = linspace(.9, .2, 4) # .5 to .2 seems to be a good range; especially .2
+            magRange = linspace(.8, .2, 3) # .5 to .2 seems to be a good range; especially .2
             # magRange = array([.9, .2])
             temps = linspace(0, 10, 100)
 

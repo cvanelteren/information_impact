@@ -33,22 +33,22 @@ checkDistribution() # print it only once
 def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu_count(), int burninSamples = int(1e3)):
     # start sampling
     cdef dict snapshots = {}
-    func = functools.partial(parallelSnapshots, step = step, \
-    burninSamples = burninSamples, model = model)
-
     # func = functools.partial(parallelSnapshots, step = step, \
-    # burninSamples = burninSamples)
+    # burninSamples = burninSamples, model = model)
+
+    func = functools.partial(parallelSnapshots, step = step, \
+    burninSamples = burninSamples)
 
     Z = nSamples
 
-    # tmp = []
-    # for i in range(nSamples):
-    #   m = copy.deepcopy(model)
-    #   m.reset()
-    #   tmp.append((1, m))
+    tmp = []
+    for i in range(nSamples):
+      m = copy.deepcopy(model)
+      m.reset()
+      tmp.append((1, m))
 
     # tmp = np.ones(nSamples)
-    tmp = [nSamples]
+    # tmp = [nSamples]
     with mp.Pool(processes = parallel) as p:
         results = p.imap(func, tqdm(tmp), 1)
         for result in results:
@@ -59,15 +59,15 @@ def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
-# def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
+def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
+# def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
     '''
     Get snapshots by simlating for :nSamples:
     :step: gives how many steps are between samples
     '''
     ### use this if you want to start from random init
-    # nSamples, model = sampleModel
-    # model.burnin(burninSamples) # start from random state
+    nSamples, model = sampleModel
+    model.burnin(burninSamples) # start from random state
 
 
     cdef dict snap = {}
@@ -198,7 +198,7 @@ def parallelMonteCarlo_alt(startState):
       # res = model.simulate(deltas, 1, pulse)
       tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
       for idx, state in enumerate(tmp):
-        # state = state if np.sign(state.mean()) < 0 else -state # local dynamics
+        state = state if np.sign(state.mean()) < 0 else -state # local dynamics
         for node in nodeIDs:
             nodeState = state[node]
             nodeStateIdx = sortr[nodeState]
@@ -225,8 +225,8 @@ def mutualInformation_alt(conditional):
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-#def parallelMonteCarlo(startState, model, kSamples, snapshots, conditions, deltas,  pulse, mode):
 def parallelMonteCarlo(startState):
+# def parallelMonteCarlo(startState, model, kSamples, snapshots, conditions, deltas,  pulse, mode):
     '''
     parallized version of computing the conditional, this can be run
     as a single core version

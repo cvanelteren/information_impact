@@ -32,6 +32,11 @@ for file in os.listdir(d):
         pulse = re.search('\{.*\}', file).group()
         res[temp] = res.get(temp, ()) + ((pulse, IO.loadPickle(f'{d}/{file}')), )
         
+        deltas = re.search('deltas=\d+', file).group()
+        deltas = int(re.search('\d+', deltas).group()) + 1 # always add 1
+        
+        
+        
 rres = {}
 for i, j in res.items():
     rres[i] = dict(j)
@@ -48,8 +53,8 @@ from tqdm import tqdm
 for temp in k:
     
     current = rres[temp]
-    
-    func = lambda x, a, b, c, d, e, f : a + b * exp(-c*x)  # + d * exp(-e *(x - f))
+#    d, e, f 
+    func = lambda x, a, b, c: a + b * exp(-c*x)  # + d * exp(-e *(x - f))
     fr   = lambda x, a, b : func(x, *a) - b # root finder
     
     
@@ -141,8 +146,8 @@ for temp in k:
 #        ax.scatter( degs[key], value, color = colors[idx, :])
     # %%
     from functools import partial
-    centralities = dict(deg = partial(nx.degree, weight = w), cent = nx.betweenness_centrality, close = nx.closeness_centrality, eig = nx.eigenvector_centrality)
-    for centr, entrality in centralities.items():
+    centralities = dict(deg = partial(nx.degree, weight = w), betw = nx.betweenness_centrality, close = nx.closeness_centrality, eig = nx.eigenvector_centrality)
+    for centr, centrality in centralities.items():
         degs = dict(centrality(model.graph))
         fig, ax = subplots()
         x = []
@@ -155,14 +160,13 @@ for temp in k:
         xx = scipy.stats.linregress(*x.T)
         #     ax.scatter(*H[idx, :], color = colors[idx])
         #ax.set_yscale('log')
-        setp(ax, **dict(xlabel = 'centrality', ylabel = 'abs IDT'))
+        setp(ax, **dict(xlabel = centr, ylabel = 'abs IDT'))
         ax.legend(bbox_to_anchor = (1.01, 1))
         ax.set_title(f'T = {temp}')
         
     show()
     # %%
     #fig, ax = subplots()
-    #degs = dict ( nx.degree(model.graph))
     #for i, j in degs.items():
     #    idx = model.mapping[i]
     #    ax.scatter(j, mi[0, idx])
@@ -182,16 +186,19 @@ for temp in k:
     import re
     
     hd = lambda x, y : sqrt(((sqrt(x) - sqrt(y))**2).sum(-1))/sqrt(2)
-    idx = 1
-    control = pxs['{}'][idx, ...]
+    iidx = 1
+    control = pxs['{}'][iidx, ...]
     hs = {}
-    hd_single = zeros((model.nNodes, 31, model.nNodes))
+    hd_single = zeros((model.nNodes, deltas, model.nNodes))
     for i, j in pxs.items():
         if i != '{}':
-            title = re.search("'.*'", i).group()[1:-1]; # print(title)
-            h = hd(control, j[idx, ...])
-            
-            idx = model.mapping[title]
+#            title = re.search("'.*'", i).group()[1:-1]; # print(title)
+            title = re.search('{.*:', i).group()[1:-1]
+            h = hd(control, j[iidx, ...])
+            try:
+                idx = model.mapping[title]
+            except:
+                idx = model.mapping[int(title)]
             hd_single[idx, ...] = hd(pxs['{}'], j)
             
             hs[title] = h.mean()
@@ -203,17 +210,17 @@ for temp in k:
     ax.legend(bbox_to_anchor = (1, 1))
     setp(ax, **dict(xlabel = 'Time', ylabel = 'Hellinger distance'))
     # plot impact 
-    fig, ax = subplots(figsize = (10, 10))
-    ax.bar(list(hs.keys()), list(hs.values()))
-    ax.set_ylabel('Hellinger distance')
-    
+#    fig, ax = subplots(figsize = (10, 10))
+#    ax.bar(list(hs.keys()), list(hs.values()))
+#    ax.set_ylabel('Hellinger distance')
+#    
     
     # plot idt vs impact
     fig, ax = subplots()
     xx = []
     for node in model.graph.nodes():
         try:
-            x = hs[node]    
+            x = hs[str(node)]    
         except:
             x = hs[f"'{node}'"]
         y = H[model.mapping[node], 0]
@@ -237,7 +244,7 @@ for temp in k:
     HHH = zeros(model.nNodes)
     for idx, i in enumerate(hd_single.mean(axis = -1)):
         node = model.rmapping[idx]
-        ii =  31//2 
+        ii =  deltas//2 
         x = arange(len(i) - ii)
         
         a, b = scipy.optimize.curve_fit(func, x, i[ii:],  maxfev = 1000000)
@@ -253,13 +260,20 @@ for temp in k:
         
         HHH[idx] = rot
 #        print(idx, node, rot, max(i), tmp)
+
     ax.legend(bbox_to_anchor = (1.01, 1))
     ax.set_xlim(0, 19)
+#    ax.set_ylim(-.2, 1)
     setp(ax, **dict(xlabel = 'time since nudge', ylabel = 'hellinger distance'))
     fig, ax = subplots()
     [ax.scatter(x, y, color = colors[idx], label = model.rmapping[idx]) for idx, (x, y) in enumerate(zip(H[:,0], HHH))]
     ax.legend(bbox_to_anchor = (1.01, 1))
     ax.set_title(temp)
     setp(ax, **dict(xlabel = 'abs idt', ylabel = 'hellinger limit'))
+    r = scipy.stats.linregress(H[:, 0], HHH)
+    tmpx = linspace(min(H[:,0]), max(H[:,0]))
+    tmpy = tmpx * r.slope + r.intercept
+    ax.plot(tmpx, tmpy, 'k--')
+    ax.text(.8, .1, f'p={r.pvalue:.2f}', transform = ax.transAxes)
 
     show()
