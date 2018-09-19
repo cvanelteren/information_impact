@@ -198,7 +198,7 @@ def parallelMonteCarlo_alt(startState):
       # res = model.simulate(deltas, 1, pulse)
       tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
       for idx, state in enumerate(tmp):
-        state = state if np.sign(state.mean()) < 0 else -state # local dynamics
+        # state = state if np.sign(state.mean()) < 0 else -state # local dynamics
         for node in nodeIDs:
             nodeState = state[node]
             nodeStateIdx = sortr[nodeState]

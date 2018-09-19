@@ -54,7 +54,7 @@ for temp in k:
     
     current = rres[temp]
 #    d, e, f 
-    func = lambda x, a, b, c: a + b * exp(-c*x)  # + d * exp(-e *(x - f))
+    func = lambda x, a, b, c, d, e: a + b * exp(-c*x)  #  + d * exp(-e *x)
     fr   = lambda x, a, b : func(x, *a) - b # root finder
     
     
@@ -82,7 +82,7 @@ for temp in k:
             x = arange(len(MI))
             a, b = scipy.optimize.curve_fit(func, x, MI, maxfev = 1000000)
     #        print(a)
-            l =  a[0] + 1e-2
+            l =  a[0] + .1
     #        if i == '{}':
     #            print(model.rmapping[jdx], a[0], l)
     #        l = .001
@@ -118,18 +118,14 @@ for temp in k:
    
     w = None
     w = 'weight'
-    degs = dict(nx.degree(model.graph, weight = w))
-    degs = {}
 #    for node in model.graph.nodes():
 #        f = []
 #        for n in model.graph.neighbors(node):
 #            f.append(model.graph[node][n]['weight'])
 #        degs[node] = sum(f)
     
-    degs = dict(nx.betweenness_centrality(model.graph, normalized = 1))
     #
 #    degs = dict(nx.closeness_centrality(model.graph))
-    degs = dict(nx.eigenvector_centrality(model.graph))
     #print(degs)
     #tmp1 = degs.copy()
     #tt = abs(array(list(degs.values())))
@@ -146,7 +142,9 @@ for temp in k:
 #        ax.scatter( degs[key], value, color = colors[idx, :])
     # %%
     from functools import partial
-    centralities = dict(deg = partial(nx.degree, weight = w), betw = nx.betweenness_centrality, close = nx.closeness_centrality, eig = nx.eigenvector_centrality)
+    centralities = dict(deg = partial(nx.degree, weight = w), \
+                        betw = nx.betweenness_centrality, \
+                        close = nx.closeness_centrality)
     for centr, centrality in centralities.items():
         degs = dict(centrality(model.graph))
         fig, ax = subplots()
@@ -198,10 +196,12 @@ for temp in k:
             try:
                 idx = model.mapping[title]
             except:
-                idx = model.mapping[int(title)]
+                idx = model.mapping[int(title.split("'")[0])]
             hd_single[idx, ...] = hd(pxs['{}'], j)
-            
             hs[title] = h.mean()
+            
+
+    
             
     # %%
     fig, ax = subplots()
@@ -275,5 +275,40 @@ for temp in k:
     tmpy = tmpx * r.slope + r.intercept
     ax.plot(tmpx, tmpy, 'k--')
     ax.text(.8, .1, f'p={r.pvalue:.2f}', transform = ax.transAxes)
+    # %%
 
+    joints = {i : j['joint'] for i, j in current.items()}
+    control = joints['{}']
+    fig, ax = subplots()
+    
+    HH = zeros(model.nNodes)
+    for i, joint in joints.items():
+        if i != '{}':
+            title = re.search('{.*:', i).group()[1:-1].split("'")[0]
+            title  = int(title)
+#            print(title)
+            tmp = []
+            for x, y in joint.items():
+#                y *= snapshots[x]
+                
+                xx = control[x]
+#                xx*=snapshots[x]
+                tmp.append(hd(xx, y))
+            tmp = array(tmp)
+            tmp = tmp.mean(axis = 0).mean(axis =-1)
+            idx = model.mapping[title]
+            
+            ii = deltas // 2
+            xxx = arange(len(tmp) - ii)
+            a, b  = scipy.optimize.curve_fit(func, xxx, tmp[ii:], maxfev= 10000)
+            l = a[0] + 1e-3
+            root = scipy.optimize.root(fr, 0, args = (a, l))
+            ax.scatter(root.x, func(root.x, *a))
+            ax.plot(xxx, tmp[ii:], color = colors[idx], label = title)
+            HH[model.mapping[title]] = root.x
+    fig, ax = subplots()
+    [ax.scatter(x,y) for x,y in zip(H[:, 0], HH)]
+    ax.legend()
+        
+    
     show()

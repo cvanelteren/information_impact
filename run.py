@@ -24,12 +24,12 @@ close('all')
 if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
-    kSamples = 300
-    deltas   = 19
+    kSamples = 1000
+    deltas   = 30
     step     = 1
     nSamples = 1000
     burninSamples = 20
-    pulseSize = 10
+    pulseSize = inf
 
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
@@ -41,6 +41,9 @@ if __name__ == '__main__':
     for node, row in h.iterrows():
         attr[node] = dict(H = row['externalField'], nudges = 0)
     nx.set_node_attributes(graph, attr)
+
+    graph = nx.path_graph(3, nx.DiGraph())
+    graph.add_edge(0,0)
     #
     # for i, j in graph.edges():
     #     graph[i][j]['weight'] = 1 # random.randn() # sign(graph[i][j]['weight'])
@@ -65,7 +68,7 @@ if __name__ == '__main__':
     # # %%
 
     # graph = nx.krackhardt_kite_graph()
-    graph = nx.barabasi_albert_graph(12, 3)
+    # graph = nx.watts_strogatz_graph(20, 2, .3)
     now = datetime.datetime.now()
     targetDirectory = f'{os.getcwd()}/Data/{now}'
     os.mkdir(targetDirectory)
@@ -91,7 +94,7 @@ if __name__ == '__main__':
             for i, j in tmp.items():
                 globals()[i] = j
         else:
-            magRange = linspace(.8, .2, 3) # .5 to .2 seems to be a good range; especially .2
+            magRange = linspace(.9, .2, 2) # .5 to .2 seems to be a good range; especially .2
             # magRange = array([.9, .2])
             temps = linspace(0, 10, 100)
 
