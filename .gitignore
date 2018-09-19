@@ -1,7 +1,7 @@
+build/
 __pycache__/
 Data/
 *.c
 *.so
 *.pickle
 *.html
-build/
