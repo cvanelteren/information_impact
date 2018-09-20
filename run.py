@@ -29,7 +29,7 @@ if __name__ == '__main__':
     step     = 1
     nSamples = 10000
     burninSamples = 5
-    pulseSize = -1
+    pulseSize = inf
 
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)

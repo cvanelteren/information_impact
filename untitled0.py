@@ -49,13 +49,13 @@ print(k)
 import scipy
 from tqdm import tqdm
 
-theta = 1e-1
+theta =  1e-2
 
 for temp in k:
     try:
         current = rres[temp]
     #    d, e, f 
-        func = lambda x, a, b, c, d, e, f: a + b * exp(-c*x) #  + d * exp(-e *(x-f))
+        func = lambda x, a, b, c: a + b * exp(-c*x) #  + d * exp(-e *(x-f))
         fr   = lambda x, a, b : func(x, *a) - b # root finder
         
         
@@ -306,10 +306,10 @@ for temp in k:
                 tmp = tmp.mean(axis = 0).mean(axis =-1)
                 idx = model.mapping[title]
                 
-                ii = deltas // 2
+                ii = deltas // 2 + 1
                 xxx = arange(len(tmp) - ii)
                 a, b  = scipy.optimize.curve_fit(func, xxx, tmp[ii:], maxfev= 10000)
-                l = a[0] + 1e-3
+                l = a[0] + theta
                 root = scipy.optimize.root(fr, 0, args = (a, l))
                 ax.scatter(root.x, func(root.x, *a), c = colors[idx])
                 ax.plot(xxx, tmp[ii:], color = colors[idx], label = title)
