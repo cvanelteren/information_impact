@@ -25,11 +25,11 @@ if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
     kSamples = 1000
-    deltas   = 30
+    deltas   = 10
     step     = 1
-    nSamples = 1000
-    burninSamples = 20
-    pulseSize = inf
+    nSamples = 10000
+    burninSamples = 5
+    pulseSize = -1
 
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
@@ -42,8 +42,13 @@ if __name__ == '__main__':
         attr[node] = dict(H = row['externalField'], nudges = 0)
     nx.set_node_attributes(graph, attr)
 
-    graph = nx.path_graph(3, nx.DiGraph())
-    graph.add_edge(0,0)
+    graph = nx.star_graph(4)
+    graph = nx.path_graph(3)
+    graph = nx.sedgewick_maze_graph()
+    # graph = nx.path_graph(3, nx.DiGraph())
+    # graph.add_edge(0,0)
+
+    # graph = nx.barabasi_albert_graph(10, 3)
     #
     # for i, j in graph.edges():
     #     graph[i][j]['weight'] = 1 # random.randn() # sign(graph[i][j]['weight'])
@@ -82,7 +87,6 @@ if __name__ == '__main__':
 
         conditions = {(tuple(model.nodeIDs), (i,)) : \
         idx for idx, i in enumerate(model.nodeIDs)}
-
         # %%
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'
     #    fileName = f'Data/{f}'
@@ -94,9 +98,10 @@ if __name__ == '__main__':
             for i, j in tmp.items():
                 globals()[i] = j
         else:
-            magRange = linspace(.9, .2, 2) # .5 to .2 seems to be a good range; especially .2
+            magRange = linspace(.95, .8, 2) # .5 to .2 seems to be a good range; especially .2
+            # magRange = array([.5])
             # magRange = array([.9, .2])
-            temps = linspace(0, 10, 100)
+            temps = linspace(0, 20, 100)
 
             temps, mag, sus = model.matchMagnetization(  temps = temps,\
              n = 1000, burninSamples = 0)
@@ -113,16 +118,16 @@ if __name__ == '__main__':
             f_root = lambda x,  c: func(x, *a) - c
             magRange *= max(mag)
             for m in magRange:
-                r = scipy.optimize.root(f_root, 0, args = (m), method = 'linearmixing')
-
-                temperatures = hstack((temperatures, abs(r.x)))
+                r = scipy.optimize.root(f_root, 0, args = (m))#, method = 'linearmixing')
+                rot = r.x if r.x > 0 else 0
+                temperatures = hstack((temperatures, rot))
 
             fig, ax = subplots()
             # ax.scatter(temps, func(temps, *a))
             xx = linspace(0, max(temps), 1000)
             ax.plot(xx, func(xx, *a))
             # ax.plot(temps, g.predict(temps[:, None]))
-            ax.scatter(temperatures, magRange, c ='red')
+            ax.scatter(temperatures, func(temperatures, *a), c ='red')
             ax.scatter(temps, mag, alpha = .2)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
             savefig(f'{targetDirectory}/temp vs mag.png')
@@ -173,13 +178,16 @@ if __name__ == '__main__':
             pulses = {node : pulseSize for node in model.graph.nodes()}
             pulse  = {}
             joint = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
-                                            deltas = deltas, kSamples = kSamples,\
-                                            mode = mode, pulse = pulse)
+                                           deltas = deltas, kSamples = kSamples,\
+                                           mode = mode, pulse = pulse)
+
             # joint = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
-            # deltas = deltas, kSamples = kSamples, pulse = pulse, mode = 'source')
+             # deltas = deltas, kSamples = kSamples, pulse = pulse, mode = 'source')
+
             print('Computing MI')
             mi = infcy.mutualInformation_alt(joint)
-            # mi   = infcy.mutualInformation(joint, conditions, deltas)
+            # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
+
             fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
             IO.savePickle(fileName, dict(mi = mi, joint = joint, model = model,\
                                             snapshots = snapshots))

@@ -26,7 +26,7 @@ class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = False, \
                  betaThreshold = 1e-2, agentStates = [-1 ,1],
                  mode = 'async', verbose = False, \
-                 nudgeMode = 'constant'):
+                 nudgeMode = 'constant', magSide = 'neg'):
 
         super(Ising, self).__init__(\
                                   graph = graph, \
@@ -50,7 +50,8 @@ class Ising(Model):
         self.betaThreshold  = betaThreshold
         self.verbose        = verbose
         self._t             = temperature
-        self.states         = np.float16(self.states) # enforce low memory
+        self.states         = np.int16(self.states) # enforce low memory
+        self.magSide        = magSide
 
         # define the update method
         # self.updateMethods  = dict(glauber = self.energy_default, \
@@ -193,7 +194,13 @@ class Ising(Model):
           #   p = exp(-self.beta * (flipEnergy - energy))
           #   if rand() / float(INT_MAX)  <= p:
           #     states[node] = -states[node]
-        self.states = states # overwrite (redundant if sync)
+        # TODO: ugly
+        if self.magSide == 'neg':
+          self.states = states  if np.sign(states.mean()) < 0 else -states
+        elif self.magSide == 'pos':
+          self.states = -states  if np.sign(states.mean()) < 0 else states
+        else:
+          self.states = states
         return self.states # maybe aliasing again
 
     def computeProb(self):

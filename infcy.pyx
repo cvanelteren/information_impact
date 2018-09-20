@@ -35,7 +35,7 @@ def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu
     cdef dict snapshots = {}
     # func = functools.partial(parallelSnapshots, step = step, \
     # burninSamples = burninSamples, model = model)
-
+    #
     func = functools.partial(parallelSnapshots, step = step, \
     burninSamples = burninSamples)
 
@@ -84,7 +84,6 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
     for i in range(n):
         if i % step == 0:
             state = model.states
-            # state = state if np.sign(state.mean()) < 0 else -state # local dynamics
             snap[tuple(state)] = snap.get(tuple(state), 0) + 1
         model.updateState(next(r))
     return snap
@@ -198,7 +197,6 @@ def parallelMonteCarlo_alt(startState):
       # res = model.simulate(deltas, 1, pulse)
       tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
       for idx, state in enumerate(tmp):
-        # state = state if np.sign(state.mean()) < 0 else -state # local dynamics
         for node in nodeIDs:
             nodeState = state[node]
             nodeStateIdx = sortr[nodeState]
@@ -218,7 +216,7 @@ def mutualInformation_alt(conditional):
   px = np.zeros((deltas + 1, model.nNodes, len(model.agentStates)))
   H = np.zeros((deltas + 1, model.nNodes))
   for key, value in conditional.items():
-    H += snapshots[key] * np.nansum(value * np.log2(value), -1)
+    H += np.nansum(value * np.log2(value), -1) * snapshots[key]
     px += value * snapshots[key]
   H -= np.nansum(px * np.log2(px), -1)
   return H
@@ -289,7 +287,7 @@ cowan
     return conditional
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def mutualInformation(dict joint, int condition, int deltas):
+def mutualInformation(dict joint, condition, int deltas):
     '''Condition is the idx to the dict'''
     cdef dict data = {\
     key : value for key, value in joint.items() if key[0] == condition}
@@ -300,11 +298,13 @@ def mutualInformation(dict joint, int condition, int deltas):
     # loop declaration
     # cdef tuple key
     # cdef int delta
+
     for key, value in tqdm(data.items()):
 
       delta = key[3]
         # bin regardless of key 1
       newkey = key[2]
+
       px[delta][newkey] = px[delta].get(newkey, 0) + value
 
         # py
@@ -320,11 +320,12 @@ def mutualInformation(dict joint, int condition, int deltas):
     # loop
     for delta in tqdm(range(deltas)):
         H[delta] -= np.nansum([p * np.log2(p) for p in px[delta].values()])
+
         for state, value in pxy[delta].items():
             for node, v in value.items():
                 if v > 0:
                     H[delta] += py[delta][state] * v * np.log2(v)
-    return H
+    return H.T
 def encodeState(state, nStates):
     return int(''.join(format(int(i), f'0{nStates - 1}b') for i in state), 2)
 def decodeState(state, nStates, nNodes):
