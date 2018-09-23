@@ -22,7 +22,7 @@ cdef extern from "limits.h":
     int INT_MAX
 # TODO: fix the equilibrium method
 # TODO: further cythonization
-cdef class Ising(Model):
+class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = False, \
                  betaThreshold = 1e-2, agentStates = [-1 ,1],
                  mode = 'async', verbose = False, \

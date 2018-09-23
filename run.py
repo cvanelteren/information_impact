@@ -46,7 +46,7 @@ if __name__ == '__main__':
     graph = nx.path_graph(3)
     graph = nx.sedgewick_maze_graph()
     graph = nx.barabasi_albert_graph(30, 4)
-    # graph = nx.path_graph(3, nx.DiGraph())
+    graph = nx.path_graph(3, nx.DiGraph())
     # graph.add_edge(0,0)
 
     # graph = nx.barabasi_albert_graph(10, 3)
@@ -186,7 +186,7 @@ if __name__ == '__main__':
              # deltas = deltas, kSamples = kSamples, pulse = pulse, mode = 'source')
 
             print('Computing MI')
-            mi = infcy.mutualInformation_alt(joint)
+            mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
             # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
 
             fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
@@ -200,7 +200,7 @@ if __name__ == '__main__':
                                         mode = mode, pulse = pulse)
                 print('Computing MI')
                 print(type(joint))
-                mi = infcy.mutualInformation_alt(joint)
+                mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
                 fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 IO.savePickle(fileName, dict(mi = mi, joint = joint, model = model,\
                                         snapshots = snapshots))

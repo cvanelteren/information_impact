@@ -111,21 +111,22 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
 
     print('Starting MC sampling')
     # uggly temp for testing if partial is a bottle neck
-    globals()['kSamples'] = kSamples
-    globals()['deltas'] = deltas
-    globals()['conditions'] = conditions
-    globals()['pulse'] = pulse
-    globals()['mode'] = mode
-    globals()['model'] = model
-    globals()['snapshots'] = snapshots
-#    func = functools.partial(\
-#    parallelMonteCarlo, model = model,
-#    mode = mode, kSamples = kSamples, \
-#    deltas = deltas, snapshots = snapshots, conditions = conditions,\
-#    pulse = pulse)
+    # globals()['kSamples'] = kSamples
+    # globals()['deltas'] = deltas
+    # globals()['conditions'] = conditions
+    # globals()['pulse'] = pulse
+    # globals()['mode'] = mode
+    # globals()['model'] = model
+    # globals()['snapshots'] = snapshots
+    func = functools.partial(\
+                            parallelMonteCarlo, model = model,
+                            mode = mode, kSamples = kSamples, \
+                            deltas = deltas, snapshots = snapshots, conditions = conditions,\
+                            pulse = pulse\
+                            )
     joint = {}
     with mp.Pool(mp.cpu_count()) as p:
-        for result in p.imap( parallelMonteCarlo, tqdm(snapshots), 10):
+        for result in p.imap( func, tqdm(snapshots), 10):
             for key, value in result.items():
                 joint[key] = joint.get(key, 0) + value
     return joint
@@ -149,29 +150,31 @@ def monteCarlo_alt(object model, dict snapshots,
 
    print('Starting MC sampling')
    # uggly temp for testing if partial is a bottle neck
-   globals()['kSamples'] = kSamples
-   globals()['deltas'] = deltas
+   # globals()['kSamples'] = kSamples
+   # globals()['deltas'] = deltas
    # globals()['conditions'] = conditions
-   globals()['pulse'] = pulse
-   globals()['mode'] = mode
-   globals()['model'] = model
-   globals()['snapshots'] = snapshots
-  #    func = functools.partial(\
-  #    parallelMonteCarlo, model = model,
-  #    mode = mode, kSamples = kSamples, \
-  #    deltas = deltas, snapshots = snapshots, conditions = conditions,\
-  #    pulse = pulse)
+   # globals()['pulse'] = pulse
+   # globals()['mode'] = mode
+   # globals()['model'] = model
+   # globals()['snapshots'] = snapshots
+   func = functools.partial(\
+                            parallelMonteCarlo_alt, model = model,
+                            mode = mode, kSamples = kSamples, \
+                            deltas = deltas, snapshots = snapshots,\
+                            pulse = pulse\
+                            )
    joint = {}
    with mp.Pool(mp.cpu_count()) as p:
-       for result in p.imap( parallelMonteCarlo_alt, tqdm(snapshots), 10):
+       for result in p.imap( func, tqdm(snapshots), 10):
            for key, value in result.items():
                joint[key] = value
    return joint
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelMonteCarlo_alt(startState):
-  global model, kSamples, conditions, deltas, pulse, snapshots, mode
+def parallelMonteCarlo_alt(startState, model, kSamples, deltas,\
+                          pulse, snapshots, mode):
+  # global model, kSamples, conditions, deltas, pulse, snapshots, mode
   # convert to binary state from decimal
   # flip list due to binary encoding
   if type(startState) is tuple:
@@ -205,7 +208,7 @@ def parallelMonteCarlo_alt(startState):
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def mutualInformation_alt(conditional):
+def mutualInformation_alt(conditional, deltas, snapshots, model):
   '''Condition is the idx to the dict'''
 
   cdef np.ndarray H = np.zeros(deltas)
@@ -223,8 +226,8 @@ def mutualInformation_alt(conditional):
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelMonteCarlo(startState):
-# def parallelMonteCarlo(startState, model, kSamples, snapshots, conditions, deltas,  pulse, mode):
+def parallelMonteCarlo(startState, model, kSamples, snapshots, conditions, deltas,  pulse, mode):
+  # def parallelMonteCarlo(startState):
     '''
     parallized version of computing the conditional, this can be run
     as a single core version
@@ -234,7 +237,6 @@ cowan
     index is the node.
 
     '''
-    global model, kSamples, conditions, deltas, pulse, snapshots, mode
     doPulse = True if pulse != {} else False# prevent empty of entire pulse
     # convert to binary state from decimal
     # flip list due to binary encoding
