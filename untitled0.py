@@ -49,7 +49,7 @@ print(k)
 import scipy
 from tqdm import tqdm
 
-theta =  1e-2
+theta =  1e-3
 
 for temp in k:
     try:
@@ -104,13 +104,13 @@ for temp in k:
                            alpha = 1)
                 ax.scatter(rot, func(rot, *a), \
                                color = colors[jdx], marker = 's', s = 100)
-                ax.set_xlim(-.2, 10)
+                ax.set_xlim(-.2, 3)
                 ax.set_ylim(-.2, 1)
                 ax.set_title(f'{temp} {i} {error}')
                 ax.set_ylabel('$I(x_i(t) ; X)$')
                 ax.legend(bbox_to_anchor = (1., .5))
                 error += ((func(x, *a) - MI)**2).sum() / model.nNodes
-                
+                 
             if i != '{}': close()
         # %%
         #fig, ax = subplots()
@@ -272,6 +272,24 @@ for temp in k:
         ax.set_xlim(0, deltas//2)
 #        ax.set_ylim(-.2, 1)
         setp(ax, **dict(xlabel = 'time since nudge', ylabel = 'hellinger distance'))
+        
+        # centrality measure and impact
+        for centr, centrality in centralities.items():
+            degs = dict(centrality(model.graph))
+            fig, ax = subplots()
+            x = []
+            for node, deg in degs.items():
+                idx = model.mapping[node]
+                ax.scatter(deg, HHH[idx], color = colors[idx], label = node)
+                x.append((deg, HHH[idx]))
+                
+            x = array(x)
+            xx = scipy.stats.linregress(*x.T)
+            #     ax.scatter(*H[idx, :], color = colors[idx])
+            #ax.set_yscale('log')
+            setp(ax, **dict(xlabel = centr, ylabel = 'impact'))
+            ax.legend(bbox_to_anchor = (1.01, 1))
+            ax.set_title(f'T = {temp}')
         
         fig, ax = subplots()
         [ax.scatter(x, y, color = colors[idx], label = model.rmapping[idx]) for idx, (x, y) in enumerate(zip(H[:,0], HHH))]

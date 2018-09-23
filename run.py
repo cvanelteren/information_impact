@@ -45,6 +45,7 @@ if __name__ == '__main__':
     graph = nx.star_graph(4)
     graph = nx.path_graph(3)
     graph = nx.sedgewick_maze_graph()
+    graph = nx.barabasi_albert_graph(30, 4)
     # graph = nx.path_graph(3, nx.DiGraph())
     # graph.add_edge(0,0)
 
