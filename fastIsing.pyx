@@ -10,8 +10,7 @@ import numpy  as np
 cimport numpy as np
 
 from scipy.stats import linregress
-import scipy
-import networkx as nx, multiprocessing as mp, functools, tqdm, information
+import networkx as nx, multiprocessing as mp, functools, tqdm, information, scipy,  functools, copy
 cimport cython
 from models import Model
 from libc.math cimport exp
@@ -211,8 +210,9 @@ class Ising(Model):
             probs[node] = exp(-self.beta * en)
         return probs / np.nansum(probs)
 
-    def matchMagnetization(self, targetMag =  1/np.e, \
-                          temps = np.logspace(-3, 2, 20), n = int(1e3),
+    def matchMagnetization(self,\
+                          temps = np.logspace(-3, 2, 20),\
+                          n = int(1e3),\
                           burninSamples = 100):
 
      '''
@@ -225,14 +225,13 @@ class Ising(Model):
      H  = np.zeros( len(temps) )   # magnetization
      HH = np.zeros( ( len(temps ))) # susceptibility
 
-     for idx, t in enumerate(tqdm.tqdm(temps)):
-       self.t  = t # update temperature
-       self.states = -np.ones(self.nNodes, dtype = self.states.dtype) # rest to ones; only interested in how mag is kept
-       # self.reset()
-       self.burnin(burninSamples)
-       res = self.simulate(n)
-       H[idx]  = abs(res.mean())                                # abs magnetization
-       HH[idx] =  ((res**2).mean() - res.mean()**2) * self.beta # susceptibility
+     func = functools.partial(matchMagnetization, nSamples = n,
+                   burninSamples = burninSamples)
+     x = [(copy.copy(self), t) for t in temps]
+     with mp.Pool(processes = mp.cpu_count()) as p:
+       results = np.array(p.starmap(func, x))
+       H       = results[:, 0] # magnetization
+       HH      = results[:, 1] # susceptibility
      return temps, H, HH
 
     def matchingEntropy(self, targetEntropy = 1/np.e, \
@@ -270,46 +269,19 @@ def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):
     return information.getSnapShots(model = model, nSamples = nSamples,\
                                     step = step)[:2] # only keep the node probs
 
-def matchTemperature(\
-    graph,\
-    temperatures = np.logspace(-20, 1, 10),\
-    targetDistribution = None, \
-    nSamples = 1000,\
-    step = None,\
-    fitModel = Ising):
-    '''
-    Estimates the temperature for which the average node probability [target]
-    is achieved..
-    The idea is to fit a model to the temperatures from which the target is idtsEstimated
-    '''
-    if type(step) is type(None):
-        step = 5 * graph.number_of_nodes()
-    probs = np.zeros((len(temperatures), graph.number_of_nodes(), 2))
-    # for each T init model and burnin for equilibrium
-    import multiprocessing as mp; import functools
-    func = functools.partial(fitTemperature, graph = graph, nSamples = nSamples,\
-                             step = step, fitModel = fitModel)
-    with mp.Pool(processes = mp.cpu_count() - 1) as pool:
-        probsr       = np.array(pool.map(func, temperatures), dtype = object)
 
-    probs = np.array([p[1] for p in probsr])
-    sprobs= np.array([np.array(list(p[0].values())) for p in probsr])
-    H           = probs # information.entropy(probs).mean(-1) # average the entropies [temps  x nodes]
-    Hstate = np.array([information.entropy(s) for s in sprobs]) # states have diff dimension
-
-    func = lambda x, a, b, c, d: a + b - np.exp(-c * (x - d))
-    from scipy.optimize import curve_fit
-    from functools import partial
-    try:
-        coefs = curve_fit(func, temperatures, Hstate)[0]
-        tmp = list(func.__code__.co_varnames) # dirty hacks!
-        tmp.remove('x')
-        ofunc =partial(func, **{i:j for i,j in zip(tmp, coefs)})
-        half = np.log(2)/coefs[2] # not really half point, but approx
-    except:
-        print('not found')
-        half = 0; ofunc = 0
-    return Hstate, H, half, ofunc
+def matchMagnetization(model, t, nSamples, burninSamples):
+  '''
+  compute in parallel the magnetization
+  '''
+  model.t      = t # update temperature
+  model.states = -np.ones(model.nNodes, dtype = model.states.dtype) # rest to ones; only interested in how mag is kept
+  # self.reset()
+  model.burnin(burninSamples)
+  res = model.simulate(nSamples)
+  H  = abs(res.mean())                                # abs magnetization
+  HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
+  return H, HH
 
 
 
