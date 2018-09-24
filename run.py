@@ -26,11 +26,11 @@ if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
     repeats       = 1000
-    deltas        = 10
+    deltas        = 30
     step          = 1
     nSamples      = 1000
     burninSamples = 5
-    pulseSize     = 1
+    pulseSize     = inf
 
     numIter       = 1
 

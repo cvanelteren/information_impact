@@ -124,12 +124,12 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
                             deltas = deltas, snapshots = snapshots, conditions = conditions,\
                             pulse = pulse\
                             )
-    joint = {}
+    conditional = {}
     with mp.Pool(mp.cpu_count()) as p:
         for result in p.imap( func, tqdm(snapshots), 10):
             for key, value in result.items():
-                joint[key] = joint.get(key, 0) + value
-    return joint
+                conditional[key] = conditional.get(key, 0) + value
+    return conditional
 '''
 The alt functions currently only probe the system and the nodes. The plan is to build from here.
 Conditions can be added, however the problem resides in the fact that it assumes time-symmetry;
@@ -163,12 +163,12 @@ def monteCarlo_alt(object model, dict snapshots,
                             deltas = deltas, snapshots = snapshots,\
                             pulse = pulse\
                             )
-   joint = {}
+   conditional = {}
    with mp.Pool(mp.cpu_count()) as p:
        for result in p.imap( func, tqdm(snapshots), 10):
            for key, value in result.items():
-               joint[key] = value
-   return joint
+               conditional[key] = value
+   return conditional
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
@@ -214,7 +214,7 @@ def mutualInformation_alt(conditional, deltas, snapshots, model):
   '''
 
   cdef np.ndarray H = np.zeros(deltas)
-  # joint is a conditional here
+  # conditional is a conditional here
   # loop declaration
   # cdef tuple key
   # cdef int delta
@@ -333,10 +333,10 @@ def reverseCalculation(int nSamples, object model, int delta, dict pulse):
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def mutualInformation(dict joint, condition, int deltas):
+def mutualInformation(dict conditional, condition, int deltas):
     '''Condition is the idx to the dict'''
     cdef dict data = {\
-    key : value for key, value in joint.items() if key[0] == condition}
+    key : value for key, value in conditional.items() if key[0] == condition}
     cdef dict px = {i : {} for i in range(deltas)}
     cdef dict py = {i : {} for i in range(deltas)}
     cdef np.ndarray H = np.zeros(deltas)
