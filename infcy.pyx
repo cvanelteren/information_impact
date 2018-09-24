@@ -178,7 +178,7 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   # convert to binary state from decimal
   # flip list due to binary encoding
   if type(startState) is tuple:
-      startState = np.array(startState, dtype = INT16) # convert back to numpy array
+      startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
   r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
@@ -243,7 +243,7 @@ cowan
     # convert to binary state from decimal
     # flip list due to binary encoding
     if type(startState) is tuple:
-        startState = np.array(startState, dtype = mode.states.dtype) 
+        startState = np.array(startState, dtype = mode.states.dtype)
     r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
     cdef dict conditional = {}
 
