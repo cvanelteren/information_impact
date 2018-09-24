@@ -19,8 +19,7 @@ cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double)
 cdef extern from "limits.h":
     int INT_MAX
-# TODO: fix the equilibrium method
-# TODO: further cythonization
+# TODO: this is still too pythonic. The conversion was made from direct python code; future me needs to hack this into c
 class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = False, \
                  betaThreshold = 1e-2, agentStates = [-1 ,1],
@@ -195,9 +194,9 @@ class Ising(Model):
           #     states[node] = -states[node]
         # TODO: ugly
         if self.magSide == 'neg':
-          self.states = states  if np.sign(states.mean()) < 0 else -states
+          self.states = states  if np.sign(states.mean()) <= 0 else -states
         elif self.magSide == 'pos':
-          self.states = -states  if np.sign(states.mean()) < 0 else states
+          self.states = -states  if np.sign(states.mean()) <= 0 else states
         else:
           self.states = states
         return self.states # maybe aliasing again

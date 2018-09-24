@@ -287,6 +287,43 @@ cowan
                 if model.nudgeMode == 'pulse':
                   doPulse = False
     return conditional
+@cython.boundscheck(False)
+@cython.wraparound(False)
+def reverseCalculation(int nSamples, object model, int delta, dict pulse):
+  '''
+  Computes MI based on slice of time data (indicated by :delta:)
+  '''
+  res   = model.simulate(nSamples, verbose = True, pulse = pulse)
+  n     = res.shape[0]
+  cond  = {} # storage for conditional distribution
+  cc    = {} # counter for the unique states
+  state = {} # gather the unique states
+
+  Z   = n - delta # number of samples
+  jdx = 1
+  for i in tqdm(range(delta, n - jdx)):
+      tmp      = res[i - delta: i + jdx] # get time slice relative to the current
+      x        = tuple(res[i])           # this is the state considered
+      state[x] = state.get(x, 0) + 1 / Z # normalize its probability and count
+      cond[x]  = cond.get(x, np.zeros(tmp.shape)) +  ((tmp + 1) / 2) #TODO: make this dynamics based on model states
+      cc[x]    = cc.get(x, 0) + 1 # count the bins
+  print(f'unique states {len(cond)}')
+
+  H  = np.zeros((delta + jdx, model.nNodes))
+  px = np.zeros((delta + jdx, model.nNodes))
+
+  for key, value in tqdm(cond.items()):
+      z = value / cc[key]  # how many times does the state occur?
+      # assert all(z + 1 - z) == 1
+      # z[np.isnan(z)] = 0
+      px += value / Z
+      x  = np.dstack((z * np.log2(z), (1 - z) * np.log2(1 - z)))
+      x  = np.nansum(x, -1)
+      H  += state[key] * x
+  tmp = np.nansum(np.dstack((px * np.log2(px), (1 - px) * np.log2(1 - px))), -1)
+  H  -= tmp
+  return res, cc, cond, state, H
+
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 def mutualInformation(dict joint, condition, int deltas):

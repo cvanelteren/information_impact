@@ -21,15 +21,18 @@ import datetime
 from artNet import Net
 from time import time
 close('all')
+np.random.seed() # set seed
 if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
-    kSamples = 1000
-    deltas   = 10
-    step     = 1
-    nSamples = 10000
+    kSamples      = 1000
+    deltas        = 10
+    step          = 1
+    nSamples      = 100000
     burninSamples = 5
-    pulseSize = inf
+    pulseSize     = 1
+
+    numIter       = 1
 
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
@@ -45,8 +48,8 @@ if __name__ == '__main__':
     graph = nx.star_graph(4)
     graph = nx.path_graph(3)
     graph = nx.sedgewick_maze_graph()
-    graph = nx.barabasi_albert_graph(30, 4)
-    graph = nx.path_graph(3, nx.DiGraph())
+    graph = nx.barabasi_albert_graph(200, 4)
+    # graph = nx.path_graph(3, nx.DiGraph())
     # graph.add_edge(0,0)
 
     # graph = nx.barabasi_albert_graph(10, 3)
@@ -79,11 +82,11 @@ if __name__ == '__main__':
     targetDirectory = f'{os.getcwd()}/Data/{now}'
     os.mkdir(targetDirectory)
 
-    for i in range(1):
+    for i in range(numIter):
         # graph = nx.barabasi_albert_graph(10, 3)
         model = fastIsing.Ising(graph = graph, \
                                 temperature = 0, \
-                                mode = 'async')
+                                mode = 'async', magSide = 'neg')
 
 
         conditions = {(tuple(model.nodeIDs), (i,)) : \
@@ -161,48 +164,43 @@ if __name__ == '__main__':
             from multiprocessing import cpu_count
             # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
             print('Getting snapshots')
-            s = infcy.getSnapShots(model, nSamples, \
-                                           parallel     = cpu_count(), \
-                                           burninSamples = burninSamples, \
-                                           step = step)
-            snapshots = s
-            # match magnetization
-            # snapshots = {}
-            # for i, j in tqdm(s.items()):
-            #     i = array(i)
-            #     if sign(mean(i)) < 0:
-            #         i *= -1
-            #     snapshots[tuple(i)] = snapshots.get(tuple(i), 0) + j
+
+            # snapshots = infcy.getSnapShots(model, nSamples, \
+            #                                parallel     = cpu_count(), \
+            #                                burninSamples = burninSamples, \
+            #                                step = step)
 
 
 
             pulses = {node : pulseSize for node in model.graph.nodes()}
             pulse  = {}
-            joint = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
-                                           deltas = deltas, kSamples = kSamples,\
-                                           mode = mode, pulse = pulse)
+            # joint = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
+                                           # deltas = deltas, kSamples = kSamples,\
+                                           # mode = mode, pulse = pulse)
+            snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
 
-            # joint = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
+
+            # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
              # deltas = deltas, kSamples = kSamples, pulse = pulse, mode = 'source')
 
             print('Computing MI')
-            mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
+            # mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
             # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
 
             fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-            IO.savePickle(fileName, dict(mi = mi, joint = joint, model = model,\
+            IO.savePickle(fileName, dict(mi = mi, conditional = conditional, model = model,\
                                             snapshots = snapshots))
 
             for n, p in pulses.items():
                 pulse = {n : p}
-                joint = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
-                                        deltas = deltas, kSamples = kSamples,\
-                                        mode = mode, pulse = pulse)
+                # conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
+                                        # deltas = deltas, kSamples = kSamples,\
+                                        # mode = mode, pulse = pulse)
                 print('Computing MI')
-                print(type(joint))
-                mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
+                # mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
+                snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                IO.savePickle(fileName, dict(mi = mi, joint = joint, model = model,\
+                IO.savePickle(fileName, dict(mi = mi, conditional = conditional, model = model,\
                                         snapshots = snapshots))
 
                 # print(f'{(time() - s)/60} elapsed minutes')
