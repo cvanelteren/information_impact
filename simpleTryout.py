@@ -24,12 +24,12 @@ if __name__ == '__main__':
     nSamples = 1000
     step     = 1
     deltas   = 10
-    kSamples = 1000
+    repeats = 1000
     res = {}
     for temperature in tqdm(temperatures):
         model = fastIsing.Ising(graph, temperature, False)
         snapshots = information.getSnapShots(model, nSamples, step)[0]
-        mc = information.monteCarlo(model, snapshots, deltas, kSamples)
+        mc = information.monteCarlo(model, snapshots, deltas, repeats)
         pState, pNode, pNodeGivenState, joint, I = information.mutualInformationShift(model, snapshots, mc,
                                                                                       mode = 'sinc')
         
@@ -67,7 +67,7 @@ if __name__ == '__main__':
 #    ax.set_xlabel('Temperature') ; ax.set_ylabel('State entropy')
     # %%
     aa = {(-1, -1, 1), (-1, -1 ,-1), (-1, 1, 1), (-1, 1, -1)}
-    test = information.monteCarlo(model, snapshots = aa, deltas = 10, kSamples = 1000)
+    test = information.monteCarlo(model, snapshots = aa, deltas = 10, repeats = 1000)
     # %%
     test = mc
     p = zeros((deltas + 1, model.nNodes, 2, 8))
@@ -87,7 +87,7 @@ if __name__ == '__main__':
                     elif sample[0, n] == -1 and i == -1:
                         p[tidx, n, 1, idx] += 1
     pp = p.sum(-1) / (test.shape[0] * test.shape[1])
-    dp = p/kSamples
+    dp = p/repeats
     
     h = plotz.hellingerDistance(pp[..., [0]], pp[..., [1]])
     hh = plotz.hellingerDistance(dp[:, :, 0, :], dp[:, :, 1, :])

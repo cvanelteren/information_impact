@@ -98,6 +98,7 @@ class Model:
         self.nNodes         = nNodes
         self.nudges         = nudges
         self.agentStates    = agentStates
+        self.nStates        = len(agentStates)
         self._mode          = mode
         self.nudgeMode      = nudgeMode
         self.sampleNodes    = dict(\

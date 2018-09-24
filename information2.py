@@ -94,14 +94,14 @@ def getSnapShotsParallel(nSamples, model, step = 100):
     return model.simulate(nSamples = nSamples, step = step)
 
 def montecarlo(fileName,\
-            model, kSamples, deltas, pulse = {}, \
+            model, repeats, deltas, pulse = {}, \
             sourceData = 'snapshots/', targetData = 'mc'):
     func = functools.partial(parallelMonteCarlo, model = model, \
-    kSamples = kSamples, deltas = deltas, pulse = pulse)
+    repeats = repeats, deltas = deltas, pulse = pulse)
     compute(func, fileName, sourceData, targetData)
 
 @jit
-def parallelMonteCarlo(startState, model, kSamples, deltas, pulse = {}):
+def parallelMonteCarlo(startState, model, repeats, deltas, pulse = {}):
     '''
     parallized version of computing the conditional, this can be run
     as a single core version
@@ -111,15 +111,15 @@ def parallelMonteCarlo(startState, model, kSamples, deltas, pulse = {}):
     # print(' in mc', startState)
     value      = startState[-1] # tmp hack; this is the prob value
     startState = startState[:model.nNodes] #
-    montecarlo = np.zeros((kSamples, deltas + 1, model.nNodes), dtype = int)
+    montecarlo = np.zeros((repeats, deltas + 1, model.nNodes), dtype = int)
     sim = model.simulate # read somewhere that referencing in for loop is slower
     # than pre-definition
-    for k in range(kSamples):
+    for k in range(repeats):
         model.states       = startState.copy() # prevent alias
         montecarlo[k, ...] = sim(nSamples = deltas, step = 1, pulse = pulse)
     return montecarlo
 
-def mutualInformationShift(model, fileName, kSamples, mode = 'source', \
+def mutualInformationShift(model, fileName, repeats, mode = 'source', \
         sourceData = 'mc', targetData = 'mi', conditions = None, \
         ):
        state2idx = {}
@@ -145,7 +145,7 @@ def mutualInformationShift(model, fileName, kSamples, mode = 'source', \
        nodestate2idx       = {i:idx for idx, i in enumerate(Ystates)}
 
        # init normalizing agent
-       Z = {tuple(i[:model.nNodes]) : i[-1] / kSamples  for i in snapshots}
+       Z = {tuple(i[:model.nNodes]) : i[-1] / repeats  for i in snapshots}
 
        '''for each monte carlo sample we want to bin it into the known samples'''
        # convert state to number; convert conditioned to number

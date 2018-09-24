@@ -63,7 +63,7 @@ def parallelSnapshots(nSamples, model, step, Z ):
     return snap
 
 def monteCarlo(model, snapshots,  conditions,
-               deltas = 10,  kSamples = 11,
+               deltas = 10,  repeats = 11,
                parallel = True, \
                pulse = {}, mode = 'source'):
     '''
@@ -71,7 +71,7 @@ def monteCarlo(model, snapshots,  conditions,
     parsed snapshots.
 
     Input:
-        :kSamples: Number of times to perform monte-carlo sample per snapshot
+        :repeats: Number of times to perform monte-carlo sample per snapshot
         :deltas: number of time steps to simulate for
         :use_more_power: whether or not to use multiple cores
         :pulse: a dictionary indicating which nodes to inject an external pulse.
@@ -79,7 +79,7 @@ def monteCarlo(model, snapshots,  conditions,
     '''
     # would prefer to make this a generator, however then mp breaks
 
-    # def parallelMonteCarlo(startState, model, conditions, kSamples, deltas, Z, pulse = {}, mode = 'source'):
+    # def parallelMonteCarlo(startState, model, conditions, repeats, deltas, Z, pulse = {}, mode = 'source'):
     def parallelMonteCarlo(startState):
         '''
         parallized version of computing the conditional, this can be run
@@ -95,9 +95,9 @@ def monteCarlo(model, snapshots,  conditions,
         # flip list due to binary encoding
         if type(startState) is tuple:
             startState = np.array(startState) # convert back to numpy array
-        r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(kSamples * deltas))
+        r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
         conditional = {}
-        for k in range(kSamples):
+        for k in range(repeats):
             # start from the same point
             model.states = np.array(startState.copy(), dtype = np.int16)
             # res = model.simulate(deltas, 1, pulse)
@@ -125,7 +125,7 @@ def monteCarlo(model, snapshots,  conditions,
                     tmp = (idx,tx, ty, delta)
                     #  bin data
                     conditional[tmp] = conditional.get(tmp, 0) + \
-                    snapshots[tuple(startState)] / kSamples
+                    snapshots[tuple(startState)] / repeats
                 model.updateState(next(r))# update to next step
                 # restore pulse
                 if doPulse:
@@ -197,7 +197,7 @@ def decodeState(state, nStates, nNodes):
 #                 nSamples    = 1000,
 #                 step        = 100,
 #                 deltas      = 10,
-#                 kSamples    = 1000,
+#                 repeats    = 1000,
 #                 mode        = 'source',
 #                 pulse       = False,
 #                 reset       = False,
@@ -210,7 +210,7 @@ def decodeState(state, nStates, nNodes):
 #         :model: ising model to be used
 #         :reset: whether to start from random state, will automatically burnin
 #         :deltas: number of time steps to simulate
-#         :kSamples: number of samples for each time step
+#         :repeats: number of samples for each time step
 #     Returns:
 #         :results: a dict containing node probability, state probability and conditional probability
 #         per nudge condition (keys), and mutual information.
@@ -222,7 +222,7 @@ def decodeState(state, nStates, nNodes):
 #     print('Starting nudges\nParameters:')
 #     # TODO remove this; think about using kwargs in the future
 #     # print parameters:
-#     d = dict(nSamples = nSamples, kSamples = kSamples, step = step,\
+#     d = dict(nSamples = nSamples, repeats = repeats, step = step,\
 #              deltas = deltas, mode = mode, reset = reset, pulse = pulse)
 #
 #     for key, value in d.items():
@@ -245,7 +245,7 @@ def decodeState(state, nStates, nNodes):
 #     snapshots = getSnapShots(model = model, nSamples = nSamples, step = step, parallel = parallel)[0]
 #     # get mc results
 #     mr = monteCarlo(model = model, snapshots = snapshots,\
-#                     deltas = deltas, kSamples = kSamples,\
+#                     deltas = deltas, repeats = repeats,\
 #                     pulse = nudgeInfo if pulse else {},\
 #                     parallel = parallel)
 #
@@ -260,7 +260,7 @@ def decodeState(state, nStates, nNodes):
 #         effect = nudgeInfo.get(list(nudge.keys())[0], None)
 #     except:
 #         effect = None
-#     std = dict(kSamples = kSamples, model = model, nSamples = nSamples,
+#     std = dict(repeats = repeats, model = model, nSamples = nSamples,
 #                deltas = deltas, step = step, pulse = pulse)
 #
 #     # dict output for organization #TODO: keep this or nah?
@@ -456,7 +456,7 @@ def decodeState(state, nStates, nNodes):
 # #        Input:
 # #            :model: fast ising model
 # #            :nSamples: number of snapshots to get from single run
-# #            :kSamples: k monte carlo samples
+# #            :repeats: k monte carlo samples
 # #            :deltas: number of simulation steps to do for the monte carlo samples
 # #        Returns:
 # #            :MI shift: I(x_i^t ; X^t - delta) -> delta x condition x states space x node states
@@ -473,7 +473,7 @@ def decodeState(state, nStates, nNodes):
 # #        # starting to make changes here
 # #        print('Binning data')
 # #        print(montecarloResults.shape)
-# #        nStates, kSamples, deltas, nNodes = montecarloResults.shape # TODO: fix this for refactor?
+# #        nStates, repeats, deltas, nNodes = montecarloResults.shape # TODO: fix this for refactor?
 # #        # look into swapping the axes back to regain performance
 # #        montecarloResults = montecarloResults.reshape(-1, deltas, model.nNodes).swapaxes(0, 1)
 # #        mappingState = {}
@@ -494,7 +494,7 @@ def decodeState(state, nStates, nNodes):
 # #        Ystates = tuple(itertools.product(*(model.agentStates for _ in range(N))))
 # #        mappingNode       = {i:idx for idx, i in enumerate(Ystates)}
 # #        # init normalizing agent
-# #        Z = {key : value / (kSamples) for key, value in snapshots.items()}
+# #        Z = {key : value / (repeats) for key, value in snapshots.items()}
 # #        '''for each monte carlo sample we want to bin it into the known samples'''
 # #        # convert state to number; convert conditioned to number
 # #        targets = montecarloResults[0, ...] # track the zero
@@ -522,7 +522,7 @@ def decodeState(state, nStates, nNodes):
 # #        return joint,
 # # def transferEntropy(nSamples = 1000,
 # #                     step    = 100,
-# #                     kSamples = 1000,
+# #                     repeats = 1000,
 # #                     L        = 10 ):
 # #
 # #     """
@@ -541,4 +541,4 @@ def decodeState(state, nStates, nNodes):
 #     conditional     = conditionalProbabilityPerDelta(model           = model,
 #                                                      startStates     = stateSpace,
 #                                                      L               = deltas,
-#                                                      kSamples        = kSamples)
+#                                                      repeats        = repeats)

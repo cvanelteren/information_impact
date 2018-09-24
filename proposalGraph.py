@@ -39,7 +39,7 @@ if __name__ == '__main__':
                     nSamples = 1000,\
                     step     = 20,\
                     deltas   = 10,\
-                    kSamples = 1000,\
+                    repeats = 1000,\
                     mode = 'source', reset = True)
     import time;
     past = time.time()

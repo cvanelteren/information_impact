@@ -175,13 +175,13 @@ def simulation(model, nDiffStep = int(1e3), nSamples = 500, betaThreshold = 1e-3
 #        print(stateProbability, u)
     return model, u,  stateProbability, nodeProbability
 
-def multualInformationPerDelta(model, beta, nodeProbability, uniqueStates, stateProbability, kSamples, deltas):
+def multualInformationPerDelta(model, beta, nodeProbability, uniqueStates, stateProbability, repeats, deltas):
     '''
     Returns the multual information for all xi in X per t-di for di in deltas
     : g: graph used in the model
     : beta: inverse temperature of the model
     : uniqueStates: the unique states encoutered after running the simulation
-    : kSamples: number of times to simulate per unique state
+    : repeats: number of times to simulate per unique state
     : deltas: number of time steps to simulate for
     '''
     # entropy of nodes [node x 1]
@@ -196,7 +196,7 @@ def multualInformationPerDelta(model, beta, nodeProbability, uniqueStates, state
 #        print(startState)
         nodeCond = zeros((deltas, len(nodeProbability)))
 #        print('Starting on state')
-        for k in range(kSamples):
+        for k in range(repeats):
             model.states = startState.copy() # reste the model states
 #            model = Ising(g = g, beta = beta, start = startState.copy()) # TODO: dont
             for delta in range(deltas):
@@ -205,7 +205,7 @@ def multualInformationPerDelta(model, beta, nodeProbability, uniqueStates, state
 #                else:
                 nodeCond[delta, :] += (array(list(model.step().values())) + 1) / 2 # count prob of being 1
 
-        nodeCond /= kSamples
+        nodeCond /= repeats
         conditionalDist.append(nodeCond)
     conditionalDist = array(conditionalDist)
 
@@ -250,11 +250,11 @@ if __name__ == '__main__':
     fig, ax = subplots(); ax.imshow(nodeProbability.reshape(nn,nn))
     assert 0
 # %% Create conditional probabilities
-    kSamples  = 10
+    repeats  = 10
     deltas    = 50
     conditionalDist, I = multualInformationPerDelta(model, beta, \
                                                     nodeProbability, uniqueStates, \
-                                                    stateProbability, kSamples, deltas)
+                                                    stateProbability, repeats, deltas)
 
 
 
@@ -364,7 +364,7 @@ if __name__ == '__main__':
     '''
     For all unique states, for each node do a positive and negative nudge n-times
     '''
-    kSamples = 100
+    repeats = 100
     conditionalDist = []
     print('Estimating MI per node')
     # conditionalDist = number of X^T x deltas x nodes
@@ -383,12 +383,12 @@ if __name__ == '__main__':
             tmp = {node: i for node, i in zip(nudgeGraph.nodes(), tmp)}
             model.g = nudgeGraph # update the new graph
             nodeCond = zeros((deltas, len(nodeProbability) + 1))
-            for k in range(kSamples):
+            for k in range(repeats):
                 model.states = copy.copy(tmp)
                 for delta in range(deltas):
                     nodeCond[delta, :] += (array(list(model.step().values())) + 1) / 2 # count prob of being 1
 
-            nodeCond /= kSamples
+            nodeCond /= repeats
             storage[jdx, idx, ...] = nodeCond
 #        conditionalDist.append(nodeCond)
 #    conditionalDist = array(conditionalDist)

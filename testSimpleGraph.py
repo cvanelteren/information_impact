@@ -63,7 +63,7 @@ class SimpleGraph(unittest.TestCase):
 
         # standard parameters
         self.deltas   = 10
-        self.kSamples = 100
+        self.repeats = 100
         self.nSamples = 1_00000
         self.step     = 1
 
@@ -72,7 +72,7 @@ class SimpleGraph(unittest.TestCase):
         print(len(self.snapshots))
         self.mc        = information.monteCarlo(\
         model = self.model, snapshots = self.snapshots, \
-        deltas = self.deltas, kSamples = self.kSamples, pulse = {},\
+        deltas = self.deltas, repeats = self.repeats, pulse = {},\
         parallel = self.parallel)
         return self.model
 

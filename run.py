@@ -25,10 +25,10 @@ np.random.seed() # set seed
 if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
-    kSamples      = 1000
+    repeats       = 1000
     deltas        = 10
     step          = 1
-    nSamples      = 100000
+    nSamples      = 1000
     burninSamples = 5
     pulseSize     = 1
 
@@ -47,9 +47,8 @@ if __name__ == '__main__':
 
     graph = nx.star_graph(4)
     graph = nx.path_graph(3)
-    graph = nx.sedgewick_maze_graph()
-    graph = nx.barabasi_albert_graph(200, 4)
-    # graph = nx.path_graph(3, nx.DiGraph())
+    # graph = nx.barabasi_albert_graph(10, 4)
+    graph = nx.path_graph(3, nx.DiGraph())
     # graph.add_edge(0,0)
 
     # graph = nx.barabasi_albert_graph(10, 3)
@@ -142,65 +141,53 @@ if __name__ == '__main__':
         # assert 0
         # temperatures = [800]
 
-        # state = zeros(12)
-        # n = 12
-        # N = 2**n
-        # state = zeros(n)
-        # snapshots = {}
-        # for i in tqdm(range(N)):
-        #     string = format(i, '012b')
-        #     for idx, j in enumerate(string):
-        #         state[idx] = 1 if j == '1' else -1
-        #     snapshots[tuple(state)] = 1 / N
         for t in temperatures:
             print(f'Setting {t}')
             model.t = t
-            # if os.path.isfile(fileName):
-                # if input('Do you want to remove this file Y/N') == 'Y':
-                    # os.remove(fileName)
-            # s = time()
-            # if os.path.isfile(fileName) == False:
-        #        mis = {}
+
             from multiprocessing import cpu_count
             # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
             print('Getting snapshots')
 
-            # snapshots = infcy.getSnapShots(model, nSamples, \
-            #                                parallel     = cpu_count(), \
-            #                                burninSamples = burninSamples, \
-            #                                step = step)
+            snapshots = infcy.getSnapShots(model, nSamples, \
+                                           parallel     = cpu_count(), \
+                                           burninSamples = burninSamples, \
+                                           step = step)
 
 
 
             pulses = {node : pulseSize for node in model.graph.nodes()}
             pulse  = {}
-            # joint = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
-                                           # deltas = deltas, kSamples = kSamples,\
-                                           # mode = mode, pulse = pulse)
-            snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
+            conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
+                                           deltas = deltas, repeats = repeats,\
+                                           mode = mode, pulse = pulse)
 
+            # px, snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
 
             # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
-             # deltas = deltas, kSamples = kSamples, pulse = pulse, mode = 'source')
+             # deltas = deltas, repeats = repeats, pulse = pulse, mode = 'source')
 
             print('Computing MI')
-            # mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
+            px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
+            print(px)
             # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
 
-            fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-            IO.savePickle(fileName, dict(mi = mi, conditional = conditional, model = model,\
-                                            snapshots = snapshots))
+            fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+            IO.savePickle(fileName, dict(
+            mi = mi, conditional = conditional, model = model,\
+            px = px, snapshots = snapshots))
 
             for n, p in pulses.items():
                 pulse = {n : p}
                 # conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
-                                        # deltas = deltas, kSamples = kSamples,\
+                                        # deltas = deltas, repeats = repeats,\
                                         # mode = mode, pulse = pulse)
                 print('Computing MI')
-                # mi = infcy.mutualInformation_alt(joint, deltas, snapshots, model)
-                snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={kSamples}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                IO.savePickle(fileName, dict(mi = mi, conditional = conditional, model = model,\
-                                        snapshots = snapshots))
+                px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
+                # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
+                fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                IO.savePickle(fileName, dict(
+                mi = mi, conditional = conditional, model = model,\
+                px = px, snapshots = snapshots))
 
                 # print(f'{(time() - s)/60} elapsed minutes')

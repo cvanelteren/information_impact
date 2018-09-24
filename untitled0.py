@@ -64,7 +64,7 @@ for temp in k:
 
         for idx, (i, j) in enumerate(tqdm(current.items())):
 
-            mi = j['mi'][::-1]
+            mi = j['mi']
             snapshots = j['snapshots']
             conditional = j['conditional']
             model = j['model']
@@ -173,34 +173,25 @@ for temp in k:
         #    ax.scatter(j, mi[0, idx])
         #setp(ax, **dict(xlabel = 'degree', ylabel = 'entropy'))
         ## %%
-        pxs = {}
-        for i, j in current.items():
-            shape = list(conditional.values())[0].shape
-            px = zeros((shape))
-            conditional = j['conditional']
-            snaps = j['snapshots']
-
-            for ii, jj in conditional.items():
-                px += snaps[ii] * jj
-            pxs[i] = px
         # %%
         import re
 
         hd = lambda x, y : sqrt(((sqrt(x) - sqrt(y))**2).sum(-1))/sqrt(2)
         iidx = 1
-        control = pxs['{}'][iidx, ...]
+        control = pxs['{}']
         hs = {}
         hd_single = zeros((model.nNodes, deltas, model.nNodes))
-        for i, j in pxs.items():
+        for i, j in current.items():
             if i != '{}':
+                px = j['px']
     #            title = re.search("'.*'", i).group()[1:-1]; # print(title)
                 title = re.search('{.*:', i).group()[1:-1]
-                h = hd(control, j[iidx, ...])
+                h = hd(control, px)
                 try:
                     idx = model.mapping[title]
                 except:
                     idx = model.mapping[int(title.split("'")[0])]
-                hd_single[idx, ...] = hd(pxs['{}'], j)
+                hd_single[idx, ...] = h
                 hs[title] = h.mean()
 
 

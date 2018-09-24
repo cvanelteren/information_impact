@@ -91,7 +91,7 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 def monteCarlo(object model, dict snapshots,  dict conditions,
-               long deltas = 10,  long kSamples = 11,
+               long deltas = 10,  long repeats = 11,
                bint parallel = True, \
                dict pulse = {}, str mode = 'source'):
     '''
@@ -99,7 +99,7 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
     parsed snapshots.
 
     Input:
-        :kSamples: Number of times to perform monte-carlo sample per snapshot
+        :repeats: Number of times to perform monte-carlo sample per snapshot
         :deltas: number of time steps to simulate for
         :use_more_power: whether or not to use multiple cores
         :pulse: a dictionary indicating which nodes to inject an external pulse.
@@ -111,7 +111,7 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
 
     print('Starting MC sampling')
     # uggly temp for testing if partial is a bottle neck
-    # globals()['kSamples'] = kSamples
+    # globals()['repeats'] = repeats
     # globals()['deltas'] = deltas
     # globals()['conditions'] = conditions
     # globals()['pulse'] = pulse
@@ -120,7 +120,7 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
     # globals()['snapshots'] = snapshots
     func = functools.partial(\
                             parallelMonteCarlo, model = model,
-                            mode = mode, kSamples = kSamples, \
+                            mode = mode, repeats = repeats, \
                             deltas = deltas, snapshots = snapshots, conditions = conditions,\
                             pulse = pulse\
                             )
@@ -142,7 +142,7 @@ one can do this for small graphs, but larger graphs will need tons of ram.
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 def monteCarlo_alt(object model, dict snapshots,
-               long deltas = 10,  long kSamples = 11,
+               long deltas = 10,  long repeats = 11,
                bint parallel = True, \
                dict pulse = {}, str mode = 'source'):
 
@@ -150,7 +150,7 @@ def monteCarlo_alt(object model, dict snapshots,
 
    print('Starting MC sampling')
    # uggly temp for testing if partial is a bottle neck
-   # globals()['kSamples'] = kSamples
+   # globals()['repeats'] = repeats
    # globals()['deltas'] = deltas
    # globals()['conditions'] = conditions
    # globals()['pulse'] = pulse
@@ -159,7 +159,7 @@ def monteCarlo_alt(object model, dict snapshots,
    # globals()['snapshots'] = snapshots
    func = functools.partial(\
                             parallelMonteCarlo_alt, model = model,
-                            mode = mode, kSamples = kSamples, \
+                            mode = mode, repeats = repeats, \
                             deltas = deltas, snapshots = snapshots,\
                             pulse = pulse\
                             )
@@ -172,14 +172,14 @@ def monteCarlo_alt(object model, dict snapshots,
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelMonteCarlo_alt(startState, model, kSamples, deltas,\
+def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
                           pulse, snapshots, mode):
-  # global model, kSamples, conditions, deltas, pulse, snapshots, mode
+  # global model, repeats, conditions, deltas, pulse, snapshots, mode
   # convert to binary state from decimal
   # flip list due to binary encoding
   if type(startState) is tuple:
       startState = np.array(startState, dtype = INT16) # convert back to numpy array
-  r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(kSamples * deltas))
+  r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
   cdef int k
@@ -194,7 +194,7 @@ def parallelMonteCarlo_alt(startState, model, kSamples, deltas,\
   cdef int nodeStateIdx
   cdef np.ndarray tmp
 
-  for k in range(kSamples):
+  for k in range(repeats):
       # start from the same point
       model.states = np.array(startState.copy(), dtype = model.states.dtype)
       # res = model.simulate(deltas, 1, pulse)
@@ -203,30 +203,32 @@ def parallelMonteCarlo_alt(startState, model, kSamples, deltas,\
         for node in nodeIDs:
             nodeState = state[node]
             nodeStateIdx = sortr[nodeState]
-            out[idx, node, nodeStateIdx] += 1/kSamples
+            out[idx, node, nodeStateIdx] += 1/repeats
   return {tuple(startState) : out}
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 def mutualInformation_alt(conditional, deltas, snapshots, model):
-  '''Condition is the idx to the dict'''
+  '''
+   Returns the node distribution and the mutual information decay
+  '''
 
   cdef np.ndarray H = np.zeros(deltas)
   # joint is a conditional here
   # loop declaration
   # cdef tuple key
   # cdef int delta
-  px = np.zeros((deltas + 1, model.nNodes, len(model.agentStates)))
-  H = np.zeros((deltas + 1, model.nNodes))
+  px = np.zeros((deltas + 1, model.nNodes, model.nStates))
+  H  = np.zeros((deltas + 1, model.nNodes))
   for key, value in conditional.items():
-    H += np.nansum(value * np.log2(value), -1) * snapshots[key]
+    H  += np.nansum(value * np.log2(value), -1) * snapshots[key]
     px += value * snapshots[key]
   H -= np.nansum(px * np.log2(px), -1)
-  return H
+  return px, H
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelMonteCarlo(startState, model, kSamples, snapshots, conditions, deltas,  pulse, mode):
+def parallelMonteCarlo(startState, model, repeats, snapshots, conditions, deltas,  pulse, mode):
   # def parallelMonteCarlo(startState):
     '''
     parallized version of computing the conditional, this can be run
@@ -242,13 +244,13 @@ cowan
     # flip list due to binary encoding
     if type(startState) is tuple:
         startState = np.array(startState, dtype = INT16) # convert back to numpy array
-    r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(kSamples * deltas))
+    r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
     cdef dict conditional = {}
 
     cdef int k
     cdef int delta
     cdef int j
-    for k in range(kSamples):
+    for k in range(repeats):
         # start from the same point
         model.states = np.array(startState.copy(), dtype = model.states.dtype)
         # res = model.simulate(deltas, 1, pulse)
@@ -274,12 +276,12 @@ cowan
                 # Y = conditionState[list(condition[1])]
                 # X = targetState[list(condition[0])]
 
-                ty = encodeState(Y, 2)
-                tx = encodeState(X, 2)
+                ty = encodeState(Y, model.nStates)
+                tx = encodeState(X, model.nStates)
                 tmp = (idx, tx, ty, delta)
                 #  bin data
                 conditional[tmp] = conditional.get(tmp, 0) + \
-                snapshots[tuple(startState)] / kSamples
+                snapshots[tuple(startState)] / repeats
             model.updateState(next(r))# update to next step
             # restore pulse
             if doPulse:
@@ -305,24 +307,28 @@ def reverseCalculation(int nSamples, object model, int delta, dict pulse):
       tmp      = res[i - delta: i + jdx] # get time slice relative to the current
       x        = tuple(res[i])           # this is the state considered
       state[x] = state.get(x, 0) + 1 / Z # normalize its probability and count
-      cond[x]  = cond.get(x, np.zeros(tmp.shape)) +  ((tmp + 1) / 2) #TODO: make this dynamics based on model states
+      current  = cond.get(x, np.zeros((*tmp.shape, model.nStates)))
+      binned   = np.digitize(tmp, model.agentStates, right = True)
+      for i in range(tmp.shape[0]):
+        for j in range(model.nNodes):
+            current[i, j, binned[i,j]] += 1
+      cond[x]  = current
       cc[x]    = cc.get(x, 0) + 1 # count the bins
   print(f'unique states {len(cond)}')
 
   H  = np.zeros((delta + jdx, model.nNodes))
-  px = np.zeros((delta + jdx, model.nNodes))
+  px = np.zeros((delta + jdx, model.nNodes, model.nStates))
 
   for key, value in tqdm(cond.items()):
       z = value / cc[key]  # how many times does the state occur?
       # assert all(z + 1 - z) == 1
       # z[np.isnan(z)] = 0
       px += value / Z
-      x  = np.dstack((z * np.log2(z), (1 - z) * np.log2(1 - z)))
-      x  = np.nansum(x, -1)
+      x  = np.nansum(z * np.log2(z), axis = -1) # sum over node states
       H  += state[key] * x
-  tmp = np.nansum(np.dstack((px * np.log2(px), (1 - px) * np.log2(1 - px))), -1)
+  tmp = np.nansum(px * np.log2(px), axis = -1)
   H  -= tmp
-  return res, cc, cond, state, H
+  return res, cc, px, cond, state, H
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive

@@ -11,15 +11,15 @@ graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.ed
 model = Ising(graph, t, doBurnin = False)
 
 nSamples = int(10000)
-kSamples = 10000
+repeats = 10000
 deltas   = 10
-d = dict(model = model, kSamples = kSamples, deltas = deltas, pulse = {})
+d = dict(model = model, repeats = repeats, deltas = deltas, pulse = {})
 fileName = f'/media/casper/375C5C665C66D4FA/tester.h5'
 fileName = f'{os.getcwd()}/cat_test_{t}.h5'
 #
 #ii.getSnapshots(fileName = fileName, model = model, nSamples = nSamples)
 #ii.montecarlo(fileName = fileName, **d)
-#ii.mutualInformationShift(model, fileName, kSamples, mode = 'source')
+#ii.mutualInformationShift(model, fileName, repeats, mode = 'source')
 # %%
 from h5py import File
 import  os
