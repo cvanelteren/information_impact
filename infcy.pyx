@@ -243,7 +243,7 @@ cowan
     # convert to binary state from decimal
     # flip list due to binary encoding
     if type(startState) is tuple:
-        startState = np.array(startState, dtype = INT16) # convert back to numpy array
+        startState = np.array(startState, dtype = mode.states.dtype) 
     r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
     cdef dict conditional = {}
 
@@ -289,6 +289,7 @@ cowan
                 if model.nudgeMode == 'pulse':
                   doPulse = False
     return conditional
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 def reverseCalculation(int nSamples, object model, int delta, dict pulse):
