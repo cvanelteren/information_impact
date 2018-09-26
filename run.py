@@ -26,11 +26,11 @@ if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
     repeats       = 1000
-    deltas        = 30
+    deltas        = 100
     step          = 1
-    nSamples      = 1000
+    nSamples      = 10000
     burninSamples = 5
-    pulseSize     = 1
+    pulseSize     = inf
 
     numIter       = 1
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     nx.set_node_attributes(graph, attr)
 
     graph = nx.star_graph(4)
-    graph = nx.path_graph(3)
+    # graph = nx.path_graph(3)
     # graph = nx.barabasi_albert_graph(10, 4)
     # graph = nx.path_graph(3, nx.DiGraph())
     # graph.add_edge(0,0)
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         # graph = nx.barabasi_albert_graph(10, 3)
         model = fastIsing.Ising(graph = graph, \
                                 temperature = 0, \
-                                mode = 'async', magSide = 'neg')
+                                mode = 'async', magSide = '')
 
 
         conditions = {(tuple(model.nodeIDs), (i,)) : \
@@ -102,7 +102,7 @@ if __name__ == '__main__':
                 globals()[i] = j
         else:
             magRange = linspace(.95, .8, 2) # .5 to .2 seems to be a good range; especially .2
-            # magRange = array([.5])
+            magRange = array([.8])
             # magRange = array([.9, .2])
             temps = linspace(0, 20, 100)
 
@@ -169,7 +169,6 @@ if __name__ == '__main__':
 
             print('Computing MI')
             px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
-            print(px)
             # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
 
             fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'

@@ -34,14 +34,10 @@ def fit(MI, func =lambda x, a, b, c: a *exp(-(b * x)**c) , x = None,\
     coefficients = zeros( (nNodes, func.__code__.co_argcount - 1) )  # absolute and relatives idt
     # tol = 1e-5# finfo(float).eps
     # print(finfo(float).eps)
-    for idx, i in enumerate(MI.T):
-        try:
-            if type(func) is scipy.interpolate.splev:
-                popt, pcov = scipy.optimize.curve_fit(func, x, i, maxfev = int(1e6),\
-                                                  method = 'lm')
-            else:
-                popt = scipy.interpolate.splrep(x, i, k = 1)
-
+    for idx, miNode in enumerate(MI.T):
+            popt, pcov = scipy.optimize.curve_fit(\
+            func, x, miNode, maxfev = int(1e6),\
+                                                  )
             stdFit = dict(\
                           fun     = func, \
                           x0      = 0,\
@@ -53,15 +49,17 @@ def fit(MI, func =lambda x, a, b, c: a *exp(-(b * x)**c) , x = None,\
             # store the optimal coefficients [or return function? -> TODO?]
             coefficients[idx] = popt.copy()
             # work around for finding asympotote
-            newFunc = lambda x, a, b: func(x, *a) + b
-            stdFit['args'] = (tuple(popt), -tol)
-            stdFit['fun'] = newFunc
-            r = scipy.optimize.root(**stdFit)
+            ROOT             = popt[0] + tol
+            newFunc          = lambda x, a, b: func(x, *a) - b
+            stdFit['args']   = (tuple(popt), tol)
+            stdFit['fun']    = newFunc
+            r                = scipy.optimize.root(**stdFit)
 
             # if not r.success: assert False, 'no proper fit found'
             root = r.x
-            if root < 0:
+            if root < 0 or ROOT > max(miNode):
                 root = 0
+
             y = func(x, *popt)
             area = scipy.integrate.simps(y, x)
 
@@ -69,7 +67,7 @@ def fit(MI, func =lambda x, a, b, c: a *exp(-(b * x)**c) , x = None,\
             # maximum height
             newFunc = lambda x, a, b: func(x, *a) + b
             stdFit['fun'] = newFunc
-            stdFit['args'] = (tuple(popt), -.5 * max(i))
+            stdFit['args'] = (tuple(popt), -.5 * max(miNode))
             hwmh = scipy.optimize.root(**stdFit)
 
             hwmh = hwmh.x
@@ -82,17 +80,15 @@ def fit(MI, func =lambda x, a, b, c: a *exp(-(b * x)**c) , x = None,\
 
 
             # get fit error
-            tmp_x = arange(len(i))
+            tmp_x = arange(len(miNode))
             tmp_y = func(tmp_x, *popt)
-            SSE   = ((i - tmp_y)**2).sum() # sum squared error
+            SSE   = ((miNode - tmp_y)**2).sum() # sum squared error
             # print('Fit SSE {}'.format(SSE))
             if verbose:
                 print('root\n', r)
                 print('half-time\n', hwmh)
                 print(f'1/e  {ex}')
             idt[idx, :] = [root, hwmh, area, ex, SSE]
-        except Exception as e:
-            print(e)
     return idt, coefficients
 
 def c():
@@ -377,7 +373,7 @@ def c():
     close('all')
 
 def showFit(model, I, \
-            func = lambda x, b, c, d:  (exp(-b * x - c) * heaviside(-(x - d), 1)), \
+            func = lambda x, a, b, c: a + b*exp(-c * x)  , \
             verbose = False):
     style.use('seaborn-poster') # large texts(!)
     fig, ax = subplots()

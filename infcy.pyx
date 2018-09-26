@@ -57,36 +57,34 @@ def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu
     print(f'Found {len(snapshots)} states')
     return snapshots
 
+    # def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
-# def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
-    '''
+  '''
     Get snapshots by simlating for :nSamples:
     :step: gives how many steps are between samples
-    '''
-    ### use this if you want to start from random init
-    nSamples, model = sampleModel
-    model.burnin(burninSamples) # start from random state
+  '''
+  ### use this if you want to start from random init
+  nSamples, model = sampleModel
+  model.burnin(burninSamples) # start from random state
+  cdef dict snap = {}
+  # init generator
+  cdef int n = int(nSamples * step)
+  # pre-define what to sample
+  r = (\
+  model.sampleNodes[model.mode](model.nodeIDs)\
+  for i in range(n)\
+      )
 
-
-    cdef dict snap = {}
-    # init generator
-    cdef int n = int(nSamples * step)
-    # pre-define what to sample
-    r = (\
-    model.sampleNodes[model.mode](model.nodeIDs)\
-    for i in range(n)\
-        )
-
-    # simulate
-    cdef int i
-    for i in range(n):
-        if i % step == 0:
-            state = model.states
-            snap[tuple(state)] = snap.get(tuple(state), 0) + 1
-        model.updateState(next(r))
-    return snap
+  # simulate
+  cdef int i
+  for i in range(n):
+      if i % step == 0:
+          state = model.states
+          snap[tuple(state)] = snap.get(tuple(state), 0) + 1
+      model.updateState(next(r))
+  return snap
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive

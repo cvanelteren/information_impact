@@ -173,11 +173,12 @@ class Ising(Model):
           # TODO: change this mess
           # # heatbath glauber
           # if self.updateMethod == 'glauber':
-          # tmp = self.beta * (flipEnergy - energy)
-          tmp = - self.beta * energy * 2
+          tmp = self.beta * (flipEnergy - energy)
+          # tmp = - self.beta * energy * 2
           tmp = tmp if not np.isnan(tmp) else 0
           p = 1 / ( 1 + exp(tmp) )
-          if rand() / float(INT_MAX) < p:
+          # if rand() / float(INT_MAX) < p:
+          if np.random.rand() < p:
             states[node] = -states[node]
 
           # elif self.updateMethod == 'metropolis':

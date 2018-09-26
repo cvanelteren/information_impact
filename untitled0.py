@@ -49,7 +49,7 @@ print(k)
 import scipy
 from tqdm import tqdm
 
-theta =  1e-3
+theta =  1e-1
 
 for temp in k:
     try:
@@ -64,10 +64,10 @@ for temp in k:
 
         for idx, (i, j) in enumerate(tqdm(current.items())):
 
-            mi = j['mi']
-            snapshots = j['snapshots']
+            mi          = j['mi']
+            snapshots   = j['snapshots']
             conditional = j['conditional']
-            model = j['model']
+            model       = j['model']
 
             colors = cm.tab20(arange(model.nNodes))
             if 'H' not in globals():
@@ -111,7 +111,7 @@ for temp in k:
                 ax.legend(bbox_to_anchor = (1., .5))
                 error += ((func(x, *a) - MI)**2).sum() / model.nNodes
 
-#            if i != '{}': close()
+            if i != '{}': close()
         # %%
         #fig, ax = subplots()
         #[ax.scatter(*H[idx, :], color = colors[idx]) for idx in range(model.nNodes)]
