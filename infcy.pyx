@@ -104,18 +104,7 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
         A pulse only lasts for the initial time step (delta 0  > 1)
     '''
     # would prefer to make this a generator, however then mp breaks
-
-
-
     print('Starting MC sampling')
-    # uggly temp for testing if partial is a bottle neck
-    # globals()['repeats'] = repeats
-    # globals()['deltas'] = deltas
-    # globals()['conditions'] = conditions
-    # globals()['pulse'] = pulse
-    # globals()['mode'] = mode
-    # globals()['model'] = model
-    # globals()['snapshots'] = snapshots
     func = functools.partial(\
                             parallelMonteCarlo, model = model,
                             mode = mode, repeats = repeats, \
@@ -147,14 +136,6 @@ def monteCarlo_alt(object model, dict snapshots,
 
 
    print('Starting MC sampling')
-   # uggly temp for testing if partial is a bottle neck
-   # globals()['repeats'] = repeats
-   # globals()['deltas'] = deltas
-   # globals()['conditions'] = conditions
-   # globals()['pulse'] = pulse
-   # globals()['mode'] = mode
-   # globals()['model'] = model
-   # globals()['snapshots'] = snapshots
    func = functools.partial(\
                             parallelMonteCarlo_alt, model = model,
                             mode = mode, repeats = repeats, \
@@ -177,21 +158,26 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   # flip list due to binary encoding
   if type(startState) is tuple:
       startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
-  r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
+  # r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
   cdef int k
   cdef int delta
   cdef int j
   cdef long [:] nodeIDs  = model.nodeIDs
-  out = np.zeros((deltas + 1, model.nNodes, len(model.agentStates)))
+
+  # output time x nodes x node states
+  out = np.zeros((deltas + 1, model.nNodes, model.nStates))
+  # map from node state to idx
   sortr = {i : idx for idx, i in enumerate(model.agentStates)}
 
+  # declarations
   cdef int noteState
   cdef int node
   cdef int nodeStateIdx
   cdef np.ndarray tmp
 
+  # start repeats
   for k in range(repeats):
       # start from the same point
       model.states = np.array(startState.copy(), dtype = model.states.dtype)
@@ -199,7 +185,7 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
       tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
       for idx, state in enumerate(tmp):
         for node in nodeIDs:
-            nodeState = state[node]
+            nodeState    = state[node]
             nodeStateIdx = sortr[nodeState]
             out[idx, node, nodeStateIdx] += 1/repeats
   return {tuple(startState) : out}
@@ -220,7 +206,7 @@ def mutualInformation_alt(conditional, deltas, snapshots, model):
   H  = np.zeros((deltas + 1, model.nNodes))
   for key, value in conditional.items():
     H  += np.nansum(value * np.log2(value), -1) * snapshots[key]
-    px += value * snapshots[key]
+    px += value * snapshots[key] # update node distribution
   H -= np.nansum(px * np.log2(px), -1)
   return px, H
 

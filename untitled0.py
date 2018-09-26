@@ -55,7 +55,7 @@ for temp in k:
     try:
         current = rres[temp]
     #    d, e, f
-        func = lambda x, a, b, c: a + b * exp(-c*x) #  + d * exp(-e *(x-f))
+        func = lambda x, a, b, c, d, e, f: a + b * exp(-c*x)   + d * exp(-e *(x-f))
         fr   = lambda x, a, b : func(x, *a) - b # root finder
 
 
