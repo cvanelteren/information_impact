@@ -202,7 +202,10 @@ class Ising(Model):
         return self.states # maybe aliasing again
 
     def computeProb(self):
-        ''' Computes p_i = 1/z * (1 + exp( -beta * energy))**-1'''
+        """
+        Compute the node probability for the current state p_i = 1/z * (1 + exp( -beta * energy))**-1
+        """
+
         probs = np.zeros(self.nNodes)
         for node in self.nodeIDs:
             en = self.energy(node, self.states[node])[0]
@@ -213,13 +216,17 @@ class Ising(Model):
                           temps = np.logspace(-3, 2, 20),\
                           n = int(1e3),\
                           burninSamples = 100):
-
-     '''
-     Computes the magnetization for a range of temperature. This can be used to
-     determine an optimal temperature with certain equilibrium properties
-     Returns :temps: :mag: :sus:
-     '''
-
+     """
+     Computes the magnetization as a function of temperatures
+     Input:
+        :temps: a range of temperatures
+        :n:     number of samples to simulate for
+        :burninSamples: number of samples to throw away before sampling
+    Returns:
+        :temps: the temperature range as input
+        :mag:  the magnetization for t in temps
+        :sus:  the magnetic susceptibility
+     """
      # start from 1s and check how likely nodes will flip
      H  = np.zeros( len(temps) )   # magnetization
      HH = np.zeros( ( len(temps ))) # susceptibility
@@ -236,6 +243,9 @@ class Ising(Model):
     def matchingEntropy(self, targetEntropy = 1/np.e, \
                        temps = np.logspace(-3, 1, 20), n = 10,\
                        ):
+      """
+      Matches the temperature to :targetEntropy:. This function is deprecated
+      """
       def func(x, a, b, c, d):
         return   a / (1 + np.exp(b * (x - c)) ) + d
       def ifunc(x, a, b, c, d):
@@ -257,6 +267,9 @@ class Ising(Model):
 
 
     def removeAllNudges(self):
+        '''
+        Sets all nudges to zero
+        '''
         self.nudges = np.zeros(self.nudges.shape)
 
 def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):

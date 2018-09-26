@@ -111,7 +111,7 @@ for temp in k:
                 ax.legend(bbox_to_anchor = (1., .5))
                 error += ((func(x, *a) - MI)**2).sum() / model.nNodes
 
-            if i != '{}': close()
+#            if i != '{}': close()
         # %%
         #fig, ax = subplots()
         #[ax.scatter(*H[idx, :], color = colors[idx]) for idx in range(model.nNodes)]
@@ -175,13 +175,7 @@ for temp in k:
         ## %%
         pxs = {}
         for i, j in current.items():
-            shape = list(conditional.values())[0].shape
-            px = zeros((shape))
-            conditional = j['conditional']
-            snaps = j['snapshots']
-
-            for ii, jj in conditional.items():
-                px += snaps[ii] * jj
+            px = j['px']
             pxs[i] = px
         # %%
         import re

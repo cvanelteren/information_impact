@@ -30,7 +30,7 @@ if __name__ == '__main__':
     step          = 1
     nSamples      = 1000
     burninSamples = 5
-    pulseSize     = inf
+    pulseSize     = 1
 
     numIter       = 1
 
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     graph = nx.star_graph(4)
     graph = nx.path_graph(3)
     # graph = nx.barabasi_albert_graph(10, 4)
-    graph = nx.path_graph(3, nx.DiGraph())
+    # graph = nx.path_graph(3, nx.DiGraph())
     # graph.add_edge(0,0)
 
     # graph = nx.barabasi_albert_graph(10, 3)
@@ -179,9 +179,9 @@ if __name__ == '__main__':
 
             for n, p in pulses.items():
                 pulse = {n : p}
-                # conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
-                                        # deltas = deltas, repeats = repeats,\
-                                        # mode = mode, pulse = pulse)
+                conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
+                                        deltas = deltas, repeats = repeats,\
+                                        mode = mode, pulse = pulse)
                 print('Computing MI')
                 px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
