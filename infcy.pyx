@@ -303,9 +303,10 @@ def reverseCalculation(int nSamples, object model, int delta, dict pulse):
 
   H  = np.zeros((delta + jdx, model.nNodes))
   px = np.zeros((delta + jdx, model.nNodes, model.nStates))
-
+  conditional = {}
   for key, value in tqdm(cond.items()):
-      z = value / cc[key]  # how many times does the state occur?
+      z                = value / cc[key]  # how many times does the state occur?
+      conditional[key] = z
       # assert all(z + 1 - z) == 1
       # z[np.isnan(z)] = 0
       px += value / Z
@@ -313,7 +314,7 @@ def reverseCalculation(int nSamples, object model, int delta, dict pulse):
       H  += state[key] * x
   tmp = np.nansum(px * np.log2(px), axis = -1)
   H  -= tmp
-  return res, cc, px, cond, state, H
+  return res, cc, px, conditional, state, H
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive

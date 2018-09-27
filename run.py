@@ -26,7 +26,7 @@ if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
     repeats       = 1000
-    deltas        = 100
+    deltas        = 10
     step          = 1
     nSamples      = 10000
     burninSamples = 5
@@ -85,7 +85,7 @@ if __name__ == '__main__':
         # graph = nx.barabasi_albert_graph(10, 3)
         model = fastIsing.Ising(graph = graph, \
                                 temperature = 0, \
-                                mode = 'async', magSide = '')
+                                mode = 'async', magSide = 'neg')
 
 
         conditions = {(tuple(model.nodeIDs), (i,)) : \
@@ -149,26 +149,26 @@ if __name__ == '__main__':
             # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
             print('Getting snapshots')
 
-            snapshots = infcy.getSnapShots(model, nSamples, \
-                                           parallel     = cpu_count(), \
-                                           burninSamples = burninSamples, \
-                                           step = step)
+            # snapshots = infcy.getSnapShots(model, nSamples, \
+                                           # parallel     = cpu_count(), \
+                                           # burninSamples = burninSamples, \
+                                           # step = step)
 
 
 
             pulses = {node : pulseSize for node in model.graph.nodes()}
             pulse  = {}
-            conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
-                                           deltas = deltas, repeats = repeats,\
-                                           mode = mode, pulse = pulse)
+            # conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
+                                           # deltas = deltas, repeats = repeats,\
+                                           # mode = mode, pulse = pulse)
 
-            # px, snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
-
+            px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
+            print(conditional)
             # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
              # deltas = deltas, repeats = repeats, pulse = pulse, mode = 'source')
 
             print('Computing MI')
-            px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
+            # px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
             # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
 
             fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
@@ -182,8 +182,8 @@ if __name__ == '__main__':
                                         deltas = deltas, repeats = repeats,\
                                         mode = mode, pulse = pulse)
                 print('Computing MI')
-                px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
-                # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
+                # px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
+                snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 IO.savePickle(fileName, dict(
                 mi = mi, conditional = conditional, model = model,\

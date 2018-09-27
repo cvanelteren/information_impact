@@ -64,7 +64,7 @@ for temp in k:
 
         for idx, (i, j) in enumerate(tqdm(current.items())):
 
-            mi          = j['mi']
+            mi          = j['mi'][::-1]
             snapshots   = j['snapshots']
             conditional = j['conditional']
             model       = j['model']
@@ -175,7 +175,7 @@ for temp in k:
         ## %%
         pxs = {}
         for i, j in current.items():
-            px = j['px']
+            px = j['px'][::-1]
             pxs[i] = px
         # %%
         import re
