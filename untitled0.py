@@ -55,7 +55,7 @@ for temp in k:
     try:
         current = rres[temp]
     #    d, e, f
-        func = lambda x, a, b, c, d, e, f: a + b * exp(-c*x)   + d * exp(-e *(x-f))
+        func = lambda x, a, b, c, d, e, f: a + b * exp(-c*x)   #+ d * exp(-e *(x-f))
         fr   = lambda x, a, b : func(x, *a) - b # root finder
 
 
@@ -64,7 +64,7 @@ for temp in k:
 
         for idx, (i, j) in enumerate(tqdm(current.items())):
 
-            mi          = j['mi'][::-1]
+            mi          = j['mi']
             snapshots   = j['snapshots']
             conditional = j['conditional']
             model       = j['model']
