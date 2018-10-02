@@ -145,13 +145,12 @@ class Ising(Model):
         # tmp = neighborStates.sum()
 
         energy     = -tmp - H # empty list sums to zero
-        flipEnergy = -energy
 
         # adding nudges
         nudge       = self.nudges[node] * states[node]
-#        energy     -= (self.states[node] * nudge).sum()
-        energy     -= nudge # TODO: checks to not allow for multiple nudges
-        flipEnergy -= nudge
+
+        energy     = energy - nudge # TODO: checks to not allow for multiple nudges
+        flipEnergy = -energy
         return energy, flipEnergy
     # @jit
     @cython.boundscheck(False)
@@ -166,6 +165,8 @@ class Ising(Model):
         cdef long  N = len(nodesToUpdate)
         cdef long  n
         cdef long node
+        cdef double energy
+        cdef double flipEnergy
         for n in range(N):
           node = nodesToUpdate[n]
 
@@ -173,11 +174,12 @@ class Ising(Model):
           # TODO: change this mess
           # # heatbath glauber
           # if self.updateMethod == 'glauber':
-          tmp = self.beta * (flipEnergy - energy)
+          tmp = self.beta * - 2 * energy
           # tmp = - self.beta * energy * 2
           tmp = tmp if not np.isnan(tmp) else 0
-          p = 1 / ( 1 + exp(tmp) )
+          p = 1 / ( 1 + np.exp(tmp) )
           # if rand() / float(INT_MAX) < p:
+          # print(p, energy)
           if np.random.rand() < p:
             states[node] = -states[node]
 

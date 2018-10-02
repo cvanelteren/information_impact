@@ -50,12 +50,12 @@ import scipy
 from tqdm import tqdm
 
 theta =  1e-1
-
+METHOD = 'excitingmixing'
 for temp in k:
     try:
         current = rres[temp]
     #    d, e, f
-        func = lambda x, a, b, c, d, e, f: a + b * exp(-c*x)   #+ d * exp(-e *(x-f))
+        func = lambda x, a, b, c, d, e, f: a + b * exp(-c*x)  # + d* exp(-e *(x-f))
         fr   = lambda x, a, b : func(x, *a) - b # root finder
 
 
@@ -83,14 +83,8 @@ for temp in k:
                 x = arange(len(MI))
                 a, b = scipy.optimize.curve_fit(func, x, MI, maxfev = 100000)
         #        print(a)
-                l =  a[0] + theta
-#                l = .5
-        #        if i == '{}':
-        #            print(model.rmapping[jdx], a[0], l)
-        #        l = .001
-            #         l = .2 * max(MI)
-            #             l = 2/np.e
-                r = scipy.optimize.root(fr, 0, args = (a, l) )# ,  method = 'linearmixing')
+                l =  a[0] + theta  * max(MI)
+                r = scipy.optimize.root(fr, 0, args = (a, l), method = METHOD )# ,  method = 'linearmixing')
                 rot = r.x
                 if rot < 0:
                     rot = 0
@@ -103,7 +97,7 @@ for temp in k:
                 ax.scatter(x, MI, color = colors[jdx], label = model.rmapping[jdx],\
                            alpha = 1)
                 ax.scatter(rot, func(rot, *a), \
-                               color = colors[jdx], marker = 's', s = 100)
+                               color = colors[jdx], marker = 's', s = 100, alpha = .3)
                 ax.set_xlim(-.2, 3)
                 ax.set_ylim(-.2, 1)
                 ax.set_title(f'{temp} {i} {error}')
@@ -175,12 +169,12 @@ for temp in k:
         ## %%
         pxs = {}
         for i, j in current.items():
-            px = j['px'][::-1]
+            px = j['px']
             pxs[i] = px
         # %%
         import re
 
-        hd = lambda x, y : sqrt(((sqrt(x) - sqrt(y))**2).sum(-1))/sqrt(2)
+        hd = lambda x, y : sqrt((( sqrt(x) - sqrt(y) )**2).sum(-1))/sqrt(2)
         iidx = 1
         control = pxs['{}'][iidx, ...]
         hs = {}
@@ -203,7 +197,7 @@ for temp in k:
         # %%
         fig, ax = subplots()
 
-        [ax.plot(i, color = colors[idx], label = model.rmapping[idx]) for idx, i in enumerate(hd_single.mean(axis = -1))]
+        [ax.plot(i, color = colors[idx], label = model.rmapping[idx]) for idx, i in enumerate(hd_single.sum(axis = -1))]
         ax.legend(bbox_to_anchor = (1, 1))
         setp(ax, **dict(xlabel = 'Time', ylabel = 'Hellinger distance'))
         # plot impact
@@ -233,38 +227,39 @@ for temp in k:
         r =  scipy. stats.linregress(xx)
         x = linspace(min(xx[:, 0]), max(xx[:, 0]))
         ax.plot(x, r.slope * x + r.intercept, 'k--')
-        ax.text(.6, .2, f'p = {r.pvalue:.2f}', transform = ax.transAxes)
+        ax.text(.6, .2, f'p = {r.pvalue:.2f}')
         setp(ax, **dict(xlabel = 'impact', ylabel = 'idt', title = f'T = {temp}'))
         ax.legend(bbox_to_anchor = (1.01, 1))
         savefig(f'{d}/{temp}.png')
         # %%
 
         # calc idt of hellinger
-        xr = linspace(0, 10)
+        xr = linspace(0, 10, 1000)
         fig, ax = subplots()
         HHH = zeros(model.nNodes)
-        for idx, i in enumerate(hd_single.mean(axis = -1)):
+        for idx, i in enumerate(hd_single.sum(axis = -1)):
             node = model.rmapping[idx]
-            ii =  deltas//2 + 1
+            ii =  deltas//2 
             x = arange(len(i) - ii)
 
             a, b = scipy.optimize.curve_fit(func, x, i[ii:],  maxfev = 1000000)
-            tmp = a[0] + theta
-            h_idt = scipy.optimize.root(fr, -1, args = (a, tmp), method = 'linearmixing')
+            tmp = a[0] + theta * max(i)
+            h_idt = scipy.optimize.root(fr, -1, args = (a, tmp), method = METHOD)
             rot = h_idt.x
             if max(i) <= tmp or rot < 0:
                 rot = 0
             idt = H[idx, 0]
-            ax.plot(xr, func(xr, *a), color = colors[idx])
+            ax.plot(xr, func(xr, *a), alpha = .2, color = colors[idx])
             ax.scatter(x, i[ii:], color = colors[idx], alpha = 1, label = node)
-            ax.scatter(rot, func(rot, *a), 200, color = colors[idx],  marker = 's')
-
+            ax.scatter(rot, func(rot, *a), 100, color = colors[idx],  marker = 's')
+            
+            ax.vlines(rot, 0, func(rot, *a), color = colors[idx])
             HHH[idx] = rot
     #        print(idx, node, rot, max(i), tmp)
 
         ax.legend(bbox_to_anchor = (1.01, 1))
-        ax.set_xlim(0, deltas//2)
-#        ax.set_ylim(-.2, 1)
+        ax.set_xlim(-.2, 3) # deltas//2)
+        ax.set_ylim(-.2, 2)
         setp(ax, **dict(xlabel = 'time since nudge', ylabel = 'hellinger distance'))
 
         # centrality measure and impact
@@ -294,7 +289,7 @@ for temp in k:
         tmpx = linspace(min(H[:,0]), max(H[:,0]))
         tmpy = tmpx * r.slope + r.intercept
         ax.plot(tmpx, tmpy, 'k--')
-        ax.text(.8, .1, f'p={r.pvalue:.2f}', transform = ax.transAxes)
+        ax.text(.8, .1, f'p={r.pvalue:.2f}')
         # %%
 
         conditionals = {i : j['conditional'] for i, j in current.items()}
@@ -318,10 +313,10 @@ for temp in k:
                 tmp = tmp.mean(axis = 0).mean(axis =-1)
                 idx = model.mapping[title]
 
-                ii = deltas // 2 + 1
+                ii = deltas // 2 
                 xxx = arange(len(tmp) - ii)
                 a, b  = scipy.optimize.curve_fit(func, xxx, tmp[ii:], maxfev= 10000)
-                l = a[0] + theta
+                l = a[0] + theta  * max(tmp)
                 root = scipy.optimize.root(fr, 0, args = (a, l))
                 ax.scatter(root.x, func(root.x, *a), c = colors[idx])
                 ax.plot(xxx, tmp[ii:], color = colors[idx], label = title)

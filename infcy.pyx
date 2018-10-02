@@ -181,7 +181,6 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   for k in range(repeats):
       # start from the same point
       model.states = np.array(startState.copy(), dtype = model.states.dtype)
-      # res = model.simulate(deltas, 1, pulse)
       tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
       for idx, state in enumerate(tmp):
         for node in nodeIDs:
