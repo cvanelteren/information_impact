@@ -44,10 +44,10 @@
       \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Woodward - 2005 - Making things happen A theory of causal explanation.pdf:pdf
       \endverb
       \verb{urlraw}
-      \verb http://books.google.com/books?hl=en{\&}lr={\&}id=IFVJAbgySmEC{\&}oi=fnd{\&}pg=PA3{\&}dq=making+things+happen+a+theory+of+causal+explanation{\&}ots=R33bb0Zlh0{\&}sig=brqbriOiqp0dSRtl2QbVjWRW9kc
+      \verb http://books.google.com/books?hl=en&lr=&id=IFVJAbgySmEC&oi=fnd&pg=PA3&dq=making+things+happen+a+theory+of+causal+explanation&ots=R33bb0Zlh0&sig=brqbriOiqp0dSRtl2QbVjWRW9kc
       \endverb
       \verb{url}
-      \verb http://books.google.com/books?hl=en%7B%5C&%7Dlr=%7B%5C&%7Did=IFVJAbgySmEC%7B%5C&%7Doi=fnd%7B%5C&%7Dpg=PA3%7B%5C&%7Ddq=making+things+happen+a+theory+of+causal+explanation%7B%5C&%7Dots=R33bb0Zlh0%7B%5C&%7Dsig=brqbriOiqp0dSRtl2QbVjWRW9kc
+      \verb http://books.google.com/books?hl=en&lr=&id=IFVJAbgySmEC&oi=fnd&pg=PA3&dq=making+things+happen+a+theory+of+causal+explanation&ots=R33bb0Zlh0&sig=brqbriOiqp0dSRtl2QbVjWRW9kc
       \endverb
     \endentry
     \entry{Pearl2000}{article}{}
@@ -111,13 +111,13 @@
       \verb 10.1016/S0898-1221(96)90227-8
       \endverb
       \verb{file}
-      \verb :home/casper/Downloads/[Melanie{\_}Mitchell]{\_}An{\_}Introduction{\_}to{\_}Genetic{\_}Algo(b-ok.xyz).pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Mitchell - 1998 - An Introduction to Genetic Algorithms (Complex Adaptive Systems).pdf:pdf
       \endverb
       \verb{urlraw}
-      \verb http://www.amazon.ca/exec/obidos/redirect?tag=citeulike09-20{\&}path=ASIN/0262631857
+      \verb http://www.amazon.ca/exec/obidos/redirect?tag=citeulike09-20&path=ASIN/0262631857
       \endverb
       \verb{url}
-      \verb http://www.amazon.ca/exec/obidos/redirect?tag=citeulike09-20%7B%5C&%7Dpath=ASIN/0262631857
+      \verb http://www.amazon.ca/exec/obidos/redirect?tag=citeulike09-20&path=ASIN/0262631857
       \endverb
     \endentry
     \entry{Sayama2015}{book}{}
@@ -152,9 +152,43 @@
       \verb arXiv:1011.1669v3
       \endverb
       \verb{file}
-      \verb :home/casper/Downloads/[Hiroki{\_}Sayama]{\_}Introduction{\_}to{\_}the{\_}Modeling{\_}and{\_}A(b-ok.xyz).pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Sayama - 2015 - Introduction to the Modeling and Analysis of Complex Systems.pdf:pdf
       \endverb
       \keyw{icle}
+    \endentry
+    \entry{Aaronson2011}{article}{}
+      \name{author}{1}{}{%
+        {{hash=9709fc1390d4ac82cbad7750d99484bf}{%
+           family={Aaronson},
+           familyi={A\bibinitperiod},
+           given={Scott},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{fullhash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{bibnamehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{authorbibnamehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{authornamehash}{9709fc1390d4ac82cbad7750d99484bf}
+      \strng{authorfullhash}{9709fc1390d4ac82cbad7750d99484bf}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{One might think that, once we know something is computable, how efficiently it can be computed is a practical question with little further philosophical importance. In this essay, I offer a detailed case that one would be wrong. In particular, I argue that computational complexity theory---the field that studies the resources (such as time, space, and randomness) needed to solve computational problems---leads to new perspectives on the nature of mathematical knowledge, the strong AI debate, computationalism, the problem of logical omniscience, Hume's problem of induction, Goodman's grue riddle, the foundations of quantum mechanics, economic rationality, closed timelike curves, and several other topics of philosophical interest. I end by discussing aspects of complexity theory itself that could benefit from philosophical analysis.}
+      \field{eprinttype}{arXiv}
+      \field{issn}{1433-8092}
+      \field{journaltitle}{In Computability: G{ö}del, Turing, Church, and beyond ( {\ldots}}
+      \field{number}{0844626}
+      \field{title}{{Why Philosophers Should Care About Computational Complexity}}
+      \field{year}{2011}
+      \field{pages}{58}
+      \range{pages}{1}
+      \verb{eprint}
+      \verb 1108.1791
+      \endverb
+      \verb{file}
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Aaronson - 2011 - Why Philosophers Should Care About Computational Complexity.pdf:pdf
+      \endverb
     \endentry
     \entry{Pearl2018}{book}{}
       \name{author}{20}{}{%
@@ -265,14 +299,14 @@
       \strng{authorbibnamehash}{81e6eac2be1f6b8a1a340c8fc5657231}
       \strng{authornamehash}{81e6eac2be1f6b8a1a340c8fc5657231}
       \strng{authorfullhash}{60d79fcb60b52dd4215f908a5edb89bb}
-      \field{sortinit}{3}
-      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{sortinit}{4}
+      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{isbn}{9780465097616}
       \field{title}{{The Book of Why}}
       \verb{file}
-      \verb :home/casper/Calibre Library/Judea Pearl/The Book of Why (2)/The Book of Why - Judea Pearl.pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Pearl et al. - Unknown - The Book of Why.pdf:pdf
       \endverb
     \endentry
     \entry{Chen2017}{article}{}
@@ -289,8 +323,8 @@
       \strng{authorbibnamehash}{c2465aadc98c418b040e810d4f8c1b79}
       \strng{authornamehash}{c2465aadc98c418b040e810d4f8c1b79}
       \strng{authorfullhash}{c2465aadc98c418b040e810d4f8c1b79}
-      \field{sortinit}{4}
-      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
+      \field{sortinit}{5}
+      \field{sortinithash}{3c19c3776b658b3558e9e2e4840c01e2}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{In this article, the notion of pinning control for directed networks of dynamical systems is introduced, where the nodes could be either single-input single-output (SISO) or multi-input multi-output (MIMO) dynamical systems, and could be non-identical and nonlinear in general but will be specified to be identical linear time-invariant (LTI) systems here in the study of network controllability. Both state and structural controllability problems will be discussed, illustrating how the network topology, node-system dynamics, external control inputs and inner dynamical interactions altogether affect the controllability of a general complex network of LTI systems, with necessary and sufficient conditions presented for both SISO and MIMO settings. To that end, the controllability of a special temporally switching directed network of linear time-varying (LTV) node systems will be addressed, leaving some more general networks and challenging issues to the end for research outlook.}
@@ -316,9 +350,9 @@
            given={Yang\bibnamedelima Yu},
            giveni={Y\bibinitperiod\bibinitdelim Y\bibinitperiod}}}%
         {{hash=dafe091e0ec5121c0dd1acdf731cec6a}{%
-           family={Barab{\'{a}}si},
+           family={Barab{á}si},
            familyi={B\bibinitperiod},
-           given={Albert\bibnamedelima L{\'{a}}szl{\'{o}}},
+           given={Albert\bibnamedelima L{á}szl{ó}},
            giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
       }
       \strng{namehash}{cdb67950367b65110f5709f8511fbeb7}
@@ -327,13 +361,13 @@
       \strng{authorbibnamehash}{cdb67950367b65110f5709f8511fbeb7}
       \strng{authornamehash}{cdb67950367b65110f5709f8511fbeb7}
       \strng{authorfullhash}{cdb67950367b65110f5709f8511fbeb7}
-      \field{sortinit}{4}
-      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
+      \field{sortinit}{5}
+      \field{sortinithash}{3c19c3776b658b3558e9e2e4840c01e2}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{A reflection of our ultimate understanding of a complex system is our ability to control its behavior. Typically, control has multiple prerequisites: It requires an accurate map of the network that governs the interactions between the system's components, a quantitative description of the dynamical laws that govern the temporal behavior of each component, and an ability to influence the state and temporal behavior of a selected subset of the components. With deep roots in nonlinear dynamics and control theory, notions of control and controllability have taken a new life recently in the study of complex networks, inspiring several fundamental questions: What are the control principles of complex systems? How do networks organize themselves to balance control with functionality? To address these here we review recent advances on the controllability and the control of complex networks, exploring the intricate interplay between a system's structure, captured by its network topology, and the dynamical laws that govern the interactions between the components. We match the pertinent mathematical results with empirical findings and applications. We show that uncovering the control principles of complex systems can help us explore and ultimately understand the fundamental laws that govern their behavior.}
       \field{eprinttype}{arXiv}
-      \field{isbn}{1476-4687 (Electronic)$\backslash$r0028-0836 (Linking)}
+      \field{isbn}{1476-4687 (Electronic)0̊028-0836 (Linking)}
       \field{issn}{15390756}
       \field{journaltitle}{Reviews of Modern Physics}
       \field{number}{3}
@@ -374,11 +408,11 @@
       \strng{authorbibnamehash}{bc4057afbc772c6fe8603d9833fec82d}
       \strng{authornamehash}{bc4057afbc772c6fe8603d9833fec82d}
       \strng{authorfullhash}{bc4057afbc772c6fe8603d9833fec82d}
-      \field{sortinit}{6}
-      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{abstract}{Although networks are extensively used to visualize information flow in biological, social and technological systems, translating topology into dynamic flow continues to challenge us, as similar networks exhibit fundamentally different flow patterns, driven by different interaction mechanisms. To uncover a network's actual flow patterns, here\x{00a0}we use a perturbative formalism, analytically tracking the contribution of all nodes/paths to the flow of information, exposing the rules that link structure and dynamic information flow for a broad range of nonlinear systems. We find that the diversity of flow patterns can be mapped into a single universal function, characterizing the interplay between the system's topology and its dynamics, ultimately allowing us to identify the network's main arteries of information flow. Counter-intuitively, our formalism predicts a family of frequently encountered dynamics where the flow of information avoids the hubs, favoring the network's peripheral pathways, a striking disparity between structure and dynamics.}
+      \field{abstract}{Although networks are extensively used to visualize information flow in biological, social and technological systems, translating topology into dynamic flow continues to challenge us, as similar networks exhibit fundamentally different flow patterns, driven by different interaction mechanisms. To uncover a network's actual flow patterns, here we use a perturbative formalism, analytically tracking the contribution of all nodes/paths to the flow of information, exposing the rules that link structure and dynamic information flow for a broad range of nonlinear systems. We find that the diversity of flow patterns can be mapped into a single universal function, characterizing the interplay between the system's topology and its dynamics, ultimately allowing us to identify the network's main arteries of information flow. Counter-intuitively, our formalism predicts a family of frequently encountered dynamics where the flow of information avoids the hubs, favoring the network's peripheral pathways, a striking disparity between structure and dynamics.}
       \field{issn}{20411723}
       \field{journaltitle}{Nature Communications}
       \field{number}{1}
@@ -403,12 +437,12 @@
     \entry{Sikic2013}{article}{}
       \name{author}{4}{}{%
         {{hash=3c035c219eaa5e91c0a47ae6628cbf17}{%
-           family={{\v{S}}iki{\'{c}}},
-           familyi={\v{S}\bibinitperiod},
+           family={{Š}iki{ć}},
+           familyi={Š\bibinitperiod},
            given={Mile},
            giveni={M\bibinitperiod}}}%
         {{hash=15308c2815e4a5bbd10f06b52af641d0}{%
-           family={Lan{\v{c}}i{\'{c}}},
+           family={Lan{č}i{ć}},
            familyi={L\bibinitperiod},
            given={Alen},
            giveni={A\bibinitperiod}}}%
@@ -418,8 +452,8 @@
            given={Nino},
            giveni={N\bibinitperiod}}}%
         {{hash=0fcb88e771d6e8da2551d7619ab82815}{%
-           family={{\v{S}}tefan{\v{c}}i{\'{c}}},
-           familyi={\v{S}\bibinitperiod},
+           family={{Š}tefan{č}i{ć}},
+           familyi={Š\bibinitperiod},
            given={Hrvoje},
            giveni={H\bibinitperiod}}}%
       }
@@ -429,8 +463,8 @@
       \strng{authorbibnamehash}{d72b247ccaf3eb7aa890c8c77f8defc5}
       \strng{authornamehash}{6b05041377ed608facc40f31505bc785}
       \strng{authorfullhash}{d72b247ccaf3eb7aa890c8c77f8defc5}
-      \field{sortinit}{6}
-      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{In the study of disease spreading on empirical complex networks in SIR model, initially infected nodes can be ranked according to some measure of their epidemic impact. The highest ranked nodes, also referred to as "superspreaders", are associated to dominant epidemic risks and therefore deserve special attention. In simulations on studied empirical complex networks, it is shown that the ranking depends on the dynamical regime of the disease spreading. A possible mechanism leading to this dependence is illustrated in an analytically tractable example. In systems where the allocation of resources to counter disease spreading to individual nodes is based on their ranking, the dynamical regime of disease spreading is frequently not known before the outbreak of the disease. Therefore, we introduce a quantity called epidemic centrality as an average over all relevant regimes of disease spreading as a basis of the ranking. A recently introduced concept of phase diagram of epidemic spreading is used as a framework in which several types of averaging are studied. The epidemic centrality is compared to structural properties of nodes such as node degree, k-cores and betweenness. There is a growing trend of epidemic centrality with degree and k-cores values, but the variation of epidemic centrality is much smaller than the variation of degree or k-cores value. It is found that the epidemic centrality of the structurally peripheral nodes is of the same order of magnitude as the epidemic centrality of the structurally central nodes. The implications of these findings for the distributions of resources to counter disease spreading are discussed.}
@@ -449,9 +483,6 @@
       \endverb
       \verb{eprint}
       \verb 1110.2558
-      \endverb
-      \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/{\v{S}}iki{\'{c}} et al. - 2013 - Epidemic centrality - Is there an underestimated epidemic impact of network peripheral nodes.pdf:pdf
       \endverb
     \endentry
     \entry{Cowan2012}{article}{}
@@ -488,8 +519,8 @@
       \strng{authorbibnamehash}{030b121c2fadb6e34ef323f7c1415819}
       \strng{authornamehash}{1dc0ff8fc53aacbab34e407aecfa293d}
       \strng{authorfullhash}{030b121c2fadb6e34ef323f7c1415819}
-      \field{sortinit}{6}
-      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{Structural controllability has been proposed as an analytical framework for making predictions regarding the control of complex networks across myriad disciplines in the physical and life sciences (Liu et al., Nature:473(7346):167-173, 2011). Although the integration of control theory and network analysis is important, we argue that the application of the structural controllability framework to most if not all real-world networks leads to the conclusion that a single control input, applied to the power dominating set (PDS), is all that is needed for structural controllability. This result is consistent with the well-known fact that controllability and its dual observability are generic properties of systems. We argue that more important than issues of structural controllability are the questions of whether a system is almost uncontrollable, whether it is almost unobservable, and whether it possesses almost pole-zero cancellations.}
@@ -508,7 +539,7 @@
       \verb 1106.2573
       \endverb
       \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Cowan et al. - 2012 - Nodal dynamics, not degree distributions, determine the structural controllability of complex networks(2).pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Cowan et al. - 2012 - Nodal dynamics, not degree distributions, determine the structural controllability of complex networks.pdf:pdf
       \endverb
     \endentry
     \entry{Muldoon2016}{article}{}
@@ -555,8 +586,8 @@
       \strng{authorbibnamehash}{3a4e6267bc978280a5edd9eb4dd3453a}
       \strng{authornamehash}{3a4e6267bc978280a5edd9eb4dd3453a}
       \strng{authorfullhash}{a288eb165ffedab4d054790319d188c9}
-      \field{sortinit}{6}
-      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{The ability to modulate brain states using targeted stimulation is increasingly being employed to treat neurological disorders and to enhance human performance. Despite the growing interest in brain stimulation as a form of neuromodulation, much remains unknown about the network-level impact of these focal perturbations. To study the system wide impact of regional stimulation, we employ a data-driven computational model of nonlinear brain dynamics to systematically explore the effects of targeted stimulation. Validating predictions from network control theory, we uncover the relationship between regional controllability and the focal versus global impact of stimulation, and we relate these findings to differences in the underlying network architecture. Finally, by mapping brain regions to cognitive systems, we observe that the default mode system imparts large global change despite being highly constrained by structural connectivity. This work forms an important step towards the development of personalized stimulation protocols for medical treatment or performance enhancement.}
@@ -574,9 +605,6 @@
       \verb{eprint}
       \verb 1601.00987
       \endverb
-      \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Muldoon et al. - 2016 - Stimulation-Based Control of Dynamic Brain Networks.pdf:pdf
-      \endverb
     \endentry
     \entry{Yan2017}{article}{}
       \name{author}{7}{}{%
@@ -586,7 +614,7 @@
            given={Gang},
            giveni={G\bibinitperiod}}}%
         {{hash=ae03e1b99d98d314750fe4f365a17f8e}{%
-           family={V{\'{e}}rtes},
+           family={V{é}rtes},
            familyi={V\bibinitperiod},
            given={Petra\bibnamedelima E.},
            giveni={P\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
@@ -611,9 +639,9 @@
            given={William\bibnamedelima R.},
            giveni={W\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
         {{hash=dafe091e0ec5121c0dd1acdf731cec6a}{%
-           family={Barab{\'{a}}si},
+           family={Barab{á}si},
            familyi={B\bibinitperiod},
-           given={Albert\bibnamedelima L{\'{a}}szl{\'{o}}},
+           given={Albert\bibnamedelima L{á}szl{ó}},
            giveni={A\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
       }
       \list{publisher}{1}{%
@@ -625,13 +653,13 @@
       \strng{authorbibnamehash}{8888c7a469452a5fa0a620e9b80bd382}
       \strng{authornamehash}{8888c7a469452a5fa0a620e9b80bd382}
       \strng{authorfullhash}{874159e087d0af6b75a877d366c39ded}
-      \field{sortinit}{6}
-      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{abstract}{{<}p{>}Application of network control theory to the neuronal connectome of {<}i{>}Caenorhabditis elegans{<}/i{>}, allowing prediction of the involvement of individual neurons in locomotion.{<}/p{>}}
+      \field{abstract}{<p>Application of network control theory to the neuronal connectome of <i>Caenorhabditis elegans</i>, allowing prediction of the involvement of individual neurons in locomotion.</p>}
       \field{eprinttype}{arXiv}
-      \field{isbn}{0008-5472 (Print)$\backslash$r0008-5472 (Linking)}
+      \field{isbn}{0008-5472 (Print)0̊008-5472 (Linking)}
       \field{issn}{14764687}
       \field{journaltitle}{Nature}
       \field{number}{7677}
@@ -661,7 +689,7 @@
         {{hash=44a91b5254dadc0c94a2fa94b0abe711}{%
            family={Pequito},
            familyi={P\bibinitperiod},
-           given={S{\'{e}}rgio},
+           given={S{é}rgio},
            giveni={S\bibinitperiod}}}%
         {{hash=c3eb30878ed3a6e845d0a003e00b2c9f}{%
            family={Preciado},
@@ -669,9 +697,9 @@
            given={Victor\bibnamedelima M.},
            giveni={V\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
         {{hash=7286b44b1f1ba854e19b99a1ec63fc7e}{%
-           family={Barab{\'{a}}si},
+           family={Barab{á}si},
            familyi={B\bibinitperiod},
-           given={Albert-L{\'{a}}szl{\'{o}}},
+           given={Albert-L{á}szl{ó}},
            giveni={A\bibinithyphendelim L\bibinitperiod}}}%
         {{hash=426b744acc9454c626abd6b855b88691}{%
            family={Pappas},
@@ -685,8 +713,8 @@
       \strng{authorbibnamehash}{a0da5d23cc18b4e419002cb4967bc219}
       \strng{authornamehash}{14ac950b6de09701f3a4bd6e076e9f59}
       \strng{authorfullhash}{a0da5d23cc18b4e419002cb4967bc219}
-      \field{sortinit}{6}
-      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{Recent advances in control theory provide us with efficient tools to determine the minimum number of driving (or driven) nodes to steer a complex network towards a desired state. Furthermore, we often need to do it within a given time window, so it is of practical importance to understand the trade-offs between the minimum number of driving/driven nodes and the minimum time required to reach a desired state. Therefore, we introduce the notion of actuation spectrum to capture such trade-offs, which we used to find that in many complex networks only a small fraction of driving (or driven) nodes is required to steer the network to a desired state within a relatively small time window. Furthermore, our empirical studies reveal that, even though synthetic network models are designed to present structural properties similar to those observed in real networks, their actuation spectra can be dramatically different. Thus, it supports the need to develop new synthetic network models able to replicate controllability properties of real-world networks.}
@@ -733,8 +761,8 @@
       \strng{authorbibnamehash}{6882817ff2d3affcf985bccf673ea200}
       \strng{authornamehash}{6882817ff2d3affcf985bccf673ea200}
       \strng{authorfullhash}{6882817ff2d3affcf985bccf673ea200}
-      \field{sortinit}{7}
-      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
+      \field{sortinit}{8}
+      \field{sortinithash}{07edf88d4ea82509b9c4b4d13f41c452}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{abstract}{The study of network structure has uncovered organizational principles in complex systems. However, there is also a need to understand how to control them; for example, to revert a diseased cell to a healthy state, or a mature cell to a pluripotent state. Two recent methodologies suggest that the controllability of complex multivariate systems can be predicted solely from the graph of interactions between variables, without considering variable dynamics: structural controllability and minimum dominating sets. Both methodologies utilize idealized assumptions about multivariate dynamics, yet most accurate models of real-world systems do not abide by these assumptions. Here, we study the relationship between network structure and the control of multivariate dynamics using three distinct measures of controllability in Boolean Networks. We demonstrate that structure-only methods fail to properly characterize controllability in these nonlinear systems; even in very simple networks, a large variation of possible dynamics can occur for the same structure, each with different control profiles. Our methodology is also used to characterize critical control variables in three models of biochemical regulation: the Drosophila melanogaster single-cell segment polarity network, the eukaryotic cell cycle of budding yeast Saccharomyces cerevisiae, and the floral organ arrangement in Arabidopsis thaliana. Structure-only methods both undershoot and overshoot the number and which sets of variables actually control these models, highlighting the importance of the system dynamics in determining control. Our analysis further shows that the logic of automata transition functions, namely how canalizing they are, plays a role in the extent to which structure predicts dynamics.}
@@ -755,7 +783,7 @@
       \verb 1509.08409
       \endverb
       \verb{file}
-      \verb :home/casper/Downloads/srep24456.pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Gates, Rocha - 2016 - Control of complex networks requires both structure and dynamics.pdf:pdf
       \endverb
       \verb{urlraw}
       \verb http://dx.doi.org/10.1038/srep24456
@@ -866,9 +894,6 @@
       \verb{eprint}
       \verb 1111.5483
       \endverb
-      \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Quax, Apolloni, Sloot - 2013 - The diminishing role of hubs in dynamical processes on complex networks.pdf:pdf
-      \endverb
       \verb{urlraw}
       \verb http://www.ncbi.nlm.nih.gov/pubmed/24004558
       \endverb
@@ -916,7 +941,7 @@
       \verb ISBN 0-471-06259-6
       \endverb
       \verb{file}
-      \verb :home/casper/Downloads/[Thomas{\_}M.{\_}Cover,{\_}Joy{\_}A.{\_}Thomas]{\_}Elements{\_}of{\_}Infor(b-ok.xyz).pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Cover, Thomas - 2005 - Elements of Information Theory.pdf:pdf
       \endverb
     \endentry
     \entry{Eichler2006}{article}{}
@@ -997,9 +1022,6 @@
       \verb{doi}
       \verb 10.1007/978-3-642-54474-3
       \endverb
-      \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Wibral, Editors, Kelso - 2014 - Directed Information Measures in Neuroscience.pdf:pdf
-      \endverb
       \verb{urlraw}
       \verb http://link.springer.com/10.1007/978-3-642-54474-3
       \endverb
@@ -1044,7 +1066,7 @@
       \verb 10.1142/S0219525908001465
       \endverb
       \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/AY, POLANI - 2008 - Information Flows in Causal Networks.pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Ay, Polani - 2008 - Information Flows in Causal Networks.pdf:pdf
       \endverb
       \verb{urlraw}
       \verb http://www.worldscientific.com/doi/abs/10.1142/S0219525908001465
@@ -1082,10 +1104,10 @@
       \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{abstract}{We define the relevant information in a signal {\$}x\backslashin X{\$} as being the information that this signal provides about another signal {\$}y\backslashin \backslashY{\$}. Examples include the information that face images provide about the names of the people portrayed, or the information that speech sounds provide about the words spoken. Understanding the signal {\$}x{\$} requires more than just predicting {\$}y{\$}, it also requires specifying which features of {\$}\backslashX{\$} play a role in the prediction. We formalize this problem as that of finding a short code for {\$}\backslashX{\$} that preserves the maximum information about {\$}\backslashY{\$}. That is, we squeeze the information that {\$}\backslashX{\$} provides about {\$}\backslashY{\$} through a `bottleneck' formed by a limited set of codewords {\$}\backslashtX{\$}. This constrained optimization problem can be seen as a generalization of rate distortion theory in which the distortion measure {\$}d(x,\backslashx){\$} emerges from the joint statistics of {\$}\backslashX{\$} and {\$}\backslashY{\$}. This approach yields an exact set of self consistent equations for the coding rules {\$}X \backslashto \backslashtX{\$} and {\$}\backslashtX \backslashto \backslashY{\$}. Solutions to these equations can be found by a convergent re-estimation method that generalizes the Blahut-Arimoto algorithm. Our variational principle provides a surprisingly rich framework for discussing a variety of problems in signal processing and learning, as will be described in detail elsewhere.}
+      \field{abstract}{We define the relevant information in a signal $x\in X$ as being the information that this signal provides about another signal $y\in \Y$. Examples include the information that face images provide about the names of the people portrayed, or the information that speech sounds provide about the words spoken. Understanding the signal $x$ requires more than just predicting $y$, it also requires specifying which features of $\X$ play a role in the prediction. We formalize this problem as that of finding a short code for $\X$ that preserves the maximum information about $\Y$. That is, we squeeze the information that $\X$ provides about $\Y$ through a `bottleneck' formed by a limited set of codewords $\tX$. This constrained optimization problem can be seen as a generalization of rate distortion theory in which the distortion measure $d(x,\x)$ emerges from the joint statistics of $\X$ and $\Y$. This approach yields an exact set of self consistent equations for the coding rules $X \to \tX$ and $\tX \to \Y$. Solutions to these equations can be found by a convergent re-estimation method that generalizes the Blahut-Arimoto algorithm. Our variational principle provides a surprisingly rich framework for discussing a variety of problems in signal processing and learning, as will be described in detail elsewhere.}
       \field{eprintclass}{physics}
       \field{eprinttype}{arXiv}
-      \field{isbn}{1364-6613 (Print)$\backslash$r1364-6613 (Linking)}
+      \field{isbn}{1364-6613 (Print)1̊364-6613 (Linking)}
       \field{issn}{0305-5728}
       \field{month}{4}
       \field{title}{{The information bottleneck method}}
@@ -1194,7 +1216,7 @@
       \verb 9411012
       \endverb
       \verb{file}
-      \verb :home/casper/Downloads/entropy.pdf:pdf
+      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Shannon - 1948 - A mathematical theory of communication.pdf:pdf
       \endverb
       \verb{urlraw}
       \verb http://cm.bell-labs.com/cm/ms/what/shannonday/shannon1948.pdf
@@ -1234,9 +1256,6 @@
       \verb{doi}
       \verb 10.1016/j.socnet.2004.11.008
       \endverb
-      \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Borgatti - 2005 - Centrality and network flow.pdf:pdf
-      \endverb
       \keyw{Centrality,Network flow,Typology}
     \endentry
     \entry{Borgatti2006}{article}{}
@@ -1262,7 +1281,7 @@
       \field{sortinithash}{cbff857e587bcb4635511624d773949e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{abstract}{The concept of centrality is often invoked in social network analysis, and diverse indices have been proposed to measure it. This paper develops a unified framework for the measurement of centrality. All measures of centrality assess a node's involvement in the walk structure of a network. Measures vary along four key dimensions: type of nodal involvement assessed, type of walk considered, property of walk assessed, and choice of summary measure. If we cross-classify measures by type of nodal involvement (radial versus medial) and property of walk assessed (volume versus length), we obtain a four-fold polychotomization with one cell empty which mirrors Freeman's 1979 categorization. At a more substantive level, measures of centrality summarize a node's involvement in or contribution to the cohesiveness of the network. Radial measures in particular are reductions of pair-wise proximities/cohesion to attributes of nodes or actors. The usefulness and interpretability of radial measures depend on the fit of the cohesion matrix to the one-dimensional model. In network terms, a network that is fit by a one-dimensional model has a core-periphery structure in which all nodes revolve more or less closely around a single core. This in turn implies that the network does not contain distinct cohesive subgroups. Thus, centrality is shown to be intimately connected with the cohesive subgroup structure of a network. {{$\copyright$}} 2005 Elsevier B.V. All rights reserved.}
+      \field{abstract}{The concept of centrality is often invoked in social network analysis, and diverse indices have been proposed to measure it. This paper develops a unified framework for the measurement of centrality. All measures of centrality assess a node's involvement in the walk structure of a network. Measures vary along four key dimensions: type of nodal involvement assessed, type of walk considered, property of walk assessed, and choice of summary measure. If we cross-classify measures by type of nodal involvement (radial versus medial) and property of walk assessed (volume versus length), we obtain a four-fold polychotomization with one cell empty which mirrors Freeman's 1979 categorization. At a more substantive level, measures of centrality summarize a node's involvement in or contribution to the cohesiveness of the network. Radial measures in particular are reductions of pair-wise proximities/cohesion to attributes of nodes or actors. The usefulness and interpretability of radial measures depend on the fit of the cohesion matrix to the one-dimensional model. In network terms, a network that is fit by a one-dimensional model has a core-periphery structure in which all nodes revolve more or less closely around a single core. This in turn implies that the network does not contain distinct cohesive subgroups. Thus, centrality is shown to be intimately connected with the cohesive subgroup structure of a network. {©} 2005 Elsevier B.V. All rights reserved.}
       \field{isbn}{0378-8733}
       \field{issn}{03788733}
       \field{journaltitle}{Social Networks}
@@ -1274,9 +1293,6 @@
       \range{pages}{19}
       \verb{doi}
       \verb 10.1016/j.socnet.2005.11.005
-      \endverb
-      \verb{file}
-      \verb :home/casper/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Borgatti, Everett - 2006 - A Graph-theoretic perspective on centrality.pdf:pdf
       \endverb
     \endentry
     \entry{Fried2015}{article}{}
@@ -1309,7 +1325,7 @@
         {{hash=458e89e5a03a19c1faa83d07cdc0041b}{%
            family={Cramer},
            familyi={C\bibinitperiod},
-           given={Ang{\'{e}}lique\bibnamedelima O.J.},
+           given={Ang{é}lique\bibnamedelima O.J.},
            giveni={A\bibinitperiod\bibinitdelim O\bibinitperiod}}}%
         {{hash=66600a0658e8a46b993b0f97e042c84b}{%
            family={Epskamp},
@@ -1478,6 +1494,7 @@
       \endverb
     \endentry
   \enddatalist
+  \missing{Bavalas1950}
   \missing{Gibbs1996}
 \endrefsection
 \endinput

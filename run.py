@@ -16,7 +16,7 @@ from functools import partial
 from multiprocessing import Pool
 from scipy import sparse
 import os, pickle, IO, h5py, sys
-import IO, multiprocessing as mp
+import IO, multiprocessing as mp, json
 import datetime
 from artNet import Net
 from time import time
@@ -25,8 +25,8 @@ np.random.seed() # set seed
 if __name__ == '__main__':
     # graph = nx.path_graph(12, nx.DiGraph())
     # graph = nx.read_edgelist(f'{os.getcwd()}/Data/bn/bn-cat-mixed-species_brain_1.edges')
-    repeats       = 1000
-    deltas        = 20
+    repeats       = 500
+    deltas        = 50
     step          = 1
     nSamples      = 1000
     burninSamples = 5
@@ -34,7 +34,8 @@ if __name__ == '__main__':
 
     numIter       = 1
     magSide       = 'neg'
-    CHECK         = .8
+    CHECK         = .8  # match magnetiztion at 80 percent of max
+
 
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV('{}/Graph_min1_1.csv'.format(dataDir), header = 0, index_col = 0)
@@ -48,15 +49,28 @@ if __name__ == '__main__':
     nx.set_node_attributes(graph, attr)
 
     graph = nx.krackhardt_kite_graph()
-    # graph = nx.path_graph(3, nx.DiGraph())
-    # graph = nx.path_graph(3)
-    # graph = nx.star_graph(4)
-    # graph = nx.watts_strogatz_graph(20, 2, .3)
-    now = datetime.datetime.now()
-    targetDirectory = f'{os.getcwd()}/Data/{now}'
-    os.mkdir(targetDirectory)
+    graph = nx.path_graph(4);
+    # graph = nx.barabasi_albert_graph(100, 4)
+    # graph.add_edge(2, 3); graph.add_edge(3, 4); graph.add_edge(4,2);
+    # graph.add_edge(0, 5); graph.add_edge(5, 6); graph.add_edge(6,0);
 
-    for i in range(numIter):
+
+
+    numIter = 10
+    for i in range(numIter - 1):
+        now = time()
+        targetDirectory = f'{os.getcwd()}/Data/{now}'
+        os.mkdir(targetDirectory)
+        settings = dict(
+            repeat           = repeats,
+            deltas           = deltas,
+            nSamples         = nSamples,
+            step             = step,
+            burninSamples    = burninSamples,
+            pulseSize        = pulseSize
+                          )
+        IO.saveSettings(targetDirectory, settings)
+        graph = nx.barabasi_albert_graph(10, i + 1)
         # graph = nx.barabasi_albert_graph(10, 3)
         model = fastIsing.Ising(graph = graph, \
                                 temperature = 0, \
@@ -81,15 +95,12 @@ if __name__ == '__main__':
             # magRange = array([.9, .2])
             temps = linspace(.1, 10, 20)
 
-            temps, mag, sus = model.matchMagnetization(  temps = temps,\
+            mag, sus = model.matchMagnetization(  temps = temps,\
              n = 100, burninSamples = 0)
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
             # func = lambda x, a, b, c : a + b*exp(-c * x)
             a, b = scipy.optimize.curve_fit(func, temps, mag, maxfev = 10000)
-            # g = gp(normalize_y = True)
-            # g.fit(temps[:, None], mag)
-            # fff    = lambda x, b : g.predict(x[:, None]) - b
 
             # run the simulation per temperature
             temperatures = array([])
@@ -101,10 +112,8 @@ if __name__ == '__main__':
                 temperatures = hstack((temperatures, rot))
 
             fig, ax = subplots()
-            # ax.scatter(temps, func(temps, *a))
             xx = linspace(0, max(temps), 1000)
             ax.plot(xx, func(xx, *a))
-            # ax.plot(temps, g.predict(temps[:, None]))
             ax.scatter(temperatures, func(temperatures, *a), c ='red')
             ax.scatter(temps, mag, alpha = .2)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
@@ -142,13 +151,15 @@ if __name__ == '__main__':
              # deltas = deltas, repeats = repeats, pulse = pulse, mode = 'source')
 
             print('Computing MI')
-            cpx, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
+            px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
             # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
 
             fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-            IO.savePickle(fileName, dict(
-            mi = mi, conditional = conditional, model = model,\
-            px = cpx, snapshots = snapshots))
+            sr = IO.SimulationResult(mi = mi,
+                                    conditional = conditional,
+                                    model = model,\
+                                    px = px, snapshots = snapshots)
+            IO.savePickle(fileName, sr)
 
             for n, p in pulses.items():
                 pulse = {n : p}
@@ -159,9 +170,8 @@ if __name__ == '__main__':
                 px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                IO.savePickle(fileName, dict(
-                mi = mi, conditional = conditional, model = model,\
-                px = px, snapshots = snapshots))
-                print(n)
-                print(px[1, model.mapping[n], :], '\n', cpx[1, model.mapping[n], :])
-                # print(f'{(time() - s)/60} elapsed minutes')
+                sr = IO.SimulationResult(mi = mi,
+                                        conditional = conditional,
+                                        model = model,\
+                                        px = px, snapshots = snapshots)
+                IO.savePickle(fileName, sr)

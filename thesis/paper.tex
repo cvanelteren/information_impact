@@ -45,12 +45,12 @@ up]{caption} 									% Custom captions under/above floats in tables or figures
 
 \usepackage{titling} % Customizing the title section
 \usepackage{hyperref} % For hyperlinks in the PDF
-
+\usepackage{csquotes}
 
 % custom
 \usepackage{amsmath}
-\usepackage[backend=biber, bibencoding=utf8, style=nature, url=false]{biblatex}
-\addbibresource{/home/casper/biblatex/computational_science.bib}
+\usepackage[backend=biber, style=nature, url=false]{biblatex}
+\addbibresource{/home/casper/Documents/library.bib}
 \usepackage{graphicx}
 \usepackage{float}
 %----------------------------------------------------------------------------------------
@@ -73,9 +73,9 @@ up]{caption} 									% Custom captions under/above floats in tables or figures
 }
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
-	\begin{abstract}
-		\noindent One of the most central questions in network science is: which nodes are most important? Often this is answered using topological properties such as high connectedness or centrality in the network. However it is unclear whether topological connectedness translates directly to dynamical influence. Here we show that topological features such as network centrality or connectedness are actually poor predictors of the dynamical influence of a node on the rest of the network. We simulate the kinetic Ising spin model with weighted edges on generated and real weighted networks, including a psychological symptom network. Dynamical importance of a node is predicted by the characteristic time of decay of information about its state variable, and validated by simulating perturbations to node states. One of our main findings is that the most dynamically  influential nodes are usually not the most well-connected or central nodes. This implies that the common assumption of topologically central or well-connected nodes being also dynamically important is actually false, and we cannot abstract away the dynamics from a network before analyzing it.
-	\end{abstract}
+%	\begin{abstract}
+%		\noindent One of the most central questions in network science is: which nodes are most important? Often this is answered using topological properties such as high connectedness or centrality in the network. However it is unclear whether topological connectedness translates directly to dynamical influence. Here we show that topological features such as network centrality or connectedness are actually poor predictors of the dynamical influence of a node on the rest of the network. We simulate the kinetic Ising spin model with weighted edges on generated and real weighted networks, including a psychological symptom network. Dynamical importance of a node is predicted by the characteristic time of decay of information about its state variable, and validated by simulating perturbations to node states. One of our main findings is that the most dynamically  influential nodes are usually not the most well-connected or central nodes. This implies that the common assumption of topologically central or well-connected nodes being also dynamically important is actually false, and we cannot abstract away the dynamics from a network before analyzing it.
+%	\end{abstract}
 }
 
 
@@ -98,6 +98,7 @@ up]{caption} 									% Custom captions under/above floats in tables or figures
 	% we willen meest impactvol node uitharden; is degene met de hoogste idt ook de node met meest impact? vorig onderzoek neit gedaan
 %	 hoe is de ranking na nudge?
 	One of the principle aims of science is to provide causal explanation to (natural) phenomena\cite{Woodward2005, Pearl2000}. For example, we wish to understand why healthy cells can transform into cancerous cells, how populations of neurons produce cognition, what causes a financial market to crash,  or how social interaction influences opinion consensus. These systems are typically characterized by many dynamical variables, non-equilibrium, non-linear, and time-dependent behavior, defying analysis by most of our current theories and tools. At the same time, exactly these systems are vitally important to the functioning of our bodies, society, and environment. Their resistance to reductionistic analysis has earned them the qualification of `complex (adaptive) systems' and spawned the cutting edge field of complexity science aiming to understand the inner-mechanism of these systems\cite{Mitchell1998, Sayama2015}.
+    
 
 	Obtaining causal explanations is a multi-step process. Pearl identified three levels of causation\cite{Pearl2018}. The first step in understanding any problem is mapping regularities in the environment. This level is where science starts and where it is the state of the art for the many supervised machine learning methods specifically neural networks including deep learning. The second level entails predicting the effects of deliberate alterations of the environment. It focuses on `what-if' scenarios, e.g. what will happen if we change the environment. It is important to emphasize that the first level will never be enough for causal explanations. No matter how large the dataset is, passive observation will only yield correlative associations where cause and effect cannot be disentangled.  The final step involves constructing theories surrounding `why' questions, e.g. questions such as `Was it $X$ that caused $Y$?' or `What if $X$ had not occured?'. That is, the final level op causation looks to the past and is able to integrate information above-and-beyond the second level. It allows for answering of counter-factuals through control and manipulation and is crucial for understanding the problems outlined above.
 
@@ -109,7 +110,7 @@ up]{caption} 									% Custom captions under/above floats in tables or figures
 
 	At its core the method consists of information-theoretic measures, specifically a time-delayed version of Shannon mutual information (MI)\cite{Cover2005} which are computed based on cross-section of time-series of each dynamic variable in the system with the entire system. Information theoretical methods have the advantage of being suitable for non-equilibrium systems, and non-linear,  time-dependent interactions. Additionally, they can be readily applied to different data-types such as categorical, discrete and continuous data. Furthermore, the technique will be a good predictor for specifically small interventions and not overwhelming interventions, making it suitable for sensitive control of complex systems while staying as close as possible to their natural functioning.
 
-	Similar approaches have been developed using other information theoretical based approaches such as transfer entropy \cite{Eichler2006}, conditional MI \cite{Wibral2014}, relative entropy\cite{AY2008} or information bottleneck\cite{Tishby2000}. However, these methods are not suitable for two reasons. Firstly, the  question that these techniques attempt tot answer is qualitatively different from our proposed measure. Their main aim is to reconstruct the complete network of causal interactions by evaluating the (short-term) causal influence between every pair of nodes. In contrast, the emphasis here is on finding out whether a give-node has a long-term causal effect on the entire system - \textit{regardless of where in the system this effect resides}. Second, they are ultimately based on the conditional MI measure which is known to either overestimate or underestimate the influence of so-called synergistic and redundant information\cite{James2016a}. The used methods here circumvents this issue by using only the non-conditional MI measure which does not have this problem. This has the disad\left( vantage that only a handful (independent) driver-nodes can be identified instead of the full causal network. Regardless, this body of work will already provide essential innovation towards the management of complex systems and possible research avenue for climbing the ladder of causation.
+	Similar approaches have been developed using other information theoretical based approaches such as transfer entropy \cite{Eichler2006}, conditional MI \cite{Wibral2014}, relative entropy\cite{AY2008} or information bottleneck\cite{Tishby2000}. However, these methods are not suitable for two reasons. Firstly, the  question that these techniques attempt tot answer is qualitatively different from our proposed measure. Their main aim is to reconstruct the complete network of causal interactions by evaluating the (short-term) causal influence between every pair of nodes. In contrast, the emphasis here is on finding out whether a give-node has a long-term causal effect on the entire system - \textit{regardless of where in the system this effect resides}. Second, they are ultimately based on the conditional MI measure which is known to either overestimate or underestimate the influence of so-called synergistic and redundant information\cite{James2016a}. The used methods here circumvents this issue by using only the non-conditional MI measure which does not have this problem. This has the disadvantage that only a handful (independent) driver-nodes can be identified instead of the full causal network. Regardless, this body of work will already provide essential innovation towards the management of complex systems and possible research avenue for climbing the ladder of causation.
 
 
 		
@@ -137,18 +138,18 @@ up]{caption} 									% Custom captions under/above floats in tables or figures
 	Up until now, we haven't addressed how we can ensure that the information of a node will be lost as a function of time. This can be ensured using the data processing inequality. This concept from information theory entails that the information content of a signal cannot be increased through physical operation in a Markov chain; information is generally lost, not gained when sent through a noisy channel, see \ref{app:dpi} for proof.
 
 	At every time step every node can partially transmit its information to its nearest neighbors. In order to compute the IDT we will need a time-delayed mutual information which is defined as:
-	\begin{equation} \label{eq:mi}
-	\begin{aligned}
-	I(s_i(t) ; S(0)) &= H(s_i(t)) - H(s_i(t) \vert S(0)) \\
-	&= \sum_{s_i(t)=x}  \sum_{S(0) = X} P(x \vert X) \log \frac{P(x \vert X)}{P(x)}
-	\end{aligned}
-	\end{equation}
+%	\begin{equation} \label{eq:mi}
+%	\begin{aligned}
+%	I(s_i(t) ; S(0)) &= H(s_i(t)) - H(s_i(t) \vert S(0)) \\
+%	&= \sum_{s_i(t)=x}  \sum_{S(0) = X} P(x \vert X) \log \frac{P(x \vert X)}{P(x)}
+%	\end{aligned}
+%	\end{equation}
 	The state $S(0) = X$ indicates a random state from the state space of the system, i.e. a specific `snapshot' or configuration of the system, and $s_i(t)$ indicates the state of node a node at some time $t$ from snapshot $S(0)$, please see \ref{sec:numerical}.
 
 	Here we consider Markovian networks in which each node determines its next state according to the Gibbs measure. The Gibbs measure describes how a unit changes its state subject to the combines potential of its interacting neighbors (see \ref{sec:model}). We define the IDT for node $s_i$ as :
-	\begin{equation}
-	\delta_i = \{t \textrm{ \ such that \ } I\left( s_i(t) : S(0) \right) = \alpha H\left(s_i \right)\}.
-	\end{equation}
+%	\begin{equation}
+%	\delta_i = \{t \textrm{ \ such that \ } I\left( s_i(t) : S(0) \right) = \alpha H\left(s_i \right)\}.
+%%	\end{equation}
 	where $\alpha$ can be chosen between $\left[ 0, 1 \right)$. In Markov networks the data processing inequality ensures that the mutual information will decay as $t \rightarrow \infty$. Data processing inequality is an information theoretical concept which states that the information through a noisy channel cannot be increased through local operation, see appendix \ref{app:dpi} for proof.
 
 %	EXPAND THIS PROOF
@@ -162,19 +163,19 @@ up]{caption} 									% Custom captions under/above floats in tables or figures
 
 
 
-	\begin{equation}
-	H(S) = - \sum_i p_i \log p_i
-	\label{entropy}
-	\end{equation}
-
-	\begin{equation}
-	I(S; s_i) = H(s_i) - H(s_i \vert S)
-	\end{equation}
-
-	\begin{equation}
-	I(s_i(0) ; S(t)) = \sum_{s_i(0)=x}  \sum_{S(t) = X} P(X \vert x) \log \frac{P(X \vert x)}{P(X)}
-	\label{eq:mi}
-	\end{equation}
+%	\begin{equation}
+%	H(S) = - \sum_i p_i \log p_i
+%	\label{entropy}
+%	\end{equation}
+%
+%	\begin{equation}
+%	I(S; s_i) = H(s_i) - H(s_i \vert S)
+%	\end{equation}
+%
+%	\begin{equation}
+%	I(s_i(0) ; S(t)) = \sum_{s_i(0)=x}  \sum_{S(t) = X} P(X \vert x) \log \frac{P(X \vert x)}{P(X)}
+%	\label{eq:mi}
+%	\end{equation}
 
 	% use this to explain network topology scienc etc
 	\subsection{Network characteristics}
@@ -183,10 +184,10 @@ up]{caption} 									% Custom captions under/above floats in tables or figures
 
 	\subsubsection*{Closeness centrality}
 	In connected graphs, closeness centrality of a node is a measure of centrality of a node. It is calculated as the reciprocal sum of the shortest path of a node between all other nodes in a network; the more central a node is, the closer it is to other nodes. Closeness of node $v$ is defined as \cite{Bavalas1950}:
-
-	\begin{equation}
-	C(v) = \frac{1}{\sum_{v_j \neq i \in V} d(v_i, v_j)
-	\end{equation}
+%
+%	\begin{equation}
+%	C(v) = \frac{1}{\sum_{v_j \neq i \in V} d(v_i, v_j)
+%	\end{equation}
 
 
 	\subsubsection*{Betweenness centrality}

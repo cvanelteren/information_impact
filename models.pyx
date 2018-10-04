@@ -23,7 +23,7 @@ class Model:
         It translates the networkx graph into numpy dependencies for speed.
         '''
         self.modes = 'sync async single serial' # expand this if we want more modes
-
+        # TODO: put this in a constructor
         assert mode in self.modes
         # kinda uggly
         statePresent, hPresent, nudgePresent = [\

@@ -1,8 +1,7 @@
 import IO, plotting as plotz, os, re
 from numpy import *
 from matplotlib.pyplot import *
-import networkx as nx
-import networkx as nx
+import networkx as nx, plotting
 from tqdm import tqdm_notebook as tqdm
 #%load_ext autoreload
 #%autoreload 2
@@ -11,51 +10,33 @@ close('all')
 
 
 res = {}
-d = f'{os.getcwd()}/Data/'
+dataPath = f'{os.getcwd()}/Data/'
 def newest(path):
     files = os.listdir(path)
     paths = [os.path.join(path, basename) for basename in files]
     return sorted(paths, key=os.path.getctime)
-d = newest(d)[-1]
+d = newest(dataPath)[0]
 use = '2018-09-11 15:35:58.931256'
 #d = f'{os.getcwd()}/Data/{use}'
 # d = newest(d)
 print(d)
 
-# d = f'{os.getcwd()}'
-colors = cm.tab20(arange(12))
-res = {}
-for file in os.listdir(d):
-    if file.endswith('.pickle') and not 'mags' in file:
-#        print(file)
-        temp  = re.search('t=\d+\.[0-9]+', file).group() # find temp
-        pulse = re.search('\{.*\}', file).group()
-        res[temp] = res.get(temp, ()) + ((pulse, IO.loadPickle(f'{d}/{file}')), )
-
-        deltas = re.search('deltas=\d+', file).group()
-        deltas = int(re.search('\d+', deltas).group()) + 1 # always add 1
-
-
-
-rres = {}
-for i, j in res.items():
-    rres[i] = dict(j)
-k = list(rres.keys())
-
-print(k)
+data = IO.extractData(d)
 
 # %%
 
 import scipy
 from tqdm import tqdm
 
-theta =  1e-1
-METHOD = 'excitingmixing'
-for temp in k:
+theta =  1e-2
+METHOD = 'linearmixing'
+deltas = IO.readSettings(d)['deltas']
+print(IO.readSettings(d))
+for temp in data.keys():
     try:
-        current = rres[temp]
+        current = data[temp]
     #    d, e, f
-        func = lambda x, a, b, c, d, e, f: a + b * exp(-c*x)  # + d* exp(-e *(x-f))
+        func = lambda x, a, b, c, d, e, f: a + b * exp(-c* x) # d * exp(- e * (x - f))
         fr   = lambda x, a, b : func(x, *a) - b # root finder
 
 
@@ -64,10 +45,11 @@ for temp in k:
 
         for idx, (i, j) in enumerate(tqdm(current.items())):
 
-            mi          = j['mi']
-            snapshots   = j['snapshots']
-            conditional = j['conditional']
-            model       = j['model']
+            mi          = j.mi
+            snapshots   = j.snapshots
+            conditional = j.conditional
+            model       = j.model
+
 
             colors = cm.tab20(arange(model.nNodes))
             if 'H' not in globals():
@@ -83,8 +65,13 @@ for temp in k:
                 x = arange(len(MI))
                 a, b = scipy.optimize.curve_fit(func, x, MI, maxfev = 100000)
         #        print(a)
-                l =  a[0] + theta  * max(MI)
-                r = scipy.optimize.root(fr, 0, args = (a, l), method = METHOD )# ,  method = 'linearmixing')
+                l =  a[0] + theta  #* max(MI)
+                k = 0
+                while True:
+                    r = scipy.optimize.root(fr, k, args = (a, l), method = METHOD )# ,  method = 'linearmixing')
+                    if r.success:
+                        break
+                    k += .1
                 rot = r.x
                 if rot < 0:
                     rot = 0
@@ -100,43 +87,24 @@ for temp in k:
                                color = colors[jdx], marker = 's', s = 100, alpha = .3)
                 ax.set_xlim(-.2, 3)
                 ax.set_ylim(-.2, 1)
-                ax.set_title(f'{temp} {i} {error}')
+                ax.set_title(f'{temp} MSE = {error:.2f}')
                 ax.set_ylabel('$I(x_i(t) ; X)$')
+                ax.set_xlabel('Time [step]')
                 ax.legend(bbox_to_anchor = (1., .5))
                 error += ((func(x, *a) - MI)**2).sum() / model.nNodes
 
             if i != '{}': close()
+        fig, ax = subplots(); plotting.addGraphPretty(model, ax)
+        if not os.path.exists(d + '/figures'):
+            os.mkdir(d + '/figures')
+        savefig(f'{d}/figures/idt_time.png')
         # %%
-        #fig, ax = subplots()
-        #[ax.scatter(*H[idx, :], color = colors[idx]) for idx in range(model.nNodes)]
-
         ii = min(H[:,0]), max(H[:, 0])
         ax.plot(ii,ii , '--k', alpha = .2)
 
         w = None
         w = 'weight'
-    #    for node in model.graph.nodes():
-    #        f = []
-    #        for n in model.graph.neighbors(node):
-    #            f.append(model.graph[node][n]['weight'])
-    #        degs[node] = sum(f)
 
-        #
-    #    degs = dict(nx.closeness_centrality(model.graph))
-        #print(degs)
-        #tmp1 = degs.copy()
-        #tt = abs(array(list(degs.values())))
-        #m, mm = tt.min(), tt.max()
-        #for i, j in tmp1.items():
-        #    tmp1[i] = (j - m) / (mm - m)
-        #for i, j in tmp1.items():
-        #    tmp1[i] = abs(j)
-        #degs = tmp1
-        # %%
-    #    fig, ax = subplots()
-    #    for key, value in hs.items():
-    #        idx = model.mapping[key]
-    #        ax.scatter( degs[key], value, color = colors[idx, :])
         # %%
         from functools import partial
         centralities = dict(deg = partial(nx.degree, weight = w), \
@@ -150,16 +118,14 @@ for temp in k:
                 idx = model.mapping[node]
                 ax.scatter(deg, H[idx, 0], color = colors[idx], label = node)
                 x.append((deg, H[idx, 0]))
-
             x = array(x)
             xx = scipy.stats.linregress(*x.T)
             #     ax.scatter(*H[idx, :], color = colors[idx])
             #ax.set_yscale('log')
             setp(ax, **dict(xlabel = centr, ylabel = 'abs IDT'))
             ax.legend(bbox_to_anchor = (1.01, 1))
-            ax.set_title(f'T = {temp}')
+            ax.set_title(f'{temp}')
 
-        show()
         # %%
         #fig, ax = subplots()
         #for i, j in degs.items():
@@ -169,8 +135,8 @@ for temp in k:
         ## %%
         pxs = {}
         for i, j in current.items():
-            px = j['px']
-            pxs[i] = px
+        
+            pxs[i] = j.px
         # %%
         import re
 
@@ -197,7 +163,7 @@ for temp in k:
         # %%
         fig, ax = subplots()
 
-        [ax.plot(i, color = colors[idx], label = model.rmapping[idx]) for idx, i in enumerate(hd_single.sum(axis = -1))]
+        [ax.plot(i, color = colors[idx], label = model.rmapping[idx]) for idx, i in enumerate(hd_single.mean(axis = -1))]
         ax.legend(bbox_to_anchor = (1, 1))
         setp(ax, **dict(xlabel = 'Time', ylabel = 'Hellinger distance'))
         # plot impact
@@ -227,7 +193,7 @@ for temp in k:
         r =  scipy. stats.linregress(xx)
         x = linspace(min(xx[:, 0]), max(xx[:, 0]))
         ax.plot(x, r.slope * x + r.intercept, 'k--')
-        ax.text(.6, .2, f'p = {r.pvalue:.2f}')
+        ax.text(.6, .2, f'p = {r.pvalue:.2f}', transform = ax.transAxes)
         setp(ax, **dict(xlabel = 'impact', ylabel = 'idt', title = f'T = {temp}'))
         ax.legend(bbox_to_anchor = (1.01, 1))
         savefig(f'{d}/{temp}.png')
@@ -237,14 +203,20 @@ for temp in k:
         xr = linspace(0, 10, 1000)
         fig, ax = subplots()
         HHH = zeros(model.nNodes)
-        for idx, i in enumerate(hd_single.sum(axis = -1)):
+        for idx, i in enumerate(hd_single.mean(axis = -1)):
             node = model.rmapping[idx]
-            ii =  deltas//2 
+            ii =  deltas//2
             x = arange(len(i) - ii)
 
             a, b = scipy.optimize.curve_fit(func, x, i[ii:],  maxfev = 1000000)
-            tmp = a[0] + theta * max(i)
-            h_idt = scipy.optimize.root(fr, -1, args = (a, tmp), method = METHOD)
+            tmp = a[0] + theta # * max(i)
+            k = 0
+            while True:
+                h_idt = scipy.optimize.root(fr, k, args = (a, tmp), method = METHOD )# ,  method = 'linearmixing')
+                if h_idt.success:
+                    break
+                k += .1
+            if k > 0 : print(k)
             rot = h_idt.x
             if max(i) <= tmp or rot < 0:
                 rot = 0
@@ -252,16 +224,16 @@ for temp in k:
             ax.plot(xr, func(xr, *a), alpha = .2, color = colors[idx])
             ax.scatter(x, i[ii:], color = colors[idx], alpha = 1, label = node)
             ax.scatter(rot, func(rot, *a), 100, color = colors[idx],  marker = 's')
-            
+
             ax.vlines(rot, 0, func(rot, *a), color = colors[idx])
             HHH[idx] = rot
     #        print(idx, node, rot, max(i), tmp)
 
         ax.legend(bbox_to_anchor = (1.01, 1))
         ax.set_xlim(-.2, 3) # deltas//2)
-        ax.set_ylim(-.2, 2)
+        ax.set_ylim(-.2, hd_single.max() * 1.1)
         setp(ax, **dict(xlabel = 'time since nudge', ylabel = 'hellinger distance'))
-
+        savefig(f'{d}/figures/impact_time.png')
         # centrality measure and impact
         for centr, centrality in centralities.items():
             degs = dict(centrality(model.graph))
@@ -289,7 +261,8 @@ for temp in k:
         tmpx = linspace(min(H[:,0]), max(H[:,0]))
         tmpy = tmpx * r.slope + r.intercept
         ax.plot(tmpx, tmpy, 'k--')
-        ax.text(.8, .1, f'p={r.pvalue:.2f}')
+        ax.text(.8, .1, f'p={r.pvalue:.2f}', transform = ax.transAxes)
+        savefig(f'{d}/figures/idt_impact.png')
         # %%
 
         conditionals = {i : j['conditional'] for i, j in current.items()}
@@ -313,16 +286,18 @@ for temp in k:
                 tmp = tmp.mean(axis = 0).mean(axis =-1)
                 idx = model.mapping[title]
 
-                ii = deltas // 2 
+                ii = deltas // 2
                 xxx = arange(len(tmp) - ii)
                 a, b  = scipy.optimize.curve_fit(func, xxx, tmp[ii:], maxfev= 10000)
-                l = a[0] + theta  * max(tmp)
+                l = a[0] + theta * max(tmp)
                 root = scipy.optimize.root(fr, 0, args = (a, l))
-                ax.scatter(root.x, func(root.x, *a), c = colors[idx])
-                ax.plot(xxx, tmp[ii:], color = colors[idx], label = title)
+                ax.scatter(root.x, func(root.x, *a), color = colors[idx])
+                ax.plot(xxx, tmp[ii:], '.', color = colors[idx], label = title)
+                ax.plot(linspace(0, 100), func(linspace(0, 100), *a), color = colors[idx])
                 HH[model.mapping[title]] = root.x
+        ax.set_xlim(0, 4)
         fig, ax = subplots()
-        [ax.scatter(x,y, c = c) for x,y,c in zip(H[:, 0], HH, colors)]
+        [ax.scatter(x,y, color = c) for x,y,c in zip(H[:, 0], HH, colors)]
         ax.legend()
     except Exception as e: print(e)
 

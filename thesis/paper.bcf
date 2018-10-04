@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bcf:controlfile version="3.4" bltxversion="3.10" xmlns:bcf="https://sourceforge.net/projects/biblatex">
+<bcf:controlfile version="3.4" bltxversion="3.11" xmlns:bcf="https://sourceforge.net/projects/biblatex">
   <!-- BIBER OPTIONS -->
   <bcf:options component="biber" type="global">
     <bcf:option type="singlevalued">
       <bcf:key>output_encoding</bcf:key>
-      <bcf:value>ascii</bcf:value>
+      <bcf:value>utf8</bcf:value>
     </bcf:option>
     <bcf:option type="singlevalued">
       <bcf:key>input_encoding</bcf:key>
@@ -360,6 +360,7 @@
     <bcf:option datatype="boolean">uniquework</bcf:option>
     <bcf:option datatype="boolean">uniqueprimaryauthor</bcf:option>
     <bcf:option datatype="boolean">defernumbers</bcf:option>
+    <bcf:option datatype="boolean">locallabelwidth</bcf:option>
     <bcf:option datatype="boolean">bibwarn</bcf:option>
     <bcf:option datatype="boolean">useprefix</bcf:option>
     <bcf:option datatype="boolean">defernums</bcf:option>
@@ -1563,9 +1564,19 @@
       <bcf:field>eprinttype</bcf:field>
       <bcf:field>eventday</bcf:field>
       <bcf:field>eventendday</bcf:field>
+      <bcf:field>eventendhour</bcf:field>
+      <bcf:field>eventendminute</bcf:field>
       <bcf:field>eventendmonth</bcf:field>
+      <bcf:field>eventendseason</bcf:field>
+      <bcf:field>eventendsecond</bcf:field>
+      <bcf:field>eventendtimezone</bcf:field>
       <bcf:field>eventendyear</bcf:field>
+      <bcf:field>eventhour</bcf:field>
+      <bcf:field>eventminute</bcf:field>
       <bcf:field>eventmonth</bcf:field>
+      <bcf:field>eventseason</bcf:field>
+      <bcf:field>eventsecond</bcf:field>
+      <bcf:field>eventtimezone</bcf:field>
       <bcf:field>eventyear</bcf:field>
       <bcf:field>eventtitle</bcf:field>
       <bcf:field>eventtitleaddon</bcf:field>
@@ -1597,9 +1608,19 @@
       <bcf:field>eprinttype</bcf:field>
       <bcf:field>eventday</bcf:field>
       <bcf:field>eventendday</bcf:field>
+      <bcf:field>eventendhour</bcf:field>
+      <bcf:field>eventendminute</bcf:field>
       <bcf:field>eventendmonth</bcf:field>
+      <bcf:field>eventendseason</bcf:field>
+      <bcf:field>eventendsecond</bcf:field>
+      <bcf:field>eventendtimezone</bcf:field>
       <bcf:field>eventendyear</bcf:field>
+      <bcf:field>eventhour</bcf:field>
+      <bcf:field>eventminute</bcf:field>
       <bcf:field>eventmonth</bcf:field>
+      <bcf:field>eventseason</bcf:field>
+      <bcf:field>eventsecond</bcf:field>
+      <bcf:field>eventtimezone</bcf:field>
       <bcf:field>eventyear</bcf:field>
       <bcf:field>eventtitle</bcf:field>
       <bcf:field>eventtitleaddon</bcf:field>
@@ -1641,9 +1662,19 @@
       <bcf:field>eprinttype</bcf:field>
       <bcf:field>eventday</bcf:field>
       <bcf:field>eventendday</bcf:field>
+      <bcf:field>eventendhour</bcf:field>
+      <bcf:field>eventendminute</bcf:field>
       <bcf:field>eventendmonth</bcf:field>
+      <bcf:field>eventendseason</bcf:field>
+      <bcf:field>eventendsecond</bcf:field>
+      <bcf:field>eventendtimezone</bcf:field>
       <bcf:field>eventendyear</bcf:field>
+      <bcf:field>eventhour</bcf:field>
+      <bcf:field>eventminute</bcf:field>
       <bcf:field>eventmonth</bcf:field>
+      <bcf:field>eventseason</bcf:field>
+      <bcf:field>eventsecond</bcf:field>
+      <bcf:field>eventtimezone</bcf:field>
       <bcf:field>eventyear</bcf:field>
       <bcf:field>eventtitle</bcf:field>
       <bcf:field>eventtitleaddon</bcf:field>
@@ -1717,6 +1748,24 @@
       <bcf:entrytype>unpublished</bcf:entrytype>
       <bcf:field>addendum</bcf:field>
       <bcf:field>author</bcf:field>
+      <bcf:field>eventday</bcf:field>
+      <bcf:field>eventendday</bcf:field>
+      <bcf:field>eventendhour</bcf:field>
+      <bcf:field>eventendminute</bcf:field>
+      <bcf:field>eventendmonth</bcf:field>
+      <bcf:field>eventendseason</bcf:field>
+      <bcf:field>eventendsecond</bcf:field>
+      <bcf:field>eventendtimezone</bcf:field>
+      <bcf:field>eventendyear</bcf:field>
+      <bcf:field>eventhour</bcf:field>
+      <bcf:field>eventminute</bcf:field>
+      <bcf:field>eventmonth</bcf:field>
+      <bcf:field>eventseason</bcf:field>
+      <bcf:field>eventsecond</bcf:field>
+      <bcf:field>eventtimezone</bcf:field>
+      <bcf:field>eventyear</bcf:field>
+      <bcf:field>eventtitle</bcf:field>
+      <bcf:field>eventtitleaddon</bcf:field>
       <bcf:field>howpublished</bcf:field>
       <bcf:field>language</bcf:field>
       <bcf:field>location</bcf:field>
@@ -1725,6 +1774,8 @@
       <bcf:field>subtitle</bcf:field>
       <bcf:field>title</bcf:field>
       <bcf:field>titleaddon</bcf:field>
+      <bcf:field>type</bcf:field>
+      <bcf:field>venue</bcf:field>
     </bcf:entryfields>
     <bcf:constraints>
       <bcf:entrytype>article</bcf:entrytype>
@@ -1922,55 +1973,57 @@
   <!-- CITATION DATA -->
   <!-- SECTION 0 -->
   <bcf:bibdata section="0">
-    <bcf:datasource type="file" datatype="bibtex">/home/casper/biblatex/computational_science.bib</bcf:datasource>
+    <bcf:datasource type="file" datatype="bibtex">/home/casper/Documents/library.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
     <bcf:citekey order="1">Woodward2005</bcf:citekey>
     <bcf:citekey order="1">Pearl2000</bcf:citekey>
     <bcf:citekey order="2">Mitchell1998</bcf:citekey>
     <bcf:citekey order="2">Sayama2015</bcf:citekey>
-    <bcf:citekey order="3">Pearl2018</bcf:citekey>
-    <bcf:citekey order="4">Chen2017</bcf:citekey>
-    <bcf:citekey order="4">Liu2016a</bcf:citekey>
+    <bcf:citekey order="3">Aaronson2011</bcf:citekey>
+    <bcf:citekey order="4">Pearl2018</bcf:citekey>
     <bcf:citekey order="5">Chen2017</bcf:citekey>
-    <bcf:citekey order="6">Harush2017a</bcf:citekey>
-    <bcf:citekey order="6">Sikic2013</bcf:citekey>
-    <bcf:citekey order="6">Cowan2012</bcf:citekey>
-    <bcf:citekey order="6">Muldoon2016</bcf:citekey>
-    <bcf:citekey order="6">Yan2017</bcf:citekey>
-    <bcf:citekey order="6">Pequito2017</bcf:citekey>
-    <bcf:citekey order="7">Cowan2012</bcf:citekey>
+    <bcf:citekey order="5">Liu2016a</bcf:citekey>
+    <bcf:citekey order="6">Chen2017</bcf:citekey>
     <bcf:citekey order="7">Harush2017a</bcf:citekey>
-    <bcf:citekey order="7">Gates2016</bcf:citekey>
+    <bcf:citekey order="7">Sikic2013</bcf:citekey>
+    <bcf:citekey order="7">Cowan2012</bcf:citekey>
+    <bcf:citekey order="7">Muldoon2016</bcf:citekey>
+    <bcf:citekey order="7">Yan2017</bcf:citekey>
+    <bcf:citekey order="7">Pequito2017</bcf:citekey>
+    <bcf:citekey order="8">Cowan2012</bcf:citekey>
     <bcf:citekey order="8">Harush2017a</bcf:citekey>
-    <bcf:citekey order="9">Pequito2017</bcf:citekey>
-    <bcf:citekey order="10">Cowan2012</bcf:citekey>
-    <bcf:citekey order="10">Yan2012</bcf:citekey>
-    <bcf:citekey order="11">Quax2013</bcf:citekey>
-    <bcf:citekey order="12">Cover2005</bcf:citekey>
-    <bcf:citekey order="13">Eichler2006</bcf:citekey>
-    <bcf:citekey order="14">Wibral2014</bcf:citekey>
-    <bcf:citekey order="15">AY2008</bcf:citekey>
-    <bcf:citekey order="16">Tishby2000</bcf:citekey>
-    <bcf:citekey order="17">James2016a</bcf:citekey>
-    <bcf:citekey order="18">Quax2013</bcf:citekey>
+    <bcf:citekey order="8">Gates2016</bcf:citekey>
+    <bcf:citekey order="9">Harush2017a</bcf:citekey>
+    <bcf:citekey order="10">Pequito2017</bcf:citekey>
+    <bcf:citekey order="11">Cowan2012</bcf:citekey>
+    <bcf:citekey order="11">Yan2012</bcf:citekey>
+    <bcf:citekey order="12">Quax2013</bcf:citekey>
+    <bcf:citekey order="13">Cover2005</bcf:citekey>
+    <bcf:citekey order="14">Eichler2006</bcf:citekey>
+    <bcf:citekey order="15">Wibral2014</bcf:citekey>
+    <bcf:citekey order="16">AY2008</bcf:citekey>
+    <bcf:citekey order="17">Tishby2000</bcf:citekey>
+    <bcf:citekey order="18">James2016a</bcf:citekey>
     <bcf:citekey order="19">Quax2013</bcf:citekey>
-    <bcf:citekey order="20">Shannon1948</bcf:citekey>
-    <bcf:citekey order="21">Cover2005</bcf:citekey>
-    <bcf:citekey order="22">Borgatti2005</bcf:citekey>
-    <bcf:citekey order="22">Borgatti2006</bcf:citekey>
+    <bcf:citekey order="20">Quax2013</bcf:citekey>
+    <bcf:citekey order="21">Shannon1948</bcf:citekey>
+    <bcf:citekey order="22">Cover2005</bcf:citekey>
     <bcf:citekey order="23">Borgatti2005</bcf:citekey>
     <bcf:citekey order="23">Borgatti2006</bcf:citekey>
-    <bcf:citekey order="24">Borgatti2006</bcf:citekey>
-    <bcf:citekey order="25">Fried2015</bcf:citekey>
-    <bcf:citekey order="26">VanBorkulo2014</bcf:citekey>
-    <bcf:citekey order="27">VanBorkulo2014</bcf:citekey>
-    <bcf:citekey order="27">Epskamp2017</bcf:citekey>
+    <bcf:citekey order="24">Bavalas1950</bcf:citekey>
+    <bcf:citekey order="25">Borgatti2005</bcf:citekey>
+    <bcf:citekey order="25">Borgatti2006</bcf:citekey>
+    <bcf:citekey order="26">Borgatti2006</bcf:citekey>
     <bcf:citekey order="27">Fried2015</bcf:citekey>
-    <bcf:citekey order="28">Epskamp2017</bcf:citekey>
+    <bcf:citekey order="28">VanBorkulo2014</bcf:citekey>
+    <bcf:citekey order="29">VanBorkulo2014</bcf:citekey>
     <bcf:citekey order="29">Epskamp2017</bcf:citekey>
-    <bcf:citekey order="30">Gibbs1996</bcf:citekey>
-    <bcf:citekey order="31">Quax2013</bcf:citekey>
+    <bcf:citekey order="29">Fried2015</bcf:citekey>
+    <bcf:citekey order="30">Epskamp2017</bcf:citekey>
+    <bcf:citekey order="31">Epskamp2017</bcf:citekey>
+    <bcf:citekey order="32">Gibbs1996</bcf:citekey>
+    <bcf:citekey order="33">Quax2013</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

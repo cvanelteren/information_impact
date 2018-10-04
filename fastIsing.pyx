@@ -202,7 +202,7 @@ class Ising(Model):
           self.states = -states  if np.sign(states.mean()) <= 0 else states
         else:
           self.states = states
-        return self.states # maybe aliasing again
+        return self.states
 
     def computeProb(self):
         """
@@ -241,7 +241,25 @@ class Ising(Model):
        results = np.array(p.starmap(func, x))
        H       = results[:, 0] # magnetization
        HH      = results[:, 1] # susceptibility
-     return temps, H, HH
+     return H, HH
+
+    # def fit(self, temps, magRange, nSamples,
+    #         burninSamples, func,
+    #         fit_func):
+    #   """
+    #   Fits a kernel to :func: output for different temperatures.
+    #   It is aimed to provide an indication of the influence of temperature
+    #   for a particular target func
+    #   """
+    #
+    #   y    = func(temps, nSamples, burninSamples)
+    #   a, b = scipy.optimize.curve_fit(func, temps, y)
+    #
+    #   def f_root(x, opts, b):
+    #     return func(x, *opts, b)
+    #   roots = []
+
+
 
     def matchingEntropy(self, targetEntropy = 1/np.e, \
                        temps = np.logspace(-3, 1, 20), n = 10,\
