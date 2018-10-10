@@ -32,9 +32,9 @@ if __name__ == '__main__':
     burninSamples = 5
     pulseSize     = 1
 
-    numIter       = 1
+    numIter       = 5
     magSide       = 'neg'
-    CHECK         = .8  # match magnetiztion at 80 percent of max
+    CHECK         = .9  # match magnetiztion at 80 percent of max
 
 
     dataDir = 'Psycho' # relative path careful
