@@ -287,13 +287,13 @@ def reverseCalculation(int nSamples, object model, int delta, dict pulse):
 
   Z   = n - delta # number of samples
   jdx = 1
-  for i in tqdm(range(delta, n - jdx)):
+  for i in tqdm(range(delta, n + 1 - jdx)):
       tmp      = res[i - delta: i + jdx] # get time slice relative to the current
       x        = tuple(res[i])           # this is the state considered
       state[x] = state.get(x, 0) + 1 / Z # normalize its probability and count
       current  = cond.get(x, np.zeros((*tmp.shape, model.nStates)))
       binned   = np.digitize(tmp, model.agentStates, right = True)
-      for i in range(tmp.shape[0]):
+      for i in range(delta + 1):
         for j in range(model.nNodes):
             current[i, j, binned[i,j]] += 1
       cond[x]  = current
@@ -350,11 +350,13 @@ def mutualInformation(dict conditional, condition, int deltas):
     # loop
     for delta in tqdm(range(deltas)):
         H[delta] -= np.nansum([p * np.log2(p) for p in px[delta].values()])
-
-        for state, value in pxy[delta].items():
-            for node, v in value.items():
-                if v > 0:
-                    H[delta] += py[delta][state] * v * np.log2(v)
+        H[delta] += map(sum, (py[delta][state] * v * np.log2(v) \
+                              for v in value.values() \
+                              for state, value in pxy[delta].items if v > 0))
+        # for state, value in pxy[delta].items():
+        #     for node, v in value.items():
+        #         if v > 0:
+        #             H[delta] += py[delta][state] * v * np.log2(v)
     return H.T
 def encodeState(state, nStates):
     return int(''.join(format(int(i), f'0{nStates - 1}b') for i in state), 2)

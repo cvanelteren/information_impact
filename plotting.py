@@ -12,84 +12,39 @@ import scipy.optimize, scipy.integrate
 # %%
 
 
-def fit(MI, func =lambda x, a, b, c: a *exp(-(b * x)**c) , x = None,\
-                   verbose = True, \
-                   tol = 1e-4):
+def fit(y, func, x = None,\
+                   params = {}):
     '''
-    Fits exponential to the mutual information over time
-    :returns::
-        - the information diffussion time (idt)
-        - idt rate
-        - area under the curve
-        - fit errors
-        - optimal coefficients after fitting [may need to change to function]
-    #TODO:
-        -THIS FUNCTION NEEDS CLEANING, remove the tmp plots
-        -Add fit error label ids
+    Wrapper for scipy curve fit
+    Input :
+        :y: 2x matrix where time is the first dimension
+        :func: function to fit
+        :x: 1d array for the time, default is arange of the first dimension of :y:
+        :params: options for optimize.curve_fit
+    Returns:
+        :coefficients: the fitted parameters of the function
+        :errors: the standard deviation of the variance of the parameters
     '''
-    #TODO; figure out root methods, currently im doing soemthing that 'seems to work'
-    nDelta, nNodes = MI.shape
-    x   = arange(nDelta) if x is None else x
-    idt = zeros( (nNodes, 5) ) # store idt, rate [width at maximum height],  area under the curve, and sum squared error (SSE)
+    #TODO; parallize; problem : lambda -> use pathos or multiprocessing?
+    nDelta, nNodes = y.shape
+    x   = arange(nDelta) if x is None else x # add a
+    idt = zeros( (nNodes, 2) ) # store idt, rate [width at maximum height],  area under the curve, and sum squared error (SSE)
     coefficients = zeros( (nNodes, func.__code__.co_argcount - 1) )  # absolute and relatives idt
-    # tol = 1e-5# finfo(float).eps
-    # print(finfo(float).eps)
-    for idx, miNode in enumerate(MI.T):
-            popt, pcov = scipy.optimize.curve_fit(\
-            func, x, miNode, maxfev = int(1e6),\
-                                                  )
-            stdFit = dict(\
-                          fun     = func, \
-                          x0      = 0,\
-                          args    = tuple(popt), \
-                          options = dict(maxiter = 1000),\
-                          tol     = tol,\
-                          method  = 'linearmixing',
-                          )
-            # store the optimal coefficients [or return function? -> TODO?]
-            coefficients[idx] = popt.copy()
-            # work around for finding asympotote
-            ROOT             = popt[0] + tol
-            newFunc          = lambda x, a, b: func(x, *a) - b
-            stdFit['args']   = (tuple(popt), tol)
-            stdFit['fun']    = newFunc
-            r                = scipy.optimize.root(**stdFit)
+    errors       = zeros((nNodes))
+    for idx, yi in enumerate(y.T):
+        coeffs, coeffs_var = scipy.optimize.curve_fit(func, x, yi, **params)
+        errors[idx]        = ((func(x, *coeffs) - yi)**2).mean()
+        coefficients[idx]  = coeffs
+        
+    return coefficients, errors
 
-            # if not r.success: assert False, 'no proper fit found'
-            root = r.x
-            if root < 0 or ROOT > max(miNode):
-                root = 0
+def extractImpact(data):
+    """
+    Assumes the input is a dict with keys the impact condition,
+    attempts to extract the impacts
+    """
+    return {key : array([hellingerDistance(i.px, data['{}'].px) for i in val]) for key, val in data.items() if key != '{}'}
 
-            y = func(x, *popt)
-            area = scipy.integrate.simps(y, x)
-
-            # find rate of the curve by shifiting it to where half width at
-            # maximum height
-            newFunc = lambda x, a, b: func(x, *a) + b
-            stdFit['fun'] = newFunc
-            stdFit['args'] = (tuple(popt), -.5 * max(miNode))
-            hwmh = scipy.optimize.root(**stdFit)
-
-            hwmh = hwmh.x
-            if hwmh < 0:
-                hwmh = 0
-
-            # provide 1/e
-            stdFit['args'] = (tuple(popt), -1/np.e)
-            ex = scipy.optimize.root(**stdFit).x
-
-
-            # get fit error
-            tmp_x = arange(len(miNode))
-            tmp_y = func(tmp_x, *popt)
-            SSE   = ((miNode - tmp_y)**2).sum() # sum squared error
-            # print('Fit SSE {}'.format(SSE))
-            if verbose:
-                print('root\n', r)
-                print('half-time\n', hwmh)
-                print(f'1/e  {ex}')
-            idt[idx, :] = [root, hwmh, area, ex, SSE]
-    return idt, coefficients
 
 def c():
     close('all')
@@ -447,11 +402,11 @@ def saveAllFigures(useLabels = False, path = '../Figures'):
 
 def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.tab20):
     from matplotlib.patches import FancyArrowPatch, Circle, ConnectionStyle, Wedge
-    r = .1 # radius for circle
+    r     = .1 # radius for circle
     graph = model.graph
-    pos = positionFunction(graph)
-#    colors = cm.tab20(arange(model.nNodes))
-#    colors = cm.get_cmap('tab20')(arange(model.nNodes))
+    pos   = positionFunction(graph)
+# colors  = cm.tab20(arange(model.nNodes))
+# colors  = cm.get_cmap('tab20')(arange(model.nNodes))
     if graph.number_of_nodes() > 20:
         cmap = cm.get_cmap('gist_rainbow')
 
@@ -462,22 +417,14 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
                  edgecolor = 'black', linewidth  = 1, linestyle = 'solid')
         # add label
         # print(c.center[:2], pos[n])
-        text(*c.center, n, horizontalalignment = 'center', verticalalignment = 'center')
-
+        # ax.text(*c.center, n, horizontalalignment = 'center', \
+        # verticalalignment = 'center', transform = ax.transAxes)
+        ax.annotate(n, c.center, horizontalalignment = 'center', \
+        verticalalignment = 'center', transform = ax.transAxes)
         # add to ax
         ax.add_patch(c)
         # TODO : remove tis for member assignment
-#        rr = .1
-#        if n in a:
-#            g = Wedge(c.center, r, theta1 = 90, theta2 = 270, alpha = 1,
-#                      fc = 'red')
-#
-#            ax.add_artist(g)
-#        if n in b:
-#            h = Wedge(c.center, r, theta1 = 270, theta2 = 90, alpha = 1,
-#                      fc = 'blue')
-#            ax.add_artist(h)
-#
+
         # bookkeep for adding edge
         graph.node[n]['patch'] = c
 
@@ -486,10 +433,10 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
     # arrow style for drawing
     arstyle = '->' if type(graph) is type(nx.DiGraph()) else '<->'
     for u, v in graph.edges():
-        n1= graph.node[u]['patch']
-        n2= graph.node[v]['patch']
-        d = graph[u][v]['weight']
-        rad=0.1
+        n1      = graph.node[u]['patch']
+        n2      = graph.node[v]['patch']
+        d       = graph[u][v]['weight']
+        rad     = 0.1
         if (u,v) in seen:
             rad = seen.get((u,v))
             rad = ( rad + np.sign(rad) *0.1 ) * -1
@@ -500,9 +447,9 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
             n1 = copy(n1)
             theta  = random.uniform(0, 2*pi)
 
-            rotation = pi
-            corner1 = array([sin(theta), cos(theta)]) * r
-            corner2 = array([sin(theta + rotation), cos(theta + rotation)]) * r + .12 * sign(random.randn()) * r
+            rotation  = pi
+            corner1   = array([sin(theta), cos(theta)]) * r
+            corner2   = array([sin(theta + rotation), cos(theta + rotation)]) * r + .12 * sign(random.randn()) * r
             n1.center = array(n1.center) + corner1
             n2.center = array(n2.center) + corner2
 
@@ -520,13 +467,13 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
             e.set_arrowstyle(arrowstyle= '-|>', head_length = .1)
         else:
             connectionstyle = f'arc3,rad={rad}'
-            e = FancyArrowPatch(n1.center,n2.center, patchA = n1, patchB = n2,\
-                                arrowstyle = arstyle,
+            e  = FancyArrowPatch(n1.center,n2.center, patchA = n1, patchB = n2,\
+                                arrowstyle      = arstyle,
                                 connectionstyle = connectionstyle,
-                                mutation_scale = 10.0,
-                                lw=2,
-                                alpha= alphaEdge,
-                                color= 'red' if d < 0 else 'green')
+                                mutation_scale  = 10.0,
+                                lw              = 2,
+                                alpha           = alphaEdge,
+                                color           = 'red' if d < 0 else 'green')
 
         seen[(u,v)]=rad
         ax.add_patch(e)

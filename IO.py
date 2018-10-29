@@ -10,15 +10,27 @@ from numpy import *
 from matplotlib.pyplot import *
 from dataclasses import dataclass
 import pickle, pandas, os, re, json, datetime
-
 def extractData(dataDir):
     """
     Provides a dictionary of the results
     The format is :
     data[temperature][pulse] = SimulationResult // old format is dict
+
     """
+    #TODO :  make aggregate dataclass -> how to deal with multiple samples
+    # current work around is bad imo
+
     data = {} # storage
-    for file in os.listdir(dataDir):
+    # NOTE: this only works in python 3.6+ due to how dictionaries retain order
+    if not dataDir.endswith('/'):
+        dataDir += '/'
+    print(dataDir)
+    filesDir = sorted(\
+                     os.listdir(dataDir), \
+                     key = lambda x: os.path.getctime(dataDir + x)\
+                     )
+    
+    for file in filesDir:
         if file.endswith('.pickle') and 'mags' not in file:
             # look for t=
             temp   = re.search('t=\d+\.[0-9]+', file).group()
@@ -35,10 +47,11 @@ def extractData(dataDir):
             if type(tmp) == dict:
                 oldFormatConversion(dataDir, file, tmp)
 
-            fileDict  = {pulse : tmp}
+            fileDict  = {pulse : [tmp]}
             # append dict
             if temp in data.keys():
-                data[temp].update(fileDict)
+                # TODO : workaround, appends samples as a list
+                data[temp].update({pulse : [*data[temp].get(pulse, []), tmp]})
             else:
                 data[temp] = fileDict
     return data

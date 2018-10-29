@@ -103,8 +103,8 @@ class Model:
         self.nudgeMode      = nudgeMode
         self.sampleNodes    = dict(\
                                 single = functools.partial(np.random.choice, size = 1),\
-                                async= functools.partial(np.random.choice, size = self.nNodes, replace = False),\
-                                sync  = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
+                                async  = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
+                                sync   = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
                                 serial = np.sort\
                                 )
     # deprecated as it decreases performance, this functionality should be added

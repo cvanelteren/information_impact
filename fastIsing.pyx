@@ -174,9 +174,9 @@ class Ising(Model):
           # TODO: change this mess
           # # heatbath glauber
           # if self.updateMethod == 'glauber':
-          tmp = self.beta * - 2 * energy
+          tmp = -self.beta *  2 * energy
           # tmp = - self.beta * energy * 2
-          tmp = tmp if not np.isnan(tmp) else 0
+          tmp = 0 if np.isnan(tmp) else tmp
           p = 1 / ( 1 + np.exp(tmp) )
           # if rand() / float(INT_MAX) < p:
           # print(p, energy)
@@ -197,9 +197,9 @@ class Ising(Model):
           #     states[node] = -states[node]
         # TODO: ugly
         if self.magSide == 'neg':
-          self.states = states  if np.sign(states.mean()) <= 0 else -states
+          self.states = states  if states.mean() <= 0 else -states
         elif self.magSide == 'pos':
-          self.states = -states  if np.sign(states.mean()) <= 0 else states
+          self.states = -states  if states.mean() <= 0 else states
         else:
           self.states = states
         return self.states

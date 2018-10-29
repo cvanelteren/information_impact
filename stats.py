@@ -9,7 +9,7 @@ def hellingerDistance(p1, p2):
     returns:
         hellinger distance between p1, p2
     '''
-    return linalg.norm( (sqrt(p1) - sqrt(p2)), axis = -1) / sqrt(2)
+    return np.linalg.norm( (np.sqrt(p1) - np.sqrt(p2)), axis = -1) / np.sqrt(2)
 
 
 def hdTime(x):
