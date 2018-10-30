@@ -13,7 +13,7 @@ from time import sleep
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 extractThis      = IO.newest(dataPath)[-1]
-extractThis      = '1539187363.9923286' # this is 100
+#extractThis      = '1539187363.9923286' # this is 100
 #extractThis      = '1540135977.9857328'
 extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}" 
 data   = IO.extractData(extractThis)
@@ -210,10 +210,6 @@ for idx, r in enumerate(rootsc):
             continue
 consistency = array([ [cons(i[isnan(i) != True]) for i in j] for j in maxim.T])
 
-
-
-print(tmp.shape)
-print(consistency.shape)
 # plot consistency of the estimator
 naive = (maxim[...,0] == maxim[...,1]).mean(0)
 fig, ax = subplots()

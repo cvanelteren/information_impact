@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     numIter       = 100
     magSide       = 'neg'
-    updateMethod  = 'single'
+    updateMethod  = ''
     CHECK         = .9   # match magnetiztion at 80 percent of max
 
 
@@ -50,7 +50,7 @@ if __name__ == '__main__':
 #     for node, row in h.iterrows():
 #         attr[node] = dict(H = row['externalField'], nudges = 0)
 #     nx.set_node_attributes(graph, attr)
-#    graph = nx.krackhardt_kite_graph()
+   # graph = nx.krackhardt_kite_graph()
     graph = nx.path_graph(3)
     # graph = nx.path_graph(3)
 
