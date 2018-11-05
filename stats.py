@@ -11,6 +11,8 @@ def hellingerDistance(p1, p2):
     '''
     return np.linalg.norm( (np.sqrt(p1) - np.sqrt(p2)), axis = -1) / np.sqrt(2)
 
-
+def KL(p1, p2):
+    return - np.nansum((p1 * np.log(p2/ p1)), axis = -1)
 def hdTime(x):
     return 0
+

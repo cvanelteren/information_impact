@@ -178,16 +178,21 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   cdef np.ndarray tmp
 
   # start repeats
+  samples = np.zeros((repeats, deltas + 1, model.nNodes))
   for k in range(repeats):
       # start from the same point
       model.states = np.array(startState.copy(), dtype = model.states.dtype)
       tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
+      # idx = np.array([np.digitize(i, model.agentStates, right = True)\
+      # for i in tmp])
+      # out[idx] += 1/repeats
+      samples[k, :] = tmp
       for idx, state in enumerate(tmp):
         for node in nodeIDs:
             nodeState    = state[node]
             nodeStateIdx = sortr[nodeState]
             out[idx, node, nodeStateIdx] += 1/repeats
-  return {tuple(startState) : out}
+  return {tuple(startState) : [out, samples]}
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
@@ -203,9 +208,9 @@ def mutualInformation_alt(conditional, deltas, snapshots, model):
   # cdef int delta
   px = np.zeros((deltas + 1, model.nNodes, model.nStates))
   H  = np.zeros((deltas + 1, model.nNodes))
-  for key, value in conditional.items():
-    H  += np.nansum(value * np.log2(value), -1) * snapshots[key]
-    px += value * snapshots[key] # update node distribution
+  for key, (p, samples) in conditional.items():
+    H  += np.nansum(p * np.log2(p), -1) * snapshots[key]
+    px += p * snapshots[key] # update node distribution
   H -= np.nansum(px * np.log2(px), -1)
   return px, H
 
