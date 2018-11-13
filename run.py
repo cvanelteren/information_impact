@@ -26,14 +26,14 @@ if __name__ == '__main__':
     repeats       = 1000
     deltas        = 30
     step          = 1
-    nSamples      = 10000
+    nSamples      = 1000
     burninSamples = 100
     pulseSize     = 1
 
-    numIter       = 50
+    numIter       = 10
     magSide       = 'neg'
-    updateMethod  = 'async'
-    CHECK         = [.9, .8, .7]   # match magnetiztion at 80 percent of max
+    updateMethod  = 'single'
+    CHECK         = [.9]   # match magnetiztion at 80 percent of max
 
 
 #     dataDir = 'Psycho' # relative path careful
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     n = 10
     graphs = [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
-
+    graphs = [nx.barabasi_albert_graph(n, 4)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'

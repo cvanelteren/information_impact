@@ -10,7 +10,7 @@ from numpy import *
 from matplotlib.pyplot import *
 from dataclasses import dataclass
 import pickle, pandas, os, re, json, datetime
-def extractData(dataDir):
+def extractData(dataDir, keys = None):
     """
     Provides a dictionary of the results
     The format is :
@@ -19,12 +19,10 @@ def extractData(dataDir):
     """
     #TODO :  make aggregate dataclass -> how to deal with multiple samples
     # current work around is bad imo
-
     data = {} # storage
-    # NOTE: this only works in python 3.6+ due to how dictionaries retain order
+    # Warning: this only works in python 3.6+ due to how dictionaries retain order
     if not dataDir.endswith('/'):
         dataDir += '/'
-    print(dataDir)
     filesDir = sorted(\
                      os.listdir(dataDir), \
                      key = lambda x: os.path.getctime(dataDir + x)\
@@ -41,10 +39,9 @@ def extractData(dataDir):
             # look for pulse
             pulse     = re.search("\{.*\}", file).group()
             tmp       = loadPickle(f'{dataDir}/{file}')
-
             # ensure backwards compatibility, store new format
             # should phase out over time
-            if type(tmp) == dict:
+            if isinstance(tmp, dict):
                 oldFormatConversion(dataDir, file, tmp)
 
             fileDict  = {pulse : [tmp]}

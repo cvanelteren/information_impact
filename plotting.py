@@ -48,7 +48,52 @@ def extractImpact(data):
 
 def c():
     close('all')
+    
+def pt_bayescount(Pr, Nt):
+    """Compute the support for analytic bias correction using the 
+    Bayesian approach of Panzeri and Treves (1996)
+    
+    :Parameters:
+      Pr : 1D aray
+        Probability vector
+      Nt : int
+        Number of trials
 
+    :Returns:
+      R : int
+        Bayesian estimate of support
+    
+    """
+    
+    # dimension of space
+    dim = Pr.size
+
+    # non zero probs only
+    PrNZ = Pr[Pr>np.finfo(np.float).eps]
+    Rnaive = PrNZ.size
+    
+    R = Rnaive
+    if Rnaive < dim:
+        Rexpected = Rnaive - ((1.0-PrNZ)**Nt).sum()
+        deltaR_prev = dim
+        deltaR = np.abs(Rnaive - Rexpected)
+        xtr = 0.0
+        while (deltaR < deltaR_prev) and ((Rnaive+xtr)<dim):
+            xtr = xtr+1.0
+            Rexpected = 0.0
+            # occupied bins
+            gamma = xtr*(1.0 - ((Nt/(Nt+Rnaive))**(1.0/Nt)))
+            Pbayes = ((1.0-gamma) / (Nt+Rnaive)) * (PrNZ*Nt+1.0)
+            Rexpected = (1.0 - (1.0-Pbayes)**Nt).sum()
+            # non-occupied bins
+            Pbayes = gamma / xtr
+            Rexpected = Rexpected + xtr*(1.0 - (1.0 - Pbayes)**Nt)
+            deltaR_prev = deltaR
+            deltaR = np.abs(Rnaive - Rexpected)
+        Rnaive = Rnaive + xtr - 1.0
+        if deltaR < deltaR_prev:
+            Rnaive += 1.0
+    return Rnaive
 
 def showIDTCENT(idt, model, cent = 'betweenness'):
     from functools import partial
