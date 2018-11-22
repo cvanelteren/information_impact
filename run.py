@@ -23,10 +23,10 @@ from time import time
 close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
-    repeats       = 1000
+    repeats       = 100
     deltas        = 30
     step          = 1
-    nSamples      = 1000
+    nSamples      = 100
     burninSamples = 100
     pulseSize     = 1
 
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     n = 10
     graphs = [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
-    graphs = [nx.barabasi_albert_graph(n, 4)]
+    graphs = [nx.path_graph(3)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'

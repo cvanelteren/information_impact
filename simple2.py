@@ -75,7 +75,7 @@ del data
 # %% extract root from samples
             
 # fit functions
-double = lambda x, a, b, c, d, e, f: a + b * exp(-c*x) + d * exp(- e * (x-f))
+double = lambda x, a, b, c, d, e, f: a + b * exp(-c*x) + d * exp(- e * (x-f))   
 single = lambda x, a, b, c : a + b * exp(-c * x)
 single_= lambda x, b, c : b * exp(-c * x)
 func   = single
@@ -89,7 +89,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -1)
+zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = 0)
 zd[zd < finfo(float).eps] = 0
 
