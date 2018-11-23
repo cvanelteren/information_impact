@@ -172,20 +172,20 @@ for c, i in zip( colors, aucs.T):
     ax.scatter(*mean(i, 1), marker = '^', color = c, edgecolors = 'k')
  # %% compute concistency
  
-bins = arange(-.5, model.nNodes + .5)
-cons = lambda x : nanmax(histogram(x, bins , density = True)[0])
-
-ranking, maxim = stats.rankData(aucs)
-consistency = array([ [cons(i) for i in j] for j in maxim.T])
-# plot consistency of the estimator
-naive = (maxim[...,0] == maxim[...,1])
-fig, ax = subplots()
-[ax.plot(thetas, c, alpha = .5) for c in consistency]
-ax.set_xlim(thetas[0], thetas[-1])
-ax.legend(labels = 'MI_max Impact_max ='.split(), bbox_to_anchor = (1.25, 1.0))
-ax.set_xscale('log'); # ax.set_yscale('log')
-setp(ax, **dict(xlabel = r'$\theta$', ylabel = 'Consistency', \
-                title = 'Max based on regression'))
+#bins = arange(-.5, model.nNodes + .5)
+#cons = lambda x : nanmax(histogram(x, bins , density = True)[0])
+#
+#ranking, maxim = stats.rankData(aucs)
+#consistency = array([ [cons(i) for i in j] for j in maxim.T])
+## plot consistency of the estimator
+#naive = (maxim[...,0] == maxim[...,1])
+#fig, ax = subplots()
+#[ax.plot(thetas, c, alpha = .5) for c in consistency]
+#ax.set_xlim(thetas[0], thetas[-1])
+#ax.legend(labels = 'MI_max Impact_max ='.split(), bbox_to_anchor = (1.25, 1.0))
+#ax.set_xscale('log'); # ax.set_yscale('log')
+#setp(ax, **dict(xlabel = r'$\theta$', ylabel = 'Consistency', \
+#                title = 'Max based on regression'))
 
 # %% frequency heatmaps consistency
 tmp = array([ \

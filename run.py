@@ -23,10 +23,10 @@ from time import time
 close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
-    repeats       = 100
+    repeats       = 10000
     deltas        = 30
     step          = 1
-    nSamples      = 100
+    nSamples      = 10000
     burninSamples = 100
     pulseSize     = 1
 
