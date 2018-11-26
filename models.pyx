@@ -83,7 +83,7 @@ class Model:
             interaction[nodeID] = neighborData[:, 1]
 
          # set class data
-        cdef np.ndarray nodeIDs  = np.array(list(mapping.values()))
+        cdef np.ndarray nodeIDs  = np.array(list(mapping.values()), dtype = np.int32)
         rmapping = {value : key for key, value in mapping.items()} # TODO: deprecated
 
         # standard model properties
@@ -102,7 +102,7 @@ class Model:
         self._mode          = mode
         self.nudgeMode      = nudgeMode
         self.sampleNodes    = dict(\
-                                single = functools.partial(np.random.choice, size = 1),\
+                                single = functools.partial(np.random.choice, size = 1, ),\
                                 async  = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
                                 sync   = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
                                 serial = np.sort\
@@ -171,14 +171,6 @@ class Model:
         # nodesToUpdate = np.array([self.sampleNodes[self.mode](self.nodeIDs) for i in range(nSamples * step + 1)])
         # init storage vector
         simulationResults         = np.zeros( (nSamples + 1, self.nNodes), dtype = self.states.dtype) # TODO: this should be a generator as well
-
-        # cdef long [:] state = self.states
-        # cdef long [:, ::1] sr = simulationResults
-        # cdef int n         = int(self.nNodes)
-
-        # for i in range(n):
-          # sr[0, i] = state[i]
-
         simulationResults[0, :]   = self.states # always store current state
         sampleCounter, stepCounter= 1, 1 # zero step is already done?
         if verbose : pbar = tqdm.tqdm(total = nSamples) # init progressbar

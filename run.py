@@ -23,8 +23,8 @@ from time import time
 close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
-    real          = True
-    repeats       = int(1e4) if real else 10000
+    real          = False
+    repeats       = int(1e4) if real else 100
     deltas        = 10       if real else 10
     step          = 1
     nSamples      = int(1e4) if real else 1000

@@ -133,7 +133,7 @@ one can do this for small graphs, but larger graphs will need tons of ram.
 '''
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def monteCarlo_alt(object model, dict snapshots,
+cpdef monteCarlo_alt(object model, dict snapshots,
                long deltas = 10,  long repeats = 11,
                bint parallel = True, \
                dict pulse = {}, str mode = 'source'):
@@ -150,21 +150,24 @@ def monteCarlo_alt(object model, dict snapshots,
    conditional = {}
    cdef np.ndarray value
    cdef tuple key
+   cdef np.ndarray s = np.array([k for k in snapshots], dtype = model.states.dtype)
    with mp.Pool(mp.cpu_count()) as p:
-       for result in p.imap( func, tqdm(snapshots), _CORE):
+       for result in p.imap( func, tqdm(s), _CORE):
            for key, value in result.items():
                conditional[key] = value
    return conditional
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
-                          pulse, snapshots, mode):
+cpdef dict parallelMonteCarlo_alt(\
+          long[:] startState, object model, int repeats,\
+          int deltas,\
+          dict pulse, dict snapshots, str mode):
   # global model, repeats, conditions, deltas, pulse, snapshots, mode
   # convert to binary state from decimal
   # flip list due to binary encoding
   # if isinstance(startState, tuple):
-  cdef np.ndarray [:] startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
+  # cdef np.ndarray [:] startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
   # r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
@@ -184,14 +187,14 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
 
   cdef int k, delta, node
   cdef dict _pulse # tmp storage
-  cdef long [:] nodeIDs  = model.nodeIDs
+  cdef int [:] nodeIDs  = model.nodeIDs
   cdef np.ndarray copyNudge
   # cdef np.ndarray r = np.array([\
   # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
   # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range((delta + 1) * repeats))
   cdef int counter = 0
   cdef str nudgeMode = model.nudgeMode
-  for k in range(repeats, nogil = 1):
+  for k in range(repeats):
     # start from the same point
     model.states = np.array(startState.copy(), dtype = model.states.dtype)
     _pulse = copy.copy(pulse)
@@ -227,8 +230,11 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
         # check stop conditions
         conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
                       nudgeMode == 'pulse')
-        if any(conditions):
-          _pulse = {}
+        if nudgeMode == 'pulse':
+          _pulse = 0
+        elif nudgeMode == 'pulse' and delta >= deltas //2:
+        # if any(conditions):
+          _pulse = 0
 
   return {tuple(startState) : out}
 
@@ -278,7 +284,7 @@ cowan
     cdef int j
     for k in range(repeats):
         # start from the same point
-        model.states = np.array(startState.copy(), dtype = model.states.dtype)
+        model.states = startState.copy()
         # res = model.simulate(deltas, 1, pulse)
 
         for delta in range(deltas):
