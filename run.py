@@ -36,6 +36,7 @@ if __name__ == '__main__':
     updateMethod  = 'single'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
 
+    print(mp.cpu_count())
 
 #     dataDir = 'Psycho' # relative path careful
 #     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
