@@ -39,7 +39,7 @@ class Ising(Model):
         if not hPresent:
             if verbose : print('external field not detected assuming 0')
             nx.set_node_attributes(graph, 0, 'H')
-        H  = np.zeros(self.nNodes, dtype = float)
+        H  = np.zeros(self.nNodes)
         for node, nodeID in self.mapping.items():
             H[nodeID] = graph.nodes()[node]['H']
 
@@ -132,25 +132,18 @@ class Ising(Model):
                 :flipEnergy: energy if node flips state
         '''
         return c_energy(node, states, self.edgeData[node], self.interaction[node], self.H)
-        # neighboridx      = self.edgeData[node]
-        # interaction      = self.interaction[node]
-        # neighborStates   = states[neighboridx]
-        # H                = self.H[node] * states[node]
-        # H                = 0
-        # H                = self.H[neighboridx].dot(neighborStates)
-        # computing (flip) energy per node
-        # cdef float H = 0
-        # loop declaration
-        # compute hamiltonian
-        # tmp = neighborStates.dot(interaction) / states[node]
-        # tmp = states[node] * neighborStates.dot(interaction)
-        # tmp = neighborStates.sum()
-
+        # cdef int [   :] neighboridx    = self.edgeData[node]
+        # cdef double [:] interaction    = self.interaction[node]
+        # cdef long [   :] neighborStates = states[neighboridx]
+        # cdef double [:] H              = self.H[neighboridx].dot(neighborStates)
+        # # computing (flip) energy per node
+        # cdef double tmp   = states[node] * neighborStates.dot(interaction)
+        #
         # energy     = -tmp - H # empty list sums to zero
-
-        # adding nudges
+        #
+        # # adding nudges
         # nudge       = self.nudges[node] * states[node]
-
+        #
         # energy     = energy - nudge # TODO: checks to not allow for multiple nudges
         # return energy
     # @jit
@@ -162,6 +155,8 @@ class Ising(Model):
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         '''
+
+
         states        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
         cdef long  N = len(nodesToUpdate)
         cdef long  n
@@ -293,9 +288,46 @@ class Ising(Model):
         Sets all nudges to zero
         '''
         self.nudges = np.zeros(self.nudges.shape)
-
+# @cython.boundscheck(False)
+# cdef np.ndarray c_updateState(int [:] nodesToUpdate,\
+# int [:] states,\
+# double [:] interactions,\
+# int [:] edgeData,\
+# double beta,\
+# double [:] H,\
+# str magSide,\
+# str mode ):
+#     '''
+#     Determines the flip probability
+#     p = 1/(1 + exp(-beta * delta energy))
+#     '''
+#
+#     states = states.copy() if mode == 'sync' else states # only copy if sync else alias
+#     cdef long N = len(nodesToUpdate)
+#     cdef int n, node
+#     cdef double energy
+#     cdef interaction
+#     cdef edgeDatum
+#
+#     for n in range(N):
+#       node        = nodesToUpdate[n]
+#       edgeDatum   = edgeData[node]
+#       interaction = interactions[node]
+#       energy      = c_energy(node, states, edgeDatum, interaction, H)
+#       # TODO: change this mess
+#       # # heatbath glauber
+#       # if self.updateMethod == 'glauber':
+#       tmp = -beta *  2 * energy
+#       # tmp = - self.beta * energy * 2
+#       tmp = 0 if np.isnan(tmp) else tmp
+#       p = 1 / ( 1 + exp(tmp) )
+#       # if rand() / float(INT_MAX) < p:
+#       # print(p, energy)
+#       if rand() / float(INT_MAX)  <= p:
+#         states[node] = -states[node]
+#     return states
 @cython.boundscheck(False)
-cdef double c_energy(int node, int [:] states,\
+cdef double c_energy(int node, np.ndarray[np.int64_t] states,\
                       int [:] edgeData,\
                       double [:] interaction,\
                       double [:] H):
@@ -313,11 +345,6 @@ cdef double c_energy(int node, int [:] states,\
     energy += _state * _inter * _edge + _H * _state
   energy *= -states[node]
   return energy
-
-
-
-
-
 
 
 

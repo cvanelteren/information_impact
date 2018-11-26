@@ -1,10 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Nov  5 10:37:09 2018
-
-@author: casper
-"""
-
-a = hex(12)
-print(a)
+fileName = 'test.txt'
+with open(fileName, 'r') as f:
+    unique = set()
+    for line in f.readlines():
+        unique = unique | set(line.split()[:2])
+print(unique)
+    
