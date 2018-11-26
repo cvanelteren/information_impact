@@ -18,7 +18,7 @@ from tqdm import tqdm   #progress bar
 
 # array = functools.partial(np.array, dtype = np.float16) # tmp hack
 
-cdef int _CORE = 1 # for imap
+cdef int _CORE = 2 # for imap
 INT16 = np.int16
 def checkDistribution():
     '''Warning statement'''
@@ -60,7 +60,7 @@ def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu
     # def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-cpdef parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
+def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
   '''
     Get snapshots by simlating for :nSamples:
     :step: gives how many steps are between samples
@@ -77,7 +77,8 @@ cpdef parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
   # for i in range(n)\
   #     )
   # cdef np.ndarray r = np.array([\
-  # model.sampleNodes[model.mode](model.nodeIDs)])
+  # model.sampleNodes[model.mode](model.nodeIDs)] for _ in range(n))
+  cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range(n))
   # for i in range(n))
   # simulate
   cdef int i
@@ -85,8 +86,9 @@ cpdef parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
       if i % step == 0:
           state = model.states
           snap[tuple(state)] = snap.get(tuple(state), 0) + 1
-      model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
+      # model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
       # model.updateState(r[i])
+      model.updateState(next(r))
   return snap
 
 @cython.boundscheck(False) # compiler directive
@@ -161,8 +163,8 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   # global model, repeats, conditions, deltas, pulse, snapshots, mode
   # convert to binary state from decimal
   # flip list due to binary encoding
-  if type(startState) is tuple:
-      startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
+  # if isinstance(startState, tuple):
+  cdef np.ndarray [:] startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
   # r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
@@ -186,9 +188,10 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   cdef np.ndarray copyNudge
   # cdef np.ndarray r = np.array([\
   # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
+  # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range((delta + 1) * repeats))
   cdef int counter = 0
   cdef str nudgeMode = model.nudgeMode
-  for k in range(repeats):
+  for k in range(repeats, nogil = 1):
     # start from the same point
     model.states = np.array(startState.copy(), dtype = model.states.dtype)
     _pulse = copy.copy(pulse)
@@ -216,6 +219,7 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
       # r = next(nodesToUpdate)
       model.updateState(model.sampleNodes[model.mode](nodeIDs))
       # model.updateState(r[counter])
+      # model.updateState(next(r))
       counter += 1
       # check if pulse turn-off
       if _pulse:
