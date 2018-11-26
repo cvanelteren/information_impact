@@ -76,8 +76,8 @@ cpdef parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
   # model.sampleNodes[model.mode](model.nodeIDs)\
   # for i in range(n)\
   #     )
-  cdef np.ndarray r = np.array([\
-  model.sampleNodes[model.mode](model.nodeIDs)])
+  # cdef np.ndarray r = np.array([\
+  # model.sampleNodes[model.mode](model.nodeIDs)])
   # for i in range(n))
   # simulate
   cdef int i
@@ -85,8 +85,8 @@ cpdef parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
       if i % step == 0:
           state = model.states
           snap[tuple(state)] = snap.get(tuple(state), 0) + 1
-      # model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
-      model.updateState(r[i])
+      model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
+      # model.updateState(r[i])
   return snap
 
 @cython.boundscheck(False) # compiler directive
@@ -184,8 +184,8 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   cdef dict _pulse # tmp storage
   cdef long [:] nodeIDs  = model.nodeIDs
   cdef np.ndarray copyNudge
-  cdef np.ndarray r = np.array([\
-  model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
+  # cdef np.ndarray r = np.array([\
+  # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
   cdef int counter = 0
   cdef str nudgeMode = model.nudgeMode
   for k in range(repeats):
@@ -214,8 +214,8 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
     #
     #   # update model
       # r = next(nodesToUpdate)
-      # model.updateState(model.sampleNodes[model.mode](nodeIDs))
-      model.updateState(r[counter])
+      model.updateState(model.sampleNodes[model.mode](nodeIDs))
+      # model.updateState(r[counter])
       counter += 1
       # check if pulse turn-off
       if _pulse:
