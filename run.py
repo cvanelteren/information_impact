@@ -23,17 +23,18 @@ from time import time
 close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
-    repeats       = int(1e4)
-    deltas        = 50 
+    real          = False
+    repeats       = int(1e4) if real else 1000
+    deltas        = 50  if real else 10
     step          = 1
-    nSamples      = int(1e5)
+    nSamples      = int(1e5) if real else 1000
     burninSamples = 100
     pulseSize     = 1
 
-    numIter       = int(1e2) 
+    numIter       = int(1e2)  if real else 10
     magSide       = 'neg'
     updateMethod  = 'single'
-    CHECK         = [.9, .8, .7]   # match magnetiztion at 80 percent of max
+    CHECK         = [.9, .8, .7] if real else [.9]  # match magnetiztion at 80 percent of max
 
 
 #     dataDir = 'Psycho' # relative path careful
@@ -51,6 +52,7 @@ if __name__ == '__main__':
 
     n = 10
     graphs = [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
+    graphs = [nx.path_graph(3)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
@@ -120,13 +122,13 @@ if __name__ == '__main__':
 
 
         for t in temperatures:
-            print(f'Setting {t}')
+            print(f'{time()} Setting {t}')
             model.t = t
             model.reset()
             for i in range(numIter):
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
-                print('Getting snapshots')
+                print(f'{time()} Getting snapshots')
                 # snapshots = {tuple(infcy.encodeState(i))}
                 snapshots   = infcy.getSnapShots(model, nSamples, \
                                                parallel      = cpu_count(), \
@@ -146,7 +148,7 @@ if __name__ == '__main__':
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
                  # deltas = deltas, repeats = repeats, pulse = pulse, mode = 'source')
 
-                print('Computing MI')
+                print(f'{time()} Computing MI')
                 px, mi = infcy.mutualInformation_alt(\
                 conditional, deltas, snapshots, model)
                 # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
@@ -163,7 +165,7 @@ if __name__ == '__main__':
                     conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
                                             deltas = deltas, repeats = repeats,\
                                             mode = mode, pulse = pulse)
-                    print('Computing MI')
+                    print(f'{time()} Computing MI')
                     px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                     fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'

@@ -64,8 +64,9 @@ for condition, samples in data[t].items():
             control = data[t]['{}'][idx].px
             impact = stats.hellingerDistance(\
                              sample.px, control).mean(-1)
-#            impact = stats.KL(control, sample.px).mean(-1)
+            impact = stats.KL(control, sample.px).mean(-1)
             impact = impact[deltas // 2  : ][None, :].T
+            print(impact)
             # TODO: check if this works with tuples (not sure)
             jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                 for key in model.mapping\

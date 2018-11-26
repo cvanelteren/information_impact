@@ -1,3 +1,4 @@
+
 from distutils.core import setup, Extension
 from Cython.Build import cythonize
 import numpy
@@ -10,7 +11,7 @@ for file in os.listdir(os.getcwd()):
         setup(\
         ext_modules = cythonize(\
                     file, annotate = True,
-                    )\
+                    language_level = 3)\
                     , \
         include_dirs =[numpy.get_include()]\
         )

@@ -18,7 +18,7 @@ from tqdm import tqdm   #progress bar
 
 # array = functools.partial(np.array, dtype = np.float16) # tmp hack
 
-cdef int _CORE = 500 # for imap
+cdef int _CORE = 1 # for imap
 INT16 = np.int16
 def checkDistribution():
     '''Warning statement'''
@@ -144,7 +144,7 @@ def monteCarlo_alt(object model, dict snapshots,
                             )
    conditional = {}
    with mp.Pool(mp.cpu_count()) as p:
-       for result in p.imap( func, tqdm(snapshots), 10):
+       for result in p.imap( func, tqdm(snapshots), _CORE):
            for key, value in result.items():
                conditional[key] = value
    return conditional
@@ -170,29 +170,55 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   out = np.zeros((deltas + 1, model.nNodes, model.nStates))
 
   # map from node state to idx
-  sortr = {i : idx for idx, i in enumerate(model.agentStates)}
+  cdef dict sortr = {i : idx for idx, i in enumerate(model.agentStates)}
 
   # declarations
   cdef int noteState
   cdef int node
   cdef int nodeStateIdx
   cdef np.ndarray tmp
-
+  cdef object nodesToUpdate = \
+  (\
+  model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1) * repeats)\
+  ) # convert to g
   # start repeats
   # samples = np.zeros((repeats, deltas + 1, model.nNodes))
   for k in range(repeats):
       # start from the same point
-      model.states = np.array(startState.copy(), dtype = model.states.dtype)
-      tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
-      # idx = np.array([np.digitize(i, model.agentStates, right = True)\
-      # for i in tmp])
-      # out[idx] += 1/repeats
-      # samples[k, :] = tmp
-      for idx, state in enumerate(tmp):
-        for node in nodeIDs:
-            nodeState    = state[node]
-            nodeStateIdx = sortr[nodeState]
-            out[idx, node, nodeStateIdx] += 1/repeats
+    model.states = np.array(startState.copy(), dtype = model.states.dtype)
+    _pulse = copy.copy(pulse)
+
+    # _TMP_
+    # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
+    # for idx, state in enumerate(tmp):
+      # for node in nodeIDs:
+        # nodeState    = state[node]
+        # nodeStateIdx = sortr[nodeState]
+        # out[idx, node, nodeStateIdx] += 1/repeats
+
+    for delta in range(deltas + 1):
+      # bin data
+      state = model.states
+      for node, state in enumerate(state):
+        out[delta, node, sortr[state]] += 1 / float(repeats)
+      # assign nudges if present
+      if _pulse:
+        copyNudge = model.nudges.copy()
+        for node, nudge in _pulse.items():
+          model.nudges[model.mapping[node]] = nudge
+      # update model
+      r = next(nodesToUpdate)
+      model.updateState(r)
+
+      # check if pulse turn-off
+      if _pulse:
+        model.nudges = copyNudge
+        # check stop conditions
+        conditions = (model.nudgeMode == 'constant' and delta >= deltas // 2,\
+                      model.nudgeMode == 'pulse')
+        if any(conditions):
+          _pulse = {}
+
   return {tuple(startState) : out}
 
 @cython.boundscheck(False) # compiler directive
