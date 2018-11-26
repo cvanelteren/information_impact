@@ -35,7 +35,6 @@ if __name__ == '__main__':
     magSide       = 'neg'
     updateMethod  = 'single'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
-
     print(mp.cpu_count())
 
 #     dataDir = 'Psycho' # relative path careful
