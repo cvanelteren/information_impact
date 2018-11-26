@@ -23,17 +23,17 @@ from time import time
 close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
-    repeats       = 10000
-    deltas        = 30
+    repeats       = int(1e4)
+    deltas        = 50 
     step          = 1
-    nSamples      = 10000
+    nSamples      = int(1e5)
     burninSamples = 100
     pulseSize     = 1
 
-    numIter       = 10
+    numIter       = int(1e2) 
     magSide       = 'neg'
     updateMethod  = 'single'
-    CHECK         = [.9]   # match magnetiztion at 80 percent of max
+    CHECK         = [.9, .8, .7]   # match magnetiztion at 80 percent of max
 
 
 #     dataDir = 'Psycho' # relative path careful
@@ -51,7 +51,6 @@ if __name__ == '__main__':
 
     n = 10
     graphs = [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
-    graphs = [nx.path_graph(3)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
