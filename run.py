@@ -24,17 +24,17 @@ close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
     real          = False
-    repeats       = int(1e4) if real else 1000
-    deltas        = 50  if real else 10
+    repeats       = int(1e4) if real else 10000
+    deltas        = 50       if real else 10
     step          = 1
-    nSamples      = int(1e5) if real else 1000
-    burninSamples = 100
+    nSamples      = int(1e4) if real else 1000
+    burninSamples = 10
     pulseSize     = 1
 
-    numIter       = int(1e2)  if real else 10
+    numIter       = int(5e1) if real else 5
     magSide       = 'neg'
     updateMethod  = 'single'
-    CHECK         = [.9, .8, .7] if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
 
 
 #     dataDir = 'Psycho' # relative path careful
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     n = 10
     graphs = [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
-    graphs = [nx.path_graph(3)]
+    # graphs = [nx.path_graph(3)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
@@ -139,6 +139,7 @@ if __name__ == '__main__':
 
                 pulses = {node : pulseSize for node in model.graph.nodes()}
                 pulse  = {}
+                print(f'{time()}')
                 conditional = infcy.monteCarlo_alt(\
                                                model  = model, snapshots = snapshots,\
                                                deltas = deltas, repeats  = repeats,\

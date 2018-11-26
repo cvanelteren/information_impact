@@ -60,7 +60,7 @@ def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu
     # def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
+cpdef parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
   '''
     Get snapshots by simlating for :nSamples:
     :step: gives how many steps are between samples
@@ -72,18 +72,21 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
   # init generator
   cdef int n = int(nSamples * step)
   # pre-define what to sample
-  r = (\
-  model.sampleNodes[model.mode](model.nodeIDs)\
-  for i in range(n)\
-      )
-
+  # r = (\
+  # model.sampleNodes[model.mode](model.nodeIDs)\
+  # for i in range(n)\
+  #     )
+  cdef np.ndarray r = np.array([\
+  model.sampleNodes[model.mode](model.nodeIDs)])
+  # for i in range(n))
   # simulate
   cdef int i
   for i in range(n):
       if i % step == 0:
           state = model.states
           snap[tuple(state)] = snap.get(tuple(state), 0) + 1
-      model.updateState(next(r))
+      # model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
+      model.updateState(r[i])
   return snap
 
 @cython.boundscheck(False) # compiler directive
@@ -143,6 +146,8 @@ def monteCarlo_alt(object model, dict snapshots,
                             pulse = pulse\
                             )
    conditional = {}
+   cdef np.ndarray value
+   cdef tuple key
    with mp.Pool(mp.cpu_count()) as p:
        for result in p.imap( func, tqdm(snapshots), _CORE):
            for key, value in result.items():
@@ -151,7 +156,7 @@ def monteCarlo_alt(object model, dict snapshots,
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
+cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
                           pulse, snapshots, mode):
   # global model, repeats, conditions, deltas, pulse, snapshots, mode
   # convert to binary state from decimal
@@ -161,30 +166,30 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   # r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
-  cdef int k
-  cdef int delta
-  cdef int j
-  cdef long [:] nodeIDs  = model.nodeIDs
 
   # output time x nodes x node states
-  out = np.zeros((deltas + 1, model.nNodes, model.nStates))
+  cdef np.ndarray out = np.zeros((deltas + 1, model.nNodes, model.nStates))
 
   # map from node state to idx
   cdef dict sortr = {i : idx for idx, i in enumerate(model.agentStates)}
 
   # declarations
-  cdef int noteState
-  cdef int node
-  cdef int nodeStateIdx
-  cdef np.ndarray tmp
-  cdef object nodesToUpdate = \
-  (\
-  model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1) * repeats)\
-  ) # convert to g
-  # start repeats
-  # samples = np.zeros((repeats, deltas + 1, model.nNodes))
+
+  # cdef object nodesToUpdate = \
+  # (\
+  # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1) * repeats)\
+  # )
+
+  cdef int k, delta, node
+  cdef dict _pulse # tmp storage
+  cdef long [:] nodeIDs  = model.nodeIDs
+  cdef np.ndarray copyNudge
+  cdef np.ndarray r = np.array([\
+  model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
+  cdef int counter = 0
+  cdef str nudgeMode = model.nudgeMode
   for k in range(repeats):
-      # start from the same point
+    # start from the same point
     model.states = np.array(startState.copy(), dtype = model.states.dtype)
     _pulse = copy.copy(pulse)
 
@@ -194,7 +199,7 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
       # for node in nodeIDs:
         # nodeState    = state[node]
         # nodeStateIdx = sortr[nodeState]
-        # out[idx, node, nodeStateIdx] += 1/repeats
+        # out[idx, node, nodeStateIdx] += 1 / repeats
 
     for delta in range(deltas + 1):
       # bin data
@@ -203,19 +208,21 @@ def parallelMonteCarlo_alt(startState, model, repeats, deltas,\
         out[delta, node, sortr[state]] += 1 / float(repeats)
       # assign nudges if present
       if _pulse:
-        copyNudge = model.nudges.copy()
+        copyNudge = model.nudges.copy() # story nudges already there
         for node, nudge in _pulse.items():
-          model.nudges[model.mapping[node]] = nudge
-      # update model
-      r = next(nodesToUpdate)
-      model.updateState(r)
-
+          model.nudges[model.mapping[node]] = nudge # TODO: either set or add
+    #
+    #   # update model
+      # r = next(nodesToUpdate)
+      # model.updateState(model.sampleNodes[model.mode](nodeIDs))
+      model.updateState(r[counter])
+      counter += 1
       # check if pulse turn-off
       if _pulse:
         model.nudges = copyNudge
         # check stop conditions
-        conditions = (model.nudgeMode == 'constant' and delta >= deltas // 2,\
-                      model.nudgeMode == 'pulse')
+        conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
+                      nudgeMode == 'pulse')
         if any(conditions):
           _pulse = {}
 

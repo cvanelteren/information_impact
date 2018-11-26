@@ -11,7 +11,7 @@ from matplotlib.pyplot import *
 from time import sleep
 
 import IO, os, plotting as plotz, stats
-
+close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 extractThis      = IO.newest(dataPath)[-1]
@@ -173,101 +173,38 @@ for c, i in zip( colors, aucs.T):
     ax.scatter(*mean(i, 1), marker = '^', color = c, edgecolors = 'k')
  # %% compute concistency
  
-#bins = arange(-.5, model.nNodes + .5)
-#cons = lambda x : nanmax(histogram(x, bins , density = True)[0])
-#
-#ranking, maxim = stats.rankData(aucs)
-#consistency = array([ [cons(i) for i in j] for j in maxim.T])
-## plot consistency of the estimator
-#naive = (maxim[...,0] == maxim[...,1])
-#fig, ax = subplots()
-#[ax.plot(thetas, c, alpha = .5) for c in consistency]
-#ax.set_xlim(thetas[0], thetas[-1])
-#ax.legend(labels = 'MI_max Impact_max ='.split(), bbox_to_anchor = (1.25, 1.0))
-#ax.set_xscale('log'); # ax.set_yscale('log')
-#setp(ax, **dict(xlabel = r'$\theta$', ylabel = 'Consistency', \
-#                title = 'Max based on regression'))
+bins = arange(-.5, model.nNodes + .5)
+cons = lambda x : nanmax(histogram(x, bins , density = True)[0])
+
+ranking, maxim = stats.rankData(aucs)
+consistency = array([ [cons(i) for i in j] for j in maxim.T])
+# plot consistency of the estimator
+naive = (maxim[...,0] == maxim[...,1])
 
 # %% frequency heatmaps consistency
-tmp = array([ \
-     [\
-      histogram(j, bins = bins, density = True)[0]\
-      for j in i.T ]
-     for i in maxim.T])
-fig, ax = subplots(1, 2, sharey = 'all')
-mainax  = fig.add_subplot(111, frameon = False, 
-                          xticks = [], yticks = [])
-for axi, t in zip(ax, tmp):
-    h = axi.imshow(t.T, aspect = 'auto', vmin = 0, vmax = 1)
-colorbar(h, ax = axi, label = 'frequency')
-mainax.set_xlabel(r'$\theta$', labelpad = 30)   
+#tmp = array([ \
+#     [\
+#      histogram(j, bins = bins, density = True)[0]\
+#      for j in i.T ]
+#     for i in maxim.T])
+#fig, ax = subplots(1, 2, sharey = 'all')
+#mainax  = fig.add_subplot(111, frameon = False, 
+#                          xticks = [], yticks = [])
+#for axi, t in zip(ax, tmp):
+#    h = axi.imshow(t.T, aspect = 'auto', vmin = 0, vmax = 1)
+#colorbar(h, ax = axi, label = 'frequency')
+#mainax.set_xlabel(r'$\theta$', labelpad = 30)   
 # %%
-fig, ax = subplots(2)
-for axi, d in zip(ax, maxim.T):
-    h = axi.imshow(\
-       d.T, aspect = 'auto', vmax = nanmax(d), vmin = nanmin(d))
-    s = d.T.shape
-    colorbar(h, ax = axi)
-    axi.grid(which = 'minor', color = 'k', linestyle = '-', linewidth = 2)
-
-# %% bar graph of the ranking
-fig, ax = subplots(2)
-x = linspace(0, deltas // 2 + 1, 1000)
-
-# for all conditions
-for axi, tmp in zip(ax, COEFFS):
-    # for all samples
-    for tmpi in tmp:
-        [axi.plot(x, func(x, *c), color = col, alpha = .3) for idx, (col, c) in \
-         enumerate(zip(colors, tmpi))]
-#    axi.set_yscale('log')
-#ax.set_yscale('log')
-# %%
-tmp = aucsAbs.mean(0)
-fig, ax = subplots()
-[ax.scatter(x ,y, alpha = .7) for x, y in tmp.T]     
-# %% 
-#from mpl_toolkits.mplot3d import Axes3D 
-#fig, ax = subplots()
-#for s in aucsAbs:
-#    for nodeData, c, in zip(s, colors):
-#        ax.scatter(*nodeData.T, color = c, alpha = .5)
-#setp(ax, **dict(xlabel = 'mi auc', ylabel = 'impact auc'))
-
-# %%
-from scipy.stats.mstats import rankdata
-tmp = zeros(rootsAbs.shape)
-r   = zeros((NSAMPLES, THETAS, COND))
-r[:]= nan
-
-for sample in range(NSAMPLES):
-    for theta in range(THETAS):
-        for cond in range(COND):
-            d = rootsAbs[sample,theta,cond]
-            d = np.ma.masked_invalid(d)
-            try:
-                rr  = rankdata(d)
-                tmp[i, :, j, k] = rr
-                if unique(rr).size > 1:
-                    print(rr)
-                    r[i, j, k] = nanargmax(rr)
-            except:
-                continue
-c = zeros(r.shape[1:])
-c[:]= nan
-for i in range(THETAS):
-    for j in range(COND):
-        t = r[:, i, j]
-        t = t[t != nan]
-        c[i, j] = nanmax(histogram(t, bins, density = True)[0])
-fig, ax = subplots()
-ax.plot(thetas, c)
-d = nanmean(r[..., 0] == r[...,1], axis = 0)
-ax.plot(thetas, d)
-ax.set_xscale('log')
+#fig, ax = subplots(2)
+#for axi, d in zip(ax, maxim.T):
+#    h = axi.imshow(\
+#       d.T, aspect = 'auto', vmax = nanmax(d), vmin = nanmin(d))
+#    s = d.T.shape
+#    colorbar(h, ax = axi)
+#    axi.grid(which = 'minor', color = 'k', linestyle = '-', linewidth = 2)
 
 
 # %%
-fig, ax = subplots()
-tmp = nanmean(aucsAbs, 0)
-[ax.scatter(*x) for x in tmp.T]
+
+
+# %%
