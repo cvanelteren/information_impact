@@ -163,8 +163,8 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   # global model, repeats, conditions, deltas, pulse, snapshots, mode
   # convert to binary state from decimal
   # flip list due to binary encoding
-  # if isinstance(startState, tuple):
-  cdef np.ndarray [:] startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
+  if isinstance(startState, tuple):
+    startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
   # r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
@@ -191,7 +191,7 @@ cpdef parallelMonteCarlo_alt(startState, model, repeats, deltas,\
   # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range((delta + 1) * repeats))
   cdef int counter = 0
   cdef str nudgeMode = model.nudgeMode
-  for k in range(repeats, nogil = 1):
+  for k in range(repeats):
     # start from the same point
     model.states = np.array(startState.copy(), dtype = model.states.dtype)
     _pulse = copy.copy(pulse)

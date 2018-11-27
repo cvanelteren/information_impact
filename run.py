@@ -23,8 +23,8 @@ from time import time
 close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
-    real          = True
-    repeats       = int(1e4) if real else 10000
+    real          = 0
+    repeats       = int(1e4) if real else 1000
     deltas        = 10       if real else 10
     step          = 1
     nSamples      = int(1e4) if real else 1000
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     n = 10
     graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
-    # graphs = [nx.path_graph(3)]
+    graphs = [nx.path_graph(3)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
