@@ -170,7 +170,7 @@ class Model:
         nodesToUpdate = np.array([self.sampleNodes[self.mode](self.nodeIDs) for i in range(nSamples * step + 1)], dtype = long, order = 'F')
         # init storage vector
         simulationResults         = np.zeros( \
-        (nSamples + 1, self.nNodes), dtype = self.states.dtype, order = 'C') # TODO: this should be a generator as well
+        (nSamples + 1, self.nNodes), dtype = self.statesDtype, order = 'C') # TODO: this should be a generator as well
 
         # cdef long [:] state = self.states
         # cdef long [:, ::1] sr = simulationResults

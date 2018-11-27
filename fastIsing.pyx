@@ -49,7 +49,8 @@ class Ising(Model):
         self.betaThreshold  = betaThreshold
         self.verbose        = verbose
         self._t             = temperature
-        self.states         = np.int64(self.states) # enforce low memory
+        self.statesDtype    = np.int64
+        self.states         = self.statesDtype(self.states) # enforce low memory
         self.magSide        = magSide
 
         # define the update method
@@ -157,27 +158,25 @@ class Ising(Model):
         '''
 
 
-        states        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
+        cdef long [:] states           = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
+        cdef long [:] newstates        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
         cdef long  N = len(nodesToUpdate)
         cdef long  n
         cdef long node
-        cdef double energy
-        cdef double flipEnergy
+        cdef double energy, p
+        cdef calcE = self.energy
+
         for n in range(N):
           node = nodesToUpdate[n]
-
-          energy = self.energy(node, states)
+          energy = calcE(node, states)
           # TODO: change this mess
           # # heatbath glauber
           # if self.updateMethod == 'glauber':
-          tmp = -self.beta *  2 * energy
           # tmp = - self.beta * energy * 2
-          tmp = 0 if np.isnan(tmp) else tmp
-          p = 1 / ( 1 + np.exp(tmp) )
-          # if rand() / float(INT_MAX) < p:
-          # print(p, energy)
-          if np.random.rand() < p:
-            states[node] = -states[node]
+          p = 1 / ( 1 + np.exp(-beta *  2 * energy) )
+          # if np.random.rand() < p:
+          if rand() / float(INT_MAX) < p: # faster
+            newstates[node] = -states[node]
 
           # elif self.updateMethod == 'metropolis':
             # MCMC moves
@@ -192,12 +191,12 @@ class Ising(Model):
           #   if rand() / float(INT_MAX)  <= p:
           #     states[node] = -states[node]
         # TODO: ugly
-        if self.magSide == 'neg':
-          self.states = states  if states.mean() <= 0 else -states
-        elif self.magSide == 'pos':
-          self.states = -states  if states.mean() <= 0 else states
-        else:
-          self.states = states
+        mu = np.mean(newstates)
+        self.states = newstates
+        cdef int idx = 1
+        if mu < 0 and magSide == 'pos' or mu > 0 and magSide == 'neg':
+            idx = -1
+        self.states *= idx
         return self.states
 
     def computeProb(self):
@@ -363,7 +362,7 @@ def matchMagnetization(model, t, nSamples, burninSamples):
   compute in parallel the magnetization
   '''
   model.t      = t # update temperature
-  model.states = -np.ones(model.nNodes, dtype = model.states.dtype) # rest to ones; only interested in how mag is kept
+  model.states = -np.ones(model.nNodes, dtype = model.statesDtype) # rest to ones; only interested in how mag is kept
   # self.reset()
   model.burnin(burninSamples)
   res = model.simulate(nSamples)

@@ -150,7 +150,7 @@ cpdef monteCarlo_alt(object model, dict snapshots,
    conditional = {}
    cdef np.ndarray value
    cdef tuple key
-   cdef np.ndarray s = np.array([k for k in snapshots], dtype = model.states.dtype)
+   cdef np.ndarray s = np.array([k for k in snapshots], dtype = model.statesDtype)
    with mp.Pool(mp.cpu_count()) as p:
        for result in p.imap( func, tqdm(s), _CORE):
            for key, value in result.items():
@@ -167,7 +167,7 @@ cpdef dict parallelMonteCarlo_alt(\
   # convert to binary state from decimal
   # flip list due to binary encoding
   # if isinstance(startState, tuple):
-  # cdef np.ndarray [:] startState = np.array(startState, dtype = model.states.dtype) # convert back to numpy array
+  # cdef np.ndarray [:] startState = np.array(startState, dtype = model.statesDtype) # convert back to numpy array
   # r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
   cdef dict conditional = {}
 
@@ -196,7 +196,7 @@ cpdef dict parallelMonteCarlo_alt(\
   cdef str nudgeMode = model.nudgeMode
   for k in range(repeats):
     # start from the same point
-    model.states = np.array(startState.copy(), dtype = model.states.dtype)
+    model.states = np.array(startState.copy(), dtype = model.statesDtype)
     _pulse = copy.copy(pulse)
 
     # _TMP_
@@ -275,7 +275,7 @@ cowan
     # convert to binary state from decimal
     # flip list due to binary encoding
     if type(startState) is tuple:
-        startState = np.array(startState, dtype = mode.states.dtype)
+        startState = np.array(startState, dtype = mode.statesDtype)
     r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
     cdef dict conditional = {}
 

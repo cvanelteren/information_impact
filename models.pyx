@@ -170,7 +170,7 @@ class Model:
         (self.sampleNodes[self.mode](self.nodeIDs) for _ in range(nSamples * step + 1)) # convert to generator
         # nodesToUpdate = np.array([self.sampleNodes[self.mode](self.nodeIDs) for i in range(nSamples * step + 1)])
         # init storage vector
-        simulationResults         = np.zeros( (nSamples + 1, self.nNodes), dtype = self.states.dtype) # TODO: this should be a generator as well
+        simulationResults         = np.zeros( (nSamples + 1, self.nNodes), dtype = self.statesDtype) # TODO: this should be a generator as well
         simulationResults[0, :]   = self.states # always store current state
         sampleCounter, stepCounter= 1, 1 # zero step is already done?
         if verbose : pbar = tqdm.tqdm(total = nSamples) # init progressbar
