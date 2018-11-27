@@ -72,7 +72,6 @@ for condition, samples in data[t].items():
                 for key in model.mapping\
                 for j in re.findall(str(key), re.sub(':(.*?)\}', '', condition))]
             dd[idx, jdx, ...,  1] = impact.squeeze().T
-del data       
 # %% extract root from samples
             
 # fit functions

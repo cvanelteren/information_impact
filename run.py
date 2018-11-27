@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     n = 10
     graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
-    # graphs = [nx.path_graph(3)]
+    graphs = [nx.path_graph(3)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
@@ -92,11 +92,12 @@ if __name__ == '__main__':
             temps = linspace(.1, 10, 100)
 
             mag, sus = model.matchMagnetization(  temps = temps,\
-             n = 100, burninSamples = 0)
+             n = 1000, burninSamples = 0)
+
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
             # func = lambda x, a, b, c : a + b*exp(-c * x)
-            a, b = scipy.optimize.curve_fit(func, temps, mag, maxfev = 10000)
+            a, b = scipy.optimize.curve_fit(func, temps, mag.squeeze(), maxfev = 10000)
 
             # run the simulation per temperature
             temperatures = array([])

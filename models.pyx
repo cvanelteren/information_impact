@@ -12,6 +12,10 @@ import cython
 # TODO: add sync, async and single update methods [done]
 DTYPE = np.int
 ctypedef np.int DTYPE_T
+from libcpp.map cimport map
+from libcpp.string cimport string
+from libcpp.vector cimport vector
+from cython.operator cimport dereference, preincrement
 class Model:
     def __init__(self, graph, agentStates, mode = 'async', verbose = False, nudgeMode = 'constant'):
         '''
@@ -52,7 +56,8 @@ class Model:
 
 
         # use graph nodes as nodeID for lattice you get tuples for instance
-        mapping = {node: nodeID for nodeID, node in enumerate(graph.nodes())} # hashmap
+        cdef dict mapping  = {node: nodeID for nodeID, node in enumerate(graph.nodes())} # hashmap
+        cdef dict rmapping = {value : key for key, value in mapping.items()} # TODO: deprecated
         if type(graph) is nx.Graph:
             connecting = graph.neighbors
         elif type(graph) is nx.DiGraph:
@@ -60,11 +65,11 @@ class Model:
         else:
             raise TypeError('Graph type not understood')
 
-        nNodes  = graph.number_of_nodes()
+        cdef int nNodes  = graph.number_of_nodes()
         cdef np.ndarray states     = np.zeros(nNodes)     # store state, H
 #        edgeData   = zeros(nNodes, dtype = object)  # contains neighbors and weights [variable length]
-        edgeData   = {}
-        interaction= {}
+        cdef dict _edgeData   = {}
+        cdef dict _interaction= {}
         cdef np.ndarray nudges     = np.zeros(nNodes, dtype = object)  # contains the nudge on a node [node x nudges]
 
         # iterate over the dict, we need to keep track of the mapping
@@ -79,12 +84,15 @@ class Model:
                 else:
                     J = graph[neighbor][node]['weight']
                 neighborData[idx, :] = mapping[neighbor], J
-            edgeData[nodeID]    = np.int32(neighborData[:, 0])
-            interaction[nodeID] = neighborData[:, 1]
+            _edgeData[nodeID]    = np.int32(neighborData[:, 0])
+            _interaction[nodeID] = neighborData[:, 1]
+        # cdef map[long, vector[long]] edgeData       = _edgeData
+        # cdef map[long, vector[double]] interaction  = _interaction
+        edgeData = _edgeData
+        interaction = _interaction
 
          # set class data
         cdef np.ndarray nodeIDs  = np.array(list(mapping.values()), dtype = np.int32)
-        rmapping = {value : key for key, value in mapping.items()} # TODO: deprecated
 
         # standard model properties
         # TODO: make some of this private [partly done]

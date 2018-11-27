@@ -18,7 +18,7 @@ from tqdm import tqdm   #progress bar
 
 # array = functools.partial(np.array, dtype = np.float16) # tmp hack
 
-cdef int _CORE = 2 # for imap
+cdef int _CORE = 1 # for imap
 INT16 = np.int16
 def checkDistribution():
     '''Warning statement'''
@@ -198,60 +198,60 @@ cpdef dict parallelMonteCarlo_alt(\
     # start from the same point
     model.states = np.array(startState.copy(), dtype = model.statesDtype)
     _pulse = copy.copy(pulse)
+    # print(pulse)
 
-    # _TMP_
-    # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
-    # for idx, state in enumerate(tmp):
-      # for node in nodeIDs:
-        # nodeState    = state[node]
-        # nodeStateIdx = sortr[nodeState]
-        # out[idx, node, nodeStateIdx] += 1 / repeats
+    tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
+    for idx, state in enumerate(tmp):
+      for node in nodeIDs:
+        nodeState    = state[node]
+        nodeStateIdx = sortr[nodeState]
+        out[idx, node, nodeStateIdx] += 1 / repeats
 
-    for delta in range(deltas + 1):
-      # bin data
-      state = model.states
-      for node, state in enumerate(state):
-        out[delta, node, sortr[state]] += 1 / float(repeats)
-      # assign nudges if present
-      if _pulse:
-        copyNudge = model.nudges.copy() # story nudges already there
-        for node, nudge in _pulse.items():
-          model.nudges[model.mapping[node]] = nudge # TODO: either set or add
-    #
-    #   # update model
-      # r = next(nodesToUpdate)
-      model.updateState(model.sampleNodes[model.mode](nodeIDs))
-      # model.updateState(r[counter])
-      # model.updateState(next(r))
-      counter += 1
-      # check if pulse turn-off
-      if _pulse:
-        model.nudges = copyNudge
-        # check stop conditions
-        conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
-                      nudgeMode == 'pulse')
-        if nudgeMode == 'pulse':
-          _pulse = 0
-        elif nudgeMode == 'pulse' and delta >= deltas //2:
-        # if any(conditions):
-          _pulse = 0
+    # for delta in range(deltas + 1):
+    #   # bin data
+    #   state = model.states
+    #   for node, state in enumerate(state):
+    #     out[delta, node, sortr[state]] += 1 / float(repeats)
+    #   # assign nudges if present
+    #   if _pulse:
+    #     copyNudge = model.nudges.copy() # story nudges already there
+    #     for node, nudge in _pulse.items():
+    #       model.nudges[model.mapping[node]] = nudge # TODO: either set or add
+    # #
+    # #   # update model
+    #   # r = next(nodesToUpdate)
+    #   model.updateState(model.sampleNodes[model.mode](nodeIDs))
+    #   # model.updateState(r[counter])
+    #   # model.updateState(next(r))
+    #   counter += 1
+    #   # check if pulse turn-off
+    #   if _pulse:
+    #     model.nudges = copyNudge
+    #     # check stop conditions
+    #     conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
+    #                   nudgeMode == 'pulse')
+    #     if nudgeMode == 'pulse':
+    #       _pulse = {}
+    #   elif nudgeMode == 'constant' and delta >= deltas // 2:
+    #     # if any(conditions):
+    #       _pulse = {}
 
   return {tuple(startState) : out}
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def mutualInformation_alt(conditional, deltas, snapshots, model):
+def mutualInformation_alt(dict conditional, int deltas, \
+                          dict snapshots, object model):
   '''
    Returns the node distribution and the mutual information decay
   '''
 
-  cdef np.ndarray H = np.zeros(deltas)
   # conditional is a conditional here
   # loop declaration
   # cdef tuple key
   # cdef int delta
   px = np.zeros((deltas + 1, model.nNodes, model.nStates))
-  H  = np.zeros((deltas + 1, model.nNodes))
+  H = np.zeros((deltas + 1, model.nNodes))
   for key, p in conditional.items():
     H  += np.nansum(p * np.log2(p), -1) * snapshots[key]
     px += p * snapshots[key] # update node distribution
