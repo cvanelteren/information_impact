@@ -11,8 +11,9 @@ for file in os.listdir(os.getcwd()):
         setup(\
         ext_modules = cythonize(\
                     file, annotate = True,
-                    language_level = 3, language = 'c++')\
-                    , \
+                    language_level = 3, \
+                    gdb_debug = True, language = 'c++'),\
+                    extra_compile_args = ['-std=c++11'],\
         include_dirs =[numpy.get_include()]\
         )
 

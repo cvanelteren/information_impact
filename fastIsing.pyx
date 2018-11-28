@@ -7,19 +7,28 @@ Created on Tue Feb  6 09:36:17 2018
 """
 # cython: infer_types=True
 import numpy  as np
-cimport numpy as np
 
 from scipy.stats import linregress
-import networkx as nx, multiprocessing as mp, functools, tqdm, information, scipy,  functools, copy
+import networkx as nx, multiprocessing as mp, functools, \
+                tqdm, information, scipy,  functools, copy
+from models import Model
+# ___CythonImports___
 cimport cython
 from cython import parallel
-from models import Model
+from libcpp.map cimport map
+from libcpp.string cimport string
+from libcpp.vector cimport vector
+from cython.operator cimport dereference, preincrement
+cimport numpy as np # overwrite some c  backend from above
+
 from libc.math cimport exp
 from libc.stdlib cimport rand
 cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double)
 cdef extern from "limits.h":
     int INT_MAX
+
+
 # TODO: this is still too pythonic. The conversion was made from direct python code; future me needs to hack this into c
 class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = False, \
@@ -96,7 +105,7 @@ class Ising(Model):
         if self.verbose: print('Starting burnin')
         alpha = True
         while alpha:
-            states = self.updateState(self.sampleNodes[self.mode](self.nodeIDs))
+            states = self.updateState(self.sampleNodes(1)[0])
             y      = np.hstack((y, magnetization(states)))
             if counter > useAtleastNSamples : # run atleast 10 samples
                 # do linear regression
@@ -132,7 +141,11 @@ class Ising(Model):
                 :energy: current energy of systme config for node
                 :flipEnergy: energy if node flips state
         '''
-        return c_energy(node, states, self.edgeData[node], self.interaction[node], self.H, self.nudges[node])
+        cdef long[    :] edgeDatum = np.asarray(self.edgeData[node])
+        cdef double[ :] inter     = np.asarray(self.interaction[node])
+        cdef double[ :] H         = self.H
+        cdef double nudges        = self.nudges[node]
+        return c_energy(node, states, edgeDatum, inter, H, nudges)
         # cdef int [   :] neighboridx    = self.edgeData[node]
         # cdef double [:] interaction    = self.interaction[node]
         # cdef long [   :] neighborStates = states[neighboridx]
@@ -151,34 +164,34 @@ class Ising(Model):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
-    def updateState(self, int [:] nodesToUpdate):
+    def updateState(self, long [:] nodesToUpdate):
         '''
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         '''
 
-
         cdef long [:] states           = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
         cdef long [:] newstates        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
-        cdef long  N = len(nodesToUpdate)
-        cdef long  n
-        cdef long node
-        cdef double energy, p
+        cdef int  N = np.shape(nodesToUpdate)[1]
         # not sure if this helps
         cdef calcE       = self.energy
         cdef str magSide = self.magSide
         cdef double beta = self.beta
         cdef double nudge
 
-        cdef edgeData    = self.edgeData
-        cdef interaction = self.interaction
-        cdef  H          = self.H
+        # loop declaration
+        # edgeData      = self.edgeData
+        # interaction   = self.interaction
+        # cdef double[:] H              = self.H
 
+        cdef calC = self.energy
+        cdef int  n
+        cdef long node
+        cdef double energy, p
         for n in range(N):
           node  = nodesToUpdate[n]
           nudge = self.nudges[n]
-          energy = c_energy(node, states, edgeData[node],\
-                            interaction[node], H, nudge)
+          energy = calC(node, states)
           # TODO: change this mess
           # # heatbath glauber
           # if self.updateMethod == 'glauber':
@@ -186,7 +199,8 @@ class Ising(Model):
           if np.isnan(energy):
               p = 0.5
           else:
-              p = 1 / ( 1 + exp(-beta *  2 * energy) )
+              p = 1 / ( 1 + exp_approx(-beta *  2 * energy) )
+          print(p)
           # if np.random.rand() < p:
           if rand() / float(INT_MAX) < p: # faster
             newstates[node] = -states[node]
@@ -348,25 +362,28 @@ class Ising(Model):
 #       if rand() / float(INT_MAX)  <= p:
 #         states[node] = -states[node]
 #     return states
+@cython.wraparound(False)
 @cython.boundscheck(False)
 cdef double c_energy(int node, long[:] states,\
-                      int [:] edgeData,\
+                      long [:] edgeData,\
                       double [:] interaction,\
                       double [:] H, double nudge):
 
-  cdef double energy = 0
-  cdef long N = len(edgeData)
+  cdef double energy = nudge
+  cdef long N        = len(edgeData)
   cdef double _inter, _H
   cdef long _edge, _state
   cdef int i
   cdef long _nodeState = states[node]
-  for i in parallel.prange(N, nogil = True):
-    _inter = interaction[i]
-    _edge  = edgeData[i]
-    _state = states[i]
-    _H    = H[_edge]
-    energy -= _nodeState * _state * _inter * _edge + _H * _state
-  energy -= nudge
+
+  for i in range(N):
+        _inter = interaction[i]
+        _edge  = edgeData[i] # get correct index
+        # extract information
+        _state = states[_edge]
+        _H     = H[_edge]
+        energy -= _nodeState * _state * _inter + _H * _state
+  print(energy)
   return energy
 
 

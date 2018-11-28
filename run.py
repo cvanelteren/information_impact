@@ -20,11 +20,15 @@ import IO, multiprocessing as mp, json
 import datetime
 from artNet import Net
 from time import time
+import sys
 close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
-    real          = False
-    repeats       = int(1e4) if real else 100
+    if len(sys.argv) > 1:
+        real = sys.argv[1]
+    else:
+        real = 0
+    repeats       = int(1e4) if real else 1000
     deltas        = 10       if real else 10
     step          = 1
     nSamples      = int(1e4) if real else 1000
@@ -34,8 +38,12 @@ if __name__ == '__main__':
     numIter       = int(5e1) if real else 5
     magSide       = 'neg'
     updateMethod  = 'single'
-    CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
-
+    CHECK         = [.9, .8, .7]  if real else [.8]  # match magnetiztion at 80 percent of max
+    n = 10
+    if real:
+        graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
+    else:
+        graphs = [nx.path_graph(3)]
 #     dataDir = 'Psycho' # relative path careful
 #     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 #     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
@@ -49,9 +57,7 @@ if __name__ == '__main__':
 #         attr[node] = dict(H = row['externalField'], nudges = 0)
 #     nx.set_node_attributes(graph, attr)
 
-    n = 10
-    graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
-    graphs = [nx.path_graph(3)]
+
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
@@ -143,7 +149,7 @@ if __name__ == '__main__':
                 conditional = infcy.monteCarlo_alt(\
                                                model  = model, snapshots = snapshots,\
                                                deltas = deltas, repeats  = repeats,\
-                                               mode   = mode, pulse      = pulse)
+                                               pulse      = pulse)
 
                 # px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
@@ -165,7 +171,7 @@ if __name__ == '__main__':
                     pulse = {n : p}
                     conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
                                             deltas = deltas, repeats = repeats,\
-                                            mode = mode, pulse = pulse)
+                                            pulse = pulse)
                     print(f'{time()} Computing MI')
                     px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]

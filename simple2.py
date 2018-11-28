@@ -48,16 +48,16 @@ for condition, samples in data[t].items():
             cpx = sample.conditional
             N = repeats 
             rs  = 0
-            
+            mi = sample.mi
             for key, value in cpx.items():
 #                xx  = value[0] if isinstance(value, list) else value
                 rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
                               for j in value])
             Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
                          for i in sample.px])
-
+            
             bias = (rs - Rs) / (2 * repeats * log(2)) 
-            corrected = sample.mi - bias
+            corrected = mi - bias
             corrected[corrected < finfo(float).eps] = 0 # artefact of correction
             dd[idx, ..., 0] = corrected[:deltas // 2 + 1, :].T
         else:
@@ -65,6 +65,7 @@ for condition, samples in data[t].items():
             impact = stats.hellingerDistance(\
                              sample.px, control).mean(-1)
             impact = stats.KL(control, sample.px).mean(-1)
+            print(impact)
             impact = impact[deltas // 2  : ][None, :].T
             print(impact)
             # TODO: check if this works with tuples (not sure)
