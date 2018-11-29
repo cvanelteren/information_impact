@@ -37,14 +37,9 @@ x = []
 
 #y = asarray(m.burnin(samples = 1000))
 
-a = m.sampleNodes(100)
 s = time()
-for i in a:
-    x.append(asarray(m.updateState(i)))
+m.simulate(100)
 print(time()-s)
 x = array(x)
 plot(x.mean(1))
 # %%
-
-
-    
