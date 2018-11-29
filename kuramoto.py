@@ -4,9 +4,9 @@ from numpy import *
 the state is now the natural frequency of the node
 '''
 class Kuramoto(Model):
-    def __init__(self, graph, agentStates = [1, 2], mode = 'sync'):
+    def __init__(self, graph, agentStates = [1, 2], updateType= 'sync'):
         # need to keep track of inherent phase
-        super(Kuramoto, self).__init__(graph = graph, agentStates = agentStates, mode = mode)
+        super(Kuramoto, self).__init__(graph = graph, agentStates = agentStates, updateType= mode)
 
         # tmp hack
         self.states = random.rand(self.nNodes) * 2 * pi #  phase
@@ -20,7 +20,7 @@ class Kuramoto(Model):
         # TODO: compute neareast neighbor
         self
     def updateState(self, nodesToUpdate):
-        states = self.states.copy() if self.mode == 'sync' else self.states
+        states = self.states.copy() if self.updateType== 'sync' else self.states
         for node in nodesToUpdate:
             # get neighbor phase and update
             weights        = self.interaction[node]

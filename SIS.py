@@ -23,7 +23,7 @@ class SIS(Model):
         return bernoulli.rvs(self.beta)
 
     def updateState(self, nodesToUpdate):
-        states = self.states.copy() if self.mode == 'sync' else self.states
+        states = self.states.copy() if self.updateType== 'sync' else self.states
         for node in nodesToUpdate:
             # if infected; check if cured
             if states[node]:

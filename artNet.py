@@ -18,7 +18,7 @@ class Net(Model):
     def func(self, x):
         return 1 / (1 + np.exp(-x))
     def updateState(self, nodesToUpdate):
-        states = self.states.copy() if self.mode == 'sync' else self.states
+        states = self.states.copy() if self.updateType== 'sync' else self.states
         for node in nodesToUpdate:
             weights = self.interaction[node]
             nStates = states[self.edgeData[node]] # neighbor states

@@ -1,0 +1,53 @@
+<cython_debug version="1.0">
+  <Module c_filename="/home/casper/projects/it/tmp.c" filename="/home/casper/projects/it/tmp.pyx" module_name="tmp">
+    <Functions>
+      <Function cname="inittmp" is_initmodule_function="True" lineno="1" name="tmp" pf_cname="" qualified_name="">
+        <Locals>
+          <LocalVar cname="__pyx_v_3tmp___builtins__" lineno="0" name="__builtins__" qualified_name="tmp.__builtins__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___name__" lineno="0" name="__name__" qualified_name="tmp.__name__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___file__" lineno="0" name="__file__" qualified_name="tmp.__file__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___doc__" lineno="0" name="__doc__" qualified_name="tmp.__doc__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___path__" lineno="0" name="__path__" qualified_name="tmp.__path__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___spec__" lineno="0" name="__spec__" qualified_name="tmp.__spec__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___loader__" lineno="0" name="__loader__" qualified_name="tmp.__loader__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___package__" lineno="0" name="__package__" qualified_name="tmp.__package__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___cached__" lineno="0" name="__cached__" qualified_name="tmp.__cached__" type="PythonObject"/>
+          <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="tmp.__test__" type="PythonObject"/>
+        </Locals>
+        <Arguments/>
+        <StepIntoFunctions/>
+      </Function>
+      <Function cname="PyInit_tmp" is_initmodule_function="True" lineno="1" name="tmp" pf_cname="" qualified_name="">
+        <Locals>
+          <LocalVar cname="__pyx_v_3tmp___builtins__" lineno="0" name="__builtins__" qualified_name="tmp.__builtins__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___name__" lineno="0" name="__name__" qualified_name="tmp.__name__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___file__" lineno="0" name="__file__" qualified_name="tmp.__file__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___doc__" lineno="0" name="__doc__" qualified_name="tmp.__doc__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___path__" lineno="0" name="__path__" qualified_name="tmp.__path__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___spec__" lineno="0" name="__spec__" qualified_name="tmp.__spec__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___loader__" lineno="0" name="__loader__" qualified_name="tmp.__loader__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___package__" lineno="0" name="__package__" qualified_name="tmp.__package__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_3tmp___cached__" lineno="0" name="__cached__" qualified_name="tmp.__cached__" type="PythonObject"/>
+          <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="tmp.__test__" type="PythonObject"/>
+        </Locals>
+        <Arguments/>
+        <StepIntoFunctions/>
+      </Function>
+    </Functions>
+    <Globals>
+      <LocalVar cname="__pyx_v_3tmp___builtins__" lineno="0" name="__builtins__" qualified_name="tmp.__builtins__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___name__" lineno="0" name="__name__" qualified_name="tmp.__name__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___file__" lineno="0" name="__file__" qualified_name="tmp.__file__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___doc__" lineno="0" name="__doc__" qualified_name="tmp.__doc__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___path__" lineno="0" name="__path__" qualified_name="tmp.__path__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___spec__" lineno="0" name="__spec__" qualified_name="tmp.__spec__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___loader__" lineno="0" name="__loader__" qualified_name="tmp.__loader__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___package__" lineno="0" name="__package__" qualified_name="tmp.__package__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_3tmp___cached__" lineno="0" name="__cached__" qualified_name="tmp.__cached__" type="PythonObject"/>
+      <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="tmp.__test__" type="PythonObject"/>
+    </Globals>
+    <LineNumberMapping>
+      <LineNumber c_linenos="1339 1340 1341 1342 1343 1344 1345 1346 1347 1348 1349 1350 1351 1352 1353 1354 1355 1356 1357 1358 1359 1360 1361 1362 1363 1364 1365 1366 1367 1368 1369 1370 1371 1372" cython_lineno="1"/>
+    </LineNumberMapping>
+  </Module>
+</cython_debug>

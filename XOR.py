@@ -10,18 +10,18 @@ from fastIsing import Ising
 from numpy import *
 class XOR(Ising):
     # TODO: this class is presenteed as is; the target in updateState needs to be considered
-    def __init__(self, mode = 'serial'):
+    def __init__(self, updateType= 'serial'):
         graph = nx.DiGraph()
         [graph.add_node(i) for i in range(3)]
         graph.add_edge(0, 2, weight = 1)
         graph.add_edge(1, 2, weight = 1)
 #        print(graph.nodes())
         agentStates = [-1, 1]
-        super(XOR, self).__init__(graph = graph, agentStates = agentStates, mode = mode, temperature = 1)
+        super(XOR, self).__init__(graph = graph, agentStates = agentStates, updateType= mode, temperature = 1)
 
     def updateState(self):
-        nodesToUpdate = self.sampleNodes[self.mode](self.nodeIDs) # use mode when the model was defines
-        states        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
+        nodesToUpdate = self.sampleNodes[self.mode](self.nodeIDs) # use updateTypewhen the model was defines
+        states        = self.states.copy() if self.updateType== 'sync' else self.states # only copy if sync else alias
         for node in nodesToUpdate:
             if self.rmapping[node] != 2:
                 energy, flipEnergy = self.energy(node)
@@ -48,11 +48,11 @@ class AND(XOR):
     '''
     Same properties as XOR; however small change in the state of 2
     '''
-    def __init__(self, mode = 'serial'):
+    def __init__(self, updateType= 'serial'):
         super(AND, self).__init__(mode)
     def updateState(self):
-        nodesToUpdate = self.sampleNodes[self.mode](self.nodeIDs) # use mode when the model was defines
-        states        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
+        nodesToUpdate = self.sampleNodes[self.mode](self.nodeIDs) # use updateTypewhen the model was defines
+        states        = self.states.copy() if self.updateType== 'sync' else self.states # only copy if sync else alias
         for node in nodesToUpdate:
             if self.rmapping[node] != 2:
                 energy, flipEnergy = self.energy(node)

@@ -40,7 +40,7 @@ if __name__ == '__main__':
                     step     = 20,\
                     deltas   = 10,\
                     repeats = 1000,\
-                    mode = 'source', reset = True)
+                    updateType= 'source', reset = True)
     import time;
     past = time.time()
     results = {}

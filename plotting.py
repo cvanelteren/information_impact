@@ -35,7 +35,7 @@ def fit(y, func, x = None,\
         coeffs, coeffs_var = scipy.optimize.curve_fit(func, x, yi, **params)
         errors[idx]        = ((func(x, *coeffs) - yi)**2).mean()
         coefficients[idx]  = coeffs
-        
+
     return coefficients, errors
 
 def extractImpact(data):
@@ -48,11 +48,11 @@ def extractImpact(data):
 
 def c():
     close('all')
-    
+
 def pt_bayescount(Pr, Nt):
-    """Compute the support for analytic bias correction using the 
+    """Compute the support for analytic bias correction using the
     Bayesian approach of Panzeri and Treves (1996)
-    
+
     :Parameters:
       Pr : 1D aray
         Probability vector
@@ -62,16 +62,16 @@ def pt_bayescount(Pr, Nt):
     :Returns:
       R : int
         Bayesian estimate of support
-    
+
     """
-    
+
     # dimension of space
     dim = Pr.size
 
     # non zero probs only
     PrNZ = Pr[Pr>np.finfo(np.float).eps]
     Rnaive = PrNZ.size
-    
+
     R = Rnaive
     if Rnaive < dim:
         Rexpected = Rnaive - ((1.0-PrNZ)**Nt).sum()
@@ -425,7 +425,7 @@ def showFit(model, I, \
 
 
     formatting = dict(xlabel = '$t - \delta$', ylabel = 'Mutual information', \
-                      title = 'mode {}'.format(model.mode), \
+                      title = 'updateType{}'.format(model.mode), \
                       ylim = [-.01, I.max() +  delta],
                       xlim = [-1, max(xx) + 4 * delta])
     setp(ax, **formatting)

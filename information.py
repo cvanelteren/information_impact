@@ -65,7 +65,7 @@ def parallelSnapshots(nSamples, model, step, Z ):
 def monteCarlo(model, snapshots,  conditions,
                deltas = 10,  repeats = 11,
                parallel = True, \
-               pulse = {}, mode = 'source'):
+               pulse = {}, updateType= 'source'):
     '''
     Calls parallel montecarlo. Performs monte carlo samples based on the
     parsed snapshots.
@@ -79,13 +79,13 @@ def monteCarlo(model, snapshots,  conditions,
     '''
     # would prefer to make this a generator, however then mp breaks
 
-    # def parallelMonteCarlo(startState, model, conditions, repeats, deltas, Z, pulse = {}, mode = 'source'):
+    # def parallelMonteCarlo(startState, model, conditions, repeats, deltas, Z, pulse = {}, updateType= 'source'):
     def parallelMonteCarlo(startState):
         '''
         parallized version of computing the conditional, this can be run
         as a single core version
 
-        :mode: sinc or source. source mode shifts the conditions[0], sinc mode shift the
+        :mode: sinc or source. source updateTypeshifts the conditions[0], sinc updateTypeshift the
         the conditions[1]. De facto the first index is the state and the second
         index is the node.
 
@@ -111,8 +111,8 @@ def monteCarlo(model, snapshots,  conditions,
                         model.nudges[key] = value
 
                 state          = model.states
-                targetState    = startState if mode == 'sinc' else state
-                conditionState = state      if mode == 'sinc' else startState
+                targetState    = startState if updateType== 'sinc' else state
+                conditionState = state      if updateType== 'sinc' else startState
                 state          = tuple(state)
 
                 for condition, idx in conditions.items():
@@ -198,7 +198,7 @@ def decodeState(state, nStates, nNodes):
 #                 step        = 100,
 #                 deltas      = 10,
 #                 repeats    = 1000,
-#                 mode        = 'source',
+#                 updateType       = 'source',
 #                 pulse       = False,
 #                 reset       = False,
 #                 parallel    = True):
@@ -223,7 +223,7 @@ def decodeState(state, nStates, nNodes):
 #     # TODO remove this; think about using kwargs in the future
 #     # print parameters:
 #     d = dict(nSamples = nSamples, repeats = repeats, step = step,\
-#              deltas = deltas, mode = mode, reset = reset, pulse = pulse)
+#              deltas = deltas, updateType= mode, reset = reset, pulse = pulse)
 #
 #     for key, value in d.items():
 #         print(f'{key:>12}\t\t={value:>12}')
@@ -253,7 +253,7 @@ def decodeState(state, nStates, nNodes):
 #     joint, I = mutualInformationShift(model = model,\
 #                                                         snapshots = snapshots,\
 #                                                         montecarloResults = mr,\
-#                                                         mode = mode,\
+#                                                         updateType= mode,\
 #                                                         parallel = parallel)
 #     #TODO: this is a very temporary fix
 #     try:
@@ -335,8 +335,8 @@ def decodeState(state, nStates, nNodes):
 # #     # bin the data
 # #
 # #     for sampleAtT0, sample in zip(targets, samples):
-# #         X   = sampleAtT0 if mode == 'sinc' else sample   # t - delta
-# #         Y   = sample if mode == 'sinc' else sampleAtT0 # t = 0
+# #         X   = sampleAtT0 if updateType== 'sinc' else sample   # t - delta
+# #         Y   = sample if updateType== 'sinc' else sampleAtT0 # t = 0
 # #         jdx = mappingState[tuple(X)] # get correct index for statte
 # #         for condition, idx in mappingCondition.items():
 # #             # zdx =  # slice the correct condition
@@ -451,7 +451,7 @@ def decodeState(state, nStates, nNodes):
 # #
 # #
 # # def mutualInformationShift(model, snapshots, montecarloResults,\
-# #                            conditions = None, mode = 'source', parallel = False):
+# #                            conditions = None, updateType= 'source', parallel = False):
 # #        ''' Computes I(x_i^t ; X^t - delta)
 # #        Input:
 # #            :model: fast ising model
@@ -501,7 +501,7 @@ def decodeState(state, nStates, nNodes):
 # #
 # #
 # #        func = functools.partial(binParallel, \
-# #                                 mode = mode,\
+# #                                 updateType= mode,\
 # #                                 mappingCondition = mappingCondition,\
 # #                                 mappingNode = mappingNode,\
 # #                                 mappingState = mappingState, \

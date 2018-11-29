@@ -10,7 +10,7 @@ def compute(func, fileName, sourceData, targetData, nCores = mp.cpu_count()):
     # the data [future me problems]
     if nCores > 1: print('Spawning parallel processes')
 
-    with h5py.File(fileName, mode = 'a') as f: # creates file if it doesn't exist
+    with h5py.File(fileName, updateType= 'a') as f: # creates file if it doesn't exist
         if targetData in f:
             print('Found data; skipping computation')
         else:
@@ -119,7 +119,7 @@ def parallelMonteCarlo(startState, model, repeats, deltas, pulse = {}):
         montecarlo[k, ...] = sim(nSamples = deltas, step = 1, pulse = pulse)
     return montecarlo
 
-def mutualInformationShift(model, fileName, repeats, mode = 'source', \
+def mutualInformationShift(model, fileName, repeats, updateType= 'source', \
         sourceData = 'mc', targetData = 'mi', conditions = None, \
         ):
        state2idx = {}
@@ -152,7 +152,7 @@ def mutualInformationShift(model, fileName, repeats, mode = 'source', \
 
 
        func = functools.partial(binParallel, \
-                                mode = mode,\
+                                updateType= mode,\
                                 mappingCondition = condition2idx,\
                                 mappingNode = nodestate2idx,\
                                 mappingState = state2idx, \
@@ -189,8 +189,8 @@ def binParallel(samples, mode, mappingCondition, mappingNode, \
     # bin the data
 #    print(joint.shape)
     for sampleAtT0, sample in zip(targets, samples):
-        X   = sampleAtT0 if mode == 'sinc' else sample   # t - delta
-        Y   = sample if mode == 'sinc' else sampleAtT0 # t = 0
+        X   = sampleAtT0 if updateType== 'sinc' else sample   # t - delta
+        Y   = sample if updateType== 'sinc' else sampleAtT0 # t = 0
         jdx = mappingState[tuple(X)] # get correct index for statte
         for condition, idx in mappingCondition.items():
             # zdx =  # slice the correct condition

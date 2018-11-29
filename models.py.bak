@@ -14,7 +14,7 @@ import networkx as nx, tqdm, information, functools
 # DTYPE = np.int
 # ctypedef np.int DTYPE_T
 class Model:
-    def __init__(self, graph, agentStates, mode = 'async', verbose = False):
+    def __init__(self, graph, agentStates, updateType= 'async', verbose = False):
         '''
         General class for the models
         It defines the expected methods for the model; this can be expanded
@@ -24,7 +24,7 @@ class Model:
         It translates the networkx graph into numpy dependencies for speed.
         '''
         self.modes = 'sync async single serial' # expand this if we want more modes
-        assert mode in self.modes
+        assert updateTypein self.modes
         # kinda uggly
         statePresent, hPresent, nudgePresent = [\
             True if nx.get_node_attributes(graph, i) != {} else False for i in 'state H nudges'.split(' ')]
@@ -98,7 +98,7 @@ class Model:
         self.nNodes         = nNodes
         self.nudges         = nudges
         self.agentStates    = agentStates
-        self._mode          = mode
+        self._updateType         = mode
 
         self.sampleNodes    = dict(\
                                 single = functools.partial(np.random.choice, size = 1),\
@@ -128,12 +128,12 @@ class Model:
     @mode.setter
     def mode(self, value):
         '''
-        When adjusting the mode, it checks if the mode is possible
+        When adjusting the mode, it checks if the updateTypeis possible
         '''
         if value not in self.modes:
-            raise ValueError('Mode is not recognized, please use {}'.format(self.modes))
+            raise ValueError('updateTypeis not recognized, please use {}'.format(self.modes))
         else:
-            self._mode = value
+            self._updateType= value
 
     # list mandatory functions
     def updateState(self):
@@ -152,7 +152,7 @@ class Model:
             :simulationResults: samples x states; note minimum samples is always 2
         '''
         # pre-define number of simulation steps
-#        nodesToUpdate = random.choice(self.nodeIDs, size = (nSamples * step + 1, self.nNodes if self.mode != 'single' else 1))        # this seems faster  ^ when no while loop...
+#        nodesToUpdate = random.choice(self.nodeIDs, size = (nSamples * step + 1, self.nNodes if self.updateType!= 'single' else 1))        # this seems faster  ^ when no while loop...
         if verbose:
             print(\
               'Simulation parameters\n number of samples: {}'\

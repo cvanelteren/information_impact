@@ -1,0 +1,53 @@
+<cython_debug version="1.0">
+  <Module c_filename="/home/casper/projects/it/infcy.c" filename="/home/casper/projects/it/infcy.pyx" module_name="infcy">
+    <Functions>
+      <Function cname="initinfcy" is_initmodule_function="True" lineno="1" name="infcy" pf_cname="" qualified_name="">
+        <Locals>
+          <LocalVar cname="__pyx_v_5infcy___builtins__" lineno="0" name="__builtins__" qualified_name="infcy.__builtins__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___name__" lineno="0" name="__name__" qualified_name="infcy.__name__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___file__" lineno="0" name="__file__" qualified_name="infcy.__file__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___doc__" lineno="0" name="__doc__" qualified_name="infcy.__doc__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___path__" lineno="0" name="__path__" qualified_name="infcy.__path__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___spec__" lineno="0" name="__spec__" qualified_name="infcy.__spec__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___loader__" lineno="0" name="__loader__" qualified_name="infcy.__loader__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___package__" lineno="0" name="__package__" qualified_name="infcy.__package__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___cached__" lineno="0" name="__cached__" qualified_name="infcy.__cached__" type="PythonObject"/>
+          <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="infcy.__test__" type="PythonObject"/>
+        </Locals>
+        <Arguments/>
+        <StepIntoFunctions/>
+      </Function>
+      <Function cname="PyInit_infcy" is_initmodule_function="True" lineno="1" name="infcy" pf_cname="" qualified_name="">
+        <Locals>
+          <LocalVar cname="__pyx_v_5infcy___builtins__" lineno="0" name="__builtins__" qualified_name="infcy.__builtins__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___name__" lineno="0" name="__name__" qualified_name="infcy.__name__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___file__" lineno="0" name="__file__" qualified_name="infcy.__file__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___doc__" lineno="0" name="__doc__" qualified_name="infcy.__doc__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___path__" lineno="0" name="__path__" qualified_name="infcy.__path__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___spec__" lineno="0" name="__spec__" qualified_name="infcy.__spec__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___loader__" lineno="0" name="__loader__" qualified_name="infcy.__loader__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___package__" lineno="0" name="__package__" qualified_name="infcy.__package__" type="PythonObject"/>
+          <LocalVar cname="__pyx_v_5infcy___cached__" lineno="0" name="__cached__" qualified_name="infcy.__cached__" type="PythonObject"/>
+          <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="infcy.__test__" type="PythonObject"/>
+        </Locals>
+        <Arguments/>
+        <StepIntoFunctions/>
+      </Function>
+    </Functions>
+    <Globals>
+      <LocalVar cname="__pyx_v_5infcy___builtins__" lineno="0" name="__builtins__" qualified_name="infcy.__builtins__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___name__" lineno="0" name="__name__" qualified_name="infcy.__name__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___file__" lineno="0" name="__file__" qualified_name="infcy.__file__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___doc__" lineno="0" name="__doc__" qualified_name="infcy.__doc__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___path__" lineno="0" name="__path__" qualified_name="infcy.__path__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___spec__" lineno="0" name="__spec__" qualified_name="infcy.__spec__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___loader__" lineno="0" name="__loader__" qualified_name="infcy.__loader__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___package__" lineno="0" name="__package__" qualified_name="infcy.__package__" type="PythonObject"/>
+      <LocalVar cname="__pyx_v_5infcy___cached__" lineno="0" name="__cached__" qualified_name="infcy.__cached__" type="PythonObject"/>
+      <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="infcy.__test__" type="PythonObject"/>
+    </Globals>
+    <LineNumberMapping>
+      <LineNumber c_linenos="1339 1340 1341 1342 1343 1344 1345 1346 1347 1348 1349 1350 1351 1352 1353 1354 1355 1356 1357 1358 1359 1360 1361 1362 1363 1364 1365 1366 1367 1368 1369 1370 1371 1372" cython_lineno="1"/>
+    </LineNumberMapping>
+  </Module>
+</cython_debug>

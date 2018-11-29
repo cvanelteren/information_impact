@@ -22,9 +22,9 @@ from models import Model
 class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = True, \
                  betaThreshold = 1e-2, agentStates = [-1 ,1],
-                 mode = 'async', verbose = False):
+                 updateType= 'async', verbose = False):
         super(Ising, self).__init__(graph = graph, \
-             agentStates = agentStates, mode = mode, verbose = verbose)
+             agentStates = agentStates, updateType= mode, verbose = verbose)
         hPresent = True if nx.get_node_attributes(graph, 'H') != {} else False
         # TODO: redundant property; only present for matplotlib
 
@@ -140,7 +140,7 @@ class Ising(Model):
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         '''
-        states        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
+        states        = self.states.copy() if self.updateType== 'sync' else self.states # only copy if sync else alias
         N = len(nodesToUpdate)
         # cdef long  n
         # cdef long node

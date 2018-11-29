@@ -183,7 +183,7 @@ def mutualInformation(py, px, pxgiveny):
 
 
 def mutualInformationShift(model, snapshots, montecarloResults,\
-                           conditions = None, mode = 'source', parallel = False):
+                           conditions = None, updateType= 'source', parallel = False):
        ''' Computes I(x_i^t ; X^t - delta)
        Input:
            :model: fast ising model
@@ -233,7 +233,7 @@ def mutualInformationShift(model, snapshots, montecarloResults,\
 
 
        func = functools.partial(binParallel, \
-                                mode = mode,\
+                                updateType= mode,\
                                 mappingCondition = mappingCondition,\
                                 mappingNode = mappingNode,\
                                 mappingState = mappingState, \
@@ -268,8 +268,8 @@ def binParallel(samples, mode, mappingCondition, mappingNode, \
     # bin the data
 
     for sampleAtT0, sample in zip(targets, samples):
-        X   = sampleAtT0 if mode == 'sinc' else sample   # t - delta
-        Y   = sample if mode == 'sinc' else sampleAtT0 # t = 0
+        X   = sampleAtT0 if updateType== 'sinc' else sample   # t - delta
+        Y   = sample if updateType== 'sinc' else sampleAtT0 # t = 0
         jdx = mappingState[tuple(X)] # get correct index for statte
         for condition, idx in mappingCondition.items():
             # zdx =  # slice the correct condition
@@ -296,7 +296,7 @@ def nudgeOnNode(nudgeInfo, model,
                 step        = 100,
                 deltas      = 10,
                 repeats    = 1000,
-                mode        = 'source',
+                updateType       = 'source',
                 pulse       = False,
                 reset       = False,
                 parallel    = True):
@@ -321,7 +321,7 @@ def nudgeOnNode(nudgeInfo, model,
     # TODO remove this; think about using kwargs in the future
     # print parameters:
     d = dict(nSamples = nSamples, repeats = repeats, step = step,\
-             deltas = deltas, mode = mode, reset = reset, pulse = pulse)
+             deltas = deltas, updateType= mode, reset = reset, pulse = pulse)
 
     for key, value in d.items():
         print(f'{key:>12}\t\t={value:>12}')
@@ -351,7 +351,7 @@ def nudgeOnNode(nudgeInfo, model,
     joint, I = mutualInformationShift(model = model,\
                                                         snapshots = snapshots,\
                                                         montecarloResults = mr,\
-                                                        mode = mode,\
+                                                        updateType= mode,\
                                                         parallel = parallel)
     #TODO: this is a very temporary fix
     try:

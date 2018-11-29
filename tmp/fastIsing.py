@@ -13,9 +13,9 @@ from numba import jit
 class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = True, \
                  betaThreshold = 1e-2, agentStates = [-1,1],
-                 mode = 'async', verbose = False):
+                 updateType= 'async', verbose = False):
         super(Ising, self).__init__(graph = graph, \
-             agentStates = agentStates, mode = mode, verbose = verbose)
+             agentStates = agentStates, updateType= mode, verbose = verbose)
         hPresent = True if nx.get_node_attributes(graph, 'H') != {} else False
         # TODO: redundant property; only present for matplotlib
 
@@ -121,8 +121,8 @@ class Ising(Model):
         # TODO: leaave open the possibility to update one node
 #        if type(nodesToUpdate) is type(None):
         if type(nodesToUpdate) is type(None):
-            nodesToUpdate = self.sampleNodes[self.mode](self.nodeIDs) # use mode when the model was defines
-        states        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
+            nodesToUpdate = self.sampleNodes[self.mode](self.nodeIDs) # use updateTypewhen the model was defines
+        states        = self.states.copy() if self.updateType== 'sync' else self.states # only copy if sync else alias
 #        print(nodesToUpdate)
         for node in nodesToUpdate:
             energy, flipEnergy  = self.energy(node)

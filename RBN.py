@@ -8,9 +8,9 @@ Created on Tue Jun 26 13:41:13 2018
 from models import Model
 import numpy as np
 class RBN(Model):
-    def __init__(self, graph, agentStates = [0, 1], mode = 'async'):
+    def __init__(self, graph, agentStates = [0, 1], updateType= 'async'):
         super(RBN, self).__init__(graph = graph, agentStates = agentStates, \
-             mode = mode)
+             updateType= mode)
         ''' For each node we need to setup a random rule; this rule is generated from its inputs
         '''
         
@@ -22,7 +22,7 @@ class RBN(Model):
             rule = format(rule, f'0{n}b')
             self.rules[idx] = rule
     def updateState(self, nodesToUpdate):
-        states = self.states.copy() if self.mode == 'sync' else self.states # only copy on sync else alias
+        states = self.states.copy() if self.updateType== 'sync' else self.states # only copy on sync else alias
         n = len(nodesToUpdate)
 
         for i in range(n):

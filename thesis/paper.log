@@ -263,7 +263,7 @@ Package: pdftexcmds 2018/01/30 v0.27 Utility functions of pdfTeX for LuaTeX (HO
 Package pdftexcmds Info: LuaTeX not detected.
 Package pdftexcmds Info: \pdf@primitive is available.
 Package pdftexcmds Info: \pdf@ifprimitive is available.
-Package pdftexcmds Info: \pdfdraftmode found.
+Package pdftexcmds Info: \pdfdraftupdateTypefound.
 Package: pdfescape 2016/05/16 v1.14 Implements pdfTeX's escape features (HO)
 Package: bigintcalc 2016/05/16 v1.4 Expandable calculations on big integers (HO
 )
@@ -305,13 +305,13 @@ Package hyperref Info: Link nesting OFF on input line 4514.
 Package hyperref Info: Hyper index ON on input line 4517.
 Package hyperref Info: Plain pages OFF on input line 4524.
 Package hyperref Info: Backreferencing OFF on input line 4529.
-Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Implicit updateTypeON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4762.
 \c@Hy@tempcnt=\count112
 
 (/usr/share/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip10
-Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+Package: url 2013/09/16  ver 3.4  Verb updateTypefor urls, etc.
 )
 LaTeX Info: Redefining \url on input line 5115.
 \XeTeXLinkMargin=\dimen159
@@ -324,7 +324,7 @@ Package hyperref Info: Hyper index ON on input line 6377.
 Package hyperref Info: backreferencing OFF on input line 6384.
 Package hyperref Info: Link coloring OFF on input line 6389.
 Package hyperref Info: Link coloring with OCG OFF on input line 6394.
-Package hyperref Info: PDF/A mode OFF on input line 6399.
+Package hyperref Info: PDF/A updateTypeOFF on input line 6399.
 LaTeX Info: Redefining \ref on input line 6439.
 LaTeX Info: Redefining \pageref on input line 6443.
 \Hy@abspage=\count114
@@ -738,7 +738,7 @@ File: mt-ppl.cfg 2005/11/16 v1.6 microtype config. file: Palatino (RS)
 )
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
-*geometry* verbose mode - [ preamble ] result:
+*geometry* verbose updateType- [ preamble ] result:
 * driver: pdftex
 * paper: <default>
 * layout: <same size as paper>

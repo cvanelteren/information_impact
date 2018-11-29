@@ -76,7 +76,7 @@ if __name__ == '__main__':
         # graph = nx.barabasi_albert_graph(10, 3)
         model = fastIsing.Ising(graph = graph, \
                                 temperature = 0, \
-                                mode = updateMethod, magSide = magSide)
+                                updateType= updateMethod, magSide = magSide)
 
 
         conditions = {(tuple(model.nodeIDs), (i,)) : \
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         # %%
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'
     #    fileName = f'Data/{f}'
-        mode = model.mode
+        updateType= model.mode
         # match the temperature to sample from
         # magRange = [.2]
         if os.path.isfile(f'{targetDirectory}/mags.pickle'):
@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
                 # px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
-                 # deltas = deltas, repeats = repeats, pulse = pulse, mode = 'source')
+                 # deltas = deltas, repeats = repeats, pulse = pulse, updateType= 'source')
 
                 print(f'{time()} Computing MI')
                 px, mi = infcy.mutualInformation_alt(\
