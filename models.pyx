@@ -71,7 +71,7 @@ class Model:
 #        edgeData   = zeros(nNodes, dtype = object)  # contains neighbors and weights [variable length]
         cdef dict _edgeData   = {}
         cdef dict _interaction= {}
-        cdef np.ndarray nudges     = np.zeros(nNodes, dtype = object)  # contains the nudge on a node [node x nudges]
+        cdef nudges     = np.zeros(nNodes, dtype = float)  # contains the nudge on a node [node x nudges]
 
         # iterate over the dict, we need to keep track of the mapping
         for node, nodeID in mapping.items():
@@ -133,6 +133,14 @@ class Model:
 #        else:
 #            raise TypeError('type is not numpy array')
     @property
+    def pulse(self): return self.nudges
+
+    @pulse.setter
+    def pulse(self, pulse):
+        self.nudges[:] = 0
+        for node, value in pulse.items():
+            self.nudges[self.mapping[node]] = value
+    @property
     def mode(self):   return self._mode
 
     @mode.setter
@@ -183,9 +191,9 @@ class Model:
         simulationResults[0, :]   = self.states # always store current state
         sampleCounter, stepCounter= 1, 1 # zero step is already done?
         if verbose : pbar = tqdm.tqdm(total = nSamples) # init progressbar
+        copyNudge = self.nudges.copy() # make deep copy  #TODO: think this will cause slowdowns for very large networks
         while sampleCounter <= nSamples:
             if pulse: # run pulse; remove nudges after sim step
-                copyNudge = self.nudges.copy() # make deep copy  #TODO: think this will cause slowdowns for very large networks
                 for node, nudge in pulse.items():
                     if type(node) is tuple:
                         for i in node:

@@ -177,7 +177,7 @@ class Ising(Model):
 
         for n in range(N):
           node  = nodesToUpdate[n]
-          nudge = self.nudges[n]
+          nudge = self.nudges[node]
           energy = c_energy(node, states, edgeData[node],\
                             interaction[node], H, nudge)
           # TODO: change this mess
@@ -359,17 +359,13 @@ cdef double c_energy(int node, long[:] states,\
 
   cdef double energy = 0
   cdef long N = len(edgeData)
-  cdef double _inter, _H
-  cdef long _edge, _state
   cdef int i
-  cdef long _nodeState = states[node]
+
   for i in parallel.prange(N, nogil = True):
-    _inter = interaction[i]
-    _edge  = edgeData[i]
-    _state = states[_edge]
-    _H    = H[_edge]
-    energy -= _nodeState * _state * _inter * _edge + _H * _state
-  energy -= nudge
+  # for i in range(N):
+    energy-= states[node] * states[edgeData[i]] * interaction[i] \
+             + H[edgeData[i]] * states[edgeData[i]]
+  energy += nudge
   return energy
 
 

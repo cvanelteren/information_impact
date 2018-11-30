@@ -61,8 +61,7 @@ for condition, samples in data[t].items():
             dd[idx, ..., 0] = corrected[:deltas // 2 + 1, :].T
         else:
             control = data[t]['{}'][idx].px
-            impact = stats.hellingerDistance(\
-                             sample.px, control).mean(-1)
+            impact = stats.hellingerDistance(sample.px, control).mean(-1)
 #            impact = stats.KL(control, sample.px).mean(-1)
             impact = impact[deltas // 2  : ][None, :].T
             print(impact)

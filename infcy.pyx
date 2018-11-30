@@ -4,7 +4,7 @@ __author__ = 'Casper van Elteren'
 import numpy as np
 cimport numpy as np
 import cython, copy
-from cython import parallel
+from cython.parallel cimport parallel, prange
 # cimport numpy as np
 # cimport cython
 import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
@@ -146,7 +146,7 @@ cpdef monteCarlo_alt(object model, dict snapshots,
                             parallelMonteCarlo_alt, model = model,
                             mode = mode, repeats = repeats, \
                             deltas = deltas, snapshots = snapshots,\
-                            pulse = pulse\
+                            \
                             )
    conditional = {}
    cdef np.ndarray value
@@ -164,7 +164,7 @@ cpdef monteCarlo_alt(object model, dict snapshots,
 cpdef dict parallelMonteCarlo_alt(\
           long[:] startState, object model, int repeats,\
           int deltas,\
-          dict pulse, dict snapshots, str mode):
+          dict snapshots, str mode):
   # global model, repeats, conditions, deltas, pulse, snapshots, mode
   # convert to binary state from decimal
   # flip list due to binary encoding
@@ -188,55 +188,45 @@ cpdef dict parallelMonteCarlo_alt(\
   # )
 
   cdef int k, delta, node
-  cdef dict _pulse # tmp storage
   cdef int [:] nodeIDs  = model.nodeIDs
-  cdef np.ndarray copyNudge
   # cdef np.ndarray r = np.array([\
   # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
   # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range((delta + 1) * repeats))
   cdef int counter = 0
   cdef str nudgeMode = model.nudgeMode
-  for k in range(repeats):
-    # start from the same point
-    model.states = startState.copy()
-    _pulse = copy.copy(pulse)
-    # print(pulse)
-
-    # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
-    # for idx, state in enumerate(tmp):
-    #   for node in nodeIDs:
-    #     nodeState    = state[node]
-    #     nodeStateIdx = sortr[nodeState]
-    #     out[idx, node, nodeStateIdx] += 1 / repeats
-
-    for delta in range(deltas + 1):
-      # bin data
-      state = model.states
-      for node, state in enumerate(state):
-        out[delta, node, sortr[state]] += 1 / float(repeats)
-      # assign nudges if present
-      if _pulse:
-        copyNudge = model.nudges.copy() # story nudges already there
-        for node, nudge in _pulse.items():
-          model.nudges[model.mapping[node]] = nudge # TODO: either set or add
-    #
-    #   # update model
-      # r = next(nodesToUpdate)
-      model.updateState(model.sampleNodes[model.mode](nodeIDs))
-      # model.updateState(r[counter])
-      # model.updateState(next(r))
-      counter += 1
-      # check if pulse turn-off
-      if _pulse:
-        model.nudges = copyNudge
-        # check stop conditions
-        # conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
-        #               nudgeMode == 'pulse')
-        if nudgeMode == 'pulse':
-          _pulse = {}
-        elif nudgeMode == 'constant' and delta >= deltas // 2:
-        # if any(conditions):
-          _pulse = {}
+  cdef double[:] copyNudge = model.nudges.copy() # store nudges already there
+  # for k in range(repeats):
+  half  = deltas // 2
+  reset = False
+  with nogil, parallel():
+      for k in prange(repeats):
+          with gil:
+            # start from the same point
+            model.states[:] = startState.copy()
+            model.nudges[:] = copyNudge.copy()
+            # print(model.nudges, model.states)
+            reset        = True
+            # OLD OLD OLD
+            # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
+            # for idx, state in enumerate(tmp):
+            #   for node in nodeIDs:
+            #     nodeState    = state[node]
+            #     nodeStateIdx = sortr[nodeState]
+            #     out[idx, node, nodeStateIdx] += 1 / repeats
+            # OLD OLD OLD
+            for delta in range(deltas + 1):
+              # bin data()
+              state = model.states
+              # idx   = np.digitize(state, model.agentStates)
+              # out[delta, idx] += 1 / repeats
+              for node, state in enumerate(state):
+                out[delta, node, sortr[state]] += 1 / repeats
+              model.updateState(model.sampleNodes[model.mode](nodeIDs))
+              # check if pulse turn-off
+              if reset:
+                  if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
+                    model.nudges[:] = 0
+                    reset =  False
   return {tuple(startState) : out}
 
 @cython.boundscheck(False) # compiler directive
@@ -246,18 +236,60 @@ cpdef mutualInformation_alt(dict conditional, int deltas, \
   '''
    Returns the node distribution and the mutual information decay
   '''
-
-  # conditional is a conditional here
-  # loop declaration
-  # cdef tuple key
-  # cdef int delta
   px = np.zeros((deltas + 1, model.nNodes, model.nStates))
-  H = np.zeros((deltas + 1, model.nNodes))
+  H  = np.zeros((deltas + 1, model.nNodes))
   for key, p in conditional.items():
     H  += np.nansum(p * np.log2(p), -1) * snapshots[key]
     px += p * snapshots[key] # update node distribution
   H -= np.nansum(px * np.log2(px), -1)
   return px, H
+
+
+
+@cython.boundscheck(False) # compiler directive
+@cython.wraparound(False) # compiler directive
+def mutualInformation(dict conditional, condition, int deltas):
+    '''Condition is the idx to the dict'''
+    cdef dict data = {\
+    key : value for key, value in conditional.items() if key[0] == condition}
+    cdef dict px = {i : {} for i in range(deltas)}
+    cdef dict py = {i : {} for i in range(deltas)}
+    cdef np.ndarray H = np.zeros(deltas)
+
+    # loop declaration
+    # cdef tuple key
+    # cdef int delta
+
+    for key, value in tqdm(data.items()):
+
+      delta = key[3]
+        # bin regardless of key 1
+      newkey = key[2]
+
+      px[delta][newkey] = px[delta].get(newkey, 0) + value
+
+        # py
+      newkey = key[1]
+      py[delta][newkey] = py[delta].get(newkey, 0) + value
+    # conditional
+    cdef dict pxy = {i : {j : {} for j in py[i].keys()} for i in range(deltas)}
+    for key, value in tqdm(data.items()):
+        state, node, delta = key[1], key[2], key[3]
+        pxy[delta][state][node] = pxy[delta][state].get(node, 0) + value / py[delta][state]
+
+    # loop declaration
+    # loop
+    for delta in tqdm(range(deltas)):
+        H[delta] -= np.nansum([p * np.log2(p) for p in px[delta].values()])
+        H[delta] += map(sum, (py[delta][state] * v * np.log2(v) \
+                              for v in value.values() \
+                              for state, value in pxy[delta].items if v > 0))
+        # for state, value in pxy[delta].items():
+        #     for node, v in value.items():
+        #         if v > 0:
+        #             H[delta] += py[delta][state] * v * np.log2(v)
+    return H.T
+
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
@@ -364,50 +396,6 @@ def reverseCalculation(int nSamples, object model, int delta, dict pulse):
   tmp = np.nansum(px * np.log2(px), axis = -1)
   H  -= tmp
   return res, cc, px, conditional, state, H
-
-@cython.boundscheck(False) # compiler directive
-@cython.wraparound(False) # compiler directive
-def mutualInformation(dict conditional, condition, int deltas):
-    '''Condition is the idx to the dict'''
-    cdef dict data = {\
-    key : value for key, value in conditional.items() if key[0] == condition}
-    cdef dict px = {i : {} for i in range(deltas)}
-    cdef dict py = {i : {} for i in range(deltas)}
-    cdef np.ndarray H = np.zeros(deltas)
-
-    # loop declaration
-    # cdef tuple key
-    # cdef int delta
-
-    for key, value in tqdm(data.items()):
-
-      delta = key[3]
-        # bin regardless of key 1
-      newkey = key[2]
-
-      px[delta][newkey] = px[delta].get(newkey, 0) + value
-
-        # py
-      newkey = key[1]
-      py[delta][newkey] = py[delta].get(newkey, 0) + value
-    # conditional
-    cdef dict pxy = {i : {j : {} for j in py[i].keys()} for i in range(deltas)}
-    for key, value in tqdm(data.items()):
-        state, node, delta = key[1], key[2], key[3]
-        pxy[delta][state][node] = pxy[delta][state].get(node, 0) + value / py[delta][state]
-
-    # loop declaration
-    # loop
-    for delta in tqdm(range(deltas)):
-        H[delta] -= np.nansum([p * np.log2(p) for p in px[delta].values()])
-        H[delta] += map(sum, (py[delta][state] * v * np.log2(v) \
-                              for v in value.values() \
-                              for state, value in pxy[delta].items if v > 0))
-        # for state, value in pxy[delta].items():
-        #     for node, v in value.items():
-        #         if v > 0:
-        #             H[delta] += py[delta][state] * v * np.log2(v)
-    return H.T
 def encodeState(state, nStates):
     return int(''.join(format(int(i), f'0{nStates - 1}b') for i in state), 2)
 def decodeState(state, nStates, nNodes):

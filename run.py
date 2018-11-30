@@ -28,10 +28,10 @@ if __name__ == '__main__':
     deltas        = 10       if real else 10
     step          = 1
     nSamples      = int(1e4) if real else 1000
-    burninSamples = 10
+    burninSamples = 100
     pulseSize     = 1
 
-    numIter       = int(5e1) if real else 5
+    numIter       = int(5e1) if real else 1
     magSide       = 'neg'
     updateMethod  = 'single'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
@@ -130,20 +130,18 @@ if __name__ == '__main__':
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
                 print(f'{time()} Getting snapshots')
                 # snapshots = {tuple(infcy.encodeState(i))}
+                pulse = {}
+                model.pulse = pulse
                 snapshots   = infcy.getSnapShots(model, nSamples, \
                                                parallel      = cpu_count(), \
                                                burninSamples = burninSamples, \
                                                step          = step)
 
-
-
-                pulses = {node : pulseSize for node in model.graph.nodes()}
-                pulse  = {}
                 print(f'{time()}')
                 conditional = infcy.monteCarlo_alt(\
                                                model  = model, snapshots = snapshots,\
                                                deltas = deltas, repeats  = repeats,\
-                                               mode   = mode, pulse      = pulse)
+                                               mode   = mode)
 
                 # px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
@@ -160,12 +158,13 @@ if __name__ == '__main__':
                                         model = model,\
                                         px = px, snapshots = snapshots)
                 IO.savePickle(fileName, sr)
-
+                pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
                     pulse = {n : p}
+                    model.pulse = pulse
                     conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
                                             deltas = deltas, repeats = repeats,\
-                                            mode = mode, pulse = pulse)
+                                            mode = mode)
                     print(f'{time()} Computing MI')
                     px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
