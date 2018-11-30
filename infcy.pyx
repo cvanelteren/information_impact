@@ -198,11 +198,11 @@ cpdef dict parallelMonteCarlo_alt(\
   cdef str nudgeMode = model.nudgeMode
   for k in range(repeats):
     # start from the same point
-    model.states = np.array(startState.copy(), dtype = model.statesDtype)
+    model.states = startState.copy()
     _pulse = copy.copy(pulse)
     # print(pulse)
 
-    tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
+    # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
     # for idx, state in enumerate(tmp):
     #   for node in nodeIDs:
     #     nodeState    = state[node]
@@ -230,14 +230,13 @@ cpdef dict parallelMonteCarlo_alt(\
       if _pulse:
         model.nudges = copyNudge
         # check stop conditions
-        conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
-                      nudgeMode == 'pulse')
+        # conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
+        #               nudgeMode == 'pulse')
         if nudgeMode == 'pulse':
           _pulse = {}
-      elif nudgeMode == 'constant' and delta >= deltas // 2:
+        elif nudgeMode == 'constant' and delta >= deltas // 2:
         # if any(conditions):
           _pulse = {}
-
   return {tuple(startState) : out}
 
 @cython.boundscheck(False) # compiler directive

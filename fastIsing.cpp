@@ -8684,7 +8684,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  *   for i in parallel.prange(N, nogil = True):
  *     _inter = interaction[i]             # <<<<<<<<<<<<<<
  *     _edge  = edgeData[i]
- *     _state = states[i]
+ *     _state = states[_edge]
  */
                             __pyx_t_6 = __pyx_v_i;
                             __pyx_v__inter = (*((double *) ( /* dim=0 */ (__pyx_v_interaction.data + __pyx_t_6 * __pyx_v_interaction.strides[0]) )));
@@ -8693,7 +8693,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  *   for i in parallel.prange(N, nogil = True):
  *     _inter = interaction[i]
  *     _edge  = edgeData[i]             # <<<<<<<<<<<<<<
- *     _state = states[i]
+ *     _state = states[_edge]
  *     _H    = H[_edge]
  */
                             __pyx_t_7 = __pyx_v_i;
@@ -8702,16 +8702,16 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
                             /* "fastIsing.pyx":369
  *     _inter = interaction[i]
  *     _edge  = edgeData[i]
- *     _state = states[i]             # <<<<<<<<<<<<<<
+ *     _state = states[_edge]             # <<<<<<<<<<<<<<
  *     _H    = H[_edge]
  *     energy -= _nodeState * _state * _inter * _edge + _H * _state
  */
-                            __pyx_t_8 = __pyx_v_i;
+                            __pyx_t_8 = __pyx_v__edge;
                             __pyx_v__state = (*((long *) ( /* dim=0 */ (__pyx_v_states.data + __pyx_t_8 * __pyx_v_states.strides[0]) )));
 
                             /* "fastIsing.pyx":370
  *     _edge  = edgeData[i]
- *     _state = states[i]
+ *     _state = states[_edge]
  *     _H    = H[_edge]             # <<<<<<<<<<<<<<
  *     energy -= _nodeState * _state * _inter * _edge + _H * _state
  *   energy -= nudge
@@ -8720,7 +8720,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
                             __pyx_v__H = (*((double *) ( /* dim=0 */ (__pyx_v_H.data + __pyx_t_9 * __pyx_v_H.strides[0]) )));
 
                             /* "fastIsing.pyx":371
- *     _state = states[i]
+ *     _state = states[_edge]
  *     _H    = H[_edge]
  *     energy -= _nodeState * _state * _inter * _edge + _H * _state             # <<<<<<<<<<<<<<
  *   energy -= nudge

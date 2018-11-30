@@ -366,7 +366,7 @@ cdef double c_energy(int node, long[:] states,\
   for i in parallel.prange(N, nogil = True):
     _inter = interaction[i]
     _edge  = edgeData[i]
-    _state = states[i]
+    _state = states[_edge]
     _H    = H[_edge]
     energy -= _nodeState * _state * _inter * _edge + _H * _state
   energy -= nudge

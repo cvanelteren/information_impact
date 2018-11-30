@@ -9,8 +9,7 @@ from numpy import *
 from scipy import optimize, integrate
 from matplotlib.pyplot import *
 from time import sleep
-
-import IO, os, plotting as plotz, stats
+import IO, os, plotting as plotz, stats, re
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
@@ -64,7 +63,7 @@ for condition, samples in data[t].items():
             control = data[t]['{}'][idx].px
             impact = stats.hellingerDistance(\
                              sample.px, control).mean(-1)
-            impact = stats.KL(control, sample.px).mean(-1)
+#            impact = stats.KL(control, sample.px).mean(-1)
             impact = impact[deltas // 2  : ][None, :].T
             print(impact)
             # TODO: check if this works with tuples (not sure)
