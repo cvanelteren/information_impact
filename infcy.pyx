@@ -1,4 +1,5 @@
 # cython: infer_types=True
+# distutils: language=c"
 __author__ = 'Casper van Elteren'
 import numpy as np
 cimport numpy as np
@@ -30,7 +31,7 @@ checkDistribution() # print it only once
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu_count(), int burninSamples = int(1e3)):
+cpdef getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu_count(), int burninSamples = int(1e3)):
     # start sampling
     cdef dict snapshots = {}
     # func = functools.partial(parallelSnapshots, step = step, \
@@ -150,7 +151,8 @@ cpdef monteCarlo_alt(object model, dict snapshots,
    conditional = {}
    cdef np.ndarray value
    cdef tuple key
-   cdef np.ndarray s = np.array([k for k in snapshots], dtype = model.statesDtype)
+   cdef s = np.array([k for k in snapshots])
+   print(s.shape)
    with mp.Pool(mp.cpu_count()) as p:
        for result in p.imap( func, tqdm(s), _CORE):
            for key, value in result.items():
@@ -201,46 +203,46 @@ cpdef dict parallelMonteCarlo_alt(\
     # print(pulse)
 
     tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
-    for idx, state in enumerate(tmp):
-      for node in nodeIDs:
-        nodeState    = state[node]
-        nodeStateIdx = sortr[nodeState]
-        out[idx, node, nodeStateIdx] += 1 / repeats
+    # for idx, state in enumerate(tmp):
+    #   for node in nodeIDs:
+    #     nodeState    = state[node]
+    #     nodeStateIdx = sortr[nodeState]
+    #     out[idx, node, nodeStateIdx] += 1 / repeats
 
-    # for delta in range(deltas + 1):
-    #   # bin data
-    #   state = model.states
-    #   for node, state in enumerate(state):
-    #     out[delta, node, sortr[state]] += 1 / float(repeats)
-    #   # assign nudges if present
-    #   if _pulse:
-    #     copyNudge = model.nudges.copy() # story nudges already there
-    #     for node, nudge in _pulse.items():
-    #       model.nudges[model.mapping[node]] = nudge # TODO: either set or add
-    # #
-    # #   # update model
-    #   # r = next(nodesToUpdate)
-    #   model.updateState(model.sampleNodes[model.mode](nodeIDs))
-    #   # model.updateState(r[counter])
-    #   # model.updateState(next(r))
-    #   counter += 1
-    #   # check if pulse turn-off
-    #   if _pulse:
-    #     model.nudges = copyNudge
-    #     # check stop conditions
-    #     conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
-    #                   nudgeMode == 'pulse')
-    #     if nudgeMode == 'pulse':
-    #       _pulse = {}
-    #   elif nudgeMode == 'constant' and delta >= deltas // 2:
-    #     # if any(conditions):
-    #       _pulse = {}
+    for delta in range(deltas + 1):
+      # bin data
+      state = model.states
+      for node, state in enumerate(state):
+        out[delta, node, sortr[state]] += 1 / float(repeats)
+      # assign nudges if present
+      if _pulse:
+        copyNudge = model.nudges.copy() # story nudges already there
+        for node, nudge in _pulse.items():
+          model.nudges[model.mapping[node]] = nudge # TODO: either set or add
+    #
+    #   # update model
+      # r = next(nodesToUpdate)
+      model.updateState(model.sampleNodes[model.mode](nodeIDs))
+      # model.updateState(r[counter])
+      # model.updateState(next(r))
+      counter += 1
+      # check if pulse turn-off
+      if _pulse:
+        model.nudges = copyNudge
+        # check stop conditions
+        conditions = (nudgeMode == 'constant' and delta >= deltas // 2,\
+                      nudgeMode == 'pulse')
+        if nudgeMode == 'pulse':
+          _pulse = {}
+      elif nudgeMode == 'constant' and delta >= deltas // 2:
+        # if any(conditions):
+          _pulse = {}
 
   return {tuple(startState) : out}
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def mutualInformation_alt(dict conditional, int deltas, \
+cpdef mutualInformation_alt(dict conditional, int deltas, \
                           dict snapshots, object model):
   '''
    Returns the node distribution and the mutual information decay

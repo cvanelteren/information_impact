@@ -5835,7 +5835,7 @@ static PyObject *__pyx_pf_9fastIsing_5Ising_12updateState(CYTHON_UNUSED PyObject
  *               p = 0.5
  *           else:
  *               p = 1 / ( 1 + exp(-beta *  2 * energy) )             # <<<<<<<<<<<<<<
- *           # if np.random.rand() < p:
+ * 
  *           if rand() / float(INT_MAX) < p: # faster
  */
     /*else*/ {
@@ -5850,9 +5850,9 @@ static PyObject *__pyx_pf_9fastIsing_5Ising_12updateState(CYTHON_UNUSED PyObject
 
     /* "fastIsing.pyx":191
  *               p = 1 / ( 1 + exp(-beta *  2 * energy) )
- *           # if np.random.rand() < p:
+ * 
  *           if rand() / float(INT_MAX) < p: # faster             # <<<<<<<<<<<<<<
- *             newstates[node] = -states[node]
+ *                 newstates[node] = -states[node]
  * 
  */
     __pyx_t_17 = rand();
@@ -5864,9 +5864,9 @@ static PyObject *__pyx_pf_9fastIsing_5Ising_12updateState(CYTHON_UNUSED PyObject
     if (__pyx_t_3) {
 
       /* "fastIsing.pyx":192
- *           # if np.random.rand() < p:
+ * 
  *           if rand() / float(INT_MAX) < p: # faster
- *             newstates[node] = -states[node]             # <<<<<<<<<<<<<<
+ *                 newstates[node] = -states[node]             # <<<<<<<<<<<<<<
  * 
  *           # elif self.updateMethod == 'metropolis':
  */
@@ -5876,9 +5876,9 @@ static PyObject *__pyx_pf_9fastIsing_5Ising_12updateState(CYTHON_UNUSED PyObject
 
       /* "fastIsing.pyx":191
  *               p = 1 / ( 1 + exp(-beta *  2 * energy) )
- *           # if np.random.rand() < p:
+ * 
  *           if rand() / float(INT_MAX) < p: # faster             # <<<<<<<<<<<<<<
- *             newstates[node] = -states[node]
+ *                 newstates[node] = -states[node]
  * 
  */
     }
@@ -8578,9 +8578,9 @@ static PyObject *__pyx_pf_9fastIsing_5Ising_20removeAllNudges(CYTHON_UNUSED PyOb
   return __pyx_r;
 }
 
-/* "fastIsing.pyx":352
- * #     return states
- * @cython.boundscheck(False)
+/* "fastIsing.pyx":354
+ * @cython.wraparound(False)
+ * @cython.cdivision(True)
  * cdef double c_energy(int node, long[:] states,\             # <<<<<<<<<<<<<<
  *                       int [:] edgeData,\
  *                       double [:] interaction,\
@@ -8608,7 +8608,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
   Py_ssize_t __pyx_t_9;
   __Pyx_RefNannySetupContext("c_energy", 0);
 
-  /* "fastIsing.pyx":357
+  /* "fastIsing.pyx":359
  *                       double [:] H, double nudge):
  * 
  *   cdef double energy = 0             # <<<<<<<<<<<<<<
@@ -8617,7 +8617,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  */
   __pyx_v_energy = 0.0;
 
-  /* "fastIsing.pyx":358
+  /* "fastIsing.pyx":360
  * 
  *   cdef double energy = 0
  *   cdef long N = len(edgeData)             # <<<<<<<<<<<<<<
@@ -8627,7 +8627,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
   __pyx_t_1 = __Pyx_MemoryView_Len(__pyx_v_edgeData); 
   __pyx_v_N = __pyx_t_1;
 
-  /* "fastIsing.pyx":362
+  /* "fastIsing.pyx":364
  *   cdef long _edge, _state
  *   cdef int i
  *   cdef long _nodeState = states[node]             # <<<<<<<<<<<<<<
@@ -8635,10 +8635,9 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  *     _inter = interaction[i]
  */
   __pyx_t_2 = __pyx_v_node;
-  if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_states.shape[0];
   __pyx_v__nodeState = (*((long *) ( /* dim=0 */ (__pyx_v_states.data + __pyx_t_2 * __pyx_v_states.strides[0]) )));
 
-  /* "fastIsing.pyx":363
+  /* "fastIsing.pyx":365
  *   cdef int i
  *   cdef long _nodeState = states[node]
  *   for i in parallel.prange(N, nogil = True):             # <<<<<<<<<<<<<<
@@ -8680,7 +8679,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
                             __pyx_v__inter = ((double)__PYX_NAN());
                             __pyx_v__state = ((long)0xbad0bad0);
 
-                            /* "fastIsing.pyx":364
+                            /* "fastIsing.pyx":366
  *   cdef long _nodeState = states[node]
  *   for i in parallel.prange(N, nogil = True):
  *     _inter = interaction[i]             # <<<<<<<<<<<<<<
@@ -8688,10 +8687,9 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  *     _state = states[i]
  */
                             __pyx_t_6 = __pyx_v_i;
-                            if (__pyx_t_6 < 0) __pyx_t_6 += __pyx_v_interaction.shape[0];
                             __pyx_v__inter = (*((double *) ( /* dim=0 */ (__pyx_v_interaction.data + __pyx_t_6 * __pyx_v_interaction.strides[0]) )));
 
-                            /* "fastIsing.pyx":365
+                            /* "fastIsing.pyx":367
  *   for i in parallel.prange(N, nogil = True):
  *     _inter = interaction[i]
  *     _edge  = edgeData[i]             # <<<<<<<<<<<<<<
@@ -8699,10 +8697,9 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  *     _H    = H[_edge]
  */
                             __pyx_t_7 = __pyx_v_i;
-                            if (__pyx_t_7 < 0) __pyx_t_7 += __pyx_v_edgeData.shape[0];
                             __pyx_v__edge = (*((int *) ( /* dim=0 */ (__pyx_v_edgeData.data + __pyx_t_7 * __pyx_v_edgeData.strides[0]) )));
 
-                            /* "fastIsing.pyx":366
+                            /* "fastIsing.pyx":368
  *     _inter = interaction[i]
  *     _edge  = edgeData[i]
  *     _state = states[i]             # <<<<<<<<<<<<<<
@@ -8710,10 +8707,9 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  *     energy -= _nodeState * _state * _inter * _edge + _H * _state
  */
                             __pyx_t_8 = __pyx_v_i;
-                            if (__pyx_t_8 < 0) __pyx_t_8 += __pyx_v_states.shape[0];
                             __pyx_v__state = (*((long *) ( /* dim=0 */ (__pyx_v_states.data + __pyx_t_8 * __pyx_v_states.strides[0]) )));
 
-                            /* "fastIsing.pyx":367
+                            /* "fastIsing.pyx":369
  *     _edge  = edgeData[i]
  *     _state = states[i]
  *     _H    = H[_edge]             # <<<<<<<<<<<<<<
@@ -8721,10 +8717,9 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  *   energy -= nudge
  */
                             __pyx_t_9 = __pyx_v__edge;
-                            if (__pyx_t_9 < 0) __pyx_t_9 += __pyx_v_H.shape[0];
                             __pyx_v__H = (*((double *) ( /* dim=0 */ (__pyx_v_H.data + __pyx_t_9 * __pyx_v_H.strides[0]) )));
 
-                            /* "fastIsing.pyx":368
+                            /* "fastIsing.pyx":370
  *     _state = states[i]
  *     _H    = H[_edge]
  *     energy -= _nodeState * _state * _inter * _edge + _H * _state             # <<<<<<<<<<<<<<
@@ -8745,7 +8740,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
         #endif
       }
 
-      /* "fastIsing.pyx":363
+      /* "fastIsing.pyx":365
  *   cdef int i
  *   cdef long _nodeState = states[node]
  *   for i in parallel.prange(N, nogil = True):             # <<<<<<<<<<<<<<
@@ -8764,7 +8759,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
       }
   }
 
-  /* "fastIsing.pyx":369
+  /* "fastIsing.pyx":371
  *     _H    = H[_edge]
  *     energy -= _nodeState * _state * _inter * _edge + _H * _state
  *   energy -= nudge             # <<<<<<<<<<<<<<
@@ -8773,7 +8768,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
  */
   __pyx_v_energy = (__pyx_v_energy - __pyx_v_nudge);
 
-  /* "fastIsing.pyx":370
+  /* "fastIsing.pyx":372
  *     energy -= _nodeState * _state * _inter * _edge + _H * _state
  *   energy -= nudge
  *   return energy             # <<<<<<<<<<<<<<
@@ -8783,9 +8778,9 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
   __pyx_r = __pyx_v_energy;
   goto __pyx_L0;
 
-  /* "fastIsing.pyx":352
- * #     return states
- * @cython.boundscheck(False)
+  /* "fastIsing.pyx":354
+ * @cython.wraparound(False)
+ * @cython.cdivision(True)
  * cdef double c_energy(int node, long[:] states,\             # <<<<<<<<<<<<<<
  *                       int [:] edgeData,\
  *                       double [:] interaction,\
@@ -8797,7 +8792,7 @@ static double __pyx_f_9fastIsing_c_energy(int __pyx_v_node, __Pyx_memviewslice _
   return __pyx_r;
 }
 
-/* "fastIsing.pyx":374
+/* "fastIsing.pyx":376
  * 
  * 
  * def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):             # <<<<<<<<<<<<<<
@@ -8848,19 +8843,19 @@ static PyObject *__pyx_pw_9fastIsing_1fitTemperature(PyObject *__pyx_self, PyObj
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_graph)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, 1); __PYX_ERR(0, 374, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, 1); __PYX_ERR(0, 376, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_nSamples)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, 2); __PYX_ERR(0, 374, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, 2); __PYX_ERR(0, 376, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_step)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, 3); __PYX_ERR(0, 374, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, 3); __PYX_ERR(0, 376, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
@@ -8870,7 +8865,7 @@ static PyObject *__pyx_pw_9fastIsing_1fitTemperature(PyObject *__pyx_self, PyObj
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "fitTemperature") < 0)) __PYX_ERR(0, 374, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "fitTemperature") < 0)) __PYX_ERR(0, 376, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -8892,7 +8887,7 @@ static PyObject *__pyx_pw_9fastIsing_1fitTemperature(PyObject *__pyx_self, PyObj
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 374, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("fitTemperature", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 376, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("fastIsing.fitTemperature", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -8914,25 +8909,25 @@ static PyObject *__pyx_pf_9fastIsing_fitTemperature(CYTHON_UNUSED PyObject *__py
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("fitTemperature", 0);
 
-  /* "fastIsing.pyx":379
+  /* "fastIsing.pyx":381
  *     for a specific graph of specific size
  *     '''
  *     model = fitModel(graph = graph, temperature = temperature, doBurnin = True)             # <<<<<<<<<<<<<<
  *     return information.getSnapShots(model = model, nSamples = nSamples,\
  *                                     step = step)[:2] # only keep the node probs
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 379, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 381, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_graph, __pyx_v_graph) < 0) __PYX_ERR(0, 379, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_temperature, __pyx_v_temperature) < 0) __PYX_ERR(0, 379, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_doBurnin, Py_True) < 0) __PYX_ERR(0, 379, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_v_fitModel, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 379, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_graph, __pyx_v_graph) < 0) __PYX_ERR(0, 381, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_temperature, __pyx_v_temperature) < 0) __PYX_ERR(0, 381, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_doBurnin, Py_True) < 0) __PYX_ERR(0, 381, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_v_fitModel, __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 381, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_model = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":380
+  /* "fastIsing.pyx":382
  *     '''
  *     model = fitModel(graph = graph, temperature = temperature, doBurnin = True)
  *     return information.getSnapShots(model = model, nSamples = nSamples,\             # <<<<<<<<<<<<<<
@@ -8940,52 +8935,52 @@ static PyObject *__pyx_pf_9fastIsing_fitTemperature(CYTHON_UNUSED PyObject *__py
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_information); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_information); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 382, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_getSnapShots); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_getSnapShots); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 382, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 382, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_model, __pyx_v_model) < 0) __PYX_ERR(0, 380, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_nSamples, __pyx_v_nSamples) < 0) __PYX_ERR(0, 380, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_model, __pyx_v_model) < 0) __PYX_ERR(0, 382, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_nSamples, __pyx_v_nSamples) < 0) __PYX_ERR(0, 382, __pyx_L1_error)
 
-  /* "fastIsing.pyx":381
+  /* "fastIsing.pyx":383
  *     model = fitModel(graph = graph, temperature = temperature, doBurnin = True)
  *     return information.getSnapShots(model = model, nSamples = nSamples,\
  *                                     step = step)[:2] # only keep the node probs             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_step, __pyx_v_step) < 0) __PYX_ERR(0, 380, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_step, __pyx_v_step) < 0) __PYX_ERR(0, 382, __pyx_L1_error)
 
-  /* "fastIsing.pyx":380
+  /* "fastIsing.pyx":382
  *     '''
  *     model = fitModel(graph = graph, temperature = temperature, doBurnin = True)
  *     return information.getSnapShots(model = model, nSamples = nSamples,\             # <<<<<<<<<<<<<<
  *                                     step = step)[:2] # only keep the node probs
  * 
  */
-  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 380, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_empty_tuple, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 382, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":381
+  /* "fastIsing.pyx":383
  *     model = fitModel(graph = graph, temperature = temperature, doBurnin = True)
  *     return information.getSnapShots(model = model, nSamples = nSamples,\
  *                                     step = step)[:2] # only keep the node probs             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_t_3, 0, 2, NULL, NULL, &__pyx_slice__11, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 381, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetSlice(__pyx_t_3, 0, 2, NULL, NULL, &__pyx_slice__11, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 383, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "fastIsing.pyx":374
+  /* "fastIsing.pyx":376
  * 
  * 
  * def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):             # <<<<<<<<<<<<<<
@@ -9007,7 +9002,7 @@ static PyObject *__pyx_pf_9fastIsing_fitTemperature(CYTHON_UNUSED PyObject *__py
   return __pyx_r;
 }
 
-/* "fastIsing.pyx":384
+/* "fastIsing.pyx":386
  * 
  * 
  * def matchMagnetization(modelt, nSamples, burninSamples):             # <<<<<<<<<<<<<<
@@ -9051,17 +9046,17 @@ static PyObject *__pyx_pw_9fastIsing_3matchMagnetization(PyObject *__pyx_self, P
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_nSamples)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("matchMagnetization", 1, 3, 3, 1); __PYX_ERR(0, 384, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("matchMagnetization", 1, 3, 3, 1); __PYX_ERR(0, 386, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_burninSamples)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("matchMagnetization", 1, 3, 3, 2); __PYX_ERR(0, 384, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("matchMagnetization", 1, 3, 3, 2); __PYX_ERR(0, 386, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "matchMagnetization") < 0)) __PYX_ERR(0, 384, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "matchMagnetization") < 0)) __PYX_ERR(0, 386, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -9076,7 +9071,7 @@ static PyObject *__pyx_pw_9fastIsing_3matchMagnetization(PyObject *__pyx_self, P
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("matchMagnetization", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 384, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("matchMagnetization", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 386, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("fastIsing.matchMagnetization", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -9105,7 +9100,7 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   PyObject *__pyx_t_6 = NULL;
   __Pyx_RefNannySetupContext("matchMagnetization", 0);
 
-  /* "fastIsing.pyx":388
+  /* "fastIsing.pyx":390
  *   compute in parallel the magnetization
  *   '''
  *   model, t = modelt             # <<<<<<<<<<<<<<
@@ -9118,7 +9113,7 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
     if (unlikely(size != 2)) {
       if (size > 2) __Pyx_RaiseTooManyValuesError(2);
       else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-      __PYX_ERR(0, 388, __pyx_L1_error)
+      __PYX_ERR(0, 390, __pyx_L1_error)
     }
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
     if (likely(PyTuple_CheckExact(sequence))) {
@@ -9131,21 +9126,21 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
     __Pyx_INCREF(__pyx_t_1);
     __Pyx_INCREF(__pyx_t_2);
     #else
-    __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 388, __pyx_L1_error)
+    __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 390, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 388, __pyx_L1_error)
+    __pyx_t_2 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 390, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     #endif
   } else {
     Py_ssize_t index = -1;
-    __pyx_t_3 = PyObject_GetIter(__pyx_v_modelt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 388, __pyx_L1_error)
+    __pyx_t_3 = PyObject_GetIter(__pyx_v_modelt); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 390, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_4 = Py_TYPE(__pyx_t_3)->tp_iternext;
     index = 0; __pyx_t_1 = __pyx_t_4(__pyx_t_3); if (unlikely(!__pyx_t_1)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_1);
     index = 1; __pyx_t_2 = __pyx_t_4(__pyx_t_3); if (unlikely(!__pyx_t_2)) goto __pyx_L3_unpacking_failed;
     __Pyx_GOTREF(__pyx_t_2);
-    if (__Pyx_IternextUnpackEndCheck(__pyx_t_4(__pyx_t_3), 2) < 0) __PYX_ERR(0, 388, __pyx_L1_error)
+    if (__Pyx_IternextUnpackEndCheck(__pyx_t_4(__pyx_t_3), 2) < 0) __PYX_ERR(0, 390, __pyx_L1_error)
     __pyx_t_4 = NULL;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     goto __pyx_L4_unpacking_done;
@@ -9153,7 +9148,7 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_4 = NULL;
     if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-    __PYX_ERR(0, 388, __pyx_L1_error)
+    __PYX_ERR(0, 390, __pyx_L1_error)
     __pyx_L4_unpacking_done:;
   }
   __pyx_v_model = __pyx_t_1;
@@ -9161,25 +9156,25 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   __pyx_v_t = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":389
+  /* "fastIsing.pyx":391
  *   '''
  *   model, t = modelt
  *   model.t = t             # <<<<<<<<<<<<<<
  *   model.states.fill(-1) # rest to ones; only interested in how mag is kept
  *   # self.reset()
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_model, __pyx_n_s_t_2, __pyx_v_t) < 0) __PYX_ERR(0, 389, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_model, __pyx_n_s_t_2, __pyx_v_t) < 0) __PYX_ERR(0, 391, __pyx_L1_error)
 
-  /* "fastIsing.pyx":390
+  /* "fastIsing.pyx":392
  *   model, t = modelt
  *   model.t = t
  *   model.states.fill(-1) # rest to ones; only interested in how mag is kept             # <<<<<<<<<<<<<<
  *   # self.reset()
  *   model.burnin(burninSamples)
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_states); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_states); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_fill); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 390, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_fill); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = NULL;
@@ -9194,19 +9189,19 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   }
   __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_int_neg_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_neg_1);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 390, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":392
+  /* "fastIsing.pyx":394
  *   model.states.fill(-1) # rest to ones; only interested in how mag is kept
  *   # self.reset()
  *   model.burnin(burninSamples)             # <<<<<<<<<<<<<<
  *   res = np.asarray(model.simulate(nSamples))
  *   H   = abs(res.mean())
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_burnin); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 392, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_burnin); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 394, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -9220,24 +9215,24 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   }
   __pyx_t_2 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_1, __pyx_v_burninSamples) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_burninSamples);
   __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 392, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 394, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":393
+  /* "fastIsing.pyx":395
  *   # self.reset()
  *   model.burnin(burninSamples)
  *   res = np.asarray(model.simulate(nSamples))             # <<<<<<<<<<<<<<
  *   H   = abs(res.mean())
  *   HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_asarray); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_asarray); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_simulate); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_simulate); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __pyx_t_6 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_5))) {
@@ -9251,7 +9246,7 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   }
   __pyx_t_3 = (__pyx_t_6) ? __Pyx_PyObject_Call2Args(__pyx_t_5, __pyx_t_6, __pyx_v_nSamples) : __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_nSamples);
   __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 393, __pyx_L1_error)
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_t_5 = NULL;
@@ -9267,20 +9262,20 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   __pyx_t_2 = (__pyx_t_5) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_5, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 393, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_res = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":394
+  /* "fastIsing.pyx":396
  *   model.burnin(burninSamples)
  *   res = np.asarray(model.simulate(nSamples))
  *   H   = abs(res.mean())             # <<<<<<<<<<<<<<
  *   HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
  *   return H, HH
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_res, __pyx_n_s_mean); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_res, __pyx_n_s_mean); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
@@ -9294,25 +9289,25 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   }
   __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 394, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyNumber_Absolute(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 394, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyNumber_Absolute(__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_H = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "fastIsing.pyx":395
+  /* "fastIsing.pyx":397
  *   res = np.asarray(model.simulate(nSamples))
  *   H   = abs(res.mean())
  *   HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility             # <<<<<<<<<<<<<<
  *   return H, HH
  * 
  */
-  __pyx_t_2 = PyNumber_Power(__pyx_v_res, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Power(__pyx_v_res, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_mean); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_mean); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -9327,10 +9322,10 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   }
   __pyx_t_1 = (__pyx_t_2) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_2) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
+  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_res, __pyx_n_s_mean); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_res, __pyx_n_s_mean); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_5 = NULL;
   if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
@@ -9344,26 +9339,26 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   }
   __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 395, __pyx_L1_error)
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyNumber_Power(__pyx_t_3, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Power(__pyx_t_3, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyNumber_Subtract(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_3 = PyNumber_Subtract(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_beta); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_model, __pyx_n_s_beta); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_HH = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "fastIsing.pyx":396
+  /* "fastIsing.pyx":398
  *   H   = abs(res.mean())
  *   HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
  *   return H, HH             # <<<<<<<<<<<<<<
@@ -9371,7 +9366,7 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 398, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_v_H);
   __Pyx_GIVEREF(__pyx_v_H);
@@ -9383,7 +9378,7 @@ static PyObject *__pyx_pf_9fastIsing_2matchMagnetization(CYTHON_UNUSED PyObject 
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "fastIsing.pyx":384
+  /* "fastIsing.pyx":386
  * 
  * 
  * def matchMagnetization(modelt, nSamples, burninSamples):             # <<<<<<<<<<<<<<
@@ -25687,14 +25682,14 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__8);
   __pyx_codeobj__9 = (PyObject*)__Pyx_PyCode_New(5, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__8, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_fastIsing_pyx, __pyx_n_s_ifunc, 290, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__9)) __PYX_ERR(0, 290, __pyx_L1_error)
 
-  /* "fastIsing.pyx":381
+  /* "fastIsing.pyx":383
  *     model = fitModel(graph = graph, temperature = temperature, doBurnin = True)
  *     return information.getSnapShots(model = model, nSamples = nSamples,\
  *                                     step = step)[:2] # only keep the node probs             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_slice__11 = PySlice_New(Py_None, __pyx_int_2, Py_None); if (unlikely(!__pyx_slice__11)) __PYX_ERR(0, 381, __pyx_L1_error)
+  __pyx_slice__11 = PySlice_New(Py_None, __pyx_int_2, Py_None); if (unlikely(!__pyx_slice__11)) __PYX_ERR(0, 383, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__11);
   __Pyx_GIVEREF(__pyx_slice__11);
 
@@ -26169,29 +26164,29 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__61);
   __pyx_codeobj__62 = (PyObject*)__Pyx_PyCode_New(1, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__61, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_fastIsing_pyx, __pyx_n_s_removeAllNudges, 308, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__62)) __PYX_ERR(0, 308, __pyx_L1_error)
 
-  /* "fastIsing.pyx":374
+  /* "fastIsing.pyx":376
  * 
  * 
  * def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):             # <<<<<<<<<<<<<<
  *     '''
  *     Used by match temperature to match the entropy
  */
-  __pyx_tuple__63 = PyTuple_Pack(6, __pyx_n_s_temperature, __pyx_n_s_graph, __pyx_n_s_nSamples, __pyx_n_s_step, __pyx_n_s_fitModel, __pyx_n_s_model); if (unlikely(!__pyx_tuple__63)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_tuple__63 = PyTuple_Pack(6, __pyx_n_s_temperature, __pyx_n_s_graph, __pyx_n_s_nSamples, __pyx_n_s_step, __pyx_n_s_fitModel, __pyx_n_s_model); if (unlikely(!__pyx_tuple__63)) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__63);
   __Pyx_GIVEREF(__pyx_tuple__63);
-  __pyx_codeobj__64 = (PyObject*)__Pyx_PyCode_New(5, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__63, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_fastIsing_pyx, __pyx_n_s_fitTemperature, 374, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__64)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_codeobj__64 = (PyObject*)__Pyx_PyCode_New(5, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__63, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_fastIsing_pyx, __pyx_n_s_fitTemperature, 376, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__64)) __PYX_ERR(0, 376, __pyx_L1_error)
 
-  /* "fastIsing.pyx":384
+  /* "fastIsing.pyx":386
  * 
  * 
  * def matchMagnetization(modelt, nSamples, burninSamples):             # <<<<<<<<<<<<<<
  *   '''
  *   compute in parallel the magnetization
  */
-  __pyx_tuple__65 = PyTuple_Pack(8, __pyx_n_s_modelt, __pyx_n_s_nSamples, __pyx_n_s_burninSamples, __pyx_n_s_model, __pyx_n_s_t_2, __pyx_n_s_res, __pyx_n_s_H, __pyx_n_s_HH); if (unlikely(!__pyx_tuple__65)) __PYX_ERR(0, 384, __pyx_L1_error)
+  __pyx_tuple__65 = PyTuple_Pack(8, __pyx_n_s_modelt, __pyx_n_s_nSamples, __pyx_n_s_burninSamples, __pyx_n_s_model, __pyx_n_s_t_2, __pyx_n_s_res, __pyx_n_s_H, __pyx_n_s_HH); if (unlikely(!__pyx_tuple__65)) __PYX_ERR(0, 386, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__65);
   __Pyx_GIVEREF(__pyx_tuple__65);
-  __pyx_codeobj__66 = (PyObject*)__Pyx_PyCode_New(3, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__65, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_fastIsing_pyx, __pyx_n_s_matchMagnetization, 384, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__66)) __PYX_ERR(0, 384, __pyx_L1_error)
+  __pyx_codeobj__66 = (PyObject*)__Pyx_PyCode_New(3, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__65, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_fastIsing_pyx, __pyx_n_s_matchMagnetization, 386, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__66)) __PYX_ERR(0, 386, __pyx_L1_error)
 
   /* "View.MemoryView":285
  *         return self.name
@@ -27032,33 +27027,33 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":374
+  /* "fastIsing.pyx":376
  * 
  * 
  * def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):             # <<<<<<<<<<<<<<
  *     '''
  *     Used by match temperature to match the entropy
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Ising); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_Ising); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_k__10 = __pyx_t_2;
   __Pyx_GIVEREF(__pyx_t_2);
   __pyx_t_2 = 0;
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_9fastIsing_1fitTemperature, NULL, __pyx_n_s_fastIsing); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_9fastIsing_1fitTemperature, NULL, __pyx_n_s_fastIsing); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_fitTemperature, __pyx_t_2) < 0) __PYX_ERR(0, 374, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_fitTemperature, __pyx_t_2) < 0) __PYX_ERR(0, 376, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "fastIsing.pyx":384
+  /* "fastIsing.pyx":386
  * 
  * 
  * def matchMagnetization(modelt, nSamples, burninSamples):             # <<<<<<<<<<<<<<
  *   '''
  *   compute in parallel the magnetization
  */
-  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_9fastIsing_3matchMagnetization, NULL, __pyx_n_s_fastIsing); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 384, __pyx_L1_error)
+  __pyx_t_2 = PyCFunction_NewEx(&__pyx_mdef_9fastIsing_3matchMagnetization, NULL, __pyx_n_s_fastIsing); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 386, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_matchMagnetization, __pyx_t_2) < 0) __PYX_ERR(0, 384, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_matchMagnetization, __pyx_t_2) < 0) __PYX_ERR(0, 386, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "fastIsing.pyx":1

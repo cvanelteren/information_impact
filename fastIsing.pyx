@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# distutils: language=c"
 """
 Created on Tue Feb  6 09:36:17 2018
 
@@ -187,9 +188,9 @@ class Ising(Model):
               p = 0.5
           else:
               p = 1 / ( 1 + exp(-beta *  2 * energy) )
-          # if np.random.rand() < p:
+
           if rand() / float(INT_MAX) < p: # faster
-            newstates[node] = -states[node]
+                newstates[node] = -states[node]
 
           # elif self.updateMethod == 'metropolis':
             # MCMC moves
@@ -349,6 +350,8 @@ class Ising(Model):
 #         states[node] = -states[node]
 #     return states
 @cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
 cdef double c_energy(int node, long[:] states,\
                       int [:] edgeData,\
                       double [:] interaction,\

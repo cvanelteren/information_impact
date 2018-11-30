@@ -1,4 +1,5 @@
 # cython: infer_types=True
+# distutils: language=c"
 import numpy as np
 cimport numpy as np
 import networkx as nx, tqdm, information, functools
@@ -12,10 +13,10 @@ import cython
 # TODO: add sync, async and single update methods [done]
 DTYPE = np.int
 ctypedef np.int DTYPE_T
-from libcpp.map cimport map
-from libcpp.string cimport string
-from libcpp.vector cimport vector
-from cython.operator cimport dereference, preincrement
+# from libcpp.map cimport map
+# from libcpp.string cimport string
+# from libcpp.vector cimport vector
+# from cython.operator cimport dereference, preincrement
 class Model:
     def __init__(self, graph, agentStates, mode = 'async', verbose = False, nudgeMode = 'constant'):
         '''
@@ -88,7 +89,7 @@ class Model:
             _interaction[nodeID] = neighborData[:, 1]
         # cdef map[long, vector[long]] edgeData       = _edgeData
         # cdef map[long, vector[double]] interaction  = _interaction
-        edgeData = _edgeData
+        edgeData    = _edgeData
         interaction = _interaction
 
          # set class data

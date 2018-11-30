@@ -11,9 +11,10 @@ for file in os.listdir(os.getcwd()):
         setup(\
         ext_modules = cythonize(\
                     file, annotate = True,
-                    language_level = 3, language = 'c++')\
-                    , \
-        include_dirs =[numpy.get_include()]\
+                    language_level = 3,\
+                    ), \
+        include_dirs =[numpy.get_include()], \
+        extra_compile_args = ['-O3 -march=native']\
         )
 
 

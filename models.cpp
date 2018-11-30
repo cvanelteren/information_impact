@@ -4230,7 +4230,7 @@ static PyObject *__pyx_pf_6models_5Model___init__(CYTHON_UNUSED PyObject *__pyx_
   /* "models.pyx":91
  *         # cdef map[long, vector[long]] edgeData       = _edgeData
  *         # cdef map[long, vector[double]] interaction  = _interaction
- *         edgeData = _edgeData             # <<<<<<<<<<<<<<
+ *         edgeData    = _edgeData             # <<<<<<<<<<<<<<
  *         interaction = _interaction
  * 
  */
@@ -4239,7 +4239,7 @@ static PyObject *__pyx_pf_6models_5Model___init__(CYTHON_UNUSED PyObject *__pyx_
 
   /* "models.pyx":92
  *         # cdef map[long, vector[double]] interaction  = _interaction
- *         edgeData = _edgeData
+ *         edgeData    = _edgeData
  *         interaction = _interaction             # <<<<<<<<<<<<<<
  * 
  *          # set class data
