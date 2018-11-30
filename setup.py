@@ -1,4 +1,3 @@
- # distutils: language=c++
 from distutils.core import setup, Extension
 from Cython.Build import cythonize
 import numpy

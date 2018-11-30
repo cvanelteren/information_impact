@@ -1,5 +1,5 @@
 # cython: infer_types=True
-# distutils: language=c"
+# distutils: language=c++
 __author__ = 'Casper van Elteren'
 import numpy as np
 cimport numpy as np
