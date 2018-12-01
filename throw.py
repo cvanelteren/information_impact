@@ -14,7 +14,7 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(5, 1)
+graph = nx.barabasi_albert_graph(10, 5)
 
 
 
@@ -35,9 +35,12 @@ x = []
 
 #y = asarray(m.burnin(samples = 1000))
 import infcy
-snaps = infcy.getSnapShots(m, 10000)
-print(snaps)
 s = time()
+# snaps = infcy.getSnapShots(m, 10000)
+m.simulate(100000)
+print(time() - s)
+# print(snaps)
+
 #while True:
 #    m.simulate(1)
 
