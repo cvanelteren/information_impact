@@ -1,4 +1,3 @@
-
 import networkx as nx
 from numpy import *
 from matplotlib.pyplot import *
@@ -14,7 +13,7 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(10, 5)
+graph = nx.barabasi_albert_graph(100, 5)
 
 
 
@@ -25,7 +24,7 @@ graph = nx.barabasi_albert_graph(10, 5)
 from time import time
 from fastIsing import Ising
 
-m = Ising(graph, temperature = 1)
+m = Ising(graph, temperature = inf)
 m.updateType = 'async'
 m.magSide    = 'pos'
 
@@ -34,14 +33,11 @@ temps = linspace(0, 1, 3)
 x = []
 
 #y = asarray(m.burnin(samples = 1000))
-import infcy
+
 s = time()
-# snaps = infcy.getSnapShots(m, 10000)
-m.simulate(100000)
-print(time() - s)
-# print(snaps)
-
-#while True:
-#    m.simulate(1)
-
+for i in range(10):
+    m.simulate(10000)
+print(time()-s)
+# x = array(x)
+# plot(x.mean(1))
 # %%

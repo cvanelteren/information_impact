@@ -1,5 +1,5 @@
 # cython: infer_types=True
-# distutils: language=c
+# distutils: language=c++
 __author__ = 'Casper van Elteren'
 import numpy as np
 cimport numpy as np
@@ -137,11 +137,12 @@ cpdef monteCarlo_alt(object model, dict snapshots,
    cdef np.ndarray value
    cdef tuple key
 
-   with mp.Pool(mp.cpu_count()) as p:
+   with mp.Pool(processes = mp.cpu_count()) as p:
        # conditional = p.map(func, tqdm(s))
-       for result in p.imap( func, tqdm(s), _CORE):
-           for key, value in result.items():
-               conditional[key] = value
+       conditional = {k:v for l in p.map(func,tqdm(s)) for (k,v) in l.items()}
+       # for result in p.imap( func, tqdm(s), _CORE):
+           # for key, value in result.items():
+               # conditional[key] = value
    # # cdef dict conditional = {}
    # #
    # # # map from node state to idx
@@ -233,43 +234,42 @@ cpdef dict parallelMonteCarlo_alt(\
   # cdef np.ndarray r = np.array([\
   # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
   # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range((delta + 1) * repeats))
-  cdef int counter = 0
   cdef str nudgeMode = model.nudgeMode
   cdef double[:] copyNudge = model.nudges.copy() # store nudges already there
   # for k in range(repeats):
   half  = deltas // 2
   reset = False
+  cdef r = model.sampleNodes(repeats * (deltas + 1))
   with nogil, parallel():
       for k in prange(repeats):
           with gil:
-  # for k in range(repeats):
-            # start from the same point
-            model.states[:] = startState.copy()
-            model.nudges[:] = copyNudge.copy()
-            # print(model.nudges, model.states)
-            reset        = True
-            # OLD OLD OLD
-            # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
-            # for idx, state in enumerate(tmp):
-            #   for node in nodeIDs:
-            #     nodeState    = state[node]
-            #     nodeStateIdx = sortr[nodeState]
-            #     out[idx, node, nodeStateIdx] += 1 / repeats
-            # OLD OLD OLD
-            for delta in range(deltas + 1):
-              # bin data()
-              state = model.states
-              # idx   = np.digitize(state, model.agentStates)
-              # out[delta, idx] += 1 / repeats
-              for node, state in enumerate(state):
-                out[delta, node, sortr[state]] += 1 / repeats
-              # model.updateState(model.sampleNodes[model.mode](nodeIDs))
-              model.updateState(model.sampleNodes(1)[0])
-              # check if pulse turn-off
-              if reset:
-                  if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
-                    model.nudges[:] = 0
-                    reset =  False
+                # start from the same point
+                model.states[:] = startState.copy()
+                model.nudges[:] = copyNudge.copy()
+                # print(model.nudges, model.states)
+                reset        = True
+                # OLD OLD OLD
+                # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
+                # for idx, state in enumerate(tmp):
+                #   for node in nodeIDs:
+                #     nodeState    = state[node]
+                #     nodeStateIdx = sortr[nodeState]
+                #     out[idx, node, nodeStateIdx] += 1 / repeats
+                # OLD OLD OLD
+                for delta in range(deltas + 1):
+                  # bin data()
+                  state = model.states
+                  # idx   = np.digitize(state, model.agentStates)
+                  # out[delta, idx] += 1 / repeats
+                  for node, state in enumerate(state):
+                    out[delta, node, sortr[state]] += 1 / repeats
+                  # model.updateState(model.sampleNodes[model.mode](nodeIDs))
+                  model.updateState(model.sampleNodes(1)[0])
+                  # check if pulse turn-off
+                  if reset:
+                      if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
+                        model.nudges[:] = 0
+                        reset =  False
   return {tuple(startState) : out}
 
 @cython.boundscheck(False) # compiler directive

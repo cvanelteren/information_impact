@@ -24,14 +24,14 @@ close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
     real          = False
-    repeats       = int(1e4) if real else 1000
-    deltas        = 10       if real else 10
+    repeats       = int(1e4) if real else 20_000
+    deltas        = 20       if real else 10
     step          = 1
     nSamples      = int(1e4) if real else 1000
     burninSamples = 100
     pulseSize     = 1
 
-    numIter       = 25 if real else 5
+    numIter       = 10 if real else 1
     magSide       = 'neg'
     updateMethod  = 'async'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
@@ -143,11 +143,12 @@ if __name__ == '__main__':
                                                step          = step)
                 s = "Starting MC:"
                 print(f'{s}{" " * (baseLength-len(s))}\t{datetime.datetime.now()}')
+                ss = time()
                 conditional = infcy.monteCarlo_alt(\
                                                model  = model, snapshots = snapshots,\
                                                deltas = deltas, repeats  = repeats,\
                                                mode   = mode)
-
+                print(time() - ss)
                 # px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
                  # deltas = deltas, repeats = repeats, pulse = pulse, mode = 'source')

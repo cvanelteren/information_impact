@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# distutils: language=c
+# distutils: language=c++
 """
 Created on Tue Feb  6 09:36:17 2018
 
@@ -188,7 +188,7 @@ class Ising(Model):
           if np.isnan(energy):
               p = 0.5
           else:
-              p = 1 / ( 1 + exp(-beta *  2 * energy) )
+              p = 1 / ( 1 + exp_approx(-beta *  2 * energy) )
 
           if rand() / float(INT_MAX) < p: # faster
                 newstates[node] = -states[node]
