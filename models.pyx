@@ -1,5 +1,5 @@
 # cython: infer_types=True
-# distutils: language=c++
+# distutils: language=c
 import numpy as np
 cimport numpy as np
 import networkx as nx, tqdm, functools
@@ -154,7 +154,7 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.boundscheck(False)
     @cython.nonecheck(False)
-    cpdef long [:, ::1] sampleNodes(self, long nSamples):
+    cdef long [:, ::1] sampleNodes(self, long nSamples):
         """
             Python accessible function to sample nodes
         """

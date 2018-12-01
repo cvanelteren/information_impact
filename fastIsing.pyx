@@ -141,29 +141,29 @@ cdef class Ising(Model):
         cdef:
             long[::1] states = self.__states
             double[::1] H    = self._H  # acces the c property
-            int length = len(index)
+            long length = len(index)
             # index  = np.asarray(indices, dtype = int)
-            double energy = 0
+            double energy = 0.
             int neighbor, i
             double weight, Hi
             cdef double nudge = self.__nudges[node]
-            cdef nodeState = states[node]
+            cdef long nodeState = states[node]
             long neighborState
 
 
         # compute hamiltonian and add possible nudge
         # note weights is a matrix of shape (1, nNodes)
         # with nogil, parallel():
-
-        for i in range(length):
-        # for i in prange(length, schedule = 'static'):
-            # neighbor      = index[i]
-            # neighborState = states[neighbor]
-            # weight        = weights[neighbor]
-            # Hi            = H[neighbor]
-            # energy       += weight * neighborState
-            # energy       += neighborState * Hi
-            energy += states[index[i]] * weights[index[i]] + H[index[i]] * states[index[i]]
+        with nogil, parallel():
+            for i in prange(length):
+            # for i in prange(length, schedule = 'static'):
+                # neighbor      = index[i]
+                # neighborState = states[neighbor]
+                # weight        = weights[neighbor]
+                # Hi            = H[neighbor]
+                # energy       += weight * neighborState
+                # energy       += neighborState * Hi
+                energy += states[index[i]] * weights[index[i]] + H[index[i]] * states[index[i]]
         energy *= nodeState
         energy += nudge
         return -energy

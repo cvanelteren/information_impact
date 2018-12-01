@@ -14,8 +14,8 @@ cdef class Model:
         #private
         dict __dict__
 
-    
-    cpdef long [:, ::1] sampleNodes(self, long nSamples)
+
+    cdef long [:, ::1] sampleNodes(self, long nSamples)
     cpdef void construct(self, object graph, \
                     list agentStates)
 
