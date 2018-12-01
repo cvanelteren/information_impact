@@ -1,5 +1,5 @@
 # cython: infer_types=True
-# distutils: language=c++
+# distutils: language=c
 import numpy as np
 cimport numpy as np
 import networkx as nx, tqdm, information, functools

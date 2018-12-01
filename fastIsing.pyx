@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# distutils: language=c++
+# distutils: language=c
 """
 Created on Tue Feb  6 09:36:17 2018
 
@@ -13,7 +13,7 @@ cimport numpy as np
 from scipy.stats import linregress
 import networkx as nx, multiprocessing as mp, functools, tqdm, information, scipy,  functools, copy
 cimport cython
-from cython import parallel
+from cython.parallel cimport parallel, prange
 from models import Model
 from libc.math cimport exp
 from libc.stdlib cimport rand
@@ -253,15 +253,17 @@ class Ising(Model):
          new   = copy.copy(self)
          x.append((new, t))
 
+       # results = np.array(p.map(func, x))
+     # cdef results = np.zeros((len(temps), 2))
+     # cdef int i, N = len(x)
+     # with nogil, parallel():
+     #     for i in prange(N):
+     #         with gil:
+     #             results[i, :] = func(x[i])
      with mp.Pool(processes = mp.cpu_count()) as p:
-       results = np.array(p.map(func, x))
-     # results = np.zeros((temps.size, 2))
-     # for idx, val in enumerate(x):
-     #     print(val)
-     #     results[idx, :] = func(val)
-     H, HH = results.T
+         results = np.asarray(p.map(func, x))
 
-     return H, HH
+     return np.asarray(results).T
 
     # def fit(self, temps, magRange, nSamples,
     #         burninSamples, func,
@@ -356,13 +358,13 @@ class Ising(Model):
 cdef double c_energy(int node, long[:] states,\
                       int [:] edgeData,\
                       double [:] interaction,\
-                      double [:] H, double nudge):
+                      double [:] H, double nudge) nogil:
 
   cdef double energy = 0
   cdef long N = len(edgeData)
   cdef int i
 
-  for i in parallel.prange(N, nogil = True):
+  for i in range(N):
   # for i in range(N):
     energy-= states[node] * states[edgeData[i]] * interaction[i] \
              + H[edgeData[i]] * states[edgeData[i]]
@@ -381,7 +383,7 @@ def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):
                                     step = step)[:2] # only keep the node probs
 
 
-def matchMagnetization(modelt, nSamples, burninSamples):
+cpdef matchMagnetization(modelt, nSamples, burninSamples):
   '''
   compute in parallel the magnetization
   '''
@@ -391,9 +393,11 @@ def matchMagnetization(modelt, nSamples, burninSamples):
   # self.reset()
   model.burnin(burninSamples)
   res = np.asarray(model.simulate(nSamples))
+
   H   = abs(res.mean())
-  HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
-  return H, HH
+  HH  = ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
+  out = np.array([H, HH])
+  return out
 
 
 
