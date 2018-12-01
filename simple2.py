@@ -37,7 +37,7 @@ colors = cm.tab20(arange(model.nNodes))
 # swap default colors to one with more range
 rcParams['axes.prop_cycle'] = cycler('color', colors)
 
-NSAMPLES, NODES, DELTAS, COND = len(controls), model.nNodes, deltas // 2 + 1, 2
+NSAMPLES, NODES, DELTAS, COND = len(controls), model.nNodes, deltas // 2, 2
 THETAS = thetas.size
 dd = zeros((NSAMPLES, NODES, DELTAS, COND), dtype = float32)
 for condition, samples in data[t].items():
@@ -58,13 +58,12 @@ for condition, samples in data[t].items():
             bias = (rs - Rs) / (2 * repeats * log(2)) 
             corrected = sample.mi - bias
             corrected[corrected < finfo(float).eps] = 0 # artefact of correction
-            dd[idx, ..., 0] = corrected[:deltas // 2 + 1, :].T
+            dd[idx, ..., 0] = corrected[: deltas // 2, :].T
         else:
             control = data[t]['{}'][idx].px
             impact = stats.hellingerDistance(sample.px, control).mean(-1)
 #            impact = stats.KL(control, sample.px).mean(-1)
-            impact = impact[deltas // 2  : ][None, :].T
-            print(impact)
+            impact = impact[deltas // 2 + 1 : ][None, :].T
             # TODO: check if this works with tuples (not sure)
             jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                 for key in model.mapping\
@@ -87,7 +86,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
+zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = 0)
 zd[zd < finfo(float).eps] = 0
 
@@ -101,10 +100,11 @@ zd = (zd - MIN) / (MAX - MIN)
 zd = zd.reshape(dd.shape)
 # show means with spread
 fig, ax = subplots(1, 2, sharey = 'all')
-x = arange(deltas // 2 + 1)
+x = arange(deltas // 2)
+sidx = 1
 for axi, zdi, zdstd in zip(ax, zd.mean(0).T, zd.std(0).T):
     axi.plot(x, zdi, linestyle = '--', markeredgecolor = 'black')
-    [axi.fill_between(x, a + 1.96* b, a - 1.96 * b, alpha = .5,\
+    [axi.fill_between(x, a + sidx* b, a - sidx * b, alpha = .1,\
                       color = c) for a, b, c in \
                 zip(zdi.T, zdstd.T, colors)]
 labels = 'MI IMPACT'.split()

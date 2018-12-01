@@ -19,7 +19,7 @@ from tqdm import tqdm   #progress bar
 
 # array = functools.partial(np.array, dtype = np.float16) # tmp hack
 
-cdef int _CORE = 1 # for imap
+cdef int _CORE = 10  # for imap
 INT16 = np.int16
 def checkDistribution():
     '''Warning statement'''
@@ -38,9 +38,9 @@ cpdef getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.c
     # burninSamples = burninSamples, model = model)
     #
     func = functools.partial(parallelSnapshots, step = step, \
-    burninSamples = burninSamples)
+    burninSamples = burninSamples, Z = nSamples)
 
-    Z = nSamples
+
 
     tmp = []
     for i in range(nSamples):
@@ -51,17 +51,18 @@ cpdef getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.c
     # tmp = np.ones(nSamples)
     # tmp = [nSamples]
     with mp.Pool(processes = parallel) as p:
+        # snapshots = {k : v for result in p.map(func, tqdm(tmp)) for (k,v) in result.items()}
         results = p.imap(func, tqdm(tmp), 1)
         for result in results:
           for key, value in result.items():
-            snapshots[key] = snapshots.get(key, 0) + value / Z
+            snapshots[key] = snapshots.get(key, 0) + value
     print(f'Found {len(snapshots)} states')
     return snapshots
 
     # def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
+def parallelSnapshots(tuple sampleModel,  int step, int burninSamples, int Z):
   '''
     Get snapshots by simlating for :nSamples:
     :step: gives how many steps are between samples
@@ -85,8 +86,14 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
   cdef int i
   for i in range(n):
       if i % step == 0:
-          state = model.states
-          snap[tuple(state)] = snap.get(tuple(state), 0) + 1
+          state = tuple(model.states)
+          snap[state] = snap.get(state, 0) + 1 / Z
+          if state in snap:
+              snap[state] += 1 / Z
+          else:
+              snap[state]  = 1 / Z
+
+          # snap[tuple(state)] = snap.get(tuple(state), 0) / Z
       # model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
       # model.updateState(r[i])
       model.updateState(next(r))
@@ -119,9 +126,11 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
                             )
     conditional = {}
     with mp.Pool(mp.cpu_count()) as p:
-        for result in p.imap( func, tqdm(snapshots), 10):
-            for key, value in result.items():
-                conditional[key] = conditional.get(key, 0) + value
+        conditional = p.map(func, tqdm(snapshots))
+        # for result in p.imap( func, tqdm(snapshots), 10):
+        #     for key, value in result.items():
+        #         conditional[key] = conditional.get(key, 0) + value
+    print('Done')
     return conditional
 '''
 The alt functions currently only probe the system and the nodes. The plan is to build from here.
@@ -152,8 +161,8 @@ cpdef monteCarlo_alt(object model, dict snapshots,
    cdef np.ndarray value
    cdef tuple key
    cdef s = np.array([k for k in snapshots])
-   print(s.shape)
    with mp.Pool(mp.cpu_count()) as p:
+       # conditional = p.map(func, tqdm(s))
        for result in p.imap( func, tqdm(s), _CORE):
            for key, value in result.items():
                conditional[key] = value
@@ -201,6 +210,7 @@ cpdef dict parallelMonteCarlo_alt(\
   with nogil, parallel():
       for k in prange(repeats):
           with gil:
+  # for k in range(repeats):
             # start from the same point
             model.states[:] = startState.copy()
             model.nudges[:] = copyNudge.copy()

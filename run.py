@@ -24,16 +24,16 @@ close('all')
 np.random.seed() # set seed
 if __name__ == '__main__':
     real          = False
-    repeats       = int(1e4) if real else 10000
+    repeats       = int(1e4) if real else 1000
     deltas        = 10       if real else 10
     step          = 1
-    nSamples      = int(1e4) if real else 1000
+    nSamples      = int(1e4) if real else 10000
     burninSamples = 100
     pulseSize     = 1
 
-    numIter       = int(5e1) if real else 1
+    numIter       = 25 if real else 5
     magSide       = 'neg'
-    updateMethod  = 'single'
+    updateMethod  = 'async'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
 
 #     dataDir = 'Psycho' # relative path careful
@@ -50,8 +50,11 @@ if __name__ == '__main__':
 #     nx.set_node_attributes(graph, attr)
 
     n = 10
-    graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
-    graphs = [nx.path_graph(3)]
+    x = linspace(1, n, 3, dtype = int)
+    print(x)
+    # graphs = [nx.barabasi_albert_graph(n, i) \
+    #           for i in x]
+    graphs = [nx.barabasi_albert_graph(10, 2)]
     for graph in graphs:
         now = time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
