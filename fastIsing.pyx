@@ -225,11 +225,10 @@ cdef class Ising(Model):
         states = newstates # possible overwrite
         return states #
     cpdef np.ndarray simulate(self, int samples):
-        print(self.__nNodes, self.__nodeids)
         cdef:
             long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)
-            int i
             long[:, ::1] r = self.sampleNodes(samples)
+            int i
         for i in range(samples):
             results[i] = self.updateState(r[i])
 

@@ -18,6 +18,7 @@ ctypedef np.int DTYPE_T
 # from libcpp.map cimport map as cmap
 # from libcpp.string cimport string
 # from libcpp.vector cimport vector
+from libc.stdlib cimport rand
 
 from cython.operator cimport dereference, preincrement
 from libc.stdlib cimport rand
@@ -162,7 +163,7 @@ cdef class Model: # see pxd
         """
         cdef:
             # initialization
-            nodeIDs           = self.__nodeids
+            long[::1] nodeIDs           = self.__nodeids
             long length       = self.__nNodes # length of target array
             updateType        = self.__updateType
 
@@ -170,7 +171,7 @@ cdef class Model: # see pxd
         if updateType == 'single':
             sampleSize = 1
         elif updateType == 'serial':
-            return nodeIDs
+            sampleSize = 0
         else:
             sampleSize = length
         print
@@ -191,10 +192,16 @@ cdef class Model: # see pxd
         cdef:
             int sample
             int start
+            long i, j, k
         for samplei in range(nSamples):
             start = (samplei * sampleSize) % length
             if start + sampleSize >= length:
-                np.random.shuffle(nodeIDs)
+                # np.random.shuffle(nodeIDs)
+                for i in range(length):
+                    j = <long> (i + length * rand() / INT_MAX)
+                    k = nodeIDs[j]
+                    nodeIDs[j] = nodeIDs[i]
+                    nodeIDs[i] = k
             samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
 

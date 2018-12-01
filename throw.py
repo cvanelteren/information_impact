@@ -13,9 +13,7 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-from models import Model
 graph = nx.barabasi_albert_graph(10, 5)
-m = Model(graph = graph, agentStates = [-1, 1])
 
 
 
@@ -37,7 +35,9 @@ x = []
 #y = asarray(m.burnin(samples = 1000))
 
 s = time()
-m.simulate(100)
+for i in range(10):
+    m.simulate(10000)
+    print(time())
 print(time()-s)
 # x = array(x)
 # plot(x.mean(1))

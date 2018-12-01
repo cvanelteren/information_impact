@@ -23,5 +23,5 @@ cdef class Model:
                     long[::1] nodeIDs, \
                     int length, int nSamples,\
                     int sampleSize,\
-                    )
+                    ) 
     # cdef long[::1] updateState(self, int[:] nodesToUpdate)
