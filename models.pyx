@@ -136,8 +136,10 @@ cdef class Model: # see pxd
         self.rmapping = rmapping
 
         # note columns are the in-degree rows out
-        self.adj         = nx.adj_matrix(graph, weight = 'weight') # sparse
-        self.adj.data.astype(np.float64) #TODO: this doesn't work..
+        _adj = nx.adj_matrix(graph, weight = 'weight')
+        self.adj         = np.asarray(_adj.todense(), order = 'C') # sparse
+        self.index       = np.array([_adj[:, i].indices for i in range(graph.number_of_nodes())])
+        # self.adj.data.astype(np.float64) #TODO: this doesn't work..
 
         # enforce dtypes: reduce this if needed
 
@@ -147,7 +149,7 @@ cdef class Model: # see pxd
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
-        self.__nodeids = np.array(list(mapping.values()), dtype = int)
+        self.__nodeids = np.arange(graph.number_of_nodes(), dtype = int)
         self.__states = states
         self.__nNodes = graph.number_of_nodes()
 

@@ -59,7 +59,7 @@ cdef class Ising(Model):
                   nudgeType   = nudgeType)
 
 
-        cdef double[::1] H  = np.zeros(self.__nNodes, float)
+        cdef np.ndarray H  = np.zeros(self.graph.number_of_nodes(), float)
         for node, nodeID in self.mapping.items():
             H[nodeID] = graph.nodes()[node].get('H', 0)
 
@@ -129,8 +129,8 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int node, \
-                       int[::1] index,\
-                       double [::1] weights):
+                       int[:] index,\
+                       double [:] weights):
         '''
         input:
             :node: member of nodeIDs
@@ -208,8 +208,8 @@ cdef class Ising(Model):
             # indices = self.adj[:, node].indices
             # print(node, np.asarray(weights), np.asarray(indices))
             # check if node has input
-            if len(self.adj[:, node].indices) != 0:
-                energy = self.energy(node, self.adj[:, node].indices, self.adj[:, node].data)
+            if len(self.index[node]) != 0:
+                energy = self.energy(node, self.index[node], self.adj[:, node])
                 # print(energy)
                 p = 1 / ( 1 + exp_approx(- beta * 2. * energy) )
             else:
@@ -225,8 +225,9 @@ cdef class Ising(Model):
         states = newstates # possible overwrite
         return states #
     cpdef np.ndarray simulate(self, int samples):
+        print(self.__nNodes, self.__nodeids)
         cdef:
-            long[:, ::1] results = np.zeros((samples, self.__nNodes), int)
+            long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)
             int i
             long[:, ::1] r = self.sampleNodes(samples)
         for i in range(samples):

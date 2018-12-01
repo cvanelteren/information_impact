@@ -14,8 +14,8 @@ cdef class Ising(Model):
 
     cdef double energy(self, \
                        int node, \
-                       int[::1] index,\
-                       double [::1] weights)
+                       int[:] index,\
+                       double [:] weights)
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)
