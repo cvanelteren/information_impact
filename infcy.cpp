@@ -4646,7 +4646,7 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
  *   for i in range(n):
  *       if i % step == 0:             # <<<<<<<<<<<<<<
  *           state = tuple(model.states)
- *           snap[state] = snap.get(state, 0) + 1 / Z
+ *           # snap[state] = snap.get(state, 0) + 1 / Z
  */
     if (unlikely(__pyx_v_step == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "integer division or modulo by zero");
@@ -4659,7 +4659,7 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
  *   for i in range(n):
  *       if i % step == 0:
  *           state = tuple(model.states)             # <<<<<<<<<<<<<<
- *           snap[state] = snap.get(state, 0) + 1 / Z
+ *           # snap[state] = snap.get(state, 0) + 1 / Z
  *           if state in snap:
  */
       __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_model, __pyx_n_s_states_2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L1_error)
@@ -4670,31 +4670,9 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
       __Pyx_XDECREF_SET(__pyx_v_state, ((PyObject*)__pyx_t_1));
       __pyx_t_1 = 0;
 
-      /* "infcy.pyx":90
- *       if i % step == 0:
- *           state = tuple(model.states)
- *           snap[state] = snap.get(state, 0) + 1 / Z             # <<<<<<<<<<<<<<
- *           if state in snap:
- *               snap[state] += 1 / Z
- */
-      __pyx_t_1 = __Pyx_PyDict_GetItemDefault(__pyx_v_snap, __pyx_v_state, __pyx_int_0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      if (unlikely(__pyx_v_Z == 0)) {
-        PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 90, __pyx_L1_error)
-      }
-      __pyx_t_2 = PyFloat_FromDouble((1.0 / ((double)__pyx_v_Z))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_3);
-      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(PyDict_SetItem(__pyx_v_snap, __pyx_v_state, __pyx_t_3) < 0)) __PYX_ERR(0, 90, __pyx_L1_error)
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-
       /* "infcy.pyx":91
  *           state = tuple(model.states)
- *           snap[state] = snap.get(state, 0) + 1 / Z
+ *           # snap[state] = snap.get(state, 0) + 1 / Z
  *           if state in snap:             # <<<<<<<<<<<<<<
  *               snap[state] += 1 / Z
  *           else:
@@ -4704,7 +4682,7 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
       if (__pyx_t_9) {
 
         /* "infcy.pyx":92
- *           snap[state] = snap.get(state, 0) + 1 / Z
+ *           # snap[state] = snap.get(state, 0) + 1 / Z
  *           if state in snap:
  *               snap[state] += 1 / Z             # <<<<<<<<<<<<<<
  *           else:
@@ -4712,25 +4690,25 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
  */
         __Pyx_INCREF(__pyx_v_state);
         __pyx_t_10 = __pyx_v_state;
-        __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_snap, __pyx_t_10); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_1 = __Pyx_PyDict_GetItem(__pyx_v_snap, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
         if (unlikely(__pyx_v_Z == 0)) {
           PyErr_SetString(PyExc_ZeroDivisionError, "float division");
           __PYX_ERR(0, 92, __pyx_L1_error)
         }
         __pyx_t_2 = PyFloat_FromDouble((1.0 / ((double)__pyx_v_Z))); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 92, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
-        __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 92, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        if (unlikely(PyDict_SetItem(__pyx_v_snap, __pyx_t_10, __pyx_t_1) < 0)) __PYX_ERR(0, 92, __pyx_L1_error)
+        __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 92, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+        if (unlikely(PyDict_SetItem(__pyx_v_snap, __pyx_t_10, __pyx_t_3) < 0)) __PYX_ERR(0, 92, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
         /* "infcy.pyx":91
  *           state = tuple(model.states)
- *           snap[state] = snap.get(state, 0) + 1 / Z
+ *           # snap[state] = snap.get(state, 0) + 1 / Z
  *           if state in snap:             # <<<<<<<<<<<<<<
  *               snap[state] += 1 / Z
  *           else:
@@ -4750,10 +4728,10 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
           PyErr_SetString(PyExc_ZeroDivisionError, "float division");
           __PYX_ERR(0, 94, __pyx_L1_error)
         }
-        __pyx_t_1 = PyFloat_FromDouble((1.0 / ((double)__pyx_v_Z))); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 94, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_1);
-        if (unlikely(PyDict_SetItem(__pyx_v_snap, __pyx_v_state, __pyx_t_1) < 0)) __PYX_ERR(0, 94, __pyx_L1_error)
-        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_3 = PyFloat_FromDouble((1.0 / ((double)__pyx_v_Z))); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        if (unlikely(PyDict_SetItem(__pyx_v_snap, __pyx_v_state, __pyx_t_3) < 0)) __PYX_ERR(0, 94, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       }
       __pyx_L6:;
 
@@ -4762,7 +4740,7 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
  *   for i in range(n):
  *       if i % step == 0:             # <<<<<<<<<<<<<<
  *           state = tuple(model.states)
- *           snap[state] = snap.get(state, 0) + 1 / Z
+ *           # snap[state] = snap.get(state, 0) + 1 / Z
  */
     }
 
@@ -4775,8 +4753,8 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
  */
     __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_cur_scope->__pyx_v_model, __pyx_n_s_updateState); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 99, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyIter_Next(__pyx_v_r); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_1 = __Pyx_PyIter_Next(__pyx_v_r); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_4 = NULL;
     if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
       __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
@@ -4787,13 +4765,13 @@ static PyObject *__pyx_pf_5infcy_4parallelSnapshots(CYTHON_UNUSED PyObject *__py
         __Pyx_DECREF_SET(__pyx_t_2, function);
       }
     }
-    __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_t_3) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3);
+    __pyx_t_3 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_t_1) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_1);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 99, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
 
   /* "infcy.pyx":100

@@ -88,14 +88,6 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples, int Z):
       if i % step == 0:
           state = tuple(model.states)
           snap[state] = snap.get(state, 0) + 1 / Z
-          if state in snap:
-              snap[state] += 1 / Z
-          else:
-              snap[state]  = 1 / Z
-
-          # snap[tuple(state)] = snap.get(tuple(state), 0) / Z
-      # model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
-      # model.updateState(r[i])
       model.updateState(next(r))
   return snap
 
