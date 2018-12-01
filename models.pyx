@@ -181,28 +181,35 @@ cdef class Model: # see pxd
     @cython.boundscheck(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[:, ::1] c_sample(self, long[::1] nodeIDs, int length, int nSamples,\
-                          int sampleSize,\
-                          ):
+    cdef long[:, ::1] c_sample(self,
+                    long[::1] nodeIDs, \
+                    int length, int nSamples,\
+                    int sampleSize,\
+                    ) :
         """
         Shuffles nodeID only when the current sample is larger
         than the shuffled array
         """
         cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), long)
         cdef:
-            int sample
-            int start
+            long sample
+            long start
             long i, j, k
-        for samplei in range(nSamples):
-            start = (samplei * sampleSize) % length
-            if start + sampleSize >= length:
-                # np.random.shuffle(nodeIDs)
-                for i in range(length):
-                    j = <long> (i + length * rand() / INT_MAX)
-                    k = nodeIDs[j]
-                    nodeIDs[j] = nodeIDs[i]
-                    nodeIDs[i] = k
-            samples[samplei] = nodeIDs[start : start + sampleSize]
+            long samplei
+        with nogil, parallel():
+            for samplei in prange(nSamples):
+                start = (samplei * sampleSize) % length
+                if start + sampleSize >= length:
+                    # np.random.shuffle(nodeIDs)
+                    for i in range(length):
+                        j = <long> (i + length * rand() / INT_MAX)
+                        k = nodeIDs[j]
+                        nodeIDs[j] = nodeIDs[i]
+                        nodeIDs[i] = k
+
+                for j in range(sampleSize):
+                    samples[samplei, j] = nodeIDs[start + j]
+                    # samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
 
     # cdef long[::1] updateState(self, int[:] nodesToUpdate):
