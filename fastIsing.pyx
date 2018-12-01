@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# distutils: language=c++
+# distutils: language=c
 """
 Created on Tue Feb  6 09:36:17 2018
 
@@ -21,6 +21,7 @@ cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double)
 cdef extern from "limits.h":
     int INT_MAX
+from libc.stdlib cimport rand
 # TODO: this is still too pythonic. The conversion was made from direct python code; future me needs to hack this into c
 class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = False, \

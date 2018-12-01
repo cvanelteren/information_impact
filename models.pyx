@@ -4,6 +4,7 @@ import numpy as np
 cimport numpy as np
 import networkx as nx, tqdm, information, functools
 import cython
+from cython.parallel cimport prange, parallel
 # TODO: maybe add reversemapping [rmap] [done]
 # TODO: insert the zero step in the simulate [done]
 # TODO: make J weight to make model more general[done]
@@ -17,6 +18,9 @@ ctypedef np.int DTYPE_T
 # from libcpp.string cimport string
 # from libcpp.vector cimport vector
 # from cython.operator cimport dereference, preincrement
+from libc.stdlib cimport rand
+cdef extern from "limits.h":
+    int INT_MAX
 class Model:
     def __init__(self, graph, agentStates, mode = 'async', verbose = False, nudgeMode = 'constant'):
         '''
@@ -258,8 +262,8 @@ class Model:
 @cython.boundscheck(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef long[:, ::1] c_sample(long[::1] nodeIDs, int length, int nSamples,\
-                      int sampleSize,\
+cdef long[:, ::1] c_sample(long[::1] nodeIDs, long length, long nSamples,\
+                      long sampleSize,\
                       ):
     """
     Shuffles nodeID only when the current sample is larger
@@ -267,11 +271,22 @@ cdef long[:, ::1] c_sample(long[::1] nodeIDs, int length, int nSamples,\
     """
     cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), long)
     cdef:
-        int sample
-        int start
-    for samplei in range(nSamples):
-        start = (samplei * sampleSize) % length
-        if start + sampleSize >= length:
-            np.random.shuffle(nodeIDs)
-        samples[samplei] = nodeIDs[start : start + sampleSize]
+        long sample
+        long start
+        long i, j, k
+        long samplei
+    with nogil:
+        for samplei in range(nSamples):
+            start = (samplei * sampleSize) % length
+            if start + sampleSize >= length:
+                # np.random.shuffle(nodeIDs)
+                for i in range(length):
+                    j = <long> (i + rand() / (INT_MAX / (length- i) + 1))
+                    k = nodeIDs[j]
+                    nodeIDs[j] = nodeIDs[i]
+                    nodeIDs[i] = k
+
+            for j in range(sampleSize):
+                samples[samplei, j] = nodeIDs[start + j]
+                # samples[samplei] = nodeIDs[start : start + sampleSize]
     return samples
