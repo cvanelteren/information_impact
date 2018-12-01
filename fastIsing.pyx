@@ -97,7 +97,8 @@ class Ising(Model):
         if self.verbose: print('Starting burnin')
         alpha = True
         while alpha:
-            states = self.updateState(self.sampleNodes[self.mode](self.nodeIDs))
+            # states = self.updateState(self.sampleNodes[self.mode](self.nodeIDs))
+            states = self.updateState(self.sampleNodes(1)[0])
             y      = np.hstack((y, magnetization(states)))
             if counter > useAtleastNSamples : # run atleast 10 samples
                 # do linear regression
@@ -152,7 +153,7 @@ class Ising(Model):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
-    def updateState(self, int [:] nodesToUpdate):
+    def updateState(self, long [:] nodesToUpdate):
         '''
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))

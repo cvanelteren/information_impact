@@ -93,7 +93,7 @@ class Model:
         interaction = _interaction
 
          # set class data
-        cdef np.ndarray nodeIDs  = np.array(list(mapping.values()), dtype = np.int32)
+        cdef np.ndarray nodeIDs  = np.array(list(mapping.values()), dtype = int)
 
         # standard model properties
         # TODO: make some of this private [partly done]
@@ -110,12 +110,12 @@ class Model:
         self.nStates        = len(agentStates)
         self._mode          = mode
         self.nudgeMode      = nudgeMode
-        self.sampleNodes    = dict(\
-                                single = functools.partial(np.random.choice, size = 1, ),\
-                                async  = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
-                                sync   = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
-                                serial = np.sort\
-                                )
+        # self.sampleNodes    = dict(\
+        #                         single = functools.partial(np.random.choice, size = 1, ),\
+        #                         async  = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
+        #                         sync   = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
+        #                         serial = np.sort\
+        #                         )
     # deprecated as it decreases performance, this functionality should be added
     # to a function that loops through all possible states
 #    @property
@@ -158,6 +158,30 @@ class Model:
         '''This method is required defaulting to zero'''
         assert False, 'model should implement this function'
 
+    @cython.wraparound(False)
+    @cython.boundscheck(False)
+    @cython.nonecheck(False)
+    def sampleNodes(self, long nSamples):
+        """
+            Python accessible function to sample nodes
+        """
+        cdef:
+            # initialization
+            nodeIDs             = self.nodeIDs
+            long length       = self.nNodes # length of target array
+            updateType        = self.mode
+
+        cdef int sampleSize
+        if updateType == 'single':
+            sampleSize = 1
+        elif updateType == 'serial':
+            return nodeIDs
+        else:
+            sampleSize = length
+        print
+        return c_sample(nodeIDs, length,  nSamples, sampleSize)
+
+
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.cdivision(True)
@@ -183,8 +207,9 @@ class Model:
                             )
         # this was first done inside update; pre-definition seems faster
         # haven't explicitly tested the generator variant, but sense will reduce memory loads
-        nodesToUpdate = \
-        (self.sampleNodes[self.mode](self.nodeIDs) for _ in range(nSamples * step + 1)) # convert to generator
+        cdef long[:, :] nodesToUpdate = self.sampleNodes(nSamples * step + 1)
+        # nodesToUpdate = \
+        # (self.sampleNodes[self.mode](self.nodeIDs) for _ in range(nSamples * step + 1)) # convert to generator
         # nodesToUpdate = np.array([self.sampleNodes[self.mode](self.nodeIDs) for i in range(nSamples * step + 1)])
         # init storage vector
         simulationResults         = np.zeros( (nSamples + 1, self.nNodes), dtype = self.statesDtype) # TODO: this should be a generator as well
@@ -207,7 +232,8 @@ class Model:
                         else:
                           self.nudges[self.mapping[node]] = nudge
 
-            self.updateState(next(nodesToUpdate))
+            # self.updateState(next(nodesToUpdate))
+            self.updateState(nodesToUpdate[stepCounter])
             # self.updateState(nodesToUpdate.__next__()) # update generator
             # twice swap cuz otherway was annoying
             if pulse:
@@ -226,3 +252,26 @@ class Model:
         # out of while
         else:
             return simulationResults
+
+
+@cython.wraparound(False)
+@cython.boundscheck(False)
+@cython.nonecheck(False)
+@cython.cdivision(True)
+cdef long[:, ::1] c_sample(long[::1] nodeIDs, int length, int nSamples,\
+                      int sampleSize,\
+                      ):
+    """
+    Shuffles nodeID only when the current sample is larger
+    than the shuffled array
+    """
+    cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), long)
+    cdef:
+        int sample
+        int start
+    for samplei in range(nSamples):
+        start = (samplei * sampleSize) % length
+        if start + sampleSize >= length:
+            np.random.shuffle(nodeIDs)
+        samples[samplei] = nodeIDs[start : start + sampleSize]
+    return samples

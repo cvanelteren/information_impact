@@ -9,7 +9,7 @@ from cython.parallel cimport parallel, prange, threadid
 # cimport numpy as np
 # cimport cython
 import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
-fastIsing, copy, datetime
+fastIsing, copy, time
 # from pathos import multiprocessing as mp
 import multiprocessing as mp
 from tqdm import tqdm   #progress bar
@@ -57,21 +57,19 @@ cpdef getSnapShots(object model, int nSamples, int step = 1,\
 
     pbar = tqdm(total = nSamples)
     cdef int thread_id = -1
-    cdef double past = datetime.time()
-    print("sanity")
+    cdef past = time.clock()
     with nogil, parallel(num_threads = nSamples):
         thread_id = threadid()
         printf("Thread ID: %d\n", thread_id)
         for i in prange(nSamples):
             with gil:
-                print('here')
                 if i % step == 0:
                     state = tuple(model.states)
                     snapshots[state] = snapshots.get(state, 0) + 1 / nSamples
                 # model.updateState(next(r))
                 model.updateState(r[0])
                 pbar.update(1)
-    print(f'\nDelta = {datetime.time() - past}')
+    print(f'Delta = {time.clock() - past}')
     return snapshots
 
 
@@ -167,7 +165,7 @@ cpdef monteCarlo_alt(object model, dict snapshots,
                dict pulse = {}, str mode = 'source'):
 
 
-   cdef double past = datetime.time()
+   cdef double past = time.clock()
    # func = functools.partial(\
    #                          parallelMonteCarlo_alt, model = model,
    #                          mode = mode, repeats = repeats, \
@@ -243,7 +241,7 @@ cpdef monteCarlo_alt(object model, dict snapshots,
                          reset =  False
                conditional[tuple(s[n])] = out
                pbar.update(1)
-   print(f"Delta = {datetime.time() - past}")
+   print(f"Delta = {time.clock() - past}")
    return conditional
 
 @cython.boundscheck(False) # compiler directive
