@@ -1,14 +1,15 @@
 # cython: infer_types=True
-# distutils: language=c++
+# distutils: language=c
 __author__ = 'Casper van Elteren'
 import numpy as np
 cimport numpy as np
-import cython, copy
-from cython.parallel cimport parallel, prange
+cimport cython
+
+from cython.parallel cimport parallel, prange, threadid
 # cimport numpy as np
 # cimport cython
 import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
-fastIsing
+fastIsing, copy, datetime
 # from pathos import multiprocessing as mp
 import multiprocessing as mp
 from tqdm import tqdm   #progress bar
@@ -18,7 +19,7 @@ from tqdm import tqdm   #progress bar
 # the general outline would be to yield the results and immediately bin them accordingly and write state to disk
 
 # array = functools.partial(np.array, dtype = np.float16) # tmp hack
-
+from libc.stdio cimport printf
 cdef int _CORE = 10  # for imap
 INT16 = np.int16
 def checkDistribution():
@@ -31,7 +32,8 @@ checkDistribution() # print it only once
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-cpdef getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu_count(), int burninSamples = int(1e3)):
+cpdef getSnapShots(object model, int nSamples, int step = 1,\
+                   int parallel = mp.cpu_count(), int burninSamples = int(1e3)):
     # start sampling
     cdef dict snapshots = {}
     # func = functools.partial(parallelSnapshots, step = step, \
@@ -43,21 +45,44 @@ cpdef getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.c
 
 
     tmp = []
+    cdef int i
     for i in range(nSamples):
-      m = copy.deepcopy(model)
-      m.reset()
-      tmp.append((1, m))
+        m = copy.deepcopy(model)
+        m.reset()
+        tmp.append((1, m))
 
-    # tmp = np.ones(nSamples)
-    # tmp = [nSamples]
-    with mp.Pool(processes = parallel) as p:
-        # snapshots = {k : v for result in p.map(func, tqdm(tmp)) for (k,v) in result.items()}
-        results = p.imap(func, tqdm(tmp), 1)
-        for result in results:
-          for key, value in result.items():
-            snapshots[key] = snapshots.get(key, 0) + value
-    print(f'Found {len(snapshots)} states')
+    r = model.sampleNodes(nSamples)
+    # for i in range(n))
+    # simulate
+
+    pbar = tqdm(total = nSamples)
+    cdef int thread_id = -1
+    cdef double past = datetime.time()
+    print("sanity")
+    with nogil, parallel(num_threads = nSamples):
+        thread_id = threadid()
+        printf("Thread ID: %d\n", thread_id)
+        for i in prange(nSamples):
+            with gil:
+                print('here')
+                if i % step == 0:
+                    state = tuple(model.states)
+                    snapshots[state] = snapshots.get(state, 0) + 1 / nSamples
+                # model.updateState(next(r))
+                model.updateState(r[0])
+                pbar.update(1)
+    print(f'\nDelta = {datetime.time() - past}')
     return snapshots
+
+
+    # with mp.Pool(processes = parallel) as p:
+    #     # snapshots = {k : v for result in p.map(func, tqdm(tmp)) for (k,v) in result.items()}
+    #     results = p.imap(func, tqdm(tmp), 1)
+    #     for result in results:
+    #       for key, value in result.items():
+    #         snapshots[key] = snapshots.get(key, 0) + value
+    # print(f'Found {len(snapshots)} states')
+    # return snapshots
 
     # def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
 @cython.boundscheck(False) # compiler directive
@@ -80,7 +105,8 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples, int Z):
   #     )
   # cdef np.ndarray r = np.array([\
   # model.sampleNodes[model.mode](model.nodeIDs)] for _ in range(n))
-  cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range(n))
+  # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range(n))
+  r = model.sampleNodes(n)
   # for i in range(n))
   # simulate
   cdef int i
@@ -88,7 +114,8 @@ def parallelSnapshots(tuple sampleModel,  int step, int burninSamples, int Z):
       if i % step == 0:
           state = tuple(model.states)
           snap[state] = snap.get(state, 0) + 1 / Z
-      model.updateState(next(r))
+      # model.updateState(next(r))
+      model.updateState(r[0])
   return snap
 
 @cython.boundscheck(False) # compiler directive
@@ -109,7 +136,6 @@ def monteCarlo(object model, dict snapshots,  dict conditions,
         A pulse only lasts for the initial time step (delta 0  > 1)
     '''
     # would prefer to make this a generator, however then mp breaks
-    print('Starting MC sampling')
     func = functools.partial(\
                             parallelMonteCarlo, model = model,
                             mode = mode, repeats = repeats, \
@@ -141,23 +167,83 @@ cpdef monteCarlo_alt(object model, dict snapshots,
                dict pulse = {}, str mode = 'source'):
 
 
+   cdef double past = datetime.time()
+   # func = functools.partial(\
+   #                          parallelMonteCarlo_alt, model = model,
+   #                          mode = mode, repeats = repeats, \
+   #                          deltas = deltas, snapshots = snapshots,\
+   #                          \
+   #                          )
+   # # conditional = {}
+   # cdef np.ndarray value
+   # cdef tuple key
+   # cdef s = np.array([k for k in snapshots])
+   # with mp.Pool(mp.cpu_count()) as p:
+   #     # conditional = p.map(func, tqdm(s))
+   #     for result in p.imap( func, tqdm(s), _CORE):
+   #         for key, value in result.items():
+   #             conditional[key] = value
+   # return conditional
+   cdef dict conditional = {}
+   cdef np.ndarray s = np.array([k for k in snapshots])
+   # output time x nodes x node states
+   cdef np.ndarray out = np.zeros((deltas + 1, model.nNodes, model.nStates))
 
-   print('Starting MC sampling')
-   func = functools.partial(\
-                            parallelMonteCarlo_alt, model = model,
-                            mode = mode, repeats = repeats, \
-                            deltas = deltas, snapshots = snapshots,\
-                            \
-                            )
-   conditional = {}
-   cdef np.ndarray value
-   cdef tuple key
-   cdef s = np.array([k for k in snapshots])
-   with mp.Pool(mp.cpu_count()) as p:
-       # conditional = p.map(func, tqdm(s))
-       for result in p.imap( func, tqdm(s), _CORE):
-           for key, value in result.items():
-               conditional[key] = value
+   # map from node state to idx
+   cdef dict sortr = {i : idx for idx, i in enumerate(model.agentStates)}
+
+   cdef repeat, delta, node
+   cdef long [:] nodeIDs  = model.nodeIDs
+   # cdef np.ndarray r = np.array([\
+   # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
+   # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range((delta + 1) * repeats))
+   cdef int counter = 0
+   cdef str nudgeMode = model.nudgeMode
+   cdef double[:] copyNudge = model.nudges.copy() # store nudges already there
+   # for k in range(repeats):
+   half  = deltas // 2
+   reset = False
+   cdef dict mc
+   cdef int N = len(s)
+   cdef int n
+   pbar = tqdm(total = N)
+   with nogil, parallel():
+       for n in prange(N, schedule = 'guided'):
+           with gil:
+               out = np.zeros((deltas + 1, model.nNodes, model.nStates))
+               for repeat in range(repeats):
+
+                 # start from the same point
+
+                 model.states[:] = s[n, :].copy()
+                 model.nudges[:] = copyNudge.copy()
+                 # print(model.nudges, model.states)
+                 reset        = True
+                 # OLD OLD OLD
+                 # tmp = model.simulate(nSamples = deltas, step = 1, pulse = pulse) # returns delta + 1 x node
+                 # for idx, state in enumerate(tmp):
+                 #   for node in nodeIDs:
+                 #     nodeState    = state[node]
+                 #     nodeStateIdx = sortr[nodeState]
+                 #     out[idx, node, nodeStateIdx] += 1 / repeats
+                 # OLD OLD OLD
+                 for delta in range(deltas + 1):
+                   # bin data()
+                   state = model.states
+                   # idx   = np.digitize(state, model.agentStates)
+                   # out[delta, idx] += 1 / repeats
+                   for node, state in enumerate(state):
+                     out[delta, node, sortr[state]] += 1 / repeats
+                   # model.updateState(model.sampleNodes[model.mode](nodeIDs))
+                   model.updateState(model.sampleNodes(1)[0])
+                   # check if pulse turn-off
+                   if reset:
+                       if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
+                         model.nudges[:] = 0
+                         reset =  False
+               conditional[tuple(s[n])] = out
+               pbar.update(1)
+   print(f"Delta = {datetime.time() - past}")
    return conditional
 
 @cython.boundscheck(False) # compiler directive
@@ -189,7 +275,7 @@ cpdef dict parallelMonteCarlo_alt(\
   # )
 
   cdef int k, delta, node
-  cdef int [:] nodeIDs  = model.nodeIDs
+  cdef long [:] nodeIDs  = model.nodeIDs
   # cdef np.ndarray r = np.array([\
   # model.sampleNodes[model.mode](model.nodeIDs) for _ in range((deltas + 1)* repeats)  ])
   # cdef object r = (model.sampleNodes[model.mode](model.nodeIDs) for _ in range((delta + 1) * repeats))
@@ -223,7 +309,8 @@ cpdef dict parallelMonteCarlo_alt(\
               # out[delta, idx] += 1 / repeats
               for node, state in enumerate(state):
                 out[delta, node, sortr[state]] += 1 / repeats
-              model.updateState(model.sampleNodes[model.mode](nodeIDs))
+              # model.updateState(model.sampleNodes[model.mode](nodeIDs))
+              model.updateState(model.sampleNodes(1)[0])
               # check if pulse turn-off
               if reset:
                   if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
@@ -311,7 +398,8 @@ cowan
     # flip list due to binary encoding
     if type(startState) is tuple:
         startState = np.array(startState, dtype = mode.statesDtype)
-    r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
+    # r = (model.sampleNodes[model.mode](model.nodeIDs) for i in range(repeats * deltas))
+    r = model.sampleNodes(repeats * deltas)
     cdef dict conditional = {}
 
     cdef int k
