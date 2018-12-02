@@ -49,16 +49,24 @@ a = []
 # ax.plot(temps,a)
 # ax.set_xscale('log')
 print(a)
-
+()
 import infcy
 s = time()
 from pathos import multiprocessing as mp
 from copy import copy
 from functools import partial
 x = [copy(m) for i in range(100)]
-func = partial(infcy.getSnapShots, nSamples = 100)
+# func = partial(infcy.getSnapShots, nSamples = 100)
+
+def func(model):
+    n = 100
+    for i in range(100):
+        print(i)
+        model.updateState(model.sampleNodes(1)[0])
+s = time()
 with mp.Pool(4) as p:
     p.map(func, x)
+print(time() - s)
 # x  = infcy.getSnapShots(m, 10000)
 # y  = infcy.monteCarlo_alt(m, x, repeats = 10000)
 

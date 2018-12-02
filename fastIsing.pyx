@@ -176,7 +176,7 @@ cdef class Ising(Model):
         p = 1/(1 + exp(-beta * delta energy))
         '''
         cdef:
-            states = self._states # alias
+            long[::1] states = self._states # alias
             long [::1] newstates #forward declaration
             int  length = nodesToUpdate.shape[0]
             str magSide = self.magSide

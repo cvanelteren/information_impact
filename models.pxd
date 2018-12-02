@@ -1,14 +1,15 @@
+cimport numpy as np
 cdef class Model:
     cdef:
         public:
-            long[::1] _states
-            long[:] _nodeids
-            long[:] agentStates
+            np.ndarray _states
+            np.ndarray  _nodeids
+            np.ndarray  agentStates
             # public sparse.csr.csr_matrix adj
             int _nNodes
             str __updateType
             str __nudgeType
-            double[::1] __nudges
+            np.ndarray  __nudges
             dict neighbors
             dict weights
             long _nStates
@@ -22,7 +23,7 @@ cdef class Model:
                     list agentStates)
 
     cdef long[:, ::1] c_sample(self,
-                    long[::1] nodeIDs, \
+                    long[:] nodeIDs, \
                     int length, int nSamples,\
                     int sampleSize,\
                     )

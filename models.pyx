@@ -101,9 +101,9 @@ cdef class Model: # see pxd
             dict mapping = {}
             dict rmapping= {}
             str delim = '\t'
-            long[::1] states = np.zeros(graph.number_of_nodes(), int, 'C')
+            states = np.zeros(graph.number_of_nodes(), int, 'C')
             int counter
-            double[::1] nudges = np.zeros(graph.number_of_nodes(), float, 'C')
+            nudges = np.zeros(graph.number_of_nodes(), float, 'C')
 
         # check all the possible edges
         from ast import literal_eval
@@ -208,7 +208,7 @@ cdef class Model: # see pxd
         cdef:
 
             # initialization
-            nodeIDs           = self._nodeids
+            long[:] nodeIDs   = self._nodeids
             long length       = self._nNodes # length of target array
             updateType        = self.__updateType
 
@@ -226,7 +226,7 @@ cdef class Model: # see pxd
     @cython.nonecheck(False)
     @cython.cdivision(True)
     cdef long[:, ::1] c_sample(self,
-                    long[::1] nodeIDs, \
+                    long[:] nodeIDs, \
                     int length, int nSamples,\
                     int sampleSize,\
                     ) :
