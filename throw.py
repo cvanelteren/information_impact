@@ -13,7 +13,7 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(100, 5)
+graph = nx.barabasi_albert_graph(10, 5)
 
 
 
@@ -27,6 +27,7 @@ from fastIsing import Ising
 m = Ising(graph, temperature = inf)
 m.updateType = 'async'
 m.magSide    = 'pos'
+print(np.asarray(m.nodeids))
 
 # %%
 temps = linspace(0, 1, 3)

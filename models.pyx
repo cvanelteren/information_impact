@@ -58,9 +58,9 @@ cdef class Model: # see pxd
     @property
     def nudgeType(self): return self.__nudgeType
     @property #return mem view of states
-    def states(self): return self.__states
+    def states(self): return self._states
     @property
-    def nodeids(self): return self.__nodeids
+    def nodeids(self): return self._nodeids
 
     @updateType.setter
     def updateType(self, value):
@@ -90,7 +90,7 @@ cdef class Model: # see pxd
             dict mapping = {}
             dict rmapping= {}
             str delim = '\t'
-            states = np.zeros(graph.number_of_nodes(), int, 'C')
+            long[::1] states = np.zeros(graph.number_of_nodes(), int, 'C')
             int counter
             double[::1] nudges = np.zeros(graph.number_of_nodes(), float, 'C')
 
@@ -135,11 +135,11 @@ cdef class Model: # see pxd
         self.graph    = graph
         self.mapping  = mapping
         self.rmapping = rmapping
-
         # note columns are the in-degree rows out
         _adj = nx.adj_matrix(graph, weight = 'weight')
+        cdef _ind = np.array([_adj[:, i].indices for i in range(graph.number_of_nodes())])
         self.adj         = np.asarray(_adj.todense(), order = 'C') # sparse
-        self.index       = np.array([_adj[:, i].indices for i in range(graph.number_of_nodes())])
+        self.index       = _ind
         # self.adj.data.astype(np.float64) #TODO: this doesn't work..
 
         # enforce dtypes: reduce this if needed
@@ -150,9 +150,10 @@ cdef class Model: # see pxd
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
-        self.__nodeids = np.arange(graph.number_of_nodes(), dtype = int)
-        self.__states = states
-        self.__nNodes = graph.number_of_nodes()
+        cdef np.ndarray _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
+        self._nodeids = _nodeids
+        self._states = states
+        self._nNodes = graph.number_of_nodes()
 
     @cython.wraparound(False)
     @cython.boundscheck(False)
@@ -162,9 +163,10 @@ cdef class Model: # see pxd
             Python accessible function to sample nodes
         """
         cdef:
+
             # initialization
-            long[::1] nodeIDs           = self.__nodeids
-            long length       = self.__nNodes # length of target array
+            nodeIDs           = self._nodeids
+            long length       = self._nNodes # length of target array
             updateType        = self.__updateType
 
         cdef int sampleSize
@@ -174,7 +176,6 @@ cdef class Model: # see pxd
             sampleSize = 0
         else:
             sampleSize = length
-        print
         return self.c_sample(nodeIDs, length,  nSamples, sampleSize)
 
     @cython.wraparound(False)
@@ -190,7 +191,7 @@ cdef class Model: # see pxd
         Shuffles nodeID only when the current sample is larger
         than the shuffled array
         """
-        cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), long)
+        cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), dtype = int)
         cdef:
             long sample
             long start

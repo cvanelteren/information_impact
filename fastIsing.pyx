@@ -140,9 +140,9 @@ cdef class Ising(Model):
                 :flipEnergy: energy if node flips state
         '''
         cdef:
-            long[::1] states = self.__states
+            long[::1] states = self._states
             double[::1] H    = self._H  # acces the c property
-            long length = len(index)
+            long length = index.shape[0]
             # index  = np.asarray(indices, dtype = int)
             double energy = 0.
             int neighbor, i
@@ -156,7 +156,8 @@ cdef class Ising(Model):
         # with nogil, parallel():
         with nogil:
             for i in range(length):
-                energy += nodeState * states[index[i]] * weights[index[i]] + H[index[i]] * states[index[i]]
+                energy += nodeState * states[index[i]] * weights[index[i]] \
+                + H[index[i]] * states[index[i]]
         energy += nudge
         return -energy
 
@@ -175,22 +176,18 @@ cdef class Ising(Model):
         p = 1/(1 + exp(-beta * delta energy))
         '''
         cdef:
-            states = self.__states # alias
+            states = self._states # alias
             long [::1] newstates #forward declaration
             int  length = len(nodesToUpdate)
             str magSide = self.magSide
             int  n
-            long node
+            int node
             double energy, p
-            int[::1] indices
-            double[:] weights
             double beta        = self.beta
             double[::1] nudges = self.__nudges
-            double nudge
-            long[::1] indices = self.index
+            indices = self.index
             double[:, ::1] adj = self.adj
             double[::1] weights
-            int[::1] index
         # allow mutability if async; single doesn't matter
         if self.__updateType == 'async':
             newstates = states
@@ -201,15 +198,13 @@ cdef class Ising(Model):
         for n in range(length):
             node    = nodesToUpdate[n]
             nudge   = nudges[node]
-            weight  = adj[:, node]
-            index   = indices[node]
             #  TODO: dunno how to typecast this; fused types can be used but dunno how
             # weights = self.adj[:, node].data
             # indices = self.adj[:, node].indices
             # print(node, np.asarray(weights), np.asarray(indices))
             # check if node has input
-            if index.shape[0] != 0:
-                energy = self.energy(node, index, weight,\
+            if indices[node].shape[0] != 0:
+                energy = self.energy(node, indices[node], adj[:, node],\
                                      nudge)
                 # print(energy)
                 p = 1 / ( 1 + exp(- beta * 2. * energy) )
@@ -226,14 +221,14 @@ cdef class Ising(Model):
         states = newstates # possible overwrite
         return states #
 
-    cpdef np.ndarray simulate(self, long samples):
+    cpdef long[:, :] simulate(self, long samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)
             long[:, ::1] r = self.sampleNodes(samples)
             int i
         for i in range(samples):
             results[i] = self.updateState(r[i])
-
+        return results
     # cpdef computeProb(self):
     #     """
     #     Compute the node probability for the current state p_i = 1/z * (1 + exp( -beta * energy))**-1

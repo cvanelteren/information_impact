@@ -25,4 +25,4 @@ cdef class Ising(Model):
     cpdef np.ndarray burnin(self,\
                  int samples=*,\
                  double threshold =*)
-    cpdef np.ndarray simulate(self, long samples)
+    cpdef long[:, :] simulate(self, long samples)

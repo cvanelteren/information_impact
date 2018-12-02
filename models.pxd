@@ -1,12 +1,11 @@
 cdef class Model:
     cdef:
         public:
-            long[::1] __states
-            long[::1] __nodeids
-            long[::1] agentStates
-            double[::1] nudges
+            long[::1] _states
+            long[:] _nodeids
+            long[:] agentStates
             # public sparse.csr.csr_matrix adj
-            int __nNodes
+            int _nNodes
             str __updateType
             str __nudgeType
             double[::1] __nudges
