@@ -22,6 +22,8 @@ from libc.stdlib cimport rand
 
 from cython.operator cimport dereference, preincrement
 from libc.stdlib cimport rand
+
+from libc.stdio cimport printf
 cdef extern from "limits.h":
     double INT_MAX
 # ctypedef np.ndarray (*UPDATE)(long[:] state, long[:] nodesToUpdate)
@@ -64,6 +66,7 @@ cdef class Model: # see pxd
     @property
     def nodeids(self): return self._nodeids
 
+
     @updateType.setter
     def updateType(self, value):
         assert value in 'sync async single serial'
@@ -72,9 +75,12 @@ cdef class Model: # see pxd
     def nudgeType(self, value):
         assert value in 'constant pulse'
         self.__nudgeType = value
-    @states.setter
+    @states.setter # TODO: expand
     def states(self, value):
-        self._states[:] = value
+        if isinstance(value, np.ndarray):
+            self._states = value
+        else:
+            self._states[:] = value
 
 
     cpdef void construct(self, object graph, list agentStates):
@@ -182,6 +188,9 @@ cdef class Model: # see pxd
         self.agentStates = np.asarray(agentStates, dtype = int)
 
         self.__nudges = nudges
+        self._nStates = len(agentStates)
+        self.nStates  = len(agentStates)
+
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
@@ -192,7 +201,7 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.boundscheck(False)
     @cython.nonecheck(False)
-    cdef long [:, ::1] sampleNodes(self, long nSamples):
+    cpdef long [:, ::1] sampleNodes(self, long nSamples):
         """
             Python accessible function to sample nodes
         """
@@ -237,7 +246,8 @@ cdef class Model: # see pxd
                 if start + sampleSize >= length:
                     # np.random.shuffle(nodeIDs)
                     for i in range(length):
-                        j = <long> (i + length * rand() / INT_MAX)
+                        j = <long> (i + rand() / (INT_MAX / (length - i)) )
+                        # printf('%d\n',j)
                         k = nodeIDs[j]
                         nodeIDs[j] = nodeIDs[i]
                         nodeIDs[i] = k

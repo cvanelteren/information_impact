@@ -1,3 +1,4 @@
+
 import networkx as nx
 from numpy import *
 from matplotlib.pyplot import *
@@ -13,7 +14,7 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-# graph = nx.barabasi_albert_graph(10, 5)
+graph = nx.barabasi_albert_graph(10, 5)
 
 
 
@@ -24,8 +25,8 @@ nx.set_node_attributes(graph, attr)
 from time import time
 from fastIsing import Ising
 
-m = Ising(graph, temperature = .1)
-m.updateType = 'single'
+m = Ising(graph, temperature = 2)
+m.updateType = 'async'
 m.magSide    = 'neg'
 
 # %%
@@ -34,9 +35,9 @@ x = []
 
 #y = asarray(m.burnin(samples = 1000))
 
-s = time()
 
-temps = linspace(0, 100, 59)
+
+temps = linspace(0, 10, 59)
 a = []
 # for t in temps:
 #     m.states = 1
@@ -50,8 +51,21 @@ a = []
 print(a)
 
 import infcy
+s = time()
+from pathos import multiprocessing as mp
+from copy import copy
+from functools import partial
+x = [copy(m) for i in range(100)]
+func = partial(infcy.getSnapShots, nSamples = 100)
+with mp.Pool(4) as p:
+    p.map(func, x)
+# x  = infcy.getSnapShots(m, 10000)
+# y  = infcy.monteCarlo_alt(m, x, repeats = 10000)
 
-infcy.getSnapShots(m, 100)
+for k, v in y.items():
+    print(v.max())
+j = 0
+print(time() - s)
 show()
 # x = array(x)
 # plot(x.mean(1))

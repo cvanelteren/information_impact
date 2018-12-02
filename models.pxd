@@ -11,12 +11,13 @@ cdef class Model:
             double[::1] __nudges
             dict neighbors
             dict weights
+            long _nStates
 
         #private
         dict __dict__
 
 
-    cdef long [:, ::1] sampleNodes(self, long nSamples)
+    cpdef long [:, ::1] sampleNodes(self, long nSamples)
     cpdef void construct(self, object graph, \
                     list agentStates)
 
