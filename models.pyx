@@ -52,7 +52,8 @@ cdef class Model: # see pxd
 
         self.construct(graph, agentStates)
 
-
+    @property
+    def states(self): return self._states
     @property
     def updateType(self): return self.__updateType
     @property

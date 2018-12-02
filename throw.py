@@ -27,7 +27,6 @@ from fastIsing import Ising
 m = Ising(graph, temperature = inf)
 m.updateType = 'async'
 m.magSide    = 'pos'
-print(np.asarray(m.nodeids))
 
 # %%
 temps = linspace(0, 1, 3)
@@ -37,7 +36,7 @@ x = []
 
 s = time()
 for i in range(10):
-    m.simulate(10000)
+    m.simulate(100)
 print(time()-s)
 # x = array(x)
 # plot(x.mean(1))
