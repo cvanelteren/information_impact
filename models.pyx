@@ -189,7 +189,6 @@ cdef class Model: # see pxd
         self._nodeids = _nodeids
         self._states = states
         self._nNodes = graph.number_of_nodes()
-
     @cython.wraparound(False)
     @cython.boundscheck(False)
     @cython.nonecheck(False)
@@ -248,8 +247,10 @@ cdef class Model: # see pxd
                     # samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
 
+    cpdef void reset(self):
+        self.states = np.random.choice(self.agentStates, size = self._nNodes)
     # cdef long[::1] updateState(self, int[:] nodesToUpdate):
-    #     """
+    #     ""
     #     Implement this method
     #     """
     #     assert False

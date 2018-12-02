@@ -1,98 +1,99 @@
-# # cython: infer_types=True
-# __author__ = 'Casper van Elteren'
-# import numpy as np
-# import cython, copy
-#
-# # cimport numpy as np
-# # cimport cython
-# import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
-# fastIsing
-# # from pathos import multiprocessing as mp
-# import multiprocessing as mp
-# from tqdm import tqdm   #progress bar
-# #from joblib import Parallel, delayed, Memory
-#
-# # TODO: the numpy approach should be re-written in a dictionary only approach in order to prevent memory issues;
-# # the general outline would be to yield the results and immediately bin them accordingly and write state to disk
-# from cython import parallel
-# from libcpp.map cimport map as cmap
-# from libcpp.vector cimport vector
-# from cython.operator cimport dereference, preincrement
-# cimport numpy as np # overwrite backend above
-#
-# cdef int _CORE = 5 # for imap
-# INT16 = np.int16
-# def checkDistribution():
-#     '''Warning statement'''
-#     from platform import platform
-#     if 'windows' in platform().lower():
-#         print('Warning: Windows detected. Please remember to respect the GIL'\
-#               ' when using multi-core functions')
-# checkDistribution() # print it only once
-#
-# @cython.boundscheck(False) # compiler directive
-# @cython.wraparound(False) # compiler directive
-# def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu_count(), int burninSamples = int(1e3)):
-#     # start sampling
-#     cdef dict snapshots = {}
-#     # func = functools.partial(parallelSnapshots, step = step, \
-#     # burninSamples = burninSamples, model = model)
-#     #
-#     func = functools.partial(parallelSnapshots, step = step, \
-#     burninSamples = burninSamples)
-#
-#     cdef double Z = nSamples # note type conversion
-#
-#     tmp = []
-#     for i in range(nSamples):
-#       m = copy.deepcopy(model)
-#       m.reset()
-#       tmp.append((1, m))
-#
-#     # tmp = np.ones(nSamples)
-#     # tmp = [nSamples]
-#     with mp.Pool(processes = parallel) as p:
-#         results = p.imap(func, tqdm(tmp), 1)
-#         for result in results:
-#           for key, value in result.items():
-#             snapshots[key] = snapshots.get(key, 0) + value / Z
-#     print(f'Found {len(snapshots)} states')
-#     return snapshots
-#
-#     # def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
-# @cython.boundscheck(False) # compiler directive
-# @cython.wraparound(False) # compiler directive
-# def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
-#   '''
-#     Get snapshots by simlating for :nSamples:
-#     :step: gives how many steps are between samples
-#   '''
-#   ### use this if you want to start from random init
-#   nSamples, model = sampleModel
-#   model.burnin(burninSamples) # start from random state
-#   cdef snap = {}
-#   # init generator
-#   cdef long n = nSamples * step
-#   # pre-define what to sample
-#   # r = (\
-#   # model.sampleNodes[model.mode](model.nodeIDs)\
-#   # for i in range(n)\
-#   #     )
-#   # cdef np.ndarray r = np.array([\
-#   # model.sampleNodes[model.mode](model.nodeIDs)] for _ in range(n))
-#   cdef long[:, :] r = model.sampleNodes(n)
-#   # for i in range(n))
-#   # simulate
-#   cdef int i
-#   for i in range(n):
-#       if i % step == 0:
-#           state = model.states
-#           snap[tuple(state)] = snap.get(tuple(state), 0) + 1
-#       # model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
-#       # model.updateState(r[i])
-#       model.updateState(r[i])
-#       print(snap)
-#   return snap
+# cython: infer_types=True
+# distutils: language=c++
+__author__ = 'Casper van Elteren'
+import numpy as np
+import cython, copy
+
+# cimport numpy as np
+# cimport cython
+import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
+fastIsing
+# from pathos import multiprocessing as mp
+import multiprocessing as mp
+from tqdm import tqdm   #progress bar
+#from joblib import Parallel, delayed, Memory
+
+# TODO: the numpy approach should be re-written in a dictionary only approach in order to prevent memory issues;
+# the general outline would be to yield the results and immediately bin them accordingly and write state to disk
+from cython import parallel
+from libcpp.map cimport map as cmap
+from libcpp.vector cimport vector
+from cython.operator cimport dereference, preincrement
+cimport numpy as np # overwrite backend above
+
+cdef int _CORE = 5 # for imap
+INT16 = np.int16
+def checkDistribution():
+    '''Warning statement'''
+    from platform import platform
+    if 'windows' in platform().lower():
+        print('Warning: Windows detected. Please remember to respect the GIL'\
+              ' when using multi-core functions')
+checkDistribution() # print it only once
+
+@cython.boundscheck(False) # compiler directive
+@cython.wraparound(False) # compiler directive
+@cython.cdivision(True)
+def getSnapShots(object model, int nSamples, int step = 1, int parallel = mp.cpu_count(), int burninSamples = int(1e3)):
+    # start sampling
+    cdef dict snapshots = {}
+    # func = functools.partial(parallelSnapshots, step = step, \
+    # burninSamples = burninSamples, model = model)
+    #
+    func = functools.partial(parallelSnapshots, step = step, \
+    burninSamples = burninSamples)
+
+
+    tmp = []
+    for i in range(nSamples):
+      m = copy.copy(model)
+      m.reset()
+      tmp.append((1, m))
+
+    # tmp = np.ones(nSamples)
+    # tmp = [nSamples]
+    cdef:
+        dict result
+        tuple key
+        int value
+        double Z = <double> nSamples
+    with mp.Pool(processes = parallel) as p:
+        results = p.map(func, tqdm(tmp), 1)
+        print(results)
+        for result in results:
+          for key, value in result.items():
+            snapshots[key] = snapshots.get(key, 0) + value / Z
+    print(f'Found {len(snapshots)} states')
+    return snapshots
+
+    # def parallelSnapshots(int nSamples, object model,  int step, int burninSamples):
+@cython.boundscheck(False) # compiler directive
+@cython.wraparound(False) # compiler directive
+def parallelSnapshots(tuple sampleModel,  int step, int burninSamples):
+    '''
+      Get snapshots by simlating for :nSamples:
+      :step: gives how many steps are between samples
+    '''
+    ### use this if you want to start from random init
+    cdef long nSamples
+    cdef object model
+    nSamples, model = sampleModel
+    # model.burnin(burninSamples) # start from random state
+    cdef snap = {}
+    # init generator
+    cdef long n = nSamples * step
+    cdef long[:, :] r = model.sampleNodes(n)
+    # simulate
+    cdef int i
+    for i in range(n):
+        if i % step == 0:
+            state = model.states
+            snap[tuple(state)] = snap.get(tuple(state), 0) + 1
+        # model.updateState(model.sampleNodes[model.mode](model.nodeIDs))
+        # model.updateState(r[i])
+        model.updateState(r[i])
+    print(snap)
+    return snap
 #
 # @cython.boundscheck(False) # compiler directive
 # @cython.wraparound(False) # compiler directive

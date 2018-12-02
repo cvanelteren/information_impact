@@ -38,16 +38,20 @@ s = time()
 
 temps = linspace(0, 100, 59)
 a = []
-for t in temps:
-    m.states = 1
-    m.t = t
-    x = np.asarray(m.simulate(10000))
-    a.append(abs(x.mean()))
-print(time()-s)
-fig, ax = subplots()
-ax.plot(temps,a)
+# for t in temps:
+#     m.states = 1
+#     m.t = t
+#     x = np.asarray(m.simulate(10000))
+#     a.append(abs(x.mean()))
+# # print(time()-s)
+# fig, ax = subplots()
+# ax.plot(temps,a)
 # ax.set_xscale('log')
 print(a)
+
+import infcy
+
+infcy.getSnapShots(m, 100)
 show()
 # x = array(x)
 # plot(x.mean(1))
