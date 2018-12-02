@@ -364,7 +364,6 @@ cdef double c_energy(int node, long[:] states,\
   cdef double energy = 0
   cdef long N = len(edgeData)
   cdef int i
-
   for i in range(N):
   # for i in range(N):
     energy-= states[node] * states[edgeData[i]] * interaction[i] \

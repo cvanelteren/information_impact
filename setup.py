@@ -11,7 +11,7 @@ for file in os.listdir(os.getcwd()):
         #  + '/numpy'
         ex = Extension(name, sources = [file], \
                        include_dirs =[nums],\
-                       extra_compile_args = ['-fopenmp'],\
+                       extra_compile_args = ['-fopenmp', '-O3', '-march=native'],\
                        extra_link_args = ['-fopenmp'],\
         )
         exts.append(ex)
