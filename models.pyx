@@ -28,6 +28,7 @@ cdef extern from "limits.h":
 # forward declaration
 cdef class Model
 
+
 cdef class Model: # see pxd
     def __init__(self, \
                  graph, agentStates = [-1, 1], \
@@ -71,6 +72,9 @@ cdef class Model: # see pxd
     def nudgeType(self, value):
         assert value in 'constant pulse'
         self.__nudgeType = value
+    @states.setter
+    def states(self, value):
+        self._states[:] = value
 
 
     cpdef void construct(self, object graph, list agentStates):
@@ -98,8 +102,14 @@ cdef class Model: # see pxd
         # check all the possible edges
         from ast import literal_eval
         connecting = graph.neighbors if isinstance(graph, nx.Graph) else nx.predecessors
+
+        cdef dict neighbors = {}
+        cdef dict weights   = {}
+        # generate adjlist
         for line in nx.generate_multiline_adjlist(graph, delim):
+            # input validation
             tmp = []
+            # if second is not dict then it must be source
             for prop in line.split(delim):
                 try:
                     i = literal_eval(prop) # throws error if only string
@@ -107,40 +117,64 @@ cdef class Model: # see pxd
                 except:
                     tmp.append(prop) # for strings
             node, info = tmp
+            # check properties, assign defaults
             if 'state' not in graph.node[node]:
                 idx = np.digitize(np.random.random_sample(), bins = bins)
                 graph.node[node]['state'] = agentStates[idx - 1]
             if 'nudge' not in graph.node[node]:
                 graph.node[node]['nudge'] =  DEFAULTNUDGE
 
-            # check which one it is
-            if isinstance(info, dict):
-                if not 'weight' in info:
+            # if not dict then it is a source
+            if isinstance(info, dict) is False:
+                # add node to seen
+                if node not in mapping:
+                    # append to stack
+                    counter             = len(mapping)
+                    mapping[node]       = counter
+                    rmapping[counter]   = node
+
+                # set source
+                source   = node
+                sourceID = mapping[node]
+
+                states[sourceID] = graph.node[node]['state']
+                nudges[sourceID] = graph.node[node]['nudge']
+            # check neighbors
+            else:
+                if 'weight' not in info:
                     graph[source][node]['weight'] = DEFAULTWEIGHT
                 if node not in mapping:
                     counter           = len(mapping)
                     mapping[node]     = counter
                     rmapping[counter] = node
-            else:
-                # add node to seen
-                if node not in mapping:
-                    # append to stack
-                    counter           = len(mapping)
-                    mapping[node]     = counter
-                    rmapping[counter] = node
-                source = node
-            states[mapping[node]] = graph.node[node]['state']
-            nudges[mapping[node]] = graph.node[node]['nudge']
 
+                # _neighbors[sourceID].push_back(mapping[node])
+                # _weights[sourceID].push_back(graph[source][node]['weight'])
+                weights[sourceID]   = weights.get(sourceID, []) + [graph[source][node]['weight']]
+                neighbors[sourceID] = neighbors.get(sourceID, []) + [mapping[node]]
+                # check if it has a reverse edge
+                if graph.has_edge(node, source):
+                    tmp            = mapping[node]
+                    weight         = graph[node][source]['weight']
+                    if tmp in neighbors:
+                        if source not in neighbors[tmp]:
+                            weights[tmp]   = weights.get(tmp, []) + [weight]
+                            neighbors[tmp] = neighbors.get(tmp, []) + [sourceID]
+                    else:
+                        weights[tmp]   = weights.get(tmp, []) + [weight]
+                        neighbors[tmp] = neighbors.get(tmp, []) + [sourceID]
+
+
+        # TODO: copy in place
+        weights        = {k : np.array(v) for k, v in weights.items()}
+        neighbors      = {k : np.array(v, dtype = int) for k, v in neighbors.items()}
+        self.neighbors = neighbors
+        self.weights   = weights
         # public and python accessible
         self.graph    = graph
         self.mapping  = mapping
         self.rmapping = rmapping
-        # note columns are the in-degree rows out
-        _adj = nx.adj_matrix(graph, weight = 'weight')
-        cdef _ind = np.array([_adj[:, i].indices for i in range(graph.number_of_nodes())])
-        self.adj         = np.asarray(_adj.todense(), order = 'C') # sparse
-        self.index       = _ind
+
         # self.adj.data.astype(np.float64) #TODO: this doesn't work..
 
         # enforce dtypes: reduce this if needed

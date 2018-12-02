@@ -13,10 +13,11 @@ cdef class Ising(Model):
             double beta
 
     cdef double energy(self, \
-                       int node, \
-                       int[:] index,\
+                       int  node, \
+                       long[:] index,\
                        double [:] weights,\
-                       double nudge)
+                       double nudge,\
+                       long[:] states)
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)

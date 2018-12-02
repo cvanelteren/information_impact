@@ -9,6 +9,8 @@ cdef class Model:
             str __updateType
             str __nudgeType
             double[::1] __nudges
+            dict neighbors
+            dict weights
 
         #private
         dict __dict__

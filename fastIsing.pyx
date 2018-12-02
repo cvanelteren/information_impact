@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # distutils: language=c
+# distutils: language_level=3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Feb  6 09:36:17 2018
@@ -78,7 +79,7 @@ cdef class Ising(Model):
     @t.setter
     def t(self, value):
         self._t = value
-        self.beta = 1/value if value != 0 else np.inf
+        self.beta = 1 / value if value != 0 else np.inf
 
     cpdef np.ndarray burnin(self,\
                  int samples = int(1e2), double threshold = 1e-2, ):
@@ -129,9 +130,10 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int node, \
-                       int[:] index,\
+                       long[:] index,\
                        double [:] weights, \
-                       double nudge):
+                       double nudge,\
+                       long[:] states):
         '''
         input:
             :node: member of nodeIDs
@@ -140,7 +142,6 @@ cdef class Ising(Model):
                 :flipEnergy: energy if node flips state
         '''
         cdef:
-            long[::1] states = self._states
             double[::1] H    = self._H  # acces the c property
             long length = index.shape[0]
             # index  = np.asarray(indices, dtype = int)
@@ -150,16 +151,15 @@ cdef class Ising(Model):
             cdef long nodeState = states[node]
             long neighborState
 
-
         # compute hamiltonian and add possible nudge
         # note weights is a matrix of shape (1, nNodes)
         # with nogil, parallel():
         with nogil:
             for i in range(length):
-                energy += nodeState * states[index[i]] * weights[index[i]] \
+                energy -=  nodeState * states[index[i]] * weights[i] \
                 + H[index[i]] * states[index[i]]
         energy += nudge
-        return -energy
+        return energy
 
     # @cython.boundscheck(False)
     # @cython.wraparound(False)
@@ -178,47 +178,49 @@ cdef class Ising(Model):
         cdef:
             states = self._states # alias
             long [::1] newstates #forward declaration
-            int  length = len(nodesToUpdate)
+            int  length = nodesToUpdate.shape[0]
             str magSide = self.magSide
             int  n
-            int node
+            long node
             double energy, p
             double beta        = self.beta
             double[::1] nudges = self.__nudges
-            indices = self.index
-            double[:, ::1] adj = self.adj
-            double[::1] weights
+            dict weights       = self.weights
+            dict neighbors     = self.neighbors
         # allow mutability if async; single doesn't matter
+
+            long[:] neighbor
+            double[:] weight
         if self.__updateType == 'async':
             newstates = states
         else:
             newstates = states.copy()
-
         # for n in prange(length, nogil = True):
         for n in range(length):
-            node    = nodesToUpdate[n]
-            nudge   = nudges[node]
+            node      = nodesToUpdate[n]
+            nudge     = nudges[node]
+            weight    = weights[node]
+            neighbor  = neighbors[node]
             #  TODO: dunno how to typecast this; fused types can be used but dunno how
             # weights = self.adj[:, node].data
             # indices = self.adj[:, node].indices
             # print(node, np.asarray(weights), np.asarray(indices))
             # check if node has input
-            if indices[node].shape[0] != 0:
-                energy = self.energy(node, indices[node], adj[:, node],\
-                                     nudge)
-                # print(energy)
-                p = 1 / ( 1 + exp(- beta * 2. * energy) )
-            else:
-                p = .5
-            if rand() / float(INT_MAX) < p: # faster
-                newstates[node] = -states[node]
 
-        mu = np.mean(newstates)
+            energy = self.energy(node, neighbor, weight,\
+                                 nudge, newstates)
+            p = 1 / ( 1. + exp(-beta * 2. * energy) )
+
+            if rand() / float(INT_MAX) < p: # faster
+                states[node] = -newstates[node]
+
+        cdef long mu = 0
+        for n in range(self._nNodes):
+            mu += states[n]
         if (mu < 0 and magSide == 'pos') or (mu > 0 and magSide == 'neg'):
             # print('inverting', mu, magSide)
-            for i in range(length):
-                newstates[i] = -newstates[i]
-        states = newstates # possible overwrite
+            for n in range(self._nNodes):
+                states[n] = -states[n]
         return states #
 
     cpdef long[:, :] simulate(self, long samples):
@@ -229,6 +231,7 @@ cdef class Ising(Model):
         for i in range(samples):
             results[i] = self.updateState(r[i])
         return results
+
     # cpdef computeProb(self):
     #     """
     #     Compute the node probability for the current state p_i = 1/z * (1 + exp( -beta * energy))**-1
