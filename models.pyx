@@ -196,8 +196,8 @@ cdef class Model: # see pxd
             long start
             long i, j, k
             long samplei
-        with nogil, parallel():
-            for samplei in prange(nSamples):
+        with nogil:
+            for samplei in range(nSamples):
                 start = (samplei * sampleSize) % length
                 if start + sampleSize >= length:
                     # np.random.shuffle(nodeIDs)

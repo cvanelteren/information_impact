@@ -9,7 +9,7 @@ cdef class Model:
             int __nNodes
             str __updateType
             str __nudgeType
-            double[:] __nudges
+            double[::1] __nudges
 
         #private
         dict __dict__
@@ -23,5 +23,5 @@ cdef class Model:
                     long[::1] nodeIDs, \
                     int length, int nSamples,\
                     int sampleSize,\
-                    ) 
+                    )
     # cdef long[::1] updateState(self, int[:] nodesToUpdate)

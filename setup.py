@@ -19,7 +19,7 @@ for file in os.listdir(os.getcwd()):
 setup(\
 ext_modules = cythonize(exts,\
             annotate = True,\
-            language_level = 2,\
+            language_level = 3,\
             )\
 )
 # ext_modules = [

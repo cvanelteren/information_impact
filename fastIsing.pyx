@@ -130,7 +130,8 @@ cdef class Ising(Model):
     cdef double energy(self, \
                        int node, \
                        int[:] index,\
-                       double [:] weights):
+                       double [:] weights, \
+                       double nudge):
         '''
         input:
             :node: member of nodeIDs
@@ -146,7 +147,6 @@ cdef class Ising(Model):
             double energy = 0.
             int neighbor, i
             double weight, Hi
-            cdef double nudge = self.__nudges[node]
             cdef long nodeState = states[node]
             long neighborState
 
@@ -154,17 +154,9 @@ cdef class Ising(Model):
         # compute hamiltonian and add possible nudge
         # note weights is a matrix of shape (1, nNodes)
         # with nogil, parallel():
-        with nogil, parallel():
-            for i in prange(length):
-            # for i in prange(length, schedule = 'static'):
-                # neighbor      = index[i]
-                # neighborState = states[neighbor]
-                # weight        = weights[neighbor]
-                # Hi            = H[neighbor]
-                # energy       += weight * neighborState
-                # energy       += neighborState * Hi
-                energy += states[index[i]] * weights[index[i]] + H[index[i]] * states[index[i]]
-        energy *= nodeState
+        with nogil:
+            for i in range(length):
+                energy += nodeState * states[index[i]] * weights[index[i]] + H[index[i]] * states[index[i]]
         energy += nudge
         return -energy
 
@@ -192,8 +184,13 @@ cdef class Ising(Model):
             double energy, p
             int[::1] indices
             double[:] weights
-            cdef double beta = self.beta
-
+            double beta        = self.beta
+            double[::1] nudges = self.__nudges
+            double nudge
+            long[::1] indices = self.index
+            double[:, ::1] adj = self.adj
+            double[::1] weights
+            int[::1] index
         # allow mutability if async; single doesn't matter
         if self.__updateType == 'async':
             newstates = states
@@ -203,13 +200,17 @@ cdef class Ising(Model):
         # for n in prange(length, nogil = True):
         for n in range(length):
             node    = nodesToUpdate[n]
+            nudge   = nudges[node]
+            weight  = adj[:, node]
+            index   = indices[node]
             #  TODO: dunno how to typecast this; fused types can be used but dunno how
             # weights = self.adj[:, node].data
             # indices = self.adj[:, node].indices
             # print(node, np.asarray(weights), np.asarray(indices))
             # check if node has input
-            if self.index[node].shape[0] != 0:
-                energy = self.energy(node, self.index[node], self.adj[:, node])
+            if index.shape[0] != 0:
+                energy = self.energy(node, index, weight,\
+                                     nudge)
                 # print(energy)
                 p = 1 / ( 1 + exp(- beta * 2. * energy) )
             else:
@@ -224,7 +225,8 @@ cdef class Ising(Model):
                 newstates[i] = -newstates[i]
         states = newstates # possible overwrite
         return states #
-    cpdef np.ndarray simulate(self, int samples):
+
+    cpdef np.ndarray simulate(self, long samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)
             long[:, ::1] r = self.sampleNodes(samples)

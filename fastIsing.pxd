@@ -15,7 +15,8 @@ cdef class Ising(Model):
     cdef double energy(self, \
                        int node, \
                        int[:] index,\
-                       double [:] weights)
+                       double [:] weights,\
+                       double nudge)
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)
@@ -24,4 +25,4 @@ cdef class Ising(Model):
     cpdef np.ndarray burnin(self,\
                  int samples=*,\
                  double threshold =*)
-    cpdef np.ndarray simulate(self, int samples)
+    cpdef np.ndarray simulate(self, long samples)
