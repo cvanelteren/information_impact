@@ -208,10 +208,10 @@ cdef class Ising(Model):
             # indices = self.adj[:, node].indices
             # print(node, np.asarray(weights), np.asarray(indices))
             # check if node has input
-            if len(self.index[node]) != 0:
+            if self.index[node].shape[0] != 0:
                 energy = self.energy(node, self.index[node], self.adj[:, node])
                 # print(energy)
-                p = 1 / ( 1 + exp_approx(- beta * 2. * energy) )
+                p = 1 / ( 1 + exp(- beta * 2. * energy) )
             else:
                 p = .5
             if rand() / float(INT_MAX) < p: # faster
