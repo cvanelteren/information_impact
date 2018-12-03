@@ -25,6 +25,8 @@ from cython.operator cimport dereference, preincrement
 from libc.stdlib cimport rand
 from libc.string cimport strcmp
 from libc.stdio cimport printf
+from libcpp.vector import vector
+from libcpp.map cimport map
 cdef extern from "limits.h":
     double INT_MAX
 # ctypedef np.ndarray (*UPDATE)(long[:] state, long[:] nodesToUpdate)
@@ -175,6 +177,8 @@ cdef class Model: # see pxd
 
 
         # TODO: copy in place
+        cdef map[int, vector[int]] neighbors =  neighbors
+        cdef map[int, vector[double]] weights=  weights
         weights        = {k : np.array(v) for k, v in weights.items()}
         neighbors      = {k : np.array(v, dtype = int) for k, v in neighbors.items()}
         self.neighbors = neighbors
@@ -201,7 +205,7 @@ cdef class Model: # see pxd
         self._nodeids = _nodeids
         self._states = states
         self._nNodes = graph.number_of_nodes()
-    
+
     @cython.wraparound(False)
     @cython.boundscheck(False)
     @cython.nonecheck(False)
