@@ -11,7 +11,8 @@ import numpy  as np
 
 from scipy.stats import linregress
 import networkx as nx, multiprocessing as mp, \
-                tqdm, scipy,  functools, copy
+                scipy,  functools, copy, time
+from tqdm import tqdm
 
 # ___CythonImports___
 cimport cython
@@ -169,7 +170,7 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -207,7 +208,8 @@ cdef class Ising(Model):
         if self.__updateType == 'async':
             newstates = states
         else:
-            newstates = states.copy()
+            for node in range(self._nNodes):
+                newstates[node] = states[node]
         # for n in prange(length, nogil = True):
         for n in range(length):
             node      = nodesToUpdate[n]
@@ -239,7 +241,39 @@ cdef class Ising(Model):
             for n in range(self._nNodes):
                 states[n] = -states[n]
         return states
-
+    @cython.wraparound(False)
+    @cython.boundscheck(False)
+    @cython.nonecheck(False)
+    @cython.cdivision(True)
+    cpdef dict getSnapShots(self, int nSamples, int step = 1,\
+                       int burninSamples = int(1e3)):
+        # start sampling
+        cdef dict snapshots = {}
+        cdef double past = time.process_time()
+        cdef int i
+        cdef long long N = nSamples * step
+        cdef long[:, ::1] r = self.sampleNodes(N)
+        cdef double Z = <double> nSamples
+        pbar = tqdm(total = N)
+        states = self._states
+        # with nogil, parallel():
+            # for i in prange(N, schedule = 'static'):
+                # with gil:
+        with nogil:
+            for i in range(N):
+                with gil:
+                    if i % step == 0:
+                        state = tuple(states)
+                        snapshots[state] = snapshots.get(state, 0.) + 1. / Z
+                    # model.updateState(next(r))
+                    with nogil:
+                        self._updateState(r[i])
+                # with gil:
+                    pbar.update(1)
+        pbar.close()
+        print(f'Found {len(snapshots)} states')
+        print(f'Delta = {time.process_time() - past}')
+        return snapshots
     cpdef simulate(self, long samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)

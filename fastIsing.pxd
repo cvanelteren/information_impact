@@ -23,8 +23,10 @@ cdef class Ising(Model):
 
     # cdef _updateState(self, long [:] nodesToUpdate)
 
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
+    cpdef dict getSnapShots(self, int nSamples, int step =*,\
+                       int burninSamples =*)
     cpdef np.ndarray burnin(self,\
                  int samples=*,\
                  double threshold =*)

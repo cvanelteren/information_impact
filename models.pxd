@@ -31,5 +31,8 @@ cdef class Model:
                     int length, long long nSamples,\
                     int sampleSize,\
                     )
+    # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
+
+
     cpdef void reset(self)
     # cdef long[::1] updateState(self, int[:] nodesToUpdate)

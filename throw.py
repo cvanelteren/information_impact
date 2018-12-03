@@ -65,7 +65,8 @@ from functools import partial
 
 print(time() - s)
 s = time()
-x  = infcy.getSnapShots(m, 10000)
+x  = m.getSnapShots(10000)
+xx = infcy.getSnapShots(m, 10000)
 #print(sum(x.values()))
 #print(m._states)
 deltas = 20
@@ -75,7 +76,7 @@ print(time() - s)
 fig, ax = subplots()
 ax.plot(mi)
 show()
-print(mi)
+#print(mi)
 
 
 # for k, v in y.items():
