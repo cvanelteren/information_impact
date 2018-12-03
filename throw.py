@@ -14,20 +14,25 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(10, 5)
+#graph = nx.barabasi_albert_graph(3, 2)
+graph = nx.path_graph(1000)
+import fastIsing
 
+s = time.process_time()
+m = fastIsing.Ising(graph, temperature = 1)
+# m.simulate(10000)
+print(time.process_time() - s)
 
+# assert 0
 # graph = nx.path_graph(3)
 # print(m.sampleNodes(10))
 #print(m.graph)
 #p = m.mapping
 #m.simulate(pulse = p)
 from time import time
-from fastIsing import Ising
 
-m = Ising(graph, temperature = 1)
-m.updateType = 'async'
-m.magSide    = 'pos'
+m.updateType = 'single'
+m.magSide    = 'neg'
 
 # %%
 temps = linspace(0, 1, 3)
@@ -55,16 +60,17 @@ s = time()
 from pathos import multiprocessing as mp
 from copy import copy
 from functools import partial
-x = [copy(m) for i in range(100)]
+# x = [copy(m) for i in range(100)]
 # func = partial(infcy.getSnapShots, nSamples = 100)
 
 print(time() - s)
 s = time()
-print(m._states)
-x  = infcy.getSnapShots(m, 100000)
-print(m._states)
-y  = infcy.monteCarlo_alt(m, x, repeats = 1000)
-px, mi = infcy.mutualInformation_alt(y, 10, x, m)
+x  = infcy.getSnapShots(m, 100)
+#print(sum(x.values()))
+#print(m._states)
+deltas = 5
+y  = infcy.monteCarlo_alt(m, x, repeats = 10000, deltas = deltas)
+px, mi = infcy.mutualInformation_alt(y, deltas, x, m, )
 fig, ax = subplots()
 ax.plot(mi)
 show()

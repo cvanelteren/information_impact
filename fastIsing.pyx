@@ -150,10 +150,10 @@ cdef class Ising(Model):
         # compute hamiltonian and add possible nudge
         # note weights is a matrix of shape (1, nNodes)
         # with nogil, parallel():
-        with nogil:
-            for i in range(length):
-                energy -=  nodeState * states[index[i]] * weights[i] \
-                + H[index[i]] * states[index[i]]
+        # with nogil:
+        for i in range(length):
+            energy -=  nodeState * states[index[i]] * weights[i] \
+            + H[index[i]] * states[index[i]]
         energy += nudge
         return energy
 
@@ -162,11 +162,13 @@ cdef class Ising(Model):
     # @cython.nonecheck(False)
     # cpdef updateState(self, long[:] nodesToUpdate):
     #     return self._updateState(nodesToUpdate)
+    cpdef long[::1] updateState(self, long[:] nodesToUpdate):
+        return self._updateState(nodesToUpdate)
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cpdef long[::1] updateState(self, long[:] nodesToUpdate):
+    cdef long[::1] _updateState(self, long[:] nodesToUpdate):
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -221,30 +223,30 @@ cdef class Ising(Model):
 
             # energy = self.energy(node, neighbor, weight,\
             #                      nudge, newstates)
-            energy = self.energy(node, neighbors[node], weights[node],\
-                                  nudges[node], newstates)
+            energy = self.energy(\
+                                 node, neighbors[node], weights[node],\
+                                 nudges[node], newstates)
             p = 1 / ( 1. + exp(-beta * 2. * energy) )
 
             if rand() / float(INT_MAX) < p: # faster
                 states[node] = -newstates[node]
 
-        cdef long mu = 0
+        cdef double mu = 0
         for n in range(self._nNodes):
-            mu += states[n]
+            mu += states[n] / float(self._nNodes)
         if (mu < 0 and magSide == 'pos') or (mu > 0 and magSide == 'neg'):
-            # print('inverting', mu, magSide)
             for n in range(self._nNodes):
                 states[n] = -states[n]
-        return states #
+        return states
 
-    cpdef long[:, :] simulate(self, long samples):
+    cpdef simulate(self, long samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)
-            long[:, ::1] r = self.sampleNodes(samples)
+            long[:, :] r = self.sampleNodes(samples)
             int i
         for i in range(samples):
             results[i] = self.updateState(r[i])
-        return results
+        return results.base
 
     # cpdef computeProb(self):
     #     """

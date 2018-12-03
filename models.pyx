@@ -22,7 +22,7 @@ from libc.stdlib cimport rand
 
 from cython.operator cimport dereference, preincrement
 from libc.stdlib cimport rand
-
+from libc.string cimport strcmp
 from libc.stdio cimport printf
 cdef extern from "limits.h":
     double INT_MAX
@@ -66,6 +66,9 @@ cdef class Model: # see pxd
     @property
     def nodeids(self): return self._nodeids
 
+    # readonly
+    @property
+    def nNodes(self) : return self._nNodes
 
     @updateType.setter
     def updateType(self, value):
@@ -90,7 +93,6 @@ cdef class Model: # see pxd
         # check if graph has weights or states assigned and or nudges
         # note does not check all combinations
         # input validation / construct adj lists
-        cdef double[:] bins = np.linspace(0, 1, len(agentStates) + 1)
         # defaults
         DEFAULTWEIGHT = 1.
         DEFAULTNUDGE  = 0.
@@ -125,8 +127,8 @@ cdef class Model: # see pxd
             node, info = tmp
             # check properties, assign defaults
             if 'state' not in graph.node[node]:
-                idx = np.digitize(np.random.random_sample(), bins = bins)
-                graph.node[node]['state'] = agentStates[idx - 1]
+                idx = np.random.choice(agentStates)
+                graph.node[node]['state'] = idx
             if 'nudge' not in graph.node[node]:
                 graph.node[node]['nudge'] =  DEFAULTNUDGE
 
@@ -201,7 +203,7 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.boundscheck(False)
     @cython.nonecheck(False)
-    cpdef long [:, ::1] sampleNodes(self, long nSamples):
+    cdef long [:, :] sampleNodes(self, long nSamples):
         """
             Python accessible function to sample nodes
         """
@@ -225,9 +227,9 @@ cdef class Model: # see pxd
     @cython.boundscheck(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[:, ::1] c_sample(self,
+    cdef long[:, :] c_sample(self,
                     long[:] nodeIDs, \
-                    int length, int nSamples,\
+                    int length, long long nSamples,\
                     int sampleSize,\
                     ) :
         """
