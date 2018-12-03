@@ -1,5 +1,6 @@
 cimport numpy as np
-
+from libcpp.vector cimport vector
+from libcpp.map cimport map
 cdef class Model:
     cdef:
         # public
@@ -14,8 +15,8 @@ cdef class Model:
         str __updateType
         str __nudgeType
         np.ndarray  __nudges
-        dict neighbors
-        dict weights
+        map[int, vector[int]] neighbors 
+        map[int, vector[double]] weights
         int _nStates
 
         #private

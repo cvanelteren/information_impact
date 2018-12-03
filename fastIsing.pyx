@@ -19,7 +19,6 @@ cimport cython
 from cython cimport numeric
 from cython.parallel cimport prange, parallel
 
-from cython.operator cimport dereference, preincrement
 cimport numpy as np # overwrite some c  backend from above
 
 from libc.math cimport exp
@@ -28,6 +27,7 @@ from libc.stdlib cimport rand
 from libcpp.map cimport map
 from libcpp.vector cimport vector
 from cython.operator cimport dereference, preincrement
+
 # use external exp
 cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double)
@@ -127,8 +127,8 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       long[::1] index,\
-                       double [::1] weights,\
+                       vector[int] & index,\
+                       vector[double] & weights,\
                        double nudge,\
                        long[::1] states):
         """
@@ -140,7 +140,9 @@ cdef class Ising(Model):
         """
         cdef:
             double[::1] H    = self._H  # acces the c property
-            long length = index.shape[0]
+            # long length = index.shape[0]
+            vector[int].iterator start = index.begin()
+            vector[int].iterator end   = index.end()
             # index  = np.asarray(indices, dtype = int)
             double energy = 0.
             int neighbor, i
@@ -153,9 +155,14 @@ cdef class Ising(Model):
         # with nogil, parallel():
         # with nogil:
         # with nogil:
-        for i in range(length):
-            energy -=  nodeState * states[index[i]] * weights[i] \
-            + H[index[i]] * states[index[i]]
+
+        while start != end:
+            energy += <double> (dereference(start))
+            print(energy)
+            preincrement(start)
+        # for i in range(length):
+            # energy -=  nodeState * states[index[i]] * weights[i] \
+            # + H[index[i]] * states[index[i]]
         energy += nudge
         return energy
 
@@ -170,14 +177,14 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         """
         cdef:
             long[::1] states = self._states # alias
-            long [::1] newstates #forward declaration
+            long [::1] newstates = states #forward declaration
             int  length = nodesToUpdate.shape[0]
             str magSide = self.magSide
             int  n
@@ -185,29 +192,9 @@ cdef class Ising(Model):
             double energy, p
             double beta        = self.beta
             double[::1] nudges = self.__nudges
-            dict weights       = self.weights
-            dict neighbors     = self.neighbors
-        # cdef map[int, vector[int]] w = weights
-        # cdef map[int, vector[int]] a = neighbors
-        #
-        # cdef map[int, vector[int]].iterator weightsb = w.begin()
-        # cdef map[int, vector[int]].iterator weightse = w.end()
-        #
-        # cdef map[int, vector[int]].iterator neighborssb = a.begin()
-        # cdef map[int, vector[int]].iterator neighborse = a.end()
-        # # allow mutability if async; single doesn't matter
-        # cdef int total = 0
-        # cdef int j, i
-        # with nogil:
-        #     while neighborssb != neighborse:
-        #         j = dereference(neighborssb).second.size()
-        #         for i in range(j):
-        #             total += dereference(neighborssb).second[i]
-        #         preincrement(neighborssb)
-        # print(total)
-        if self.__updateType == 'async':
-            newstates = states
-        else:
+            cdef map[int, vector[int]] neighbors  = self.neighbors
+            cdef map[int, vector[double]] weights = self.weights
+        if self.__updateType != 'async':
             for node in range(self._nNodes):
                 newstates[node] = states[node]
         # for n in prange(length, nogil = True):
@@ -215,17 +202,9 @@ cdef class Ising(Model):
             node      = nodesToUpdate[n]
 
 
-            # nudge     = nudges[node]
-            # weight    = weights[node]
-            # neighbor  = neighbors[node]
-            #  TODO: dunno how to typecast this; fused types can be used but dunno how
-            # weights = self.adj[:, node].data
-            # indices = self.adj[:, node].indices
-            # print(node, np.asarray(weights), np.asarray(indices))
-            # check if node has input
-
-            # energy = self.energy(node, neighbor, weight,\
-            #                      nudge, newstates)
+            # energy = self.energy(\
+            #                      node, neighbors[node], weights[node],\
+            #                      nudges[node], newstates)
             energy = self.energy(\
                                  node, neighbors[node], weights[node],\
                                  nudges[node], newstates)
@@ -259,17 +238,15 @@ cdef class Ising(Model):
         # with nogil, parallel():
             # for i in prange(N, schedule = 'static'):
                 # with gil:
-        with nogil:
-            for i in range(N):
-                with gil:
-                    if i % step == 0:
-                        state = tuple(states)
-                        snapshots[state] = snapshots.get(state, 0.) + 1. / Z
-                    # model.updateState(next(r))
-                    with nogil:
-                        self._updateState(r[i])
-                # with gil:
-                    pbar.update(1)
+
+        for i in range(N):
+            if i % step == 0:
+                state = tuple(states)
+                snapshots[state] = snapshots.get(state, 0.) + 1. / Z
+            # model.updateState(next(r))
+            self._updateState(r[i])
+        # with gil:
+            pbar.update(1)
         pbar.close()
         print(f'Found {len(snapshots)} states')
         print(f'Delta = {time.process_time() - past}')

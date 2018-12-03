@@ -1,5 +1,7 @@
 from models cimport Model
 from cython cimport numeric
+from libcpp.vector cimport vector
+from libcpp.map cimport map
 cimport numpy as np
 # cdef fused longdouble:
     # long
@@ -15,15 +17,15 @@ cdef class Ising(Model):
 
     cdef double energy(self, \
                        int  node, \
-                       long[::1] index,\
-                       double [::1] weights,\
+                       vector[int] & index,\
+                       vector[double] & weights,\
                        double nudge,\
                        long[::1] states)
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)
 
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
     cpdef dict getSnapShots(self, int nSamples, int step =*,\
                        int burninSamples =*)

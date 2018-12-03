@@ -1,5 +1,5 @@
 # cython: infer_types=True
-# distutils: language=c
+# distutils: language=c++
 import numpy as np
 cimport numpy as np
 import networkx as nx, functools, time
@@ -25,7 +25,7 @@ from cython.operator cimport dereference, preincrement
 from libc.stdlib cimport rand
 from libc.string cimport strcmp
 from libc.stdio cimport printf
-from libcpp.vector import vector
+from libcpp.vector cimport vector
 from libcpp.map cimport map
 cdef extern from "limits.h":
     double INT_MAX
@@ -114,8 +114,8 @@ cdef class Model: # see pxd
         from ast import literal_eval
         connecting = graph.neighbors if isinstance(graph, nx.Graph) else nx.predecessors
 
-        cdef dict neighbors = {}
-        cdef dict weights   = {}
+        cdef dict _neighbors = {}
+        cdef dict _weights   = {}
         # generate adjlist
         for line in nx.generate_multiline_adjlist(graph, delim):
             # input validation
@@ -161,26 +161,26 @@ cdef class Model: # see pxd
 
                 # _neighbors[sourceID].push_back(mapping[node])
                 # _weights[sourceID].push_back(graph[source][node]['weight'])
-                weights[sourceID]   = weights.get(sourceID, []) + [graph[source][node]['weight']]
-                neighbors[sourceID] = neighbors.get(sourceID, []) + [mapping[node]]
+                _weights[sourceID]   = _weights.get(sourceID, []) + [graph[source][node]['weight']]
+                _neighbors[sourceID] = _neighbors.get(sourceID, []) + [mapping[node]]
                 # check if it has a reverse edge
                 if graph.has_edge(node, source):
                     tmp            = mapping[node]
                     weight         = graph[node][source]['weight']
-                    if tmp in neighbors:
-                        if source not in neighbors[tmp]:
-                            weights[tmp]   = weights.get(tmp, []) + [weight]
-                            neighbors[tmp] = neighbors.get(tmp, []) + [sourceID]
+                    if tmp in _neighbors:
+                        if source not in _neighbors[tmp]:
+                            _weights[tmp]   = _weights.get(tmp, []) + [weight]
+                            _neighbors[tmp] = _neighbors.get(tmp, []) + [sourceID]
                     else:
-                        weights[tmp]   = weights.get(tmp, []) + [weight]
-                        neighbors[tmp] = neighbors.get(tmp, []) + [sourceID]
+                        _weights[tmp]   = _weights.get(tmp, []) + [weight]
+                        _neighbors[tmp] = _neighbors.get(tmp, []) + [sourceID]
 
 
-        # TODO: copy in place
-        cdef map[int, vector[int]] neighbors =  neighbors
-        cdef map[int, vector[double]] weights=  weights
-        weights        = {k : np.array(v) for k, v in weights.items()}
-        neighbors      = {k : np.array(v, dtype = int) for k, v in neighbors.items()}
+        # TODO: move it inline above
+        cdef map[int, vector[int]] neighbors  = _neighbors
+        cdef map[int, vector[double]] weights = _weights
+        # weights        = {k : np.array(v) for k, v in weights.items()}
+        # neighbors      = {k : np.array(v, dtype = int) for k, v in neighbors.items()}
         self.neighbors = neighbors
         self.weights   = weights
         # public and python accessible
