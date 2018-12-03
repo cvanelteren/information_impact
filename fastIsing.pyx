@@ -92,7 +92,7 @@ cdef class Ising(Model):
             double beta        # slope value
             np.ndarray x # for regression
             long[:] states
-            long[:, :] r
+            long[:, ::1] r
 
         print('Starting burnin')
         while True:
@@ -126,10 +126,10 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       long[:] index,\
-                       double [:] weights,\
+                       long[::1] index,\
+                       double [::1] weights,\
                        double nudge,\
-                       long[:] states):
+                       long[::1] states):
         """
         input:
             :node: member of nodeIDs
@@ -151,6 +151,7 @@ cdef class Ising(Model):
         # note weights is a matrix of shape (1, nNodes)
         # with nogil, parallel():
         # with nogil:
+        # with nogil:
         for i in range(length):
             energy -=  nodeState * states[index[i]] * weights[i] \
             + H[index[i]] * states[index[i]]
@@ -162,13 +163,13 @@ cdef class Ising(Model):
     # @cython.nonecheck(False)
     # cpdef updateState(self, long[:] nodesToUpdate):
     #     return self._updateState(nodesToUpdate)
-    cpdef long[::1] updateState(self, long[:] nodesToUpdate):
+    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
         return self._updateState(nodesToUpdate)
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[:] nodesToUpdate):
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -242,7 +243,7 @@ cdef class Ising(Model):
     cpdef simulate(self, long samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)
-            long[:, :] r = self.sampleNodes(samples)
+            long[:, ::1] r = self.sampleNodes(samples)
             int i
         for i in range(samples):
             results[i] = self.updateState(r[i])

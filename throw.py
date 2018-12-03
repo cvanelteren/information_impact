@@ -15,7 +15,7 @@ for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
 #graph = nx.barabasi_albert_graph(3, 2)
-graph = nx.path_graph(1000)
+graph = nx.path_graph(10)
 import fastIsing
 
 s = time.process_time()
@@ -65,12 +65,13 @@ from functools import partial
 
 print(time() - s)
 s = time()
-x  = infcy.getSnapShots(m, 100)
+x  = infcy.getSnapShots(m, 10000)
 #print(sum(x.values()))
 #print(m._states)
-deltas = 5
+deltas = 20
 y  = infcy.monteCarlo_alt(m, x, repeats = 10000, deltas = deltas)
 px, mi = infcy.mutualInformation_alt(y, deltas, x, m, )
+print(time() - s)
 fig, ax = subplots()
 ax.plot(mi)
 show()
@@ -79,7 +80,7 @@ print(mi)
 
 # for k, v in y.items():
     # print(v)
-print(time() - s)
+
 show()
 # x = array(x)
 # plot(x.mean(1))

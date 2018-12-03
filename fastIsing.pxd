@@ -15,16 +15,16 @@ cdef class Ising(Model):
 
     cdef double energy(self, \
                        int  node, \
-                       long[:] index,\
-                       double [:] weights,\
+                       long[::1] index,\
+                       double [::1] weights,\
                        double nudge,\
-                       long[:] states)
+                       long[::1] states)
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)
 
-    cdef long[::1] _updateState(self, long[:] nodesToUpdate)
-    cpdef long[::1] updateState(self, long[:] nodesToUpdate)
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
+    cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
     cpdef np.ndarray burnin(self,\
                  int samples=*,\
                  double threshold =*)

@@ -203,14 +203,14 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.boundscheck(False)
     @cython.nonecheck(False)
-    cdef long [:, :] sampleNodes(self, long nSamples):
+    cdef long [:, ::1] sampleNodes(self, long nSamples):
         """
             Python accessible function to sample nodes
         """
         cdef:
 
             # initialization
-            long[:] nodeIDs   = self._nodeids
+            long[::1] nodeIDs   = self._nodeids
             long length       = self._nNodes # length of target array
             updateType        = self.__updateType
 
@@ -227,8 +227,8 @@ cdef class Model: # see pxd
     @cython.boundscheck(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[:, :] c_sample(self,
-                    long[:] nodeIDs, \
+    cdef long[:, ::1] c_sample(self,
+                    long[::1] nodeIDs, \
                     int length, long long nSamples,\
                     int sampleSize,\
                     ) :
@@ -242,21 +242,21 @@ cdef class Model: # see pxd
             long start
             long i, j, k
             long samplei
-        with nogil:
-            for samplei in range(nSamples):
-                start = (samplei * sampleSize) % length
-                if start + sampleSize >= length:
-                    # np.random.shuffle(nodeIDs)
-                    for i in range(length):
-                        j = <long> (i + rand() / (INT_MAX / (length - i)) )
-                        # printf('%d\n',j)
-                        k = nodeIDs[j]
-                        nodeIDs[j] = nodeIDs[i]
-                        nodeIDs[i] = k
+        # with nogil:
+        for samplei in range(nSamples):
+            start = (samplei * sampleSize) % length
+            if start + sampleSize >= length:
+                # np.random.shuffle(nodeIDs)
+                for i in range(length):
+                    j = <long> (i + rand() / (INT_MAX / (length - i)) )
+                    # printf('%d\n',j)
+                    k = nodeIDs[j]
+                    nodeIDs[j] = nodeIDs[i]
+                    nodeIDs[i] = k
 
-                for j in range(sampleSize):
-                    samples[samplei, j] = nodeIDs[start + j]
-                    # samples[samplei] = nodeIDs[start : start + sampleSize]
+            for j in range(sampleSize):
+                samples[samplei, j] = nodeIDs[start + j]
+                # samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
 
     cpdef void reset(self):

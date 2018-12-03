@@ -11,9 +11,12 @@ for file in os.listdir(os.getcwd()):
         #  + '/numpy'
         ex = Extension(name, sources = [file], \
                        include_dirs =[nums],\
-                       extra_compile_args = ['-fopenmp','-xlibmopt' ,\
-                                             '-ffast-math','-Ofast', '-march=native'],\
-                       extra_link_args = ['-fopenmp'],\
+                       extra_compile_args = ['-fopenmp',\
+                                             '-ffast-math','-Ofast', \
+                                             '-march=native',\
+                                             '-std=c++11'],\
+                       extra_link_args = ['-fopenmp',\
+                                          "-std=c++11"],\
         )
         exts.append(ex)
 

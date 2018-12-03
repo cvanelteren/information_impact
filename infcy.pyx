@@ -16,6 +16,7 @@ import multiprocessing as mp
 # import pathos.multiprocessing as mp
 from tqdm import tqdm   #progress bar
 #from joblib import Parallel, delayed, Memory
+import ctypes
 
 # TODO: the numpy approach should be re-written in a dictionary only approach in order to prevent memory issues;
 # the general outline would be to yield the results and immediately bin them accordingly and write state to disk
@@ -98,7 +99,7 @@ cpdef dict monteCarlo_alt(\
     cdef long[:, :] s = np.array([q for q in snapshots])
     cdef int N = s.shape[0], n
 
-    cdef double[ :, :, :, :] out = np.zeros(\
+    cdef double[ :, :, :, ::1] out = np.zeros(\
                (\
                 N, deltas + 1,\
                  model._nNodes,\
@@ -106,60 +107,57 @@ cpdef dict monteCarlo_alt(\
                   ))
     pbar = tqdm(total = N)
 
-    cdef long[:, :] r = model.sampleNodes(N * repeats * (deltas + 1))
+    cdef long[:, ::1] r = model.sampleNodes(N * repeats * (deltas + 1))
     print('Starting loops')
     # loop declarations
     cdef double Z = <double> repeats
     cdef long[:] states = model._states
-    cdef double[:] nudges = model.__nudges
+    cdef double[::1] nudges = model.__nudges
     cdef int k, delta, node, statei
     half  = deltas // 2
     cdef bint reset = True
-    cdef long[:] agentStates = model.agentStates
+    cdef long[::1] agentStates = model.agentStates
     cdef long long idx
-    with nogil, parallel():
-        for n in prange(N, schedule = 'static'):
+    cdef long chunk = N // 4
+
+    # with nogil, parallel():
+        # for n in prange(N, schedule = 'static', chunksize = chunk):
     # for n in range(N):
+    for n in range(N):
+        for k in range(repeats):
+            for node in range(model._nNodes):
+                states[node] = s[n, node]
+                nudges[node] = copyNudge[node]
+            reset        = True
 
-            for k in range(repeats):
-                # start from the same point
-                # startState = s.base[n]
-                # print(startState)
-                # print('>', n, startState.base)
-                # print('>',tuple(s[n]))
+            for delta in range(deltas + 1):
+                # bin data()
+
+                # idx   = np.digitize(state, model.agentStates)
+                # out[delta, idx] += 1 / repeats
                 for node in range(model._nNodes):
-                    states[node] = s[n, node]
-                    nudges[node] = copyNudge[node]
-                reset        = True
+                    for statei in range(model._nStates):
+                        if states[node] == agentStates[statei]:
+                            out[n, delta, node, statei] += 1 / Z
+                    # model.updateState(model.sampleNodes[model.mode](nodeIDs))
+                # model.updateState(model.sampleNodes(1)[0])
+                # print(np.asarray(r[(n + 1) * (k + 1) * (delta + 1)]))
+                idx = (n + 1) * (k + 1) * (delta + 1)
+                # with gil:
+                #     model.updateState(r[idx])
 
-                for delta in range(deltas + 1):
-                    # bin data()
+                model.updateState(r[idx])
 
-                    # idx   = np.digitize(state, model.agentStates)
-                    # out[delta, idx] += 1 / repeats
-                    for node in range(model._nNodes):
-                        for statei in range(model._nStates):
-                            if states[node] == agentStates[statei]:
-                                out[n, delta, node, statei] += 1 / Z
-                        # model.updateState(model.sampleNodes[model.mode](nodeIDs))
-                    # model.updateState(model.sampleNodes(1)[0])
-                    # print(np.asarray(r[(n + 1) * (k + 1) * (delta + 1)]))
-                    idx = (n + 1) * (k + 1) * (delta + 1)
-                    with gil:
-                        model.updateState(r[idx])
+                # check if pulse turn-off
+                if reset:
+                    if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
+                        for node in range(model._nNodes):
+                            nudges[node] = copyNudge[node]
+                        reset =  False
 
-                    # check if pulse turn-off
-                    if reset:
-                        if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
-                            for node in range(model._nNodes):
-                                nudges[node] = copyNudge[node]
-                            reset =  False
-            # print((startState.base == s[n].base))
-            # print(startState.base, '<')
-            # print(s[n].base)
-            with gil:
-                conditional[tuple(s[n])] = out[n]
-                pbar.update(1)
+        # with gil:
+        conditional[tuple(s[n])] = out[n]
+        pbar.update(1)
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional
@@ -231,6 +229,4 @@ cpdef mutualInformation_alt(dict conditional, int deltas, \
         H  += np.nansum(p * np.log2(p), -1) * snapshots[key]
         px += p * snapshots[key] # update node distribution
     H -= np.nansum(px * np.log2(px), -1)
-    for i, j in zip(H, px):
-        print(i,j)
     return px, H
