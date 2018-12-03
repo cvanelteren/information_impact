@@ -9,7 +9,7 @@ cdef class Ising(Model):
         public:
             object adj    # sparse adjacency matrix
             str magSide   # which side to sample on
-            np.ndarray  _H # external magnetic field
+            np.ndarray _H # external magnetic field
             double beta
 
     cdef double energy(self, \

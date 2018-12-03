@@ -12,7 +12,7 @@ cdef class Model:
             np.ndarray  __nudges
             dict neighbors
             dict weights
-            long _nStates
+            int _nStates
 
         #private
         dict __dict__

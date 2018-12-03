@@ -11,19 +11,16 @@ for file in os.listdir(os.getcwd()):
         #  + '/numpy'
         ex = Extension(name, sources = [file], \
                        include_dirs =[nums],\
-                       extra_compile_args = ['-fopenmp', '-O3', '-march=native'],\
+                       extra_compile_args = ['-fopenmp', '-Ofast', '-march=native'],\
                        extra_link_args = ['-fopenmp'],\
         )
         exts.append(ex)
 
+# compile
 setup(\
 ext_modules = cythonize(exts,\
             annotate = True,\
             language_level = 3,\
-            )\
+            compiler_directives = dict(fast_gil = True,\
+                                       binding = True))\
 )
-# ext_modules = [
-#  Extension('cy', ['cy.pyx'], extra_compile_args=['-fopenmp'], extra_link_args = ['-fopenmp'])
-#
-# ]
-# setup(ext_modules = cythonize(ext_modules))
