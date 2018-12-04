@@ -2,34 +2,36 @@ from models cimport Model
 from cython cimport numeric
 from libcpp.vector cimport vector
 from libcpp.map cimport map
+from libcpp.unordered_map cimport unordered_map
 cimport numpy as np
 # cdef fused longdouble:
     # long
     # double
-
+cdef struct Connection:
+    vector[int] neighbors
+    vector[double] weights
 cdef class Ising(Model):
     cdef:
         # public
-        object adj    # sparse adjacency matrix
         str magSide   # which side to sample on
-        np.ndarray _H # external magnetic field
+        double[:] _H # external magnetic field
         double beta
 
     cdef double energy(self, \
                        int  node, \
-                       vector[int] & index,\
-                       vector[double] & weights,\
-                       double nudge,\
-                       long[::1] states)
+                       long[::1] states) nogil
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)
+    # c binding
+    cdef long[::1] updateState(self, long[::1] nodesToUpdate) nogil
 
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
-    cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cpdef dict getSnapShots(self, int nSamples, int step =*,\
-                       int burninSamples =*)
-    cpdef np.ndarray burnin(self,\
+    # # python wrapper
+    # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
+
+
+    
+    cpdef np.ndarray[double] burnin(self,\
                  int samples=*,\
                  double threshold =*)
-    cpdef simulate(self, long samples)
+    cpdef  simulate(self, long samples)

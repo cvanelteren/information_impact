@@ -27,6 +27,7 @@ from libc.string cimport strcmp
 from libc.stdio cimport printf
 from libcpp.vector cimport vector
 from libcpp.map cimport map
+from libcpp.unordered_map cimport unordered_map
 cdef extern from "limits.h":
     double INT_MAX
 # ctypedef np.ndarray (*UPDATE)(long[:] state, long[:] nodesToUpdate)
@@ -49,14 +50,9 @@ cdef class Model: # see pxd
         '''
 
 
-        # graph      = kwargs['graph']
-        # agentStates= kwargs['agentStates']
+        self.construct(graph, agentStates)
         self.nudgeType  = nudgeType
         self.updateType = updateType
-
-        # construct other properties
-
-        self.construct(graph, agentStates)
 
     @property
     def states(self): return self._states
@@ -77,6 +73,11 @@ cdef class Model: # see pxd
     def updateType(self, value):
         assert value in 'sync async single serial'
         self.__updateType = value
+        # allow for mutation if async else independent updates
+        if value == 'async':
+            self._newstates = self._states
+        else:
+            self._newstates = self._states.copy()
     @nudgeType.setter
     def nudgeType(self, value):
         assert value in 'constant pulse'
@@ -108,26 +109,28 @@ cdef class Model: # see pxd
             str delim = '\t'
             states = np.zeros(graph.number_of_nodes(), int, 'C')
             int counter
-            nudges = np.zeros(graph.number_of_nodes(), float, 'C')
+            double[::1] nudges = np.zeros(graph.number_of_nodes(), dtype = float)
+            unordered_map[int, Connection] adj # see .pxd
 
-        # check all the possible edges
+
         from ast import literal_eval
         connecting = graph.neighbors if isinstance(graph, nx.Graph) else nx.predecessors
 
-        cdef dict _neighbors = {}
-        cdef dict _weights   = {}
+        # cdef dict _neighbors = {}
+        # cdef dict _weights   = {}
         # generate adjlist
         for line in nx.generate_multiline_adjlist(graph, delim):
+            add = False # tmp for not overwriting doubles
             # input validation
-            tmp = []
+            lineData = []
             # if second is not dict then it must be source
             for prop in line.split(delim):
                 try:
                     i = literal_eval(prop) # throws error if only string
-                    tmp.append(i)
+                    lineData.append(i)
                 except:
-                    tmp.append(prop) # for strings
-            node, info = tmp
+                    lineData.append(prop) # for strings
+            node, info = lineData
             # check properties, assign defaults
             if 'state' not in graph.node[node]:
                 idx = np.random.choice(agentStates)
@@ -148,8 +151,8 @@ cdef class Model: # see pxd
                 source   = node
                 sourceID = mapping[node]
 
-                states[sourceID] = graph.node[node]['state']
-                nudges[sourceID] = graph.node[node]['nudge']
+                states[sourceID] = <long> graph.node[node]['state']
+                nudges[sourceID] = <double> graph.node[node]['nudge']
             # check neighbors
             else:
                 if 'weight' not in info:
@@ -161,36 +164,50 @@ cdef class Model: # see pxd
 
                 # _neighbors[sourceID].push_back(mapping[node])
                 # _weights[sourceID].push_back(graph[source][node]['weight'])
-                _weights[sourceID]   = _weights.get(sourceID, []) + [graph[source][node]['weight']]
-                _neighbors[sourceID] = _neighbors.get(sourceID, []) + [mapping[node]]
+                # _weights[sourceID]   = _weights.get(sourceID, []) + [graph[source][node]['weight']]
+                # _neighbors[sourceID] = _neighbors.get(sourceID, []) + [mapping[node]]
                 # check if it has a reverse edge
                 if graph.has_edge(node, source):
-                    tmp            = mapping[node]
-                    weight         = graph[node][source]['weight']
-                    if tmp in _neighbors:
-                        if source not in _neighbors[tmp]:
-                            _weights[tmp]   = _weights.get(tmp, []) + [weight]
-                            _neighbors[tmp] = _neighbors.get(tmp, []) + [sourceID]
+                    sincID = mapping[node]
+                    weight = graph[node][source]['weight']
+                    # check if t he node is already in stack
+                    if sourceID in set(adj[sincID]) :
+                        add = True
+                            # _weights[tmp]   = _weights.get(tmp, []) + [weight]
+                            # _neighbors[sincID] = _neighbors.get(sincID, []) + [sourceID]
+                    # not found so we should add
                     else:
-                        _weights[tmp]   = _weights.get(tmp, []) + [weight]
-                        _neighbors[tmp] = _neighbors.get(tmp, []) + [sourceID]
-
+                        add = True
+                # add source > node
+                sincID = <long> mapping[node]
+                adj[sourceID].neighbors.push_back(<long> mapping[node])
+                adj[sourceID].weights.push_back(<double> graph[source][node]['weight'])
+                # add reverse
+                if add:
+                    adj[sincID].neighbors.push_back( <long> sourceID)
+                    adj[sincID].weights.push_back( <double> graph[node][source]['weight'])
+                    # _adj[sincID] = _adj.get(sincID, []) + [[sourceID], [graph[node][source]['weight']]]
+                    # add node > source
+                        # _weights[tmp]   = _weights.get(tmp, []) + [weight]
+                        # _neighbors[tmp] = _neighbors.get(tmp, []) + [sourceID]
 
         # TODO: move it inline above
-        cdef map[int, vector[int]] neighbors  = _neighbors
-        cdef map[int, vector[double]] weights = _weights
-        # weights        = {k : np.array(v) for k, v in weights.items()}
-        # neighbors      = {k : np.array(v, dtype = int) for k, v in neighbors.items()}
-        self.neighbors = neighbors
-        self.weights   = weights
+        # cdef map[int, vector[int]] neighbors  = _neighbors
+        # cdef map[int, vector[double]] weights = _weights
+        # # weights        = {k : np.array(v) for k, v in weights.items()}
+        # # neighbors      = {k : np.array(v, dtype = int) for k, v in neighbors.items()}
+        # cdef map[int, vector[int, double]] adj = _adj
+        # print(adj)
+
+        # self.neighbors = neighbors
+        # self.weights   = weights
+        # self.adj = adj
         # public and python accessible
         self.graph    = graph
         self.mapping  = mapping
         self.rmapping = rmapping
 
-        # self.adj.data.astype(np.float64) #TODO: this doesn't work..
-
-        # enforce dtypes: reduce this if needed
+        self.adj = adj
 
         self.agentStates = np.asarray(agentStates, dtype = int)
 
@@ -201,9 +218,10 @@ cdef class Model: # see pxd
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
-        cdef np.ndarray _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
-        self._nodeids = _nodeids
-        self._states = states
+        cdef long[::1] _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
+        self._nodeids      = _nodeids
+        self._states       = states
+        self._newstates    = states.copy()
         self._nNodes = graph.number_of_nodes()
 
     @cython.wraparound(False)
@@ -216,7 +234,6 @@ cdef class Model: # see pxd
         cdef:
 
             # initialization
-            long[::1] nodeIDs   = self._nodeids
             long length       = self._nNodes # length of target array
             updateType        = self.__updateType
 
@@ -227,7 +244,7 @@ cdef class Model: # see pxd
             sampleSize = 0
         else:
             sampleSize = length
-        return self.c_sample(nodeIDs, length,  nSamples, sampleSize)
+        return self.c_sample(self._nodeids, length,  nSamples, sampleSize)
 
     @cython.wraparound(False)
     @cython.boundscheck(False)

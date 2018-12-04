@@ -27,6 +27,7 @@ from libc.stdlib cimport rand
 from libcpp.map cimport map
 from libcpp.vector cimport vector
 from cython.operator cimport dereference, preincrement
+from libc.stdio cimport printf
 
 # use external exp
 cdef extern from "vfastexp.h":
@@ -39,7 +40,7 @@ from models cimport Model
 cdef class Ising(Model)
 
 # class implementation
-@cython.final # enforce extension type
+# @cython.final # enforce extension type
 cdef class Ising(Model):
     def __init__(self, \
                  graph,\
@@ -92,7 +93,7 @@ cdef class Ising(Model):
             int h, counter = 0 # tmp var and counter
             double beta        # slope value
             np.ndarray x # for regression
-            long[:] states
+            long[::1] states
             long[:, ::1] r
 
         print('Starting burnin')
@@ -127,10 +128,7 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       vector[int] & index,\
-                       vector[double] & weights,\
-                       double nudge,\
-                       long[::1] states):
+                       long[::1] states) nogil:
         """
         input:
             :node: member of nodeIDs
@@ -139,31 +137,17 @@ cdef class Ising(Model):
                 :flipEnergy: energy if node flips state
         """
         cdef:
-            double[::1] H    = self._H  # acces the c property
-            # long length = index.shape[0]
-            vector[int].iterator start = index.begin()
-            vector[int].iterator end   = index.end()
-            # index  = np.asarray(indices, dtype = int)
-            double energy = 0.
-            int neighbor, i
-            double weight, Hi
-            cdef long nodeState = states[node]
-            long neighborState
-
-        # compute hamiltonian and add possible nudge
-        # note weights is a matrix of shape (1, nNodes)
-        # with nogil, parallel():
-        # with nogil:
-        # with nogil:
-
-        while start != end:
-            energy += <double> (dereference(start))
-            print(energy)
-            preincrement(start)
-        # for i in range(length):
-            # energy -=  nodeState * states[index[i]] * weights[i] \
-            # + H[index[i]] * states[index[i]]
-        energy += nudge
+            long length            = self.adj[node].neighbors.size()
+            long nodeState         = states[node]
+            long neighbor, i
+            double weight
+            double energy          = 0
+        for i in range(length):
+            neighbor = self.adj[node].neighbors[i]
+            weight   = self.adj[node].weights[i]
+            energy  -= states[node] * states[neighbor] * weight + \
+            self._H [neighbor] * states[neighbor]
+        energy += self.__nudges[node]
         return energy
 
     # @cython.boundscheck(False)
@@ -171,43 +155,30 @@ cdef class Ising(Model):
     # @cython.nonecheck(False)
     # cpdef updateState(self, long[:] nodesToUpdate):
     #     return self._updateState(nodesToUpdate)
-    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
-        return self._updateState(nodesToUpdate)
+    # cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
+    #     return self._updateState(nodesToUpdate)
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
+    cdef long[::1] updateState(self, long[::1] nodesToUpdate) nogil:
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         """
         cdef:
-            long[::1] states = self._states # alias
-            long [::1] newstates = states #forward declaration
+            long[::1] states    = self._states # alias
+            long[::1] newstates = self._newstates
             int  length = nodesToUpdate.shape[0]
-            str magSide = self.magSide
             int  n
             long node
             double energy, p
             double beta        = self.beta
-            double[::1] nudges = self.__nudges
-            cdef map[int, vector[int]] neighbors  = self.neighbors
-            cdef map[int, vector[double]] weights = self.weights
-        if self.__updateType != 'async':
-            for node in range(self._nNodes):
-                newstates[node] = states[node]
-        # for n in prange(length, nogil = True):
+
+        # for n in prange(length, nogil = True): # dont prange this
         for n in range(length):
             node      = nodesToUpdate[n]
-
-
-            # energy = self.energy(\
-            #                      node, neighbors[node], weights[node],\
-            #                      nudges[node], newstates)
-            energy = self.energy(\
-                                 node, neighbors[node], weights[node],\
-                                 nudges[node], newstates)
+            energy    = self.energy(node, newstates)
             p = 1 / ( 1. + exp(-beta * 2. * energy) )
 
             if rand() / float(INT_MAX) < p: # faster
@@ -216,9 +187,12 @@ cdef class Ising(Model):
         cdef double mu = 0
         for n in range(self._nNodes):
             mu += states[n] / float(self._nNodes)
-        if (mu < 0 and magSide == 'pos') or (mu > 0 and magSide == 'neg'):
+        if (mu < 0 and self.magSide == 'pos') or (mu > 0 and self.magSide == 'neg'):
             for n in range(self._nNodes):
                 states[n] = -states[n]
+        # for i in range(self._nNodes):
+        #     printf('%d %d \n', states[n], newstates[n])
+        # printf('\n')
         return states
     @cython.wraparound(False)
     @cython.boundscheck(False)
@@ -244,7 +218,7 @@ cdef class Ising(Model):
                 state = tuple(states)
                 snapshots[state] = snapshots.get(state, 0.) + 1. / Z
             # model.updateState(next(r))
-            self._updateState(r[i])
+            self.updateState(r[i])
         # with gil:
             pbar.update(1)
         pbar.close()
@@ -253,12 +227,16 @@ cdef class Ising(Model):
         return snapshots
     cpdef simulate(self, long samples):
         cdef:
-            long[:, ::1] results = np.zeros((samples, self.graph.number_of_nodes()), int)
+            long[:, ::1] results = np.zeros((samples, self._nNodes), int)
             long[:, ::1] r = self.sampleNodes(samples)
             int i
         for i in range(samples):
             results[i] = self.updateState(r[i])
-        return results.base
+        return results.base # convert back to normal arraay
+
+    
+
+
 
     # cpdef computeProb(self):
     #     """

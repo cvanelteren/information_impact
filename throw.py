@@ -14,15 +14,20 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-#graph = nx.barabasi_albert_graph(3, 2)
-graph = nx.path_graph(10)
+graph = nx.barabasi_albert_graph(10, 2)
+# graph = nx.path_graph(10)
 import fastIsing
 
 s = time.process_time()
-m = fastIsing.Ising(graph, temperature = 1)
+m = fastIsing.Ising(graph, temperature = .5)
 # m.simulate(10000)
 print(time.process_time() - s)
 
+
+s = time.process_time()
+for i in range(int(1e3)):
+    m.simulate(int(1e4))
+print(time.process_time() - s)
 # assert 0
 # graph = nx.path_graph(3)
 # print(m.sampleNodes(10))
@@ -31,7 +36,7 @@ print(time.process_time() - s)
 #m.simulate(pulse = p)
 from time import time
 
-m.updateType = 'single'
+m.updateType = 'async'
 m.magSide    = 'neg'
 
 # %%
@@ -41,20 +46,8 @@ x = []
 #y = asarray(m.burnin(samples = 1000))
 
 
-
 temps = linspace(0, 10, 59)
-a = []
-# for t in temps:
-#     m.states = 1
-#     m.t = t
-#     x = np.asarray(m.simulate(10000))
-#     a.append(abs(x.mean()))
-# # print(time()-s)
-# fig, ax = subplots()
-# ax.plot(temps,a)
-# ax.set_xscale('log')
-print(a)
-()
+
 import infcy
 s = time()
 from pathos import multiprocessing as mp
@@ -65,7 +58,17 @@ from functools import partial
 
 print(time() - s)
 s = time()
+temps =logspace(-3, 2, 1000)
+mags  = np.zeros(temps.size)
+for idx, t in enumerate(temps):
+    m.t = t
+    m.states = 1
+    mags[idx] = abs(np.mean(m.simulate(100)))
+
+plot(temps, mags)
+show()
 x  = m.getSnapShots(10000)
+print(time() - s)
 xx = infcy.getSnapShots(m, 10000)
 #print(sum(x.values()))
 #print(m._states)
