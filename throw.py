@@ -20,33 +20,9 @@ import fastIsing
 
 s = time.process_time()
 m = fastIsing.Ising(graph, temperature = .5)
-# m.simulate(10000)
-print(time.process_time() - s)
-
-
-s = time.process_time()
-for i in range(int(1e3)):
-    m.simulate(int(1e4))
-print(time.process_time() - s)
-# assert 0
-# graph = nx.path_graph(3)
-# print(m.sampleNodes(10))
-#print(m.graph)
-#p = m.mapping
-#m.simulate(pulse = p)
 from time import time
-
-m.updateType = 'async'
+m.updateType = 'single'
 m.magSide    = 'neg'
-
-# %%
-temps = linspace(0, 1, 3)
-x = []
-
-#y = asarray(m.burnin(samples = 1000))
-
-
-temps = linspace(0, 10, 59)
 
 import infcy
 s = time()
@@ -55,37 +31,51 @@ from copy import copy
 from functools import partial
 # x = [copy(m) for i in range(100)]
 # func = partial(infcy.getSnapShots, nSamples = 100)
+temps = linspace(0, 10, 1000)
+mags  = empty(temps.size)
 
-print(time() - s)
-s = time()
-temps =logspace(-3, 2, 1000)
-mags  = np.zeros(temps.size)
-for idx, t in enumerate(temps):
+for i, t in enumerate(temps):
     m.t = t
-    m.states = 1
-    mags[idx] = abs(np.mean(m.simulate(100)))
+    m.reset()
+    # print('>', m.states.base)
+    mags[i] = abs(np.mean(m.simulate(100)))
+    # print(m.states.base)
 
-plot(temps, mags)
-show()
-x  = m.getSnapShots(10000)
-print(time() - s)
-xx = infcy.getSnapShots(m, 10000)
-#print(sum(x.values()))
+m.t = np.inf
+
+xx = infcy.getSnapShots(m, 1000)
+
 #print(m._states)
 deltas = 20
-y  = infcy.monteCarlo_alt(m, x, repeats = 10000, deltas = deltas)
-px, mi = infcy.mutualInformation_alt(y, deltas, x, m, )
-print(time() - s)
-fig, ax = subplots()
-ax.plot(mi)
-show()
-#print(mi)
-
+y  = infcy.monteCarlo(m, xx, repeats = 10000, deltas = deltas)
+print('>')
+# for k in y:
+    # print(k)
+px, mi = infcy.mutualInformation(y, deltas, xx, m )
+plot(mi.base)
+def decodeState(state, nStates, nNodes):
+    tmp = format(state, f'0{(nStates -1 ) * nNodes}b')
+    n   = len(tmp)
+    nn  = nStates - 1
+    return np.array([int(tmp[i : i + nn], 2) for i in range(0, n, nn )], dtype = int) * 2 - 1
+#for k, v in xx.items():
+#    print(k)
+#    print(decodeState(k, 2, 10))
 
 # for k, v in y.items():
-    # print(v)
-
-show()
+#     print(k.base, v.base)
+#
+# px, mi = infcy.mutualInformation(y, deltas, xx, m, )
+# fig, ax = subplots()
+# ax.plot(mi)
+# ax.plot(temps, mags)
+# print(time() - s)
+# fig, ax = subplots()
+# ax.plot(mi)
+# show()
 # x = array(x)
 # plot(x.mean(1))
 # %%
+
+
+show()

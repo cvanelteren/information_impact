@@ -84,12 +84,16 @@ cdef class Model: # see pxd
         self.__nudgeType = value
     @states.setter # TODO: expand
     def states(self, value):
-        if isinstance(value, np.ndarray):
-            self._states = value
-        else:
-            self._states[:] = value
-
-
+        if isinstance(value, int):
+            self._newstates[:] = value
+            self._states   [:] = value
+        elif isinstance(value, np.ndarray):
+            self._newstates = value
+            self._states    = value
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+        return self._nodeids
+    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
+        return self._nodeids
     cpdef void construct(self, object graph, list agentStates):
         """
         Constructs adj matrix using structs
@@ -282,9 +286,16 @@ cdef class Model: # see pxd
                 # samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
 
-
     cpdef void reset(self):
         self.states = np.random.choice(self.agentStates, size = self._nNodes)
+    cpdef simulate(self, long samples):
+        cdef:
+            long[:, ::1] results = np.zeros((samples, self._nNodes), int)
+            long[:, ::1] r = self.sampleNodes(samples)
+            int i
+        for i in range(samples):
+            results[i] = self.updateState(r[i])
+        return results.base # convert back to normal arraay
     # cdef long[::1] updateState(self, int[:] nodesToUpdate):
     #     ""
     #     Implement this method

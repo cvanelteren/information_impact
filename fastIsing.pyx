@@ -23,7 +23,6 @@ cimport numpy as np # overwrite some c  backend from above
 
 from libc.math cimport exp
 from libc.stdlib cimport rand
-
 from libcpp.map cimport map
 from libcpp.vector cimport vector
 from cython.operator cimport dereference, preincrement
@@ -66,7 +65,23 @@ cdef class Ising(Model):
         self._H               = H
         self.beta             = np.inf if temperature == 0 else 1 / temperature
         self.t                = temperature
+        self.magSideOptions   = {'': 0, 'neg': 1, 'pos': 2}
         self.magSide          = magSide
+
+    @property
+    def magSide(self):
+        for k, v in self.magSideOptions.items():
+            if v == self._magSide:
+                return k
+    @magSide.setter
+    def magSide(self, value):
+        idx = self.magSideOptions.get(value,\
+              f'Option not recognized. Options {self.magSideOptions.keys()}')
+        if isinstance(idx, int):
+            self._magSide = idx
+        else:
+            print(idx)
+
     @property
     def H(self): return self._H
 
@@ -134,7 +149,6 @@ cdef class Ising(Model):
             :node: member of nodeIDs
         returns:
                 :energy: current energy of systme config for node
-                :flipEnergy: energy if node flips state
         """
         cdef:
             long length            = self.adj[node].neighbors.size()
@@ -150,18 +164,14 @@ cdef class Ising(Model):
         energy += self.__nudges[node]
         return energy
 
-    # @cython.boundscheck(False)
-    # @cython.wraparound(False)
-    # @cython.nonecheck(False)
-    # cpdef updateState(self, long[:] nodesToUpdate):
-    #     return self._updateState(nodesToUpdate)
-    # cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
-    #     return self._updateState(nodesToUpdate)
+    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
+        return self._updateState(nodesToUpdate)
+
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -170,71 +180,35 @@ cdef class Ising(Model):
             long[::1] states    = self._states # alias
             long[::1] newstates = self._newstates
             int  length = nodesToUpdate.shape[0]
-            int  n
             long node
+            double Z = <double> self._nNodes
             double energy, p
-            double beta        = self.beta
-
         # for n in prange(length, nogil = True): # dont prange this
         for n in range(length):
             node      = nodesToUpdate[n]
-            energy    = self.energy(node, newstates)
-            p = 1 / ( 1. + exp(-beta * 2. * energy) )
+            energy    = self.energy(node, states)
+            p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
 
             if rand() / float(INT_MAX) < p: # faster
-                states[node] = -newstates[node]
+                newstates[node] = -states[node]
 
-        cdef double mu = 0
-        for n in range(self._nNodes):
-            mu += states[n] / float(self._nNodes)
-        if (mu < 0 and self.magSide == 'pos') or (mu > 0 and self.magSide == 'neg'):
-            for n in range(self._nNodes):
-                states[n] = -states[n]
-        # for i in range(self._nNodes):
-        #     printf('%d %d \n', states[n], newstates[n])
-        # printf('\n')
+        cdef double mu = 0 # MEAN
+        cdef long NEG  = 1 # see the self.magSideOptions
+        cdef long POS  = 2
+        # printf('%d ', mu)
+        # compute mean
+        for node in range(self._nNodes):
+            mu          += states[node] / Z
+            states[node] = newstates[node] # update
+            # check if conditions are met
+        if (mu < 0 and self._magSide == POS) or\
+         (mu > 0 and self._magSide == NEG):
+            # printf('%f %d\n', mu, self._magSide)
+            # flip if true
+            for node in range(self._nNodes):
+                states[node] = -states[node]
+
         return states
-    @cython.wraparound(False)
-    @cython.boundscheck(False)
-    @cython.nonecheck(False)
-    @cython.cdivision(True)
-    cpdef dict getSnapShots(self, int nSamples, int step = 1,\
-                       int burninSamples = int(1e3)):
-        # start sampling
-        cdef dict snapshots = {}
-        cdef double past = time.process_time()
-        cdef int i
-        cdef long long N = nSamples * step
-        cdef long[:, ::1] r = self.sampleNodes(N)
-        cdef double Z = <double> nSamples
-        pbar = tqdm(total = N)
-        states = self._states
-        # with nogil, parallel():
-            # for i in prange(N, schedule = 'static'):
-                # with gil:
-
-        for i in range(N):
-            if i % step == 0:
-                state = tuple(states)
-                snapshots[state] = snapshots.get(state, 0.) + 1. / Z
-            # model.updateState(next(r))
-            self.updateState(r[i])
-        # with gil:
-            pbar.update(1)
-        pbar.close()
-        print(f'Found {len(snapshots)} states')
-        print(f'Delta = {time.process_time() - past}')
-        return snapshots
-    cpdef simulate(self, long samples):
-        cdef:
-            long[:, ::1] results = np.zeros((samples, self._nNodes), int)
-            long[:, ::1] r = self.sampleNodes(samples)
-            int i
-        for i in range(samples):
-            results[i] = self.updateState(r[i])
-        return results.base # convert back to normal arraay
-
-    
 
 
 

@@ -13,7 +13,7 @@ cdef struct Connection:
 cdef class Ising(Model):
     cdef:
         # public
-        str magSide   # which side to sample on
+        long _magSide   # which side to sample on
         double[:] _H # external magnetic field
         double beta
 
@@ -24,14 +24,12 @@ cdef class Ising(Model):
 
     # cdef _updateState(self, long [:] nodesToUpdate)
     # c binding
-    cdef long[::1] updateState(self, long[::1] nodesToUpdate) nogil
-
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
+    cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
     # # python wrapper
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 
 
-    
     cpdef np.ndarray[double] burnin(self,\
                  int samples=*,\
                  double threshold =*)
-    cpdef  simulate(self, long samples)

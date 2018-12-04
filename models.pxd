@@ -19,7 +19,7 @@ cdef class Model:
         int _nNodes
         str __updateType
         str __nudgeType
-        double[::] __nudges
+        double[::1] __nudges
 
         unordered_map[int, Connection] adj # adjacency lists
 
@@ -29,17 +29,21 @@ cdef class Model:
         int _nStates
         #private
         dict __dict__
-
-
-    cdef  long[:, ::1] sampleNodes(self, long nSamples)
     cpdef void construct(self, object graph, \
                     list agentStates)
 
+    cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
+
+
+    cdef  long[:, ::1] sampleNodes(self, long nSamples)
     cdef  long[:, ::1] c_sample(self,
                     long[::1] nodeIDs, \
                     int length, long long nSamples,\
                     int sampleSize,\
                     )
+    cpdef simulate(self, long samples)
+
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 
 
