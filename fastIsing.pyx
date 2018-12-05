@@ -124,13 +124,13 @@ cdef class Ising(Model):
             int h, counter = 0 # tmp var and counter
             double beta        # slope value
             np.ndarray x # for regression
-            long[::1] states
-            long[:, ::1] r
+            vector[long]  states
+            vector[long] r
 
         print('Starting burnin')
         while True:
-            r      = self.sampleNodes(1) # produce shuffle
-            states = self.updateState(r[0]) # update state
+            r      = self.sampleNodes(1)[0] # produce shuffle
+            states = self.updateState(r) # update state
             # check if magnetization = constant
             y      = np.hstack((y, np.abs(magnetization(states))))
             if counter > samples :
@@ -159,7 +159,7 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states) nogil:
+                       vector[long] states) nogil:
         """
         input:
             :nsyncode: member of nodeIDs
@@ -180,22 +180,22 @@ cdef class Ising(Model):
         energy += self.__nudges[node]
         return energy
 
-    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
+    cpdef vector[long]  updateState(self, vector[long] nodesToUpdate):
         return self._updateState(nodesToUpdate)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef vector[long]  _updateState(self, vector[long]  nodesToUpdate) nogil:
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         """
         cdef:
-            long[::1] states    = self._states # alias
-            long[::1] newstates = self._newstates
-            int  length = nodesToUpdate.shape[0]
+            vector[long]  states    = self._states # alias
+            vector[long]  newstates = self._newstates
+            int  length = nodesToUpdate.size()
             long node
             double Z = <double> self._nNodes
             double energy, p
@@ -204,11 +204,11 @@ cdef class Ising(Model):
             node      = nodesToUpdate[n]
             energy    = self.energy(node, states)
             p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
-
+            # printf('%d ', node)
             if rand() / float(RAND_MAX) < p: # fast but not random
-            # if self.sampler.sample() < p: # best option
+                # if self.sampler.sample() < p: # best option
             # if np.random.rand()  < p: # slow but easy
-                newstates[node] = -states[node]
+                    newstates[node] = -states[node]
 
         cdef double mu = 0 # MEAN
         cdef long NEG  = 1 # see the self.magSideOptions

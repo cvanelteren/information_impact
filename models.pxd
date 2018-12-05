@@ -12,9 +12,9 @@ cdef class Model:
         # np.ndarray _states
         # np.ndarray  _nodeids
         # np.ndarray  agentStates
-        long[::1] _states
-        long[::1] _newstates # alias
-        long[::1]  _nodeids
+        vector[long]  _states
+        vector[long]  _newstates # alias
+        vector[long]   _nodeids
         long[::1]  agentStates
         # public sparse.csr.csr_matrix adj
         int _nNodes
@@ -35,14 +35,14 @@ cdef class Model:
     cpdef void construct(self, object graph, \
                     list agentStates)
 
-    cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
+    cpdef vector[long] updateState(self,vector[long] nodesToUpdate)
+    cdef vector[long] _updateState(self, vector[long]  nodesToUpdate) nogil
 
 
-    cdef  long[:, ::1] sampleNodes(self, long Samples) nogil
+    cdef unordered_map[int, vector[long]]  sampleNodes(self, long Samples) nogil
 
-    cdef  long[:, ::1] c_sample(self,
-                    long[::1] nodeIDs, \
+    cdef unordered_map[int, vector[long]]  c_sample(self,
+                    vector[long]  nodeIDs, \
                     int length,long nSamples,\
                     long long int  sampleSize,\
                     ) nogil

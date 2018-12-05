@@ -54,7 +54,7 @@ cdef class Model: # see pxd
         self.construct(graph, agentStates)
         self.nudgeType  = nudgeType
         self.updateType = updateType
-        self.sampler          = Sampler(42, 0., 1.)
+        self.sampler    = Sampler(42, 0., 1.)
 
     @property
     def states(self): return self._states
@@ -79,7 +79,7 @@ cdef class Model: # see pxd
         if value == 'async':
             self._newstates = self._states
         else:
-            self._newstates = self._states.copy()
+            self._newstates = self._states
     @nudgeType.setter
     def nudgeType(self, value):
         assert value in 'constant pulse'
@@ -87,18 +87,20 @@ cdef class Model: # see pxd
     @states.setter # TODO: expand
     def states(self, value):
         if isinstance(value, int):
-            self._newstates[:] = value
-            self._states   [:] = value
-        elif isinstance(value, np.ndarray):
-            self._newstates = value
-            self._states    = value
+            print('>', id(self._states)== id(self._newstates))
+            for i in range(self._nNodes):
+                self._newstates[i] = value
+                self._states   [i] = value
+        # elif isinstance(value, np.ndarray):
+        #     self._newstates = value
+        #     self._states    = value
 
 
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef vector[long]   _updateState(self, vector[long] nodesToUpdate) nogil:
         return self._nodeids
 
 
-    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
+    cpdef vector[long]  updateState(self, vector[long]  nodesToUpdate):
         return self._nodeids
 
     cpdef void construct(self, object graph, list agentStates):
@@ -214,17 +216,19 @@ cdef class Model: # see pxd
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
-        cdef long[::1] _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
+        cdef vector[long]  _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
         self._nodeids      = _nodeids
         self._states       = states
         self._newstates    = states.copy()
+        print('>>', id(self._newstates) == id(self._states))
+
         self._nNodes = graph.number_of_nodes()
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+    cdef unordered_map[int, vector[long]]  sampleNodes(self, long  nSamples) nogil:
         """
             Python accessible function to sample nodes
         """
@@ -246,8 +250,8 @@ cdef class Model: # see pxd
     @cython.boundscheck(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[:, ::1] c_sample(self,
-                    long[::1] nodeIDs, \
+    cdef unordered_map[int, vector[long]] c_sample(self,
+                    vector[long]  nodeIDs, \
                     int length, long  nSamples,\
                     long long int sampleSize,\
                     ) nogil :
@@ -261,7 +265,7 @@ cdef class Model: # see pxd
             long start
             long i, j, k
             long samplei
-            vector[vector[long]] samples 
+            unordered_map[int, vector[long]] samples
         # with nogil:
         for samplei in range(nSamples):
             start = (samplei * sampleSize) % length
@@ -276,7 +280,7 @@ cdef class Model: # see pxd
                     nodeIDs[i] = k
 
             for j in range(sampleSize):
-                samples[samplei, j] = nodeIDs[start + j]
+                samples[samplei].push_back(nodeIDs[start + j])
                 # samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
 
@@ -290,12 +294,12 @@ cdef class Model: # see pxd
     @cython.cdivision(True)
     cpdef simulate(self, long long int  samples):
         cdef:
-            long[:, ::1] results = np.zeros((samples, self._nNodes), int)
-            long[:, ::1] r = self.sampleNodes(samples)
+            unordered_map[int, vector[long]]  r = self.sampleNodes(samples)
+            unordered_map[int, vector[long]] results
             int i
         for i in range(samples):
             results[i] = self.updateState(r[i])
-        return results.base # convert back to normal arraay
+        return results # convert back to normal arraay
     # cdef long[::1] updateState(self, int[:] nodesToUpdate):
     #     ""
     #     Implement this method

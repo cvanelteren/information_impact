@@ -48,10 +48,10 @@ checkDistribution() # print it only once
 #     return out
 # def encodeState(state, nStates):
 #     return int(''.join(format(1 if i == 1 else 0, f'0{nStates - 1}b') for i in state), 2)
-cdef encodeState(long[::1] state):
+cdef encodeState(vector[long]  state):
 
     cdef int binNum = 1
-    cdef int N = state.shape[0]
+    cdef int N = state.size()
     cdef int i
     cdef int dec = 0
     for i in range(N):
@@ -101,7 +101,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     # cdef dict snapshots = {}
     cdef int i
     cdef long long int N = nSamples * step
-    cdef long[:, ::1] r = model.sampleNodes(N )
+    cdef unordered_map[int, vector[long]] r = model.sampleNodes(N )
     cdef double Z = <double> nSamples
     pbar = tqdm(total = N)
     cdef long long int idx
@@ -131,13 +131,13 @@ cpdef dict monteCarlo(\
     cdef str nudgeMode = model.__nudgeType
     cdef double[:] copyNudge = model.__nudges.copy() # store nudges already there
     # for k in range(repeats):
-    cdef long[::1] buffer = model._states.copy()
+    # cdef vector[long]  buffer = model._states.copy()
 
-    cdef long[:, ::1] s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
+    cdef vector[vector[long]]  s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
     # print(np.unique(s, 1))
 
     # print(s.base)
-    cdef int N = s.shape[0], n
+    cdef int N = s.size(), n
 
     cdef double[ :, :, :, ::1] out = np.zeros(\
                (\
@@ -159,7 +159,7 @@ cpdef dict monteCarlo(\
     cdef long[::1] agentStates = model.agentStates
     cdef long  idx
     cdef int jdx
-    cdef long[::1] start = model._states
+    cdef vector[long]  start = model._states
     cdef long long int kdx
     pbar = tqdm(total = N)
     print('Starting loops')
@@ -170,7 +170,7 @@ cpdef dict monteCarlo(\
         for k in prange(repeats, nogil = True):
             # r = model.sampleNodes(deltas + 1)
             for node in range(model._nNodes):
-                model._states[node] = s[n, node]
+                model._states[node] = s[n][node]
             # model.updateState(r[n])
                 # model.__nudges[node] = copyNudge[node]
 

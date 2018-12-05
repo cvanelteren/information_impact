@@ -21,12 +21,13 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(graph, attr)
-#graph = nx.barabasi_albert_graph(N, 5)
+#graph = nx.barabasi_albert_graph(10, 5)
 # graph = nx.path_graph(10)
 import fastIsing
 
 s = time.process_time()
 m = fastIsing.Ising(graph, temperature = .5)
+
 from time import time
 m.updateType = 'async'
 m.magSide    = 'neg'
@@ -34,14 +35,25 @@ m.t = .5
 m.reset()
 import infcy
 s = time()
-temps = linspace(0, 10, 10000)
+temps = linspace(0, 100, 10)
 mags  = empty(temps.size)
+for i, t in enumerate(temps):
+#    print(m.states)
+    m.states = 1
+#    m.reset()
+    m.t = t
+    a = np.array(list(m.simulate(1000).values()))
+    print(a.mean(1))
+#    print('>, ', m.states, m.t)
+    mags[i] = a.mean()
+plot(temps, mags)
+
 #sys.settrace(trace)
 
-xx = infcy.getSnapShots(m, 10000, step = 100)
-deltas = 10
-#while True:
-y  = infcy.monteCarlo(m, xx, repeats = 100000, deltas = deltas)
+#xx = infcy.getSnapShots(m, 10000, step = 100)
+#deltas = 10
+##while True:
+#y  = infcy.monteCarlo(m, xx, repeats = 100000, deltas = deltas)
 # print('COMPARING')
 # print(xx.keys())
 # for k, v in zip(y, xx):
@@ -60,31 +72,31 @@ y  = infcy.monteCarlo(m, xx, repeats = 100000, deltas = deltas)
 print('>')
 # for k in y:
     # print(k)
-px, mi = infcy.mutualInformation(y, deltas, xx, m )
-
-# %%
-fig, ax = subplots()
-for idx, i in enumerate(mi.base.T):
-    print(i)
-    ax.plot(arange(len(i)), i, color = colors[idx], label = m.rmapping[idx]) #, colors[idx], label = m.rmapping[idx])
-ax.legend()
-# %%
-from scipy import integrate, optimize
-f = lambda x, a, b, c, d, e: a + b * exp(-c *x) + d * exp(-e * x)
-xx = arange(mi.shape[0])
-fig, ax = subplots(figsize = (10,10))
-d = nx.degree(m.graph)
-for dd, k in dict(d).items():
-    idx = m.mapping[dd]
-    x = mi.base[:, idx]
-    a, b = optimize.curve_fit(f, xx, x)
-    auc, _ = integrate.quad(f, 0, np.inf, args = tuple(a))
-
-    print(auc, dd)
-    ax.scatter(k, auc, color = colors[idx])
-    ax.scatter(k, px.base[-1, idx, :].max(), color = colors[idx], alpha = .2)
-
-idx = px.base[-1, :, :].argmax(axis = 0)
+#px, mi = infcy.mutualInformation(y, deltas, xx, m )
+#
+## %%
+#fig, ax = subplots()
+#for idx, i in enumerate(mi.base.T):
+#    print(i)
+#    ax.plot(arange(len(i)), i, color = colors[idx], label = m.rmapping[idx]) #, colors[idx], label = m.rmapping[idx])
+#ax.legend()
+## %%
+#from scipy import integrate, optimize
+#f = lambda x, a, b, c, d, e: a + b * exp(-c *x) + d * exp(-e * x)
+#xx = arange(mi.shape[0])
+#fig, ax = subplots(figsize = (10,10))
+#d = nx.degree(m.graph)
+#for dd, k in dict(d).items():
+#    idx = m.mapping[dd]
+#    x = mi.base[:, idx]
+#    a, b = optimize.curve_fit(f, xx, x)
+#    auc, _ = integrate.quad(f, 0, np.inf, args = tuple(a))
+#
+#    print(auc, dd)
+#    ax.scatter(k, auc, color = colors[idx])
+#    ax.scatter(k, px.base[-1, idx, :].max(), color = colors[idx], alpha = .2)
+#
+#idx = px.base[-1, :, :].argmax(axis = 0)
 
 
 # %%
