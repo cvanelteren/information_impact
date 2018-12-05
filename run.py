@@ -79,12 +79,12 @@ if __name__ == '__main__':
                                 updateType= updateMethod, magSide = magSide)
 
 
-        conditions = {(tuple(model.nodeIDs), (i,)) : \
-        idx for idx, i in enumerate(model.nodeIDs)}
+        conditions = {(tuple(model.nodeids), (i,)) : \
+        idx for idx, i in enumerate(model.nodeids)}
         # %%
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'
     #    fileName = f'Data/{f}'
-        updateType= model.mode
+        updateType= model.updateType
         # match the temperature to sample from
         # magRange = [.2]
         if os.path.isfile(f'{targetDirectory}/mags.pickle'):
@@ -137,45 +137,45 @@ if __name__ == '__main__':
                 print(f'{time()} Getting snapshots')
                 # snapshots = {tuple(infcy.encodeState(i))}
                 snapshots   = infcy.getSnapShots(model, nSamples, \
-                                               parallel      = cpu_count(), \
                                                burninSamples = burninSamples, \
                                                step          = step)
 
 
-
-                pulses = {node : pulseSize for node in model.graph.nodes()}
-                pulse  = {}
+                pulse       = {}
+                model.pulse = pulse
                 print(f'{time()}')
-                conditional = infcy.monteCarlo_alt(\
+                conditional = infcy.monteCarlo(\
                                                model  = model, snapshots = snapshots,\
                                                deltas = deltas, repeats  = repeats,\
-                                               pulse      = pulse)
+                                               )
 
                 # px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
                  # deltas = deltas, repeats = repeats, pulse = pulse, updateType= 'source')
 
                 print(f'{time()} Computing MI')
-                px, mi = infcy.mutualInformation_alt(\
+                px, mi = infcy.mutualInformation(\
                 conditional, deltas, snapshots, model)
                 # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
-
-                fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                print(mi)
+                fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr = IO.SimulationResult(mi = mi,
                                         conditional = conditional,
                                         model = model,\
                                         px = px, snapshots = snapshots)
                 IO.savePickle(fileName, sr)
 
+                pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
-                    pulse = {n : p}
-                    conditional = infcy.monteCarlo_alt(model = model, snapshots = snapshots,\
+                    pulse       = {n : p}
+                    model.pulse = pulse
+                    conditional = infcy.monteCarlo(model = model, snapshots = snapshots,\
                                             deltas = deltas, repeats = repeats,\
-                                            pulse = pulse)
+                                            )
                     print(f'{time()} Computing MI')
-                    px, mi = infcy.mutualInformation_alt(conditional, deltas, snapshots, model)
+                    px, mi = infcy.mutualInformation(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                    fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{mode}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                    fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                     sr = IO.SimulationResult(mi = mi,
                                             conditional = conditional,
                                             model = model,\

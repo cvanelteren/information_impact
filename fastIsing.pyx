@@ -50,6 +50,7 @@ cdef class Ising(Model)
 
 # class implementation
 # @cython.final # enforce extension type
+@cython.auto_pickle(True)
 cdef class Ising(Model):
     def __init__(self, \
                  graph,\
@@ -75,7 +76,7 @@ cdef class Ising(Model):
         self._H               = H
         self.beta             = np.inf if temperature == 0 else 1 / temperature
         self.t                = temperature
-        self.magSideOptions   = {'': 0, 'neg': 1, 'pos': 2}
+        self.magSideOptions   = {'': 0, 'neg': -1, 'pos': 1}
         self.magSide          = magSide
 
 
@@ -96,13 +97,13 @@ cdef class Ising(Model):
     @property
     def H(self): return self._H
 
-    # added property cuz im lazy
     @property
     def t(self):
         return self._t
+
     @t.setter
     def t(self, value):
-        self._t = value
+        self._t   = value
         self.beta = 1 / value if value != 0 else np.inf
 
 
@@ -127,7 +128,7 @@ cdef class Ising(Model):
             long[::1] states
             long[:, ::1] r
 
-        print('Starting burnin')
+        # print('Starting burnin')
         while True:
             r      = self.sampleNodes(1) # produce shuffle
             states = self.updateState(r[0]) # update state
@@ -146,12 +147,6 @@ cdef class Ising(Model):
             print(f'absolute mean magnetization last sample {abs(y[-1])}')
         return y
 
-    # cpdef reset(self, useAtleastNSamples = None):
-    #     """Resets the states to random"""
-    #     self.__states = np.random.choice(self.agentStates, size = self.nNodes)
-    #     if useAtleastNSamples is not None:
-    #         self.burnin(useAtleastNSamples)
-
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -159,7 +154,7 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states) nogil:
+                       long[::1] states) :
         """
         input:
             :nsyncode: member of nodeIDs
@@ -187,7 +182,7 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) :
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -199,20 +194,20 @@ cdef class Ising(Model):
             long node
             double Z = <double> self._nNodes
             double energy, p
-        # for n in prange(length, nogil = True): # dont prange this
+        # for n in prange(length,  = True): # dont prange this
         for n in range(length):
             node      = nodesToUpdate[n]
             energy    = self.energy(node, states)
             p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
 
-            if rand() / float(RAND_MAX) < p: # fast but not random
+            # if rand() / float(RAND_MAX) < p: # fast but not random
             # if self.sampler.sample() < p: # best option
-            # if np.random.rand()  < p: # slow but easy
+            if np.random.rand()  < p: # slow but easy
                 newstates[node] = -states[node]
 
         cdef double mu = 0 # MEAN
-        cdef long NEG  = 1 # see the self.magSideOptions
-        cdef long POS  = 2
+        cdef long NEG  = -1 # see the self.magSideOptions
+        cdef long POS  = 1
         # printf('%d ', mu)
         # compute mean
         for node in range(self._nNodes):
@@ -225,7 +220,6 @@ cdef class Ising(Model):
             # flip if true
             for node in range(self._nNodes):
                 states[node] = -states[node]
-
         return states
 
 
@@ -241,11 +235,10 @@ cdef class Ising(Model):
     #         probs[node] = exp(-self.beta * en)
     #     return probs / np.nansum(probs)
 
-    def matchMagnetization(self,\
-                          temps = np.logspace(-3, 2, 20),\
-                          n = int(1e3),\
-                          burninSamples = 100):
-
+    cpdef  np.ndarray matchMagnetization(self,\
+                              np.ndarray temps  = np.logspace(-3, 2, 20),\
+                          int n             = int(1e3),\
+                          int burninSamples = 100):
         """
         Computes the magnetization as a function of temperatures
         Input:
@@ -257,43 +250,15 @@ cdef class Ising(Model):
               :mag:  the magnetization for t in temps
               :sus:  the magnetic susceptibility
         """
-        # start from 1s and check how likely nodes will flip
-        # cdef double[:] H  = np.zeros( len(temps) )   # magnetization
-        # cdef double[:] HH = np.zeros( ( len(temps ))) # susceptibility
-
-        func = functools.partial(matchMagnetization, nSamples = n,
-                    burninSamples = burninSamples)
-        x = []
-        for t in temps:
-            new   = copy.copy(self)
-            x.append((new, t))
-
-            with mp.Pool(processes = mp.cpu_count()) as p:
-                results = np.array(p.map(func, x))
-         # results = np.zeros((temps.size, 2))
-         # for idx, val in enumerate(x):
-         #     print(val)
-         #     results[idx, :] = func(val)
-        return results.T
-
-
-    def removeAllNudges(self):
-        """
-        Sets all nudges to zero
-        """
-        self.nudges[:] = 0
-
-
-def matchMagnetization(modelt, nSamples, burninSamples):
-    """
-    compute in parallel the magnetization
-    """
-    model, t = modelt
-    model.t = t
-    model.states.fill(-1) # rest to ones; only interested in how mag is kept
-    # self.reset()
-    model.burnin(burninSamples)
-    res = np.asarray(model.simulate(nSamples))
-    H   = abs(res.mean())
-    HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
-    return H, HH
+        cdef double tcopy   = self.t
+        cdef results = np.zeros((2, temps.shape[0]))
+        for idx, t in enumerate(temps):
+            self.t          = t
+            jdx             = self.magSideOptions[self.magSide]
+            self.states     = jdx if jdx else 1 # rest to ones; only interested in how mag is kept
+            # self.burnin(burninSamples)
+            tmp             = self.simulate(n)
+            results[0, idx] = abs(tmp.mean())
+            results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
+        self.t = tcopy
+        return results

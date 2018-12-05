@@ -1955,7 +1955,7 @@ if (!__Pyx_RefNanny) {
   /* "sampler.pyx":1
  * #distutils: language=c++             # <<<<<<<<<<<<<<
  * 
- * cdef extern from "<random>" namespace "std" nogil:
+ * cdef extern from "<random>" namespace "std" :
  */
   __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);

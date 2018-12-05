@@ -36,6 +36,7 @@ cdef extern from "limits.h":
 cdef class Model
 from sampler cimport Sampler # mersenne sampler
 
+@cython.auto_pickle(True)
 cdef class Model: # see pxd
     def __init__(self, \
                  graph, agentStates = [-1, 1], \
@@ -54,22 +55,34 @@ cdef class Model: # see pxd
         self.construct(graph, agentStates)
         self.nudgeType  = nudgeType
         self.updateType = updateType
-        self.sampler          = Sampler(42, 0., 1.)
+        self.sampler    = Sampler(42, 0., 1.)
 
+    # some of these are doubles but not sure if all can be accessed without gil
+    # hence the wrappers
     @property
-    def states(self): return self._states
+    def states(self)    : return self._states
     @property
     def updateType(self): return self.__updateType
     @property
-    def nudgeType(self): return self.__nudgeType
+    def nudgeType(self) : return self.__nudgeType
     @property #return mem view of states
-    def states(self): return self._states
+    def states(self)    : return self._states
     @property
-    def nodeids(self): return self._nodeids
+    def nodeids(self)   : return self._nodeids
+    @property
+    def pulse(self)     : return self._nudges
+    @property
+    def nNodes(self)    : return self._nNodes
 
     # readonly
     @property
     def nNodes(self) : return self._nNodes
+
+    @pulse.setter
+    def pulse(self, vals):
+        for k, v in vals.items():
+            idx = self.mapping[k]
+            self._nudges[idx] = v
 
     @updateType.setter
     def updateType(self, value):
@@ -79,11 +92,15 @@ cdef class Model: # see pxd
         if value == 'async':
             self._newstates = self._states
         else:
+            if value == 'serial':
+                self._nodeids = np.sort(self._nodeids) # enforce  for sampler
             self._newstates = self._states.copy()
+
     @nudgeType.setter
     def nudgeType(self, value):
         assert value in 'constant pulse'
         self.__nudgeType = value
+
     @states.setter # TODO: expand
     def states(self, value):
         if isinstance(value, int):
@@ -94,7 +111,7 @@ cdef class Model: # see pxd
             self._states    = value
 
 
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
         return self._nodeids
 
 
@@ -115,12 +132,12 @@ cdef class Model: # see pxd
 
         # forward declaration and init
         cdef:
-            dict mapping = {}
-            dict rmapping= {}
+            dict mapping = {} # made nodelabe to internal
+            dict rmapping= {} # reverse
             str delim = '\t'
             states = np.zeros(graph.number_of_nodes(), int, 'C')
             int counter
-            double[::1] nudges = np.zeros(graph.number_of_nodes(), dtype = float)
+            nudges = np.zeros(graph.number_of_nodes(), dtype = float)
             unordered_map[long, Connection] adj # see .pxd
 
 
@@ -214,7 +231,7 @@ cdef class Model: # see pxd
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
-        cdef long[::1] _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
+        _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
         self._nodeids      = _nodeids
         self._states       = states
         self._newstates    = states.copy()
@@ -224,65 +241,57 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+    cdef long [:, ::1] sampleNodes(self, long  nSamples) :
         """
-            Python accessible function to sample nodes
+        Shuffles nodeID only when the current sample is larger
+        than the shuffled array
+
         """
-        cdef:
-
-            # initialization
-            long length       = self._nNodes # length of target array
-
+        # check the amount of samples to get
         cdef int sampleSize
         if self.__updateType == 'single':
             sampleSize = 1
         elif self.__updateType == 'serial':
-            sampleSize = 0
+            return self._nodeids
         else:
-            sampleSize = length
-        return self.c_sample(self._nodeids, length,  nSamples, sampleSize)
+            sampleSize = self._nNodes
 
-    @cython.wraparound(False)
-    @cython.boundscheck(False)
-    @cython.nonecheck(False)
-    @cython.cdivision(True)
-    cdef long[:, ::1] c_sample(self,
-                    long[::1] nodeIDs, \
-                    int length, long  nSamples,\
-                    long long int sampleSize,\
-                    ) nogil :
-        """
-        Shuffles nodeID only when the current sample is larger
-        than the shuffled array
-        """
-        # cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), dtype = int)
         cdef:
+            # TODO replace this with a nogil version
+            long [:, ::1] samples = np.ndarray((nSamples, sampleSize), dtype = int)
             long sample
             long start
             long i, j, k
             long samplei
-            vector[vector[long]] samples 
-        # with nogil:
+        # TODO: single updates of size one won't get shuffled
         for samplei in range(nSamples):
-            start = (samplei * sampleSize) % length
-            if start + sampleSize >= length:
-                # np.random.shuffle(nodeIDs)
-                for i in range(length): # TODO: replace this with new samplers
+            # shuffle if the current tracker is larger than the array
+            start = (samplei * sampleSize) % self._nNodes
+            if start + sampleSize >= self._nNodes:
+                for i in range(self._nNodes): # TODO: replace this with new samplers
                     # j = <long> i + self.sampler.sample() * (length - i)
-                    j = <long> (i + rand() / (RAND_MAX / (length - i)) )
-                    # printf('%d\n',j)
-                    k = nodeIDs[j]
-                    nodeIDs[j] = nodeIDs[i]
-                    nodeIDs[i] = k
-
+                    j                = <long> (i + rand() / (RAND_MAX / (self._nNodes - i)) )
+                    k                = self._nodeids[j]
+                    self._nodeids[j] = self._nodeids[i]
+                    self._nodeids[i] = k
+            # assign the samples
             for j in range(sampleSize):
-                samples[samplei, j] = nodeIDs[start + j]
+                samples[samplei, j] = self._nodeids[start + j]
                 # samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
+
+
 
     cpdef void reset(self):
         self.states = np.random.choice(\
                 self.agentStates, size = self._nNodes)
+
+
+    def removeAllNudges(self):
+        """
+        Sets all nudges to zero
+        """
+        self.nudges[:] = 0
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -296,6 +305,9 @@ cdef class Model: # see pxd
         for i in range(samples):
             results[i] = self.updateState(r[i])
         return results.base # convert back to normal arraay
+
+
+    # TODOL move this back ^
     # cdef long[::1] updateState(self, int[:] nodesToUpdate):
     #     ""
     #     Implement this method

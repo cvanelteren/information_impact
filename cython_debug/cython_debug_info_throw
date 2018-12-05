@@ -5,7 +5,7 @@
         <Locals>
           <LocalVar cname="__pyx_v_state" lineno="56" name="state" qualified_name="throw.decodeState.state" type="PythonObject"/>
           <LocalVar cname="__pyx_v_nStates" lineno="56" name="nStates" qualified_name="throw.decodeState.nStates" type="PythonObject"/>
-          <LocalVar cname="__pyx_v_nNodes" lineno="56" name="nNodes" qualified_name="throw.decodeState.nNodes" type="PythonObject"/>
+          <LocalVar cname="__pyx_vnNodes" lineno="56" name="nNodes" qualified_name="throw.decodeState.nNodes" type="PythonObject"/>
           <LocalVar cname="__pyx_v_tmp" lineno="57" name="tmp" qualified_name="throw.decodeState.tmp" type="PythonObject"/>
           <LocalVar cname="__pyx_v_n" lineno="58" name="n" qualified_name="throw.decodeState.n" type="CObject"/>
           <LocalVar cname="__pyx_v_nn" lineno="59" name="nn" qualified_name="throw.decodeState.nn" type="PythonObject"/>

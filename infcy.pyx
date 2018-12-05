@@ -39,7 +39,7 @@ def checkDistribution():
 checkDistribution() # print it only once
 
 
-# cdef int encodeState(long[::1] state) nogil:
+# cdef int encodeState(long[::1] state) :
 #     cdef int i, N = state.shape[0]
 #     cdef int out = 1
 #     for i in range(N):
@@ -62,9 +62,9 @@ cdef encodeState(long[::1] state):
 
 cdef vector[long] decodeState(long long int dec, int N):
     cdef:
-        int i=0
+        int i = 0
         # long[::1] buffer = np.zeros(N, dtype = int) - 1
-        vector [long] buffer = vector[long](N, -1) # init with
+        vector [long] buffer = vector[long](N, -1) # init with -1
     while dec > 0:
         if dec % 2:
             buffer[i] = 1
@@ -103,17 +103,17 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     cdef long long int N = nSamples * step
     cdef long[:, ::1] r = model.sampleNodes(N )
     cdef double Z = <double> nSamples
-    pbar = tqdm(total = N)
     cdef long long int idx
     cdef long* ptr
     cdef double past = time.process_time()
+    pbar = tqdm(total = nSamples)
     for i in range(N):
         if i % step == 0:
-            idx = encodeState(model._states)
+            idx             = encodeState(model._states)
             snapshots[idx] += 1/Z
             # snapshots[idx] = snapshots.get(idx, 0) + 1 / Z
+            pbar.update(1)
         model._updateState(r[i])
-        pbar.update(1)
     pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f'Delta = {time.process_time() - past}')
@@ -167,7 +167,7 @@ cpdef dict monteCarlo(\
         kdx = encodeState(s[n])
         # print(kdx)
         # r = model.sampleNodes( repeats * (deltas + 1))
-        for k in prange(repeats, nogil = True):
+        for k in range(repeats):
             # r = model.sampleNodes(deltas + 1)
             for node in range(model._nNodes):
                 model._states[node] = s[n, node]

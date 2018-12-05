@@ -12,15 +12,15 @@ cdef class Model:
         # np.ndarray _states
         # np.ndarray  _nodeids
         # np.ndarray  agentStates
-        long[::1] _states
-        long[::1] _newstates # alias
-        long[::1]  _nodeids
-        long[::1]  agentStates
+        np.ndarray _states
+        np.ndarray _newstates # alias
+        np.ndarray  _nodeids
+        np.ndarray  agentStates
         # public sparse.csr.csr_matrix adj
         int _nNodes
         str __updateType
         str __nudgeType
-        double[::1] __nudges
+        np.ndarray __nudges
 
         Sampler sampler
 
@@ -36,16 +36,11 @@ cdef class Model:
                     list agentStates)
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate)
 
 
-    cdef  long[:, ::1] sampleNodes(self, long Samples) nogil
+    cdef  long[:, ::1] sampleNodes(self, long Samples)
 
-    cdef  long[:, ::1] c_sample(self,
-                    long[::1] nodeIDs, \
-                    int length,long nSamples,\
-                    long long int  sampleSize,\
-                    ) nogil
 
     cpdef simulate(self, long long int  samples)
 
@@ -53,4 +48,3 @@ cdef class Model:
 
 
     cpdef void reset(self)
-    # cdef long[::1] updateState(self, int[:] nodesToUpdate)

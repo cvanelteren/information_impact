@@ -20,7 +20,7 @@ cdef:
     map[int, vector[int]].iterator start = m.begin()
     map[int, vector[int]].iterator end   = m.end()
     int total = 0
-with nogil:
+with :
     while start != end:
         total += derefence(start).second.size()
         preincrement(start)

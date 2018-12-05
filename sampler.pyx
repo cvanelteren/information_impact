@@ -1,6 +1,6 @@
 #distutils: language=c++
 
-cdef extern from "<random>" namespace "std" nogil:
+cdef extern from "<random>" namespace "std" :
     cdef cppclass mt19937:
         mt19937() except +
         mt19937(unsigned int) except +

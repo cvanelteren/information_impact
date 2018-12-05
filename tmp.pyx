@@ -8,6 +8,6 @@
 # cpdef cysumpar(ar[double] A):
 #   cdef double tot = 0
 #   cdef int i, n = A.size
-#   for i in prange(n, nogil = True):
+#   for i in prange(n,  = True):
 #     tot += A[i]
 #   return tot

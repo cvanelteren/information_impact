@@ -34,7 +34,7 @@
 # cdef int ss = dereference(start).first
 # cdef int ee = dereference(end).first
 #
-# with nogil:
+# with :
 #     for j in parallel.prange(ss, ee, schedule = 'static'):
 #         k    = dereference(start).first + j
 #         l    = dereference(start).second.size()
@@ -45,7 +45,7 @@
 # print(total)
 # s  = time.process_time()
 #         #total += dereference(k).second.size()
-# with nogil:
+# with :
 #     total = 0
 #     while start != end:
 #         for j in range(dereference(start).second.size()):
