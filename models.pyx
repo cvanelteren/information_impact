@@ -57,7 +57,7 @@ cdef class Model: # see pxd
         self.updateType = updateType
         self.sampler    = Sampler(42, 0., 1.)
 
-    # some of these are doubles but not sure if all can be accessed without gil
+    # TODO: make class pickable
     # hence the wrappers
     @property
     def states(self)    : return self._states
