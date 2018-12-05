@@ -12,15 +12,7 @@
           <LocalVar cname="__pyx_v_4test___loader__" lineno="0" name="__loader__" qualified_name="test.__loader__" type="PythonObject"/>
           <LocalVar cname="__pyx_v_4test___package__" lineno="0" name="__package__" qualified_name="test.__package__" type="PythonObject"/>
           <LocalVar cname="__pyx_v_4test___cached__" lineno="0" name="__cached__" qualified_name="test.__cached__" type="PythonObject"/>
-          <LocalVar cname="__pyx_v_4test_i" lineno="4" name="i" qualified_name="test.i" type="CObject"/>
-          <LocalVar cname="__pyx_v_4test_j" lineno="4" name="j" qualified_name="test.j" type="CObject"/>
-          <LocalVar cname="__pyx_v_4test_k" lineno="4" name="k" qualified_name="test.k" type="CObject"/>
-          <LocalVar cname="__pyx_v_4test_N" lineno="5" name="N" qualified_name="test.N" type="CObject"/>
           <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="test.__test__" type="PythonObject"/>
-          <LocalVar cname="__pyx_ctuple_double" lineno="5" name="__pyx_ctuple_double_struct" qualified_name="test.__pyx_ctuple_double_struct" type="CObject"/>
-          <LocalVar cname="__pyx_ctuple_double" lineno="5" name="__pyx_ctuple_double" qualified_name="test.__pyx_ctuple_double" type="CObject"/>
-          <LocalVar cname="__pyx_ctuple_long__and_int" lineno="8" name="__pyx_ctuple_long__and_int_struct" qualified_name="test.__pyx_ctuple_long__and_int_struct" type="CObject"/>
-          <LocalVar cname="__pyx_ctuple_long__and_int" lineno="8" name="__pyx_ctuple_long__and_int" qualified_name="test.__pyx_ctuple_long__and_int" type="CObject"/>
         </Locals>
         <Arguments/>
         <StepIntoFunctions/>
@@ -36,15 +28,7 @@
           <LocalVar cname="__pyx_v_4test___loader__" lineno="0" name="__loader__" qualified_name="test.__loader__" type="PythonObject"/>
           <LocalVar cname="__pyx_v_4test___package__" lineno="0" name="__package__" qualified_name="test.__package__" type="PythonObject"/>
           <LocalVar cname="__pyx_v_4test___cached__" lineno="0" name="__cached__" qualified_name="test.__cached__" type="PythonObject"/>
-          <LocalVar cname="__pyx_v_4test_i" lineno="4" name="i" qualified_name="test.i" type="CObject"/>
-          <LocalVar cname="__pyx_v_4test_j" lineno="4" name="j" qualified_name="test.j" type="CObject"/>
-          <LocalVar cname="__pyx_v_4test_k" lineno="4" name="k" qualified_name="test.k" type="CObject"/>
-          <LocalVar cname="__pyx_v_4test_N" lineno="5" name="N" qualified_name="test.N" type="CObject"/>
           <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="test.__test__" type="PythonObject"/>
-          <LocalVar cname="__pyx_ctuple_double" lineno="5" name="__pyx_ctuple_double_struct" qualified_name="test.__pyx_ctuple_double_struct" type="CObject"/>
-          <LocalVar cname="__pyx_ctuple_double" lineno="5" name="__pyx_ctuple_double" qualified_name="test.__pyx_ctuple_double" type="CObject"/>
-          <LocalVar cname="__pyx_ctuple_long__and_int" lineno="8" name="__pyx_ctuple_long__and_int_struct" qualified_name="test.__pyx_ctuple_long__and_int_struct" type="CObject"/>
-          <LocalVar cname="__pyx_ctuple_long__and_int" lineno="8" name="__pyx_ctuple_long__and_int" qualified_name="test.__pyx_ctuple_long__and_int" type="CObject"/>
         </Locals>
         <Arguments/>
         <StepIntoFunctions/>
@@ -60,19 +44,10 @@
       <LocalVar cname="__pyx_v_4test___loader__" lineno="0" name="__loader__" qualified_name="test.__loader__" type="PythonObject"/>
       <LocalVar cname="__pyx_v_4test___package__" lineno="0" name="__package__" qualified_name="test.__package__" type="PythonObject"/>
       <LocalVar cname="__pyx_v_4test___cached__" lineno="0" name="__cached__" qualified_name="test.__cached__" type="PythonObject"/>
-      <LocalVar cname="__pyx_v_4test_i" lineno="4" name="i" qualified_name="test.i" type="CObject"/>
-      <LocalVar cname="__pyx_v_4test_j" lineno="4" name="j" qualified_name="test.j" type="CObject"/>
-      <LocalVar cname="__pyx_v_4test_k" lineno="4" name="k" qualified_name="test.k" type="CObject"/>
-      <LocalVar cname="__pyx_v_4test_N" lineno="5" name="N" qualified_name="test.N" type="CObject"/>
       <LocalVar cname="__test__" lineno="1" name="__test__" qualified_name="test.__test__" type="PythonObject"/>
     </Globals>
     <LineNumberMapping>
-      <LineNumber c_linenos="1489 1490 1491 1492 1493 1494 1495 1496 1497 1498 1499 1500 1501 1502 1503 1504 1505 1506 1507 1508 1509 1510 1511 1512 1513 1514 1515 1516 1517 1518 1519 1520 1521 1522" cython_lineno="1"/>
-      <LineNumber c_linenos="1378 1379 1380 1381 1382 1383 1384 1385 1386" cython_lineno="4"/>
-      <LineNumber c_linenos="1387 1388 1389 1390 1391 1392 1393 1394 1395 1396 1397 1398 1399" cython_lineno="5"/>
-      <LineNumber c_linenos="1400 1401 1402 1403 1404 1405 1406 1407 1408 1409 1410 1411 1412 1413 1414 1415 1416 1417 1418 1419 1420 1421 1422 1423 1424 1425 1426 1427 1428 1429 1430 1431 1432 1433 1434 1435 1436 1437 1438 1470 1471 1472 1473 1474 1475 1476 1477 1478 1479 1480 1481 1482 1483 1484 1485 1486 1487 1488" cython_lineno="7"/>
-      <LineNumber c_linenos="1439 1440 1441 1442 1443 1444 1445 1446 1447 1448 1449" cython_lineno="8"/>
-      <LineNumber c_linenos="1450 1451 1452 1453 1454 1455 1456 1457 1458 1459 1460 1461 1462 1463 1464 1465 1466 1467 1468 1469" cython_lineno="9"/>
+      <LineNumber c_linenos="1353 1354 1355 1356 1357 1358 1359 1360 1361 1362 1363 1364 1365 1366 1367 1368 1369 1370 1371 1372 1373 1374 1375 1376 1377 1378 1379 1380 1381 1382 1383 1384 1385 1386" cython_lineno="1"/>
     </LineNumberMapping>
   </Module>
 </cython_debug>

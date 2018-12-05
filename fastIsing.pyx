@@ -33,10 +33,19 @@ cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double)
 cdef extern from "limits.h":
     int INT_MAX
+    int RAND_MAX
+
+
+
+cdef extern from "stdlib.h":
+    double drand48()
+    void srand48(long int seedval)
+
 
 from models cimport Model
-
 cdef class Ising(Model)
+
+
 
 # class implementation
 # @cython.final # enforce extension type
@@ -68,6 +77,7 @@ cdef class Ising(Model):
         self.magSideOptions   = {'': 0, 'neg': 1, 'pos': 2}
         self.magSide          = magSide
 
+
     @property
     def magSide(self):
         for k, v in self.magSideOptions.items():
@@ -94,6 +104,11 @@ cdef class Ising(Model):
         self._t = value
         self.beta = 1 / value if value != 0 else np.inf
 
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.nonecheck(False)
+    @cython.cdivision(True)
     cpdef np.ndarray burnin(self,\
                  int samples = int(1e2), double threshold = 1e-2, ):
         """
@@ -146,7 +161,7 @@ cdef class Ising(Model):
                        long[::1] states):
         """
         input:
-            :node: member of nodeIDs
+            :nsyncode: member of nodeIDs
         returns:
                 :energy: current energy of systme config for node
         """
@@ -187,9 +202,11 @@ cdef class Ising(Model):
         for n in range(length):
             node      = nodesToUpdate[n]
             energy    = self.energy(node, states)
-            p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
+            p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
 
-            if rand() / float(INT_MAX) < p: # faster
+            # if rand() / float(RAND_MAX) < p: # fast but not random
+            if self.sampler.sample() < p: # best option
+            # if np.random.rand()  < p: # slow but easy
                 newstates[node] = -states[node]
 
         cdef double mu = 0 # MEAN

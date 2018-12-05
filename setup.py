@@ -9,17 +9,19 @@ for file in os.listdir(os.getcwd()):
     if file.endswith('.pyx'):
         name = file.split('.')[0]
         #  + '/numpy'
-        ex = Extension(name, sources = [file], \
+        sources = [file]
+        # if 'fastIsing' in file:
+        #     sources.append('vfastexp.h')
+        ex = Extension(name, sources = sources, \
                        include_dirs =[nums],\
                        extra_compile_args = ['-fopenmp',\
-                                             '-ffast-math','-O2', \
+                                             '-ffast-math','-Ofast', \
                                              '-march=native',\
                                              '-std=c++11',\
-                                             '-g'
                                             ],\
                        extra_link_args = ['-fopenmp',\
                                           "-std=c++11",
-                                          '-g'],\
+                                          ],\
         )
         exts.append(ex)
 

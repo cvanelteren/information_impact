@@ -7,15 +7,24 @@ cimport numpy as np
 # cdef fused longdouble:
     # long
     # double
+cdef extern from "vfastexp.h":
+    double exp_approx "EXP" (double)
+
+
 cdef struct Connection:
     vector[int] neighbors
     vector[double] weights
+
+
+
+
 cdef class Ising(Model):
     cdef:
         # public
         long _magSide   # which side to sample on
         double[:] _H # external magnetic field
         double beta
+
 
     cdef double energy(self, \
                        int  node, \
@@ -24,8 +33,8 @@ cdef class Ising(Model):
 
     # cdef _updateState(self, long [:] nodesToUpdate)
     # c binding
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
     # # python wrapper
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 

@@ -28,12 +28,13 @@ from libc.stdio cimport printf
 from libcpp.vector cimport vector
 from libcpp.map cimport map
 from libcpp.unordered_map cimport unordered_map
-cdef extern from "limits.h":
-    double INT_MAX
-# ctypedef np.ndarray (*UPDATE)(long[:] state, long[:] nodesToUpdate)
-# forward declaration
-cdef class Model
 
+cdef extern from "limits.h":
+    int INT_MAX
+    int RAND_MAX
+
+cdef class Model
+from sampler cimport Sampler # mersenne sampler
 
 cdef class Model: # see pxd
     def __init__(self, \
@@ -53,6 +54,7 @@ cdef class Model: # see pxd
         self.construct(graph, agentStates)
         self.nudgeType  = nudgeType
         self.updateType = updateType
+        self.sampler          = Sampler(42, 0., 1.)
 
     @property
     def states(self): return self._states
@@ -228,10 +230,11 @@ cdef class Model: # see pxd
         self._newstates    = states.copy()
         self._nNodes = graph.number_of_nodes()
 
-    @cython.wraparound(False)
     @cython.boundscheck(False)
+    @cython.wraparound(False)
     @cython.nonecheck(False)
-    cdef long [:, ::1] sampleNodes(self, long  nSamples):
+    @cython.cdivision(True)
+    cdef long [:, ::1] sampleNodes(self, long  nSamples) :
         """
             Python accessible function to sample nodes
         """
@@ -274,8 +277,9 @@ cdef class Model: # see pxd
             start = (samplei * sampleSize) % length
             if start + sampleSize >= length:
                 # np.random.shuffle(nodeIDs)
-                for i in range(length):
-                    j = <long> (i + rand() / (INT_MAX / (length - i)) )
+                for i in range(length): # TODO: replace this with new samplers
+                    j = <long> i + self.sampler.sample() * (length - i)
+                    # j = <long> (i + rand() / (RAND_MAX / (length - i)) )
                     # printf('%d\n',j)
                     k = nodeIDs[j]
                     nodeIDs[j] = nodeIDs[i]
@@ -288,6 +292,11 @@ cdef class Model: # see pxd
 
     cpdef void reset(self):
         self.states = np.random.choice(self.agentStates, size = self._nNodes)
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.nonecheck(False)
+    @cython.cdivision(True)
     cpdef simulate(self, long long int  samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self._nNodes), int)

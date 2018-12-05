@@ -97,24 +97,24 @@ from cython.operator cimport dereference as deref, preincrement as pre
 cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
                    int burninSamples = int(1e3)):
     # start sampling
-    # cdef unordered_map[int, double] snapshots
-    cdef dict snapshots = {}
+    cdef unordered_map[int, double] snapshots
+    # cdef dict snapshots = {}
     cdef int i
     cdef long long int N = nSamples * step
     cdef long[:, ::1] r = model.sampleNodes(N )
     cdef double Z = <double> nSamples
-    # pbar = tqdm(total = N)
+    pbar = tqdm(total = N)
     cdef long long int idx
     cdef long* ptr
     cdef double past = time.process_time()
     for i in range(N):
         if i % step == 0:
             idx = encodeState(model._states)
-            # snapshots[idx] += 1/Z
-            snapshots[idx] = snapshots.get(idx, 0) + 1 / Z
+            snapshots[idx] += 1/Z
+            # snapshots[idx] = snapshots.get(idx, 0) + 1 / Z
         model._updateState(r[i])
-    #     pbar.update(1)
-    # pbar.close()
+        pbar.update(1)
+    pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f'Delta = {time.process_time() - past}')
     return snapshots
@@ -149,7 +149,7 @@ cpdef dict monteCarlo(\
                   ))
     # pbar = tqdm(total = N)
 
-    cdef long[:, ::1] r = model.sampleNodes(N * repeats * (deltas + 1))
+    cdef long[:, ::1] r#  = model.sampleNodes(N * repeats * (deltas + 1))
 
     # loop declarations
     cdef double Z = <double> repeats
@@ -163,11 +163,13 @@ cpdef dict monteCarlo(\
     cdef int jdx
     cdef long[::1] start = model._states
     cdef long long int kdx
+    pbar = tqdm(total = N)
     print('Starting loops')
     for n in range(N):
         kdx = encodeState(s[n])
         # print(kdx)
         for k in range(repeats):
+            r = model.sampleNodes(deltas + 1)
             for node in range(model._nNodes):
                 model._states[node] = s[n, node]
             # model.updateState(r[n])
@@ -180,7 +182,8 @@ cpdef dict monteCarlo(\
                     for statei in range(model._nStates):
                         if model._states[node] == agentStates[statei]:
                             out[n, delta, node, statei] += 1 / Z
-                idx = n * k * (delta + 1)
+                # idx = n * k * (delta + 1)
+                idx = delta
                 model._updateState(r[idx])
                 # printf('%d %d', delta, jdx)
                 # check if pulse turn-off
@@ -191,7 +194,7 @@ cpdef dict monteCarlo(\
 
         # print(s[n].base.shape)
         conditional[kdx] = out[n] # replace this with something that can hold the correct markers
-        # pbar.update(1)
+        pbar.update(1)
     # pbar.close()
     # print(f"Delta = {time.process_time() - past}")
     return conditional

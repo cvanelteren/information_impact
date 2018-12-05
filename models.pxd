@@ -2,6 +2,7 @@ cimport numpy as np
 from libcpp.vector cimport vector
 from libcpp.map cimport map
 from libcpp.unordered_map cimport unordered_map
+from sampler cimport Sampler
 cdef struct Connection:
     vector[int] neighbors
     vector[double] weights
@@ -20,6 +21,8 @@ cdef class Model:
         str __updateType
         str __nudgeType
         double[::1] __nudges
+
+        Sampler sampler
 
         unordered_map[long, Connection] adj # adjacency lists
 
@@ -43,6 +46,7 @@ cdef class Model:
                     int length,long nSamples,\
                     long long int  sampleSize,\
                     )
+
     cpdef simulate(self, long long int  samples)
 
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
