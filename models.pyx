@@ -92,10 +92,15 @@ cdef class Model: # see pxd
         elif isinstance(value, np.ndarray):
             self._newstates = value
             self._states    = value
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate):
+
+
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
         return self._nodeids
+
+
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
         return self._nodeids
+
     cpdef void construct(self, object graph, list agentStates):
         """
         Constructs adj matrix using structs
@@ -192,22 +197,7 @@ cdef class Model: # see pxd
                 if add:
                     adj[sincID].neighbors.push_back( <long> sourceID)
                     adj[sincID].weights.push_back( <double> graph[node][source]['weight'])
-                    # _adj[sincID] = _adj.get(sincID, []) + [[sourceID], [graph[node][source]['weight']]]
-                    # add node > source
-                        # _weights[tmp]   = _weights.get(tmp, []) + [weight]
-                        # _neighbors[tmp] = _neighbors.get(tmp, []) + [sourceID]
 
-        # TODO: move it inline above
-        # cdef map[int, vector[int]] neighbors  = _neighbors
-        # cdef map[int, vector[double]] weights = _weights
-        # # weights        = {k : np.array(v) for k, v in weights.items()}
-        # # neighbors      = {k : np.array(v, dtype = int) for k, v in neighbors.items()}
-        # cdef map[int, vector[int, double]] adj = _adj
-        # print(adj)
-
-        # self.neighbors = neighbors
-        # self.weights   = weights
-        # self.adj = adj
         # public and python accessible
         self.graph    = graph
         self.mapping  = mapping
@@ -234,7 +224,7 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long [:, ::1] sampleNodes(self, long  nSamples) :
+    cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
         """
             Python accessible function to sample nodes
         """
@@ -242,12 +232,11 @@ cdef class Model: # see pxd
 
             # initialization
             long length       = self._nNodes # length of target array
-            updateType        = self.__updateType
 
         cdef int sampleSize
-        if updateType == 'single':
+        if self.__updateType == 'single':
             sampleSize = 1
-        elif updateType == 'serial':
+        elif self.__updateType == 'serial':
             sampleSize = 0
         else:
             sampleSize = length
@@ -261,25 +250,26 @@ cdef class Model: # see pxd
                     long[::1] nodeIDs, \
                     int length, long  nSamples,\
                     long long int sampleSize,\
-                    ) :
+                    ) nogil :
         """
         Shuffles nodeID only when the current sample is larger
         than the shuffled array
         """
-        cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), dtype = int)
+        # cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), dtype = int)
         cdef:
             long sample
             long start
             long i, j, k
             long samplei
+            vector[vector[long]] samples 
         # with nogil:
         for samplei in range(nSamples):
             start = (samplei * sampleSize) % length
             if start + sampleSize >= length:
                 # np.random.shuffle(nodeIDs)
                 for i in range(length): # TODO: replace this with new samplers
-                    j = <long> i + self.sampler.sample() * (length - i)
-                    # j = <long> (i + rand() / (RAND_MAX / (length - i)) )
+                    # j = <long> i + self.sampler.sample() * (length - i)
+                    j = <long> (i + rand() / (RAND_MAX / (length - i)) )
                     # printf('%d\n',j)
                     k = nodeIDs[j]
                     nodeIDs[j] = nodeIDs[i]
@@ -291,7 +281,8 @@ cdef class Model: # see pxd
         return samples
 
     cpdef void reset(self):
-        self.states = np.random.choice(self.agentStates, size = self._nNodes)
+        self.states = np.random.choice(\
+                self.agentStates, size = self._nNodes)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)

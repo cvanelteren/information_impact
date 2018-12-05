@@ -28,7 +28,7 @@ import fastIsing
 s = time.process_time()
 m = fastIsing.Ising(graph, temperature = .5)
 from time import time
-m.updateType = 'single'
+m.updateType = 'async'
 m.magSide    = 'neg'
 m.t = .5
 m.reset()
@@ -39,9 +39,14 @@ mags  = empty(temps.size)
 #sys.settrace(trace)
 
 xx = infcy.getSnapShots(m, 10000, step = 100)
-deltas = 49
+deltas = 10
 #while True:
-y  = infcy.monteCarlo(m, xx, repeats = 10000, deltas = deltas)
+y  = infcy.monteCarlo(m, xx, repeats = 100000, deltas = deltas)
+# print('COMPARING')
+# print(xx.keys())
+# for k, v in zip(y, xx):
+#     print(k, v)
+
 #     for i, t in enumerate(temps):
 #         m.t = t
 #         m.reset()

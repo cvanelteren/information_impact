@@ -48,7 +48,7 @@ checkDistribution() # print it only once
 #     return out
 # def encodeState(state, nStates):
 #     return int(''.join(format(1 if i == 1 else 0, f'0{nStates - 1}b') for i in state), 2)
-cpdef encodeState(long[::1] state):
+cdef encodeState(long[::1] state):
 
     cdef int binNum = 1
     cdef int N = state.shape[0]
@@ -60,17 +60,17 @@ cpdef encodeState(long[::1] state):
         binNum *= 2
     return dec
 
-cpdef decodeState(long long int dec, int N):
+cdef vector[long] decodeState(long long int dec, int N):
     cdef:
         int i=0
-        long[::1] buffer = np.zeros(N, dtype = int) - 1
+        # long[::1] buffer = np.zeros(N, dtype = int) - 1
+        vector [long] buffer = vector[long](N, -1) # init with
     while dec > 0:
         if dec % 2:
             buffer[i] = 1
-        else:
-            buffer[i] = -1
         i += 1
         dec = dec // 2
+
     return buffer
 # cdef decodeState(int num):
 #     # cdef long[::1] out = np.ones(10) * -1
@@ -128,8 +128,6 @@ cpdef dict monteCarlo(\
                ):
     cdef dict conditional = {}
 
-
-
     cdef str nudgeMode = model.__nudgeType
     cdef double[:] copyNudge = model.__nudges.copy() # store nudges already there
     # for k in range(repeats):
@@ -149,7 +147,7 @@ cpdef dict monteCarlo(\
                   ))
     # pbar = tqdm(total = N)
 
-    cdef long[:, ::1] r#  = model.sampleNodes(N * repeats * (deltas + 1))
+    cdef long[:, ::1] r  # = model.sampleNodes(deltas + 1)
 
     # loop declarations
     cdef double Z = <double> repeats
@@ -168,8 +166,9 @@ cpdef dict monteCarlo(\
     for n in range(N):
         kdx = encodeState(s[n])
         # print(kdx)
-        for k in range(repeats):
-            r = model.sampleNodes(deltas + 1)
+        # r = model.sampleNodes( repeats * (deltas + 1))
+        for k in prange(repeats, nogil = True):
+            # r = model.sampleNodes(deltas + 1)
             for node in range(model._nNodes):
                 model._states[node] = s[n, node]
             # model.updateState(r[n])
@@ -182,9 +181,10 @@ cpdef dict monteCarlo(\
                     for statei in range(model._nStates):
                         if model._states[node] == agentStates[statei]:
                             out[n, delta, node, statei] += 1 / Z
-                # idx = n * k * (delta + 1)
-                idx = delta
-                model._updateState(r[idx])
+                idx = k * (delta + 1)
+                # idx = delta
+                # model._updateState(r[idx])
+                model._updateState(model.sampleNodes(1)[0])
                 # printf('%d %d', delta, jdx)
                 # check if pulse turn-off
                 if reset:
@@ -195,7 +195,7 @@ cpdef dict monteCarlo(\
         # print(s[n].base.shape)
         conditional[kdx] = out[n] # replace this with something that can hold the correct markers
         pbar.update(1)
-    # pbar.close()
+    pbar.close()
     # print(f"Delta = {time.process_time() - past}")
     return conditional
 

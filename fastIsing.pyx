@@ -35,7 +35,9 @@ cdef extern from "limits.h":
     int INT_MAX
     int RAND_MAX
 
-
+# cdef extern from "SFMT.h":
+#     void init_gen_rand(int seed)
+#     double genran_res53()
 
 cdef extern from "stdlib.h":
     double drand48()
@@ -44,7 +46,6 @@ cdef extern from "stdlib.h":
 
 from models cimport Model
 cdef class Ising(Model)
-
 
 
 # class implementation
@@ -158,7 +159,7 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states):
+                       long[::1] states) nogil:
         """
         input:
             :nsyncode: member of nodeIDs
@@ -186,7 +187,7 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -202,10 +203,10 @@ cdef class Ising(Model):
         for n in range(length):
             node      = nodesToUpdate[n]
             energy    = self.energy(node, states)
-            p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
+            p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
 
-            # if rand() / float(RAND_MAX) < p: # fast but not random
-            if self.sampler.sample() < p: # best option
+            if rand() / float(RAND_MAX) < p: # fast but not random
+            # if self.sampler.sample() < p: # best option
             # if np.random.rand()  < p: # slow but easy
                 newstates[node] = -states[node]
 

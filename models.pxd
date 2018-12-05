@@ -36,16 +36,16 @@ cdef class Model:
                     list agentStates)
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate)
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
 
 
-    cdef  long[:, ::1] sampleNodes(self, long Samples)
+    cdef  long[:, ::1] sampleNodes(self, long Samples) nogil
 
     cdef  long[:, ::1] c_sample(self,
                     long[::1] nodeIDs, \
                     int length,long nSamples,\
                     long long int  sampleSize,\
-                    )
+                    ) nogil
 
     cpdef simulate(self, long long int  samples)
 
