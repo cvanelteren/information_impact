@@ -19,12 +19,12 @@ cdef class Ising(Model):
 
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states) nogil
+                       long[::1] states)
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)
     # c binding
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
     # # python wrapper
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)

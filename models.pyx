@@ -90,7 +90,7 @@ cdef class Model: # see pxd
         elif isinstance(value, np.ndarray):
             self._newstates = value
             self._states    = value
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate):
         return self._nodeids
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
         return self._nodeids
@@ -114,7 +114,7 @@ cdef class Model: # see pxd
             states = np.zeros(graph.number_of_nodes(), int, 'C')
             int counter
             double[::1] nudges = np.zeros(graph.number_of_nodes(), dtype = float)
-            unordered_map[int, Connection] adj # see .pxd
+            unordered_map[long, Connection] adj # see .pxd
 
 
         from ast import literal_eval
@@ -231,7 +231,7 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.boundscheck(False)
     @cython.nonecheck(False)
-    cdef long [:, ::1] sampleNodes(self, long nSamples):
+    cdef long [:, ::1] sampleNodes(self, long  nSamples):
         """
             Python accessible function to sample nodes
         """
@@ -256,8 +256,8 @@ cdef class Model: # see pxd
     @cython.cdivision(True)
     cdef long[:, ::1] c_sample(self,
                     long[::1] nodeIDs, \
-                    int length, long long nSamples,\
-                    int sampleSize,\
+                    int length, long  nSamples,\
+                    long long int sampleSize,\
                     ) :
         """
         Shuffles nodeID only when the current sample is larger
@@ -288,7 +288,7 @@ cdef class Model: # see pxd
 
     cpdef void reset(self):
         self.states = np.random.choice(self.agentStates, size = self._nNodes)
-    cpdef simulate(self, long samples):
+    cpdef simulate(self, long long int  samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self._nNodes), int)
             long[:, ::1] r = self.sampleNodes(samples)

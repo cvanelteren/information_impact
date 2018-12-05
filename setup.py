@@ -12,11 +12,14 @@ for file in os.listdir(os.getcwd()):
         ex = Extension(name, sources = [file], \
                        include_dirs =[nums],\
                        extra_compile_args = ['-fopenmp',\
-                                             '-ffast-math','-Ofast', \
+                                             '-ffast-math','-O2', \
                                              '-march=native',\
-                                             '-std=c++11'],\
+                                             '-std=c++11',\
+                                             '-g'
+                                            ],\
                        extra_link_args = ['-fopenmp',\
-                                          "-std=c++11"],\
+                                          "-std=c++11",
+                                          '-g'],\
         )
         exts.append(ex)
 
@@ -25,7 +28,8 @@ setup(\
 ext_modules = cythonize(exts,\
             annotate = True,\
             language_level = 3,\
-            compiler_directives = dict(fast_gil = True,\
-                                       binding  = True)\
+            # compiler_directives = dict(fast_gil = True,\
+            #                            binding  = True)\
+            gdb_debug=True,
             )\
 )

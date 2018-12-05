@@ -60,7 +60,7 @@ cpdef encodeState(long[::1] state):
         binNum *= 2
     return dec
 
-cpdef decodeState(int dec, int N):
+cpdef decodeState(long long int dec, int N):
     cdef:
         int i=0
         long[::1] buffer = np.zeros(N, dtype = int) - 1
@@ -87,7 +87,8 @@ cpdef decodeState(int dec, int N):
 
 
 import time
-
+import faulthandler
+faulthandler.enable()
 from cython.operator cimport dereference as deref, preincrement as pre
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -96,24 +97,24 @@ from cython.operator cimport dereference as deref, preincrement as pre
 cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
                    int burninSamples = int(1e3)):
     # start sampling
-    cdef unordered_map[int, double] snapshots
-    # cdef dict snapshots = {}
+    # cdef unordered_map[int, double] snapshots
+    cdef dict snapshots = {}
     cdef int i
-    cdef long long N = nSamples * step
+    cdef long long int N = nSamples * step
     cdef long[:, ::1] r = model.sampleNodes(N )
     cdef double Z = <double> nSamples
-    pbar = tqdm(total = N)
-    cdef int idx
+    # pbar = tqdm(total = N)
+    cdef long long int idx
     cdef long* ptr
     cdef double past = time.process_time()
     for i in range(N):
         if i % step == 0:
             idx = encodeState(model._states)
-            snapshots[idx] += 1/Z
+            # snapshots[idx] += 1/Z
+            snapshots[idx] = snapshots.get(idx, 0) + 1 / Z
         model._updateState(r[i])
-        pbar.update(1)
-    pbar.close()
-    print(snapshots)
+    #     pbar.update(1)
+    # pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f'Delta = {time.process_time() - past}')
     return snapshots
@@ -127,21 +128,17 @@ cpdef dict monteCarlo(\
                ):
     cdef dict conditional = {}
 
-    cdef double past = time.process_time()
 
-    # map from node state to idx
-    cdef dict sortr = {i : idx for idx, i in \
-                       enumerate(model.agentStates)}
 
     cdef str nudgeMode = model.__nudgeType
     cdef double[:] copyNudge = model.__nudges.copy() # store nudges already there
     # for k in range(repeats):
-    cdef long[::1] buffer = model._states
+    cdef long[::1] buffer = model._states.copy()
 
     cdef long[:, ::1] s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
-    print(np.unique(s, 1))
+    # print(np.unique(s, 1))
 
-    print(s.base)
+    # print(s.base)
     cdef int N = s.shape[0], n
 
     cdef double[ :, :, :, ::1] out = np.zeros(\
@@ -150,10 +147,10 @@ cpdef dict monteCarlo(\
                  model._nNodes,\
                   model._nStates,\
                   ))
-    pbar = tqdm(total = N)
+    # pbar = tqdm(total = N)
 
     cdef long[:, ::1] r = model.sampleNodes(N * repeats * (deltas + 1))
-    print('Starting loops')
+
     # loop declarations
     cdef double Z = <double> repeats
 
@@ -162,71 +159,41 @@ cpdef dict monteCarlo(\
     half  = deltas // 2
     cdef bint reset = True
     cdef long[::1] agentStates = model.agentStates
-    cdef long long idx
-    cdef long chunk = N // 4
+    cdef long  idx
     cdef int jdx
     cdef long[::1] start = model._states
-    cdef int kdx
-
+    cdef long long int kdx
+    print('Starting loops')
     for n in range(N):
         kdx = encodeState(s[n])
         # print(kdx)
         for k in range(repeats):
             for node in range(model._nNodes):
                 model._states[node] = s[n, node]
-                model.__nudges[node] = copyNudge[node]
+            # model.updateState(r[n])
+                # model.__nudges[node] = copyNudge[node]
 
-            # reset simulatoin
+            # reset simulation
             reset        = True
             for delta in range(deltas + 1):
                 for node in range(model._nNodes):
                     for statei in range(model._nStates):
                         if model._states[node] == agentStates[statei]:
                             out[n, delta, node, statei] += 1 / Z
-                idx = (n + 1) * (k + 1) * (delta + 1)
+                idx = n * k * (delta + 1)
                 model._updateState(r[idx])
                 # printf('%d %d', delta, jdx)
                 # check if pulse turn-off
                 if reset:
                     if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
-                        nudges[:] = copyNudge
+                        # nudges[:] = copyNudge
                         reset =  False
 
         # print(s[n].base.shape)
         conditional[kdx] = out[n] # replace this with something that can hold the correct markers
-        pbar.update(1)
-    # print('>>', conditional.keys())
-
-        # print(encodeState(q), end = ' ')
-    # with nogil, parallel():
-    #     for n in prange(N):
-    #         for k in range(repeats):
-    #             for node in range(model._nNodes):
-    #                 buffer[node] = s[n, node]
-    #                 nudges[node] = copyNudge[node]
-    #             # reset simulatoin
-    #             reset        = True
-    #             for delta in range(deltas + 1):
-    #                 for node in range(model._nNodes):
-    #                     for statei in range(model._nStates):
-    #                         if buffer[node] == agentStates[statei]:
-    #                             out[n, delta, node, statei] += 1 / Z
-    #                 idx = (n + 1) * (k + 1) * (delta + 1)
-    #                 model._updateState(r[idx])
-    #                 # printf('%d %d', delta, jdx)
-    #                 # check if pulse turn-off
-    #                 if reset:
-    #                     if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
-    #                         nudges[:] = copyNudge
-    #                         reset =  False
-    #
-    #         # with gil:
-    #         with gil:
-    #             # print(s[n].base.shape)
-    #             conditional[encodeState(s[n].base[0, :])] = out[n] # replace this with something that can hold the correct markers
-    #             pbar.update(1)
-    pbar.close()
-    print(f"Delta = {time.process_time() - past}")
+        # pbar.update(1)
+    # pbar.close()
+    # print(f"Delta = {time.process_time() - past}")
     return conditional
 
 #

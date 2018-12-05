@@ -21,7 +21,7 @@ cdef class Model:
         str __nudgeType
         double[::1] __nudges
 
-        unordered_map[int, Connection] adj # adjacency lists
+        unordered_map[long, Connection] adj # adjacency lists
 
         # map[int, vector[int]] neighbors
         # map[int, vector[double]] weights
@@ -33,16 +33,17 @@ cdef class Model:
                     list agentStates)
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate)
 
 
-    cdef  long[:, ::1] sampleNodes(self, long nSamples)
+    cdef  long[:, ::1] sampleNodes(self, long Samples)
+
     cdef  long[:, ::1] c_sample(self,
                     long[::1] nodeIDs, \
-                    int length, long long nSamples,\
-                    int sampleSize,\
+                    int length,long nSamples,\
+                    long long int  sampleSize,\
                     )
-    cpdef simulate(self, long samples)
+    cpdef simulate(self, long long int  samples)
 
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 

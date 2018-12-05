@@ -143,7 +143,7 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states) nogil:
+                       long[::1] states):
         """
         input:
             :node: member of nodeIDs
@@ -171,7 +171,7 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
