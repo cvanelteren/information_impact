@@ -50,7 +50,7 @@ cdef class Ising(Model)
 
 # class implementation
 # @cython.final # enforce extension type
-@cython.auto_pickle(True)
+@cython.auto_pickle(True) # for storage of the model.. technically not needed
 cdef class Ising(Model):
     def __init__(self, \
                  graph,\
@@ -170,7 +170,7 @@ cdef class Ising(Model):
             neighbor = self.adj[node].neighbors[i]
             weight   = self.adj[node].weights[i]
             energy  -= states[node] * states[neighbor] * weight + \
-            self._H [neighbor] * states[neighbor]
+                        self._H [neighbor] * states[neighbor]
         energy += self._nudges[node]
         return energy
 
@@ -197,11 +197,12 @@ cdef class Ising(Model):
         for n in range(length):
             node      = nodesToUpdate[n]
             energy    = self.energy(node, states)
-            p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
+            p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
+            # p = 1 / ( 1. + np.exp(-self.beta * 2. * energy) )
 
-            # if rand() / float(RAND_MAX) < p: # fast but not random
+            if rand() / float(RAND_MAX) < p: # fast but not random
             # if self.sampler.sample() < p: # best option
-            if np.random.rand()  < p: # slow but easy
+            # if np.random.rand()  < p: # slow but easy
                 newstates[node] = -states[node]
 
         cdef double mu = 0 # MEAN

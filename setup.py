@@ -18,7 +18,7 @@ for file in os.listdir(os.getcwd()):
                                              '-ffast-math','-Ofast', \
                                              '-march=native',\
                                              '-std=c++11',\
-                                            ],\
+                                            '-fno-wrapv'],\
                        extra_link_args = ['-fopenmp',\
                                           "-std=c++11",
                                           ],\

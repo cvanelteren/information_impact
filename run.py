@@ -28,11 +28,11 @@ if __name__ == '__main__':
         real = sys.argv[1]
     else:
         real = 0
-    repeats       = int(1e4) if real else 1000
-    deltas        = 10       if real else 10
+    repeats       = int(1e4) if real else 10000
+    deltas        = 10       if real else 20
     step          = 1
-    nSamples      = int(1e4) if real else 1000
-    burninSamples = 10
+    nSamples      = int(1e4) if real else 10000
+    burninSamples = 1000
     pulseSize     = 1
 
     numIter       = int(5e1) if real else 5
@@ -43,7 +43,8 @@ if __name__ == '__main__':
     if real:
         graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
     else:
-        graphs = [nx.path_graph(3)]
+        graphs = [nx.path_graph(10)]
+        graphs = [nx.barabasi_albert_graph(10, 5)]
 #     dataDir = 'Psycho' # relative path careful
 #     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 #     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
@@ -79,9 +80,6 @@ if __name__ == '__main__':
                                 updateType= updateMethod, magSide = magSide)
 
 
-        conditions = {(tuple(model.nodeids), (i,)) : \
-        idx for idx, i in enumerate(model.nodeids)}
-        # %%
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'
     #    fileName = f'Data/{f}'
         updateType= model.updateType
@@ -135,14 +133,14 @@ if __name__ == '__main__':
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
                 print(f'{time()} Getting snapshots')
-                # snapshots = {tuple(infcy.encodeState(i))}
+                pulse       = {}
+                model.nudges = pulse
                 snapshots   = infcy.getSnapShots(model, nSamples, \
                                                burninSamples = burninSamples, \
                                                step          = step)
 
 
-                pulse       = {}
-                model.pulse = pulse
+
                 print(f'{time()}')
                 conditional = infcy.monteCarlo(\
                                                model  = model, snapshots = snapshots,\
@@ -157,7 +155,6 @@ if __name__ == '__main__':
                 px, mi = infcy.mutualInformation(\
                 conditional, deltas, snapshots, model)
                 # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
-                print(mi)
                 fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr = IO.SimulationResult(mi = mi.base,
                                         conditional = conditional,
@@ -167,8 +164,8 @@ if __name__ == '__main__':
 
                 pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
-                    pulse       = {n : p}
-                    model.pulse = pulse
+                    pulse        = {n : p}
+                    model.nudges = pulse
                     conditional = infcy.monteCarlo(model = model, snapshots = snapshots,\
                                             deltas = deltas, repeats = repeats,\
                                             )

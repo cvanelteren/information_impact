@@ -50,6 +50,7 @@ def c():
     close('all')
 
 def pt_bayescount(Pr, Nt):
+    # all credit goes to panzeri-treves
     """Compute the support for analytic bias correction using the
     Bayesian approach of Panzeri and Treves (1996)
 

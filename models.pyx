@@ -70,18 +70,17 @@ cdef class Model: # see pxd
     @property
     def nodeids(self)   : return self._nodeids
     @property
-    def pulse(self)     : return self._nudges
+    def nudges(self)     : return self._nudges
     @property
     def nNodes(self)    : return self._nNodes
     @property
     def nStates(self): return self._nStates
 
-    # readonly
-    @property
-    def nNodes(self) : return self._nNodes
 
-    @pulse.setter
-    def pulse(self, vals):
+    # TODO: reset all after new?
+    @nudges.setter
+    def nudges(self, vals):
+        self._nudges[:] =  0
         for k, v in vals.items():
             idx = self.mapping[k]
             self._nudges[idx] = v

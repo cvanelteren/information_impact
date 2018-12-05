@@ -48,7 +48,7 @@ checkDistribution() # print it only once
 #     return out
 # def encodeState(state, nStates):
 #     return int(''.join(format(1 if i == 1 else 0, f'0{nStates - 1}b') for i in state), 2)
-cdef encodeState(long[::1] state):
+cdef int encodeState(long[::1] state):
 
     cdef int binNum = 1
     cdef int N = state.shape[0]
@@ -127,11 +127,10 @@ cpdef dict monteCarlo(\
                int deltas = 10,  int repeats = 11,
                ):
     cdef dict conditional = {}
-
+    # cdef unordered_map[int, ]
     cdef str nudgeMode = model.__nudgeType
     cdef double[:] copyNudge = model._nudges.copy() # store nudges already there
     # for k in range(repeats):
-    cdef long[::1] buffer = model._states.copy()
 
     cdef long[:, ::1] s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
     # print(np.unique(s, 1))
@@ -152,7 +151,6 @@ cpdef dict monteCarlo(\
     # loop declarations
     cdef double Z = <double> repeats
 
-    cdef double[::1] nudges = model._nudges
     cdef int k, delta, node, statei
     half  = deltas // 2
     cdef bint reset = True
@@ -160,47 +158,45 @@ cpdef dict monteCarlo(\
     cdef long  idx
     cdef int jdx
     cdef long[::1] start = model._states
-    cdef long long int kdx
+    cdef int kdx
     pbar = tqdm(total = N)
     print('Starting loops')
+    # TODO i hate cython for its for loops
+
     for n in range(N):
         kdx = encodeState(s[n])
-        # print(kdx)
-        # r = model.sampleNodes( repeats * (deltas + 1))
         for k in range(repeats):
             # r = model.sampleNodes(deltas + 1)
+            # model._nudges[:] = copyNudge
+            # model._states[:] = s[n, :]
             for node in range(model._nNodes):
                 model._states[node] = s[n, node]
-            # model.updateState(r[n])
-                # model._nudges[node] = copyNudge[node]
-
+                model._nudges[node] = copyNudge[node]
             # reset simulation
-            reset        = True
+            reset = True
+            r     = model.sampleNodes(deltas + 1)
             for delta in range(deltas + 1):
+                # bin data
                 for node in range(model._nNodes):
                     for statei in range(model._nStates):
                         if model._states[node] == agentStates[statei]:
                             out[n, delta, node, statei] += 1 / Z
-                idx = k * (delta + 1)
-                # idx = delta
-                # model._updateState(r[idx])
-                model._updateState(model.sampleNodes(1)[0])
-                # printf('%d %d', delta, jdx)
-                # check if pulse turn-off
+                # update
+                model._updateState(r[delta])
+                # turn-off
                 if reset:
-                    if nudgeMode == 'pulse' or nudgeMode == 'constant' and delta >= half:
-                        # nudges[:] = copyNudge
-                        reset =  False
+                    if nudgeMode == 'pulse' or \
+                    nudgeMode == 'constant' and delta >= half:
 
-        # print(s[n].base.shape)
-        conditional[kdx] = out.base[n] # replace this with something that can hold the correct markers
-        print(out[n].base.shape)
-        pbar.update(1)
+                        model._nudges[:] = 0
+                        reset =  False
+            conditional[kdx] = out.base[n] # replace this with something that can hold the correct markers
+            pbar.update(1)
+
     pbar.close()
     # print(f"Delta = {time.process_time() - past}")
     return conditional
-
-#
+# cdef parallWrap(idx)
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 cpdef mutualInformation(dict conditional, int deltas, \
