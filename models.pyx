@@ -34,7 +34,7 @@ cdef extern from "limits.h":
     int RAND_MAX
 
 cdef class Model
-from sampler cimport Sampler # mersenne sampler
+# from sampler cimport Sampler # mersenne sampler
 
 @cython.auto_pickle(True)
 cdef class Model: # see pxd
@@ -55,14 +55,14 @@ cdef class Model: # see pxd
         self.construct(graph, agentStates)
         self.nudgeType  = nudgeType
         self.updateType = updateType
-        self.sampler    = Sampler(42, 0., 1.)
+        # self.sampler    = Sampler(42, 0., 1.)
 
     # TODO: make class pickable
     # hence the wrappers
     @property
     def states(self)    : return self._states
     @property
-    def updateType(self): return self.__updateType
+    def updateType(self): return self._updateType
     @property
     def nudgeType(self) : return self.__nudgeType
     @property #return mem view of states
@@ -73,6 +73,8 @@ cdef class Model: # see pxd
     def pulse(self)     : return self._nudges
     @property
     def nNodes(self)    : return self._nNodes
+    @property
+    def nStates(self): return self._nStates
 
     # readonly
     @property
@@ -87,7 +89,7 @@ cdef class Model: # see pxd
     @updateType.setter
     def updateType(self, value):
         assert value in 'sync async single serial'
-        self.__updateType = value
+        self._updateType = value
         # allow for mutation if async else independent updates
         if value == 'async':
             self._newstates = self._states
@@ -109,14 +111,6 @@ cdef class Model: # see pxd
         elif isinstance(value, np.ndarray):
             self._newstates = value
             self._states    = value
-
-
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
-        return self._nodeids
-
-
-    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
-        return self._nodeids
 
     cpdef void construct(self, object graph, list agentStates):
         """
@@ -224,9 +218,9 @@ cdef class Model: # see pxd
 
         self.agentStates = np.asarray(agentStates, dtype = int)
 
-        self.__nudges = nudges
+        self._nudges = nudges
         self._nStates = len(agentStates)
-        self.nStates  = len(agentStates)
+
 
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
@@ -236,6 +230,14 @@ cdef class Model: # see pxd
         self._states       = states
         self._newstates    = states.copy()
         self._nNodes = graph.number_of_nodes()
+
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
+        return self._nodeids
+
+
+    cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
+        return self._nodeids
+
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -249,9 +251,9 @@ cdef class Model: # see pxd
         """
         # check the amount of samples to get
         cdef int sampleSize
-        if self.__updateType == 'single':
+        if self._updateType == 'single':
             sampleSize = 1
-        elif self.__updateType == 'serial':
+        elif self._updateType == 'serial':
             return self._nodeids
         else:
             sampleSize = self._nNodes

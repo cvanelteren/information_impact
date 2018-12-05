@@ -1,5 +1,5 @@
 #distutils: language=c++
-
+cimport cython
 cdef extern from "<random>" namespace "std" :
     cdef cppclass mt19937:
         mt19937() except +

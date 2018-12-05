@@ -1148,6 +1148,8 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 static PyObject *__pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *__pyx_v_self); /* proto*/
 
+/* Module declarations from 'cython' */
+
 /* Module declarations from 'sampler' */
 static PyTypeObject *__pyx_ptype_7sampler_Sampler = 0;
 #define __Pyx_MODULE_NAME "sampler"
@@ -1954,7 +1956,7 @@ if (!__Pyx_RefNanny) {
 
   /* "sampler.pyx":1
  * #distutils: language=c++             # <<<<<<<<<<<<<<
- * 
+ * cimport cython
  * cdef extern from "<random>" namespace "std" :
  */
   __pyx_t_1 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)

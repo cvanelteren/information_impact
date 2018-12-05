@@ -18,9 +18,9 @@ cdef class Model:
         np.ndarray  agentStates
         # public sparse.csr.csr_matrix adj
         int _nNodes
-        str __updateType
+        str _updateType
         str __nudgeType
-        np.ndarray __nudges
+        np.ndarray _nudges
 
         Sampler sampler
 
@@ -31,7 +31,7 @@ cdef class Model:
         # vector[int, vector[vector[int], vector[double]]] adj
         int _nStates
         #private
-        dict __dict__
+        dict __dict__ # allow dynamic python objects
     cpdef void construct(self, object graph, \
                     list agentStates)
 

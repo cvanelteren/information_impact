@@ -41,7 +41,7 @@ fig, ax = subplots()
 ax.scatter(temps, mags)
 
 
-xx = infcy.getSnapShots(m, 10000, step = 10)
+xx = infcy.getSnapShots(m, 1000, step = 10)
 repeats = 10000
 deltas = 10
 y  = infcy.monteCarlo(m, xx, deltas, repeats)

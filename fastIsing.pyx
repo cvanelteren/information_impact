@@ -163,7 +163,6 @@ cdef class Ising(Model):
         """
         cdef:
             long length            = self.adj[node].neighbors.size()
-            long nodeState         = states[node]
             long neighbor, i
             double weight
             double energy          = 0
@@ -172,7 +171,7 @@ cdef class Ising(Model):
             weight   = self.adj[node].weights[i]
             energy  -= states[node] * states[neighbor] * weight + \
             self._H [neighbor] * states[neighbor]
-        energy += self.__nudges[node]
+        energy += self._nudges[node]
         return energy
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):

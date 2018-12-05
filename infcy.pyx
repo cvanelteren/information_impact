@@ -129,7 +129,7 @@ cpdef dict monteCarlo(\
     cdef dict conditional = {}
 
     cdef str nudgeMode = model.__nudgeType
-    cdef double[:] copyNudge = model.__nudges.copy() # store nudges already there
+    cdef double[:] copyNudge = model._nudges.copy() # store nudges already there
     # for k in range(repeats):
     cdef long[::1] buffer = model._states.copy()
 
@@ -152,7 +152,7 @@ cpdef dict monteCarlo(\
     # loop declarations
     cdef double Z = <double> repeats
 
-    cdef double[::1] nudges = model.__nudges
+    cdef double[::1] nudges = model._nudges
     cdef int k, delta, node, statei
     half  = deltas // 2
     cdef bint reset = True
@@ -172,7 +172,7 @@ cpdef dict monteCarlo(\
             for node in range(model._nNodes):
                 model._states[node] = s[n, node]
             # model.updateState(r[n])
-                # model.__nudges[node] = copyNudge[node]
+                # model._nudges[node] = copyNudge[node]
 
             # reset simulation
             reset        = True
@@ -193,7 +193,8 @@ cpdef dict monteCarlo(\
                         reset =  False
 
         # print(s[n].base.shape)
-        conditional[kdx] = out[n] # replace this with something that can hold the correct markers
+        conditional[kdx] = out.base[n] # replace this with something that can hold the correct markers
+        print(out[n].base.shape)
         pbar.update(1)
     pbar.close()
     # print(f"Delta = {time.process_time() - past}")
