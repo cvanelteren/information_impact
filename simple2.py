@@ -97,7 +97,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 5, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = 0)
 zd[zd < finfo(float).eps] = 0
 
@@ -112,7 +112,7 @@ zd = zd.reshape(dd.shape)
 # show means with spread
 fig, ax = subplots(1, 2, sharey = 'all')
 x = arange(deltas // 2)
-sidx = .5
+sidx = 2
 for axi, zdi, zdstd in zip(ax, zd.mean(0).T, zd.std(0).T):
     axi.plot(x, zdi, linestyle = '--', markeredgecolor = 'black')
     [axi.fill_between(x, a + sidx* b, a - sidx * b, alpha = .5,\
@@ -190,18 +190,18 @@ consistency = array([ [cons(i) for i in j] for j in maxim.T])
 naive = (maxim[...,0] == maxim[...,1])
 
 # %% frequency heatmaps consistency
-#tmp = array([ \
-#     [\
-#      histogram(j, bins = bins, density = True)[0]\
-#      for j in i.T ]
-#     for i in maxim.T])
-#fig, ax = subplots(1, 2, sharey = 'all')
-#mainax  = fig.add_subplot(111, frameon = False, 
-#                          xticks = [], yticks = [])
-#for axi, t in zip(ax, tmp):
-#    h = axi.imshow(t.T, aspect = 'auto', vmin = 0, vmax = 1)
-#colorbar(h, ax = axi, label = 'frequency')
-#mainax.set_xlabel(r'$\theta$', labelpad = 30)   
+tmp = array([ \
+     [\
+      histogram(j, bins = bins, density = True)[0]\
+      for j in i.T ]
+     for i in maxim.T])
+fig, ax = subplots(1, 2, sharey = 'all')
+mainax  = fig.add_subplot(111, frameon = False, 
+                          xticks = [], yticks = [])
+for axi, t in zip(ax, tmp):
+    h = axi.imshow(t.T, aspect = 'auto', vmin = 0, vmax = 1)
+colorbar(h, ax = axi, label = 'frequency')
+mainax.set_xlabel(r'$\theta$', labelpad = 30)   
 # %%
 #fig, ax = subplots(2)
 #for axi, d in zip(ax, maxim.T):

@@ -2,6 +2,8 @@ from distutils.core import setup, Extension
 from Cython.Build import cythonize
 import numpy
 import os
+os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv"
+os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv"
 
 exts = []
 nums = numpy.get_include()
@@ -19,7 +21,8 @@ for file in os.listdir(os.getcwd()):
                                              '-march=native',\
                                              '-std=c++11',\
                                             '-fno-wrapv',\
-                                            '-g'],\
+                                            # '-g',\
+                                            ],\
                        extra_link_args = ['-fopenmp',\
                                           "-std=c++11",
                                           # '-g'\
@@ -33,7 +36,7 @@ ext_modules = cythonize(exts,\
             annotate            = True,\
             language_level      = 3,\
             compiler_directives = dict(\
-                                        # fast_gil = True,\
+                                        fast_gil = True,\
                                        binding  = True),\
             # gdb_debug=True,
             )\

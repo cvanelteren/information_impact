@@ -22,20 +22,20 @@ for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(3, 2)
+graph = nx.barabasi_albert_graph(10, 5)
 # graph = nx.path_graph(10)
 import fastIsing
 #graph = nx.path_graph(20)
 s = time.process_time()
 m = fastIsing.Ising(graph, temperature = 10)
 from time import time
-m.updateType = 'single'
+m.updateType = 'async'
 
-m.magSide    = 'neg'
-m.reset()
+m.magSide    = 'pos'
+#m.reset()
 import infcy
 s = time()
-temps = linspace(0, 10, 100)
+temps = linspace(0, 29, 100)
 mags, sus = m.matchMagnetization(temps, 1000, 0)
 fig, ax = subplots()
 ax.scatter(temps, mags)
@@ -45,9 +45,9 @@ ax.scatter(temps, mags)
 #    repeats = 100000
 #    deltas = 3
 #    y  = infcy.monteCarlo(m, xx, deltas, repeats)
-#    
-#    
-#    
+#
+#
+#
 #    # for k in y:
 #        # print(k)
 #    px, mi= infcy.mutualInformation(y, deltas, xx, m )

@@ -22,20 +22,23 @@ ctypedef np.int DTYPE_T
 from libc.stdlib cimport rand
 
 from cython.operator cimport dereference, preincrement
-from libc.stdlib cimport rand
+# from libc.stdlib cimport rand
 from libc.string cimport strcmp
 from libc.stdio cimport printf
 from libcpp.vector cimport vector
 from libcpp.map cimport map
 from libcpp.unordered_map cimport unordered_map
-
+# from RNG cimport RNG
 cdef extern from "limits.h":
     int INT_MAX
     int RAND_MAX
+cdef mt19937 gen = mt19937(5)
+cdef uniform_real_distribution[double] dist = uniform_real_distribution[double](0.0,1.0)
+cdef double rand = dist(gen)
 
+from cy_random import  uniform_rv
 cdef class Model
 # from sampler cimport Sampler # mersenne sampler
-
 # @cython.final
 cdef class Model: # see pxd
     def __init__(self, \
@@ -56,6 +59,7 @@ cdef class Model: # see pxd
         self.nudgeType  = nudgeType
         self.updateType = updateType
         # self.sampler    = Sampler(42, 0., 1.)
+        # self.sampler    = RNG(time.time())
 
     # TODO: make class pickable
     # hence the wrappers
@@ -64,7 +68,7 @@ cdef class Model: # see pxd
     @property
     def updateType(self): return self._updateType
     @property
-    def nudgeType(self) : return self.__nudgeType
+    def nudgeType(self) : return self._nudgeType
     @property #return mem view of states
     def states(self)    : return self._states
     @property
@@ -100,7 +104,7 @@ cdef class Model: # see pxd
     @nudgeType.setter
     def nudgeType(self, value):
         assert value in 'constant pulse'
-        self.__nudgeType = value
+        self._nudgeType = value
 
     @states.setter # TODO: expand
     def states(self, value):
@@ -278,7 +282,7 @@ cdef class Model: # see pxd
             start = (samplei * sampleSize) % self._nNodes
             if start + sampleSize >= self._nNodes:
                 for i in range(self._nNodes): # TODO: replace this with new samplers
-                    # j = <long> i + self.sampler.sample() * (length - i)
+                    # j = <long> i + dist(gen) * (self._nNodes - i) + 1
                     j                = <long> (i + rand() / (RAND_MAX / (self._nNodes - i) + 1) )
                     k                = self._nodeids[j]
                     self._nodeids[j] = self._nodeids[i]

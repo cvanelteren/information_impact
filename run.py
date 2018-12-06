@@ -29,17 +29,18 @@ if __name__ == '__main__':
         real = sys.argv[1]
     else:
         real = 0
-    repeats       = int(1e4) if real else 10000
-    deltas        = 10       if real else 20
+    print(sys.argv, real)
+    repeats       = int(1e4) if real else 100000
+    deltas        = 10       if real else 30
     step          = 1
     nSamples      = int(1e4) if real else 10000
-    burninSamples = 1000
-    pulseSize     = np.inf
+    burninSamples = 100000
+    pulseSize     = 1
 
     numIter       = int(5e1) if real else 5
     magSide       = 'neg'
-    updateMethod  = 'async'
-    CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = 'single'
+    CHECK         = [.9, .8, .7]  if real else [.7]  # match magnetiztion at 80 percent of max
     n = 10
     if real:
         graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
@@ -71,7 +72,7 @@ if __name__ == '__main__':
             step             = step,
             burninSamples    = burninSamples,
             pulseSize        = pulseSize,
-            updateMethod     = updateMethod
+            updateMethod     = updateType
                           )
         IO.saveSettings(targetDirectory, settings)
 
@@ -79,7 +80,7 @@ if __name__ == '__main__':
         model = fastIsing.Ising(\
                                 graph       = graph, \
                                 temperature = 0, \
-                                updateType  = updateMethod,\
+                                updateType  = updateType,\
                                 magSide     = magSide)
 
 
@@ -96,10 +97,11 @@ if __name__ == '__main__':
             magRange = array([CHECK]) if isinstance(CHECK, float) else array(CHECK)
 
             # magRange = array([.9, .2])
-            temps = linspace(.1, 10, 100)
-
-            mag, sus = model.matchMagnetization(  temps = temps,\
-             n = 1000, burninSamples = 0)
+            temps = linspace(0, 10, 100)
+            print(model.magSide)
+#            model.magSide = 'neg'
+            mag, sus = model.matchMagnetization(temps = temps,\
+             n = 10000)
 
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
@@ -126,7 +128,8 @@ if __name__ == '__main__':
             tmp = dict(temps = temps, \
             temperatures = temperatures, magRange = magRange, mag = mag)
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
-
+            show()
+            assert 0 
 
         for t in temperatures:
             print(f'{time()} Setting {t}')

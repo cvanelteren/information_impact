@@ -123,6 +123,13 @@ cpdef dict monteCarlo(\
                Model model, dict snapshots,
                int deltas = 10,  int repeats = 11,
                ):
+    """
+    Monte carlo sampling of the snapshots
+    ISSUES:
+        currently have to enforce the gil in order to not overwrite
+        the model states. Best would be to copy the extensions. However,
+        I dunno how to properly reference them in arrays
+    """
 
     cdef float past = time.process_time()
     # pre-declaration
@@ -148,42 +155,39 @@ cpdef dict monteCarlo(\
     cdef int tid = -1
     # cdef list models = [copy.deepcopy(prototype) for _  in range(mp.cpu_count())]
     # cdef Model model
-    for n in prange(N, nogil = True ):
-        # tid   = threadid()
-        # model = models[tid]
-        for k in range(repeats):
-            for node in range(model._nNodes):
-                model._states[node] = s[n][node]
-                model._nudges[node] = copyNudge[node]
-            # reset simulation
-            reset   = True
-
-            for delta in range(deltas + 1):
-                # bin data
-                for node in range(model._nNodes):
-                    for statei in range(model._nStates):
-                        idx = (delta +  1) * (node + 1) * (statei + 1) + (n + 1)
-                        if model._states[node] == model.agentStates[statei]:
-                            out[n, delta, node, statei] += 1 / Z
-                # update
-                # print(counter, sc, r.base.size, out.base.size)
-                jdx  = (delta +  1) * (node + 1) * (statei + 1) + (n + 1) * (k + 1)
-                # printf('%d ', jdx)
-                model._updateState(r[jdx])
-                # turn-off
-                if reset:
-                    if model.__nudgeType == 'pulse' or \
-                    model.__nudgeType    == 'constant' and delta >= half:
-
-                        with gil:
-                            if np.sum(copyNudge) > 0:
-                                print(np.asarray(copyNudge), model.nudges.base)
-                        model._nudges[:] = 0
-                        reset            = False
-        # pbar.update(1)
-        with gil:
-            pbar.update(1)
-            conditional[kdxs[n]] = out.base[n]
+    with nogil, parallel():
+        # tid = threadid()
+        # printf('%d ', tid)
+        for n in prange(N, schedule = 'dynamic'):
+            # tid   = threadid()
+            # model = models[tid]
+            with gil: # TODO: have a fix for this...
+                for k in range(repeats):
+                    for node in range(model._nNodes):
+                        model._states[node] = s[n][node]
+                        model._nudges[node] = copyNudge[node]
+                    # reset simulation
+                    reset   = True
+                    for delta in range(deltas + 1):
+                        # bin data
+                        for node in range(model._nNodes):
+                            for statei in range(model._nStates):
+                                idx = (delta +  1) * (node + 1) * (statei + 1) + (n + 1)
+                                if model._states[node] == model.agentStates[statei]:
+                                    out[n, delta, node, statei] += 1 / Z
+                        # update
+                        # print(counter, sc, r.base.size, out.base.size)
+                        jdx  = (delta +  1) * (node + 1) * (statei + 1) + (n + 1) * (k + 1)
+                        # printf('%d ', jdx)
+                        model._updateState(r[jdx])
+                        # turn-off
+                        if reset:
+                            if model.__nudgeType == 'pulse' or \
+                            model.__nudgeType    == 'constant' and delta >= half:
+                                model._nudges[:] = 0
+                                reset            = False
+                pbar.update(1)
+                conditional[kdxs[n]] = out.base[n]
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional

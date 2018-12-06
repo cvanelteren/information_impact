@@ -36,6 +36,19 @@ cdef extern from "limits.h":
     int INT_MAX
     int RAND_MAX
 
+from RNG cimport RNG
+
+
+cdef extern from "mt19937.h" namespace "mtrandom":
+    unsigned int N
+    cdef cppclass MT_RNG:
+        MT_RNG()
+        MT_RNG(unsigned long s)
+        MT_RNG(unsigned long init_key[], int key_length)
+        void init_genrand(unsigned long s)
+        unsigned long genrand_int32()
+        double genrand_real1()
+        double operator()()
 # cdef extern from "SFMT.h":
 #     void init_gen_rand(int seed)
 #     double genran_res53()
@@ -48,7 +61,7 @@ cdef extern from "stdlib.h":
 from models cimport Model
 cdef class Ising(Model)
 
-
+# cdef RNG sampler = RNG(time.time())
 # class implementation
 # @cython.final # enforce extension type
 # @cython.auto_pickle(True) # for storage of the model.. technically not needed
@@ -205,7 +218,7 @@ cdef class Ising(Model):
             p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
 
             if rand() / float(RAND_MAX) < p: # fast but not random
-            # if self.sampler.sample() < p: # best option
+            # if sampler.rand() < p: # best option
             # if np.random.rand()  < p: # slow but easy
                 newstates[node] = -states[node]
 
@@ -256,6 +269,7 @@ cdef class Ising(Model):
         """
         cdef double tcopy   = self.t
         cdef results = np.zeros((2, temps.shape[0]))
+        self.reset()
         for idx, t in enumerate(temps):
             self.t          = t
             jdx             = self.magSideOptions[self.magSide]
@@ -264,5 +278,6 @@ cdef class Ising(Model):
             tmp             = self.simulate(n)
             results[0, idx] = abs(tmp.mean())
             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
+        print(results[0])
         self.t = tcopy
         return results
