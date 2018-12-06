@@ -155,7 +155,7 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states) :
+                       long[::1] states) nogil :
         """
         input:
             :nsyncode: member of nodeIDs
@@ -182,7 +182,7 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) :
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -198,17 +198,17 @@ cdef class Ising(Model):
         for n in range(length):
             node      = nodesToUpdate[n]
             energy    = self.energy(node, states)
-            p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
-            # p = 1 / ( 1. + np.exp(-self.beta * 2. * energy) )
+            # p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
+            p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
 
             if rand() / float(RAND_MAX) < p: # fast but not random
             # if self.sampler.sample() < p: # best option
             # if np.random.rand()  < p: # slow but easy
                 newstates[node] = -states[node]
 
-        cdef double mu = 0 # MEAN
-        cdef long NEG  = -1 # see the self.magSideOptions
-        cdef long POS  = 1
+        cdef double mu   = 0 # MEAN
+        cdef long   NEG  = -1 # see the self.magSideOptions
+        cdef long   POS  = 1
         # printf('%d ', mu)
         # compute mean
         for node in range(self._nNodes):

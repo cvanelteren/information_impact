@@ -78,10 +78,7 @@ cpdef vector[long] decodeState(int dec, int N):
             buffer[i] = 1
         i += 1
         dec = dec // 2
-
     return buffer
-
-
 
 
 import time
@@ -109,13 +106,13 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         if i % step == 0:
             idx             = encodeState(model._states)
             snapshots[idx] += 1 / Z
-            # snapshots[idx] = snapshots.get(idx, 0) + 1 / Z
             pbar.update(1)
         model._updateState(r[i])
     pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f'Delta = {time.process_time() - past}')
     return snapshots
+
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 @cython.nonecheck(False)
@@ -126,28 +123,97 @@ cpdef dict monteCarlo(\
                ):
 
     cdef float past = time.process_time()
-     # store nudges already there
-    cdef list models = []
-    cdef dict params
-    import copy
-    for startidx, val in snapshots.items():
-        params = dict(\
-                    model      = copy.copy(model),\
-                    repeats    = repeats,\
-                    deltas     = deltas,\
-                    idx        = startidx,\
-                    startState = np.asarray(decodeState(startidx, model._nNodes)),\
-                    )
-        models.append(Worker(**params))
-    # cdef np.ndarray s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
-    cdef dict conditional
-    with mp.Pool(mp.cpu_count()) as p:
-        conditional = {kdx : res for kdx, res in zip(snapshots, p.map(f, models))}
-    print(conditional)
+    # pre-declaration
+    cdef double Z            = <double> repeats
+    cdef double[:] copyNudge = model._nudges.copy()
+    cdef bint reset          = True
+    # loop stuff
+    cdef long[:, ::1]  s     = np.array([decodeState(i, model._nNodes) for i in snapshots])
+    cdef int N = s.shape[0]
+    # cdef double[::1] out     = np.zeros(N * (deltas + 1) * model._nNodes * model._nStates)
+    cdef double[:, :, :, ::1] out     = np.zeros((N , (deltas + 1),  model._nNodes,  model._nStates))
+    cdef long[:, ::1] r      = model.sampleNodes(N * repeats * (deltas + 1) )
+    cdef int k, delta, node, statei, counter, sc,  half = deltas // 2, n
+    # pbar = tqdm(total = repeats)
+    counter = 0
+    sc      = 0
+
+    cdef list kdxs    = list(snapshots.keys())
+    cdef dict conditional = {}
+    cdef long[::1] startState
+    pbar = tqdm(total = N )
+    cdef int idx, jdx
+    for n in prange(N, nogil = True ):
+        for k in range(repeats):
+            for node in range(model._nNodes):
+                model._states[node] = s[n][node]
+                model._nudges[node] = copyNudge[node]
+            # reset simulation
+            reset   = True
+
+            for delta in range(deltas + 1):
+                # bin data
+                for node in range(model._nNodes):
+                    for statei in range(model._nStates):
+                        idx = (delta +  1) * (node + 1) * (statei + 1) + (n + 1)
+                        if model._states[node] == model.agentStates[statei]:
+                            out[n, delta, node, statei] += 1 / Z
+                # update
+                # print(counter, sc, r.base.size, out.base.size)
+                jdx  = (delta +  1) * (node + 1) * (statei + 1) + (n + 1) * (k + 1)
+                # printf('%d ', jdx)
+                model._updateState(r[jdx])
+                # turn-off
+                if reset:
+                    if model.__nudgeType == 'pulse' or \
+                    model.__nudgeType    == 'constant' and delta >= half:
+                        model._nudges[:] = 0
+                        reset            = False
+        # pbar.update(1)
+        with gil:
+            pbar.update(1)
+            conditional[kdxs[n]] = out.base[n]
+    pbar.close()
     print(f"Delta = {time.process_time() - past}")
-    return {}
-def f(x):
+    return conditional
+# @cython.boundscheck(False) # compiler directive
+# @cython.wraparound(False) # compiler directive
+# @cython.nonecheck(False)
+# @cython.cdivision(True)
+# cpdef dict monteCarlo(\
+#                Model model, dict snapshots,
+#                int deltas = 10,  int repeats = 11,
+#                ):
+#
+#     cdef float past = time.process_time()
+#      # store nudges already there
+#     cdef list models = []
+#     cdef dict params
+#     import copy
+#     for startidx, val in snapshots.items():
+#         params = dict(\
+#                     model      = model,\
+#                     repeats    = repeats,\
+#                     deltas     = deltas,\
+#                     idx        = startidx,\
+#                     startState = np.asarray(decodeState(startidx, model._nNodes)),\
+#                     )
+#
+#         models.append(Worker(**params))
+#     # cdef np.ndarray s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
+#     cdef dict conditional
+#     with mp.Pool(4) as p:
+#         conditional = {kdx : res for kdx, res in zip(snapshots, p.imap(f, tqdm(models)))}
+#     print(conditional)
+#     print(f"Delta = {time.process_time() - past}")
+#     return conditional
+
+
+cpdef np.ndarray f(Worker x):
+    # print('id', id(x))
     return x.parallWrap()
+
+
 @cython.auto_pickle(True)
 cdef class Worker:
     cdef int deltas
@@ -155,53 +221,59 @@ cdef class Worker:
     cdef int repeats
     cdef np.ndarray startState
     cdef Model model
-    cdef dict __dict__
+    # cdef dict __dict__
     def __init__(self, *args, **kwargs):
+        # for k, v in kwargs.items():
+        #     setattr(self, k, v)
 
-        # print('in worker', kwargs)
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+        self.deltas     = kwargs['deltas']
+        self.model      = kwargs['model']
+        self.repeats    = kwargs['repeats']
+        self.startState = kwargs['startState']
+        self.idx        = kwargs['idx']
 
-    cpdef parallWrap(self):
+    cpdef np.ndarray parallWrap(self):
         cdef long[::1] startState = self.startState
         # start unpacking
         cdef int deltas           = self.deltas
         cdef int repeats          = self.repeats
         # cdef long[::1] startState = startState
         cdef Model model          = self.model
-
         # pre-declaration
         cdef double[::1] out = np.zeros((deltas + 1) * model._nNodes * model._nStates)
         cdef double Z              = <double> repeats
-        print(' here')
-        print(model._nudges)
         cdef double[:] copyNudge   = model._nudges.copy()
-        print('starting loops')
         cdef bint reset            = True
         # loop stuff
-        cdef long[:, ::1] r = model.sampleNodes(repeats * (deltas + 1))
-        cdef int k, delta, node, statei, counter = 0, half = deltas // 2
+        cdef long[:, ::1] r
+        cdef int k, delta, node, statei, counter, half = deltas // 2
+        # pbar = tqdm(total = repeats)
         for k in range(repeats):
             for node in range(model._nNodes):
                 model._states[node] = startState[node]
                 model._nudges[node] = copyNudge[node]
             # reset simulation
-            reset = True
+            reset   = True
+            counter = 0
+            r       = model.sampleNodes(repeats * (deltas + 1))
             for delta in range(deltas + 1):
                 # bin data
                 for node in range(model._nNodes):
                     for statei in range(model._nStates):
                         if model._states[node] == model.agentStates[statei]:
                             out[counter] += 1 / Z
+                        counter += 1
                 # update
                 model._updateState(r[counter])
-                counter += 1
+
                 # turn-off
                 if reset:
-                    if model._nudgeMode == 'pulse' or \
-                    model._nudgeMode == 'constant' and delta >= half:
+                    if model.__nudgeType == 'pulse' or \
+                    model.__nudgeType    == 'constant' and delta >= half:
                         model._nudges[:] = 0
                         reset            = False
+            # pbar.update(1)
+        # pbar.close()
         return out.base.reshape((deltas + 1, model._nNodes, model._nStates))
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive

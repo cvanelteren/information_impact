@@ -10,14 +10,14 @@ cdef struct Connection:
 cdef class Model:
     cdef:
         # public
-        np.ndarray _states
-        np.ndarray _newstates
-        np.ndarray  _nodeids
-        np.ndarray  agentStates
-        # long[::1] _states
-        # long[::1] _newstates # alias
-        # long[::1]  _nodeids
-        # long[::1]  agentStates
+        # np.ndarray _states
+        # np.ndarray _newstates
+        # np.ndarray  _nodeids
+        # np.ndarray  agentStates
+        long[::1] _states
+        long[::1] _newstates # alias
+        long[::1]  _nodeids
+        long[::1]  agentStates
         # np.ndarray _states
         # np.ndarray _newstates # alias
         # np.ndarray  _nodeids
@@ -26,8 +26,8 @@ cdef class Model:
         int _nNodes
         str _updateType
         str __nudgeType
-        # double[::1] _nudges
-        np.ndarray _nudges
+        double[::1] _nudges
+        # np.ndarray _nudges
 
         Sampler sampler
 
@@ -43,10 +43,10 @@ cdef class Model:
                     list agentStates)
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate)
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
 
 
-    cdef  long[:, ::1] sampleNodes(self, long Samples)
+    cdef  long[:, ::1] sampleNodes(self, long Samples) nogil
 
 
     cpdef simulate(self, long long int  samples)

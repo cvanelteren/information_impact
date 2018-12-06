@@ -19,9 +19,10 @@ for file in os.listdir(os.getcwd()):
                                              '-march=native',\
                                              '-std=c++11',\
                                             '-fno-wrapv',\
-                                            ],\
+                                            '-g'],\
                        extra_link_args = ['-fopenmp',\
                                           "-std=c++11",
+                                          # '-g'\
                                           ],\
         )
         exts.append(ex)
@@ -33,7 +34,7 @@ ext_modules = cythonize(exts,\
             language_level      = 3,\
             compiler_directives = dict(\
                                         # fast_gil = True,\
-                                       binding  = True)\
+                                       binding  = True),\
             # gdb_debug=True,
             )\
 )

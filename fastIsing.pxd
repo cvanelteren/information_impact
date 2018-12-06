@@ -17,20 +17,20 @@ cdef class Ising(Model):
     cdef:
         # public
         long _magSide   # which side to sample on
-        np.ndarray _H # external magnetic field
-        # double[::1]  _H # external magnetic field
+        # np.ndarray _H # external magnetic field
+        double[::1]  _H # external magnetic field
         double beta
 
 
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states)
+                       long[::1] states) nogil
 
 
     # cdef _updateState(self, long [:] nodesToUpdate)
     # c binding
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
     # # python wrapper
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 
