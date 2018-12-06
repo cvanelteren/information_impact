@@ -52,6 +52,8 @@ y  = infcy.monteCarlo(m, xx, deltas, repeats)
     # print(k)
 px, mi= infcy.mutualInformation(y, deltas, xx, m )
 
+
+
 # %%
 
 d = nansum(log2(px ) * px, -1)

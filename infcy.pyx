@@ -136,26 +136,32 @@ cpdef dict monteCarlo(\
                     deltas     = deltas,\
                     idx        = startidx
                     )
-        models.append(Worker(params))
+        models.append(Worker(**params))
     cdef long[:, ::1] s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
-    print('Starting loops')
     cdef dict conditional
-    # with mp.Pool(mp.cpu_count()) as p:
-        # conditional = {kdx : res for kdx, res in zip(snapshots, p.map(models, tqdm(s)))}
-    # print(conditional)
+    with mp.Pool(mp.cpu_count()) as p:
+        conditional = {kdx : res for kdx, res in zip(snapshots, p.map(models, tqdm(s)))}
+    print(conditional)
     print(f"Delta = {time.process_time() - past}")
     return {}
 
-class Worker:
+@cython.auto_pickle(True)
+cdef class Worker:
+    cdef int deltas
+    cdef int idx
+    cdef int repeats
+    cdef Model model
+    cdef dict __dict__
     def __init__(self, *args, **kwargs):
+
+        # print('in worker', kwargs)
         for k, v in kwargs.items():
-            print(k)
-            setattr(self, v, k)
+            setattr(self, k, v)
+        print(self.__dict__)
+    def __call__(self, startState):
+        return self.parallWrap(startState)
 
-    def __call__(self):
-        return self.parallWrap()
-
-    def parallWrap(self, startState):
+    cpdef parallWrap(self, long[::1] startState):
         # start unpacking
         cdef int deltas           = self.deltas
         cdef int repeats          = self.repeats
@@ -171,6 +177,7 @@ class Worker:
         # loop stuff
         cdef long[:, ::1] r = self.sampleNodes(repeats * (deltas + 1))
         cdef int k, delta, node, statei, counter = 0, half = deltas // 2
+        print('starting loops')
         for k in range(repeats):
             for node in range(model._nNodes):
                 model._states[node] = startState[node]
@@ -203,7 +210,6 @@ cpdef mutualInformation(dict conditional, int deltas, \
     '''
     cdef  px = np.zeros((deltas + 1, model._nNodes, model._nStates))
     cdef  H     = np.zeros((deltas + 1, model._nNodes))
-    print(' > ' ,snapshots.keys())
     for key, p in conditional.items():
         # p    = np.asarray(p)
         H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]

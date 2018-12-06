@@ -18,7 +18,8 @@ for file in os.listdir(os.getcwd()):
                                              '-ffast-math','-Ofast', \
                                              '-march=native',\
                                              '-std=c++11',\
-                                            '-fno-wrapv'],\
+                                            '-fno-wrapv',\
+                                            ],\
                        extra_link_args = ['-fopenmp',\
                                           "-std=c++11",
                                           ],\
@@ -28,10 +29,11 @@ for file in os.listdir(os.getcwd()):
 # compile
 setup(\
 ext_modules = cythonize(exts,\
-            annotate = True,\
-            language_level = 3,\
-            # compiler_directives = dict(fast_gil = True,\
-            #                            binding  = True)\
-            gdb_debug=True,
+            annotate            = True,\
+            language_level      = 3,\
+            compiler_directives = dict(\
+                                        # fast_gil = True,\
+                                       binding  = True)\
+            # gdb_debug=True,
             )\
 )
