@@ -1304,7 +1304,7 @@ typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
 struct __pyx_t_6models_Connection;
 
-/* "models.pxd":22
+/* "models.pxd":10
  * 
  * 
  * cdef struct Connection:             # <<<<<<<<<<<<<<
@@ -1415,7 +1415,7 @@ struct __pyx_obj_3RNG_RNG {
 };
 
 
-/* "models.pxd":28
+/* "models.pxd":16
  * 
  * 
  * cdef class Model:             # <<<<<<<<<<<<<<
@@ -1580,7 +1580,7 @@ struct __pyx_vtabstruct_3RNG_RNG {
 static struct __pyx_vtabstruct_3RNG_RNG *__pyx_vtabptr_3RNG_RNG;
 
 
-/* "models.pxd":28
+/* "models.pxd":16
  * 
  * 
  * cdef class Model:             # <<<<<<<<<<<<<<
@@ -24860,11 +24860,11 @@ static int __Pyx_modinit_type_import_code(void) {
    if (!__pyx_ptype_3RNG_RNG) __PYX_ERR(5, 13, __pyx_L1_error)
   __pyx_vtabptr_3RNG_RNG = (struct __pyx_vtabstruct_3RNG_RNG*)__Pyx_GetVtable(__pyx_ptype_3RNG_RNG->tp_dict); if (unlikely(!__pyx_vtabptr_3RNG_RNG)) __PYX_ERR(5, 13, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyImport_ImportModule("models"); if (unlikely(!__pyx_t_1)) __PYX_ERR(6, 28, __pyx_L1_error)
+  __pyx_t_1 = PyImport_ImportModule("models"); if (unlikely(!__pyx_t_1)) __PYX_ERR(6, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_ptype_6models_Model = __Pyx_ImportType(__pyx_t_1, "models", "Model", sizeof(struct __pyx_obj_6models_Model), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_6models_Model) __PYX_ERR(6, 28, __pyx_L1_error)
-  __pyx_vtabptr_6models_Model = (struct __pyx_vtabstruct_6models_Model*)__Pyx_GetVtable(__pyx_ptype_6models_Model->tp_dict); if (unlikely(!__pyx_vtabptr_6models_Model)) __PYX_ERR(6, 28, __pyx_L1_error)
+   if (!__pyx_ptype_6models_Model) __PYX_ERR(6, 16, __pyx_L1_error)
+  __pyx_vtabptr_6models_Model = (struct __pyx_vtabstruct_6models_Model*)__Pyx_GetVtable(__pyx_ptype_6models_Model->tp_dict); if (unlikely(!__pyx_vtabptr_6models_Model)) __PYX_ERR(6, 16, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = PyImport_ImportModule("fastIsing"); if (unlikely(!__pyx_t_1)) __PYX_ERR(7, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);

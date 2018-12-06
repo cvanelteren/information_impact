@@ -39,25 +39,6 @@ cdef extern from "limits.h":
 from RNG cimport RNG
 
 
-cdef extern from "mt19937.h" namespace "mtrandom":
-    unsigned int N
-    cdef cppclass MT_RNG:
-        MT_RNG()
-        MT_RNG(unsigned long s)
-        MT_RNG(unsigned long init_key[], int key_length)
-        void init_genrand(unsigned long s)
-        unsigned long genrand_int32()
-        double genrand_real1()
-        double operator()()
-# cdef extern from "SFMT.h":
-#     void init_gen_rand(int seed)
-#     double genran_res53()
-
-cdef extern from "stdlib.h":
-    double drand48()
-    void srand48(long int seedval)
-
-
 from models cimport Model
 cdef class Ising(Model)
 

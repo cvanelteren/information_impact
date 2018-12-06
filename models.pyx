@@ -32,11 +32,8 @@ from libcpp.unordered_map cimport unordered_map
 cdef extern from "limits.h":
     int INT_MAX
     int RAND_MAX
-cdef mt19937 gen = mt19937(5)
-cdef uniform_real_distribution[double] dist = uniform_real_distribution[double](0.0,1.0)
-cdef double rand = dist(gen)
 
-from cy_random import  uniform_rv
+
 cdef class Model
 # from sampler cimport Sampler # mersenne sampler
 # @cython.final
