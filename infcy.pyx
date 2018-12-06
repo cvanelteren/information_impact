@@ -282,8 +282,8 @@ cpdef mutualInformation(dict conditional, int deltas, \
     '''
     Returns the node distribution and the mutual information decay
     '''
-    cdef  px = np.zeros((deltas + 1, model._nNodes, model._nStates))
-    cdef  H     = np.zeros((deltas + 1, model._nNodes))
+    cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
+    cdef  np.ndarray H     = np.zeros((deltas + 1, model._nNodes))
     for key, p in conditional.items():
         # p    = np.asarray(p)
         H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]

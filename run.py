@@ -157,10 +157,10 @@ if __name__ == '__main__':
                 conditional, deltas, snapshots, model)
                 # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
                 fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                sr = IO.SimulationResult(mi = mi.base,
+                sr = IO.SimulationResult(mi = mi,
                                         conditional = conditional,
-                                        model = model,\
-                                        px = px.base, snapshots = snapshots)
+                                        graph = model.graph,\
+                                        px = px, snapshots = snapshots)
                 IO.savePickle(fileName, sr)
 
                 pulses = {node : pulseSize for node in model.graph.nodes()}
@@ -174,8 +174,8 @@ if __name__ == '__main__':
                     px, mi = infcy.mutualInformation(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                     fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                    sr = IO.SimulationResult(mi = mi.base,
+                    sr = IO.SimulationResult(mi = mi,
                                             conditional = conditional,
-                                            model = model,\
-                                            px = px.base, snapshots = snapshots)
+                                            graph = model.graph,\
+                                            px = px, snapshots = snapshots)
                     IO.savePickle(fileName, sr)

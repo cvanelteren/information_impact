@@ -27,7 +27,7 @@ def extractData(dataDir, keys = None):
                      os.listdir(dataDir), \
                      key = lambda x: os.path.getctime(dataDir + x)\
                      )
-    
+
     for file in filesDir:
         if file.endswith('.pickle') and 'mags' not in file:
             # look for t=
@@ -132,7 +132,8 @@ class SimulationResult:
     px          : dict
     snapshots   : dict
     mi          : array
-    model       : object
+    # model       : object
+    graph       : object
     # TODO: add these?
     # temperature : int
     # pulse       : dict

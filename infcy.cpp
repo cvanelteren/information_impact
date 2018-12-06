@@ -6591,8 +6591,8 @@ static PyObject *__pyx_pf_5infcy_6Worker_6__setstate_cython__(struct __pyx_obj_5
 
 static PyObject *__pyx_pw_5infcy_13mutualInformation(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
 static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional, int __pyx_v_deltas, PyObject *__pyx_v_snapshots, struct __pyx_obj_6models_Model *__pyx_v_model, CYTHON_UNUSED int __pyx_skip_dispatch) {
-  PyObject *__pyx_v_px = 0;
-  PyObject *__pyx_v_H = 0;
+  PyArrayObject *__pyx_v_px = 0;
+  PyArrayObject *__pyx_v_H = 0;
   PyObject *__pyx_v_key = NULL;
   PyObject *__pyx_v_p = NULL;
   PyObject *__pyx_r = NULL;
@@ -6612,8 +6612,8 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
   /* "infcy.pyx":285
  *     Returns the node distribution and the mutual information decay
  *     '''
- *     cdef  px = np.zeros((deltas + 1, model._nNodes, model._nStates))             # <<<<<<<<<<<<<<
- *     cdef  H     = np.zeros((deltas + 1, model._nNodes))
+ *     cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))             # <<<<<<<<<<<<<<
+ *     cdef  np.ndarray H     = np.zeros((deltas + 1, model._nNodes))
  *     for key, p in conditional.items():
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 285, __pyx_L1_error)
@@ -6654,13 +6654,14 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
   if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 285, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_v_px = __pyx_t_1;
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 285, __pyx_L1_error)
+  __pyx_v_px = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
   /* "infcy.pyx":286
  *     '''
- *     cdef  px = np.zeros((deltas + 1, model._nNodes, model._nStates))
- *     cdef  H     = np.zeros((deltas + 1, model._nNodes))             # <<<<<<<<<<<<<<
+ *     cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
+ *     cdef  np.ndarray H     = np.zeros((deltas + 1, model._nNodes))             # <<<<<<<<<<<<<<
  *     for key, p in conditional.items():
  *         # p    = np.asarray(p)
  */
@@ -6697,12 +6698,13 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
   if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 286, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_v_H = __pyx_t_1;
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 286, __pyx_L1_error)
+  __pyx_v_H = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
   /* "infcy.pyx":287
- *     cdef  px = np.zeros((deltas + 1, model._nNodes, model._nStates))
- *     cdef  H     = np.zeros((deltas + 1, model._nNodes))
+ *     cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
+ *     cdef  np.ndarray H     = np.zeros((deltas + 1, model._nNodes))
  *     for key, p in conditional.items():             # <<<<<<<<<<<<<<
  *         # p    = np.asarray(p)
  *         H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]
@@ -6820,10 +6822,11 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyNumber_InPlaceSubtract(__pyx_v_H, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 289, __pyx_L1_error)
+    __pyx_t_5 = PyNumber_InPlaceSubtract(((PyObject *)__pyx_v_H), __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 289, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF_SET(__pyx_v_H, __pyx_t_5);
+    if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 289, __pyx_L1_error)
+    __Pyx_DECREF_SET(__pyx_v_H, ((PyArrayObject *)__pyx_t_5));
     __pyx_t_5 = 0;
 
     /* "infcy.pyx":290
@@ -6842,10 +6845,11 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
     __pyx_t_3 = PyNumber_Multiply(__pyx_v_p, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 290, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_v_px, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 290, __pyx_L1_error)
+    __pyx_t_5 = PyNumber_InPlaceAdd(((PyObject *)__pyx_v_px), __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 290, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF_SET(__pyx_v_px, __pyx_t_5);
+    if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 290, __pyx_L1_error)
+    __Pyx_DECREF_SET(__pyx_v_px, ((PyArrayObject *)__pyx_t_5));
     __pyx_t_5 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -6876,12 +6880,12 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
       __Pyx_DECREF_SET(__pyx_t_2, function);
     }
   }
-  __pyx_t_5 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, __pyx_v_px) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_v_px);
+  __pyx_t_5 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_4, ((PyObject *)__pyx_v_px)) : __Pyx_PyObject_CallOneArg(__pyx_t_2, ((PyObject *)__pyx_v_px));
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 291, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyNumber_Multiply(__pyx_v_px, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Multiply(((PyObject *)__pyx_v_px), __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 291, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_t_5 = NULL;
@@ -6931,10 +6935,11 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = PyNumber_InPlaceAdd(__pyx_v_H, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 291, __pyx_L1_error)
+  __pyx_t_3 = PyNumber_InPlaceAdd(((PyObject *)__pyx_v_H), __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 291, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF_SET(__pyx_v_H, __pyx_t_3);
+  if (!(likely(((__pyx_t_3) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_3, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 291, __pyx_L1_error)
+  __Pyx_DECREF_SET(__pyx_v_H, ((PyArrayObject *)__pyx_t_3));
   __pyx_t_3 = 0;
 
   /* "infcy.pyx":292
@@ -6943,13 +6948,13 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
  *     return px, -H             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_3 = PyNumber_Negative(__pyx_v_H); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 292, __pyx_L1_error)
+  __pyx_t_3 = PyNumber_Negative(((PyObject *)__pyx_v_H)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 292, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF(__pyx_v_px);
-  __Pyx_GIVEREF(__pyx_v_px);
-  PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_px);
+  __Pyx_INCREF(((PyObject *)__pyx_v_px));
+  __Pyx_GIVEREF(((PyObject *)__pyx_v_px));
+  PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_v_px));
   __Pyx_GIVEREF(__pyx_t_3);
   PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_t_3);
   __pyx_t_3 = 0;
@@ -6976,8 +6981,8 @@ static PyObject *__pyx_f_5infcy_mutualInformation(PyObject *__pyx_v_conditional,
   __Pyx_AddTraceback("infcy.mutualInformation", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_v_px);
-  __Pyx_XDECREF(__pyx_v_H);
+  __Pyx_XDECREF((PyObject *)__pyx_v_px);
+  __Pyx_XDECREF((PyObject *)__pyx_v_H);
   __Pyx_XDECREF(__pyx_v_key);
   __Pyx_XDECREF(__pyx_v_p);
   __Pyx_XGIVEREF(__pyx_r);
