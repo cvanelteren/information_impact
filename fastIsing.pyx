@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # distutils: language=c++
 # -*- coding: utf-8 -*-
+# __author__ = 'Casper van Elteren'
 """
 Created on Tue Feb  6 09:36:17 2018
 

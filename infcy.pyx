@@ -48,7 +48,11 @@ checkDistribution() # print it only once
 #     return out
 # def encodeState(state, nStates):
 #     return int(''.join(format(1 if i == 1 else 0, f'0{nStates - 1}b') for i in state), 2)
-cdef int encodeState(long[::1] state):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.nonecheck(False)
+@cython.cdivision(True)
+cpdef int encodeState(long[::1] state):
 
     cdef int binNum = 1
     cdef int N = state.shape[0]
@@ -60,7 +64,11 @@ cdef int encodeState(long[::1] state):
         binNum *= 2
     return dec
 
-cdef vector[long] decodeState(long long int dec, int N):
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.nonecheck(False)
+@cython.cdivision(True)
+cpdef vector[long] decodeState(int dec, int N):
     cdef:
         int i = 0
         # long[::1] buffer = np.zeros(N, dtype = int) - 1
@@ -72,17 +80,7 @@ cdef vector[long] decodeState(long long int dec, int N):
         dec = dec // 2
 
     return buffer
-# cdef decodeState(int num):
-#     # cdef long[::1] out = np.ones(10) * -1
-#     cdef vector[long] out
-#     while num > 0:
-#         if num % 2:
-#             out.push_back(1)
-#         else:
-#             out.push_back(-1)
-#         num = num // 2
-#         # printf('%d', num)
-#     return out
+
 
 
 
@@ -90,6 +88,7 @@ import time
 import faulthandler
 faulthandler.enable()
 from cython.operator cimport dereference as deref, preincrement as pre
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -100,17 +99,16 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     cdef unordered_map[int, double] snapshots
     # cdef dict snapshots = {}
     cdef int i
-    cdef long long int N = nSamples * step
+    cdef int N = nSamples * step
     cdef long[:, ::1] r = model.sampleNodes(N )
     cdef double Z = <double> nSamples
-    cdef long long int idx
-    cdef long* ptr
+    cdef int idx
     cdef double past = time.process_time()
     pbar = tqdm(total = nSamples)
     for i in range(N):
         if i % step == 0:
             idx             = encodeState(model._states)
-            snapshots[idx] += 1/Z
+            snapshots[idx] += 1 / Z
             # snapshots[idx] = snapshots.get(idx, 0) + 1 / Z
             pbar.update(1)
         model._updateState(r[i])
@@ -127,25 +125,15 @@ cpdef dict monteCarlo(\
                int deltas = 10,  int repeats = 11,
                ):
     cdef dict conditional = {}
-    # cdef unordered_map[int, ]
+    # cdef unordered_map[int, double *] conditional
     cdef str nudgeMode = model.__nudgeType
     cdef double[:] copyNudge = model._nudges.copy() # store nudges already there
     # for k in range(repeats):
-
     cdef long[:, ::1] s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
     # print(np.unique(s, 1))
 
     # print(s.base)
     cdef int N = s.shape[0], n
-
-    cdef double[ :, :, :, ::1] out = np.zeros(\
-               (\
-                N, deltas + 1,\
-                 model._nNodes,\
-                  model._nStates,\
-                  ))
-    # pbar = tqdm(total = N)
-
     cdef long[:, ::1] r  # = model.sampleNodes(deltas + 1)
 
     # loop declarations
@@ -157,30 +145,37 @@ cpdef dict monteCarlo(\
     cdef long[::1] agentStates = model.agentStates
     cdef long  idx
     cdef int jdx
-    cdef long[::1] start = model._states
+    # cdef long[::1] start = model._states
     cdef int kdx
     pbar = tqdm(total = N)
     print('Starting loops')
     # TODO i hate cython for its for loops
+    # cdef double[:, :, :, ::1] out = np.zeros((N, deltas + 1, model._nNodes, model._nStates), dtype = float)
+    # cdef double[::1] out
 
+    # a = [np.zeros( (deltas + 1) * model._nNodes * model._nStates, dtype = float).copy() for i in range(N)]
+    # cdef double[::1] out
+    cdef counter
     for n in range(N):
         kdx = encodeState(s[n])
+        # printf('%p \n',&out[0])
+        out = np.zeros((deltas + 1) * model._nNodes * model._nStates)
+        # print(id(out))
         for k in range(repeats):
-            # r = model.sampleNodes(deltas + 1)
-            # model._nudges[:] = copyNudge
-            # model._states[:] = s[n, :]
             for node in range(model._nNodes):
                 model._states[node] = s[n, node]
                 model._nudges[node] = copyNudge[node]
             # reset simulation
             reset = True
-            r     = model.sampleNodes(deltas + 1)
+            r       = model.sampleNodes(deltas + 1)
+            counter = 0
             for delta in range(deltas + 1):
                 # bin data
                 for node in range(model._nNodes):
                     for statei in range(model._nStates):
                         if model._states[node] == agentStates[statei]:
-                            out[n, delta, node, statei] += 1 / Z
+                            out[counter] += 1 / Z
+                        counter += 1
                 # update
                 model._updateState(r[delta])
                 # turn-off
@@ -189,13 +184,33 @@ cpdef dict monteCarlo(\
                     nudgeMode == 'constant' and delta >= half:
 
                         model._nudges[:] = 0
-                        reset =  False
-            conditional[kdx] = out.base[n] # replace this with something that can hold the correct markers
-            pbar.update(1)
-
+                        reset            = False
+        conditional[kdx] = out.reshape((deltas + 1, model._nNodes, model._nStates)).copy()
+        # print(out.reshape((deltas + 1, model._nNodes, model._nStates)))
+        # conditional[kdx] = &out[0]# replace this with something that can hold the correct markers
+        pbar.update(1)
+    # cdef unordered_map[int, double*].iterator start = conditional.begin()
+    # cdef unordered_map[int, double*].iterator end   = conditional.end()
+    # cdef tmp = {}
+    # cdef shape =  (deltas + 1, model._nNodes, model._nStates)
+    # cdef double[::1] ar = np.zeros((deltas + 1) * model._nNodes * model._nStates, dtype = float)
+    # cdef double* ptr
+    # cdef int zz
+    # while start != end:
+    #     ptr = deref(start).second
+    #     zz = deref(start).first
+    #     for k in range(ar.shape[0]):
+    #         ar[k] = deref(ptr)
+    #         pre(ptr)
+    #     print(ar.base)
+    #     tmp[zz] = np.reshape(ar.base, shape)
+    #     pre(start)
+    # # print(np.reshape(ar.base, shape))
+    # print(np.all(tmp[zz] == out.base.reshape(shape)))
     pbar.close()
+    tmp = conditional
     # print(f"Delta = {time.process_time() - past}")
-    return conditional
+    return tmp
 # cdef parallWrap(idx)
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
@@ -204,12 +219,12 @@ cpdef mutualInformation(dict conditional, int deltas, \
     '''
     Returns the node distribution and the mutual information decay
     '''
-    cdef double[:,:, ::1] px = np.zeros((deltas + 1, model._nNodes, model._nStates))
-    cdef double[:, ::1] H  = np.zeros((deltas + 1, model._nNodes))
-    print(snapshots.keys())
+    cdef  px = np.zeros((deltas + 1, model._nNodes, model._nStates))
+    cdef  H     = np.zeros((deltas + 1, model._nNodes))
+    print(' > ' ,snapshots.keys())
     for key, p in conditional.items():
-        p    = np.asarray(p)
-        H   += np.multiply(np.nansum(np.multiply(p, np.log2(p)), -1), snapshots[key])
-        px  += np.multiply(p , snapshots[key]) # update node distribution
-    H -= np.nansum(np.multiply(px , np.log2(px)), -1)
-    return px, H
+        # p    = np.asarray(p)
+        H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]
+        px  += p  * snapshots[key] # update node distribution
+    H += np.nansum(px *  np.log2(px), -1)
+    return px, -H

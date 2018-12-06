@@ -9,7 +9,8 @@
             "-ffast-math",
             "-Ofast",
             "-march=native",
-            "-std=c++11"
+            "-std=c++11",
+            "-fno-wrapv"
         ],
         "extra_link_args": [
             "-fopenmp",

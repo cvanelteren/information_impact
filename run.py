@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# __author__ = 'Casper van Elteren'
 """
 Created on Mon Jun 11 09:06:57 2018
 

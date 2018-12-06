@@ -1,3 +1,4 @@
+# __author__ = 'Casper van Elteren'
 cimport numpy as np
 from libcpp.vector cimport vector
 from libcpp.map cimport map
@@ -12,15 +13,20 @@ cdef class Model:
         # np.ndarray _states
         # np.ndarray  _nodeids
         # np.ndarray  agentStates
-        np.ndarray _states
-        np.ndarray _newstates # alias
-        np.ndarray  _nodeids
-        np.ndarray  agentStates
+        long[::1] _states
+        long[::1] _newstates # alias
+        long[::1]  _nodeids
+        long[::1]  agentStates
+        # np.ndarray _states
+        # np.ndarray _newstates # alias
+        # np.ndarray  _nodeids
+        # np.ndarray  agentStates
         # public sparse.csr.csr_matrix adj
         int _nNodes
         str _updateType
         str __nudgeType
-        np.ndarray _nudges
+        double[::1] _nudges
+        # np.ndarray _nudges
 
         Sampler sampler
 

@@ -130,7 +130,7 @@ cdef class Model: # see pxd
             str delim = '\t'
             states = np.zeros(graph.number_of_nodes(), int, 'C')
             int counter
-            nudges = np.zeros(graph.number_of_nodes(), dtype = float)
+            double[::1] nudges = np.zeros(graph.number_of_nodes(), dtype = float)
             unordered_map[long, Connection] adj # see .pxd
 
 
@@ -252,8 +252,8 @@ cdef class Model: # see pxd
         cdef int sampleSize
         if self._updateType == 'single':
             sampleSize = 1
-        elif self._updateType == 'serial':
-            return self._nodeids
+        # elif self._updateType == 'serial':
+        #     return self._nodeids
         else:
             sampleSize = self._nNodes
 
