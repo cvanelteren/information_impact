@@ -10,8 +10,7 @@
             "-Ofast",
             "-march=native",
             "-std=c++11",
-            "-fno-wrapv",
-            "-g"
+            "-fno-wrapv"
         ],
         "extra_link_args": [
             "-fopenmp",
@@ -868,9 +867,9 @@ static const char *__pyx_f[] = {
 /*--- Type declarations ---*/
 struct __pyx_obj_7sampler_Sampler;
 
-/* "sampler.pxd":13
- * 
- * 
+/* "sampler.pxd":14
+ * import cython
+ * @cython.final
  * cdef class Sampler:             # <<<<<<<<<<<<<<
  *     cdef:
  *         mt19937 engine
@@ -886,16 +885,17 @@ struct __pyx_obj_7sampler_Sampler {
 
 /* "sampler.pyx":13
  *         T operator()(mt19937)
- * 
+ * @cython.final
  * cdef class Sampler:             # <<<<<<<<<<<<<<
  * 
- *     def __init__(self, int seed, float low, float high):
+ *     def __cinit__(self, int seed, float low, float high):
  */
 
 struct __pyx_vtabstruct_7sampler_Sampler {
   PyObject *(*sample)(struct __pyx_obj_7sampler_Sampler *);
 };
 static struct __pyx_vtabstruct_7sampler_Sampler *__pyx_vtabptr_7sampler_Sampler;
+static PyObject *__pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *);
 
 /* --- Runtime support code (head) --- */
 /* Refnanny.proto */
@@ -1034,13 +1034,6 @@ static void __Pyx_Raise(PyObject *type, PyObject *value, PyObject *tb, PyObject 
 static CYTHON_INLINE PyObject* __Pyx_PyObject_GenericGetAttrNoDict(PyObject* obj, PyObject* attr_name);
 #else
 #define __Pyx_PyObject_GenericGetAttrNoDict PyObject_GenericGetAttr
-#endif
-
-/* PyObject_GenericGetAttr.proto */
-#if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000
-static PyObject* __Pyx_PyObject_GenericGetAttr(PyObject* obj, PyObject* attr_name);
-#else
-#define __Pyx_PyObject_GenericGetAttr PyObject_GenericGetAttr
 #endif
 
 /* SetVTable.proto */
@@ -1239,7 +1232,7 @@ static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_Sampler___reduce_cython[] = "Sampler.__reduce_cython__";
 static const char __pyx_k_Sampler___setstate_cython[] = "Sampler.__setstate_cython__";
-static const char __pyx_k_self_engine_self_uniform_cannot[] = "self.engine,self.uniform cannot be converted to a Python object for pickling";
+static const char __pyx_k_no_default___reduce___due_to_non[] = "no default __reduce__ due to non-trivial __cinit__";
 static PyObject *__pyx_n_s_Sampler;
 static PyObject *__pyx_n_s_Sampler___reduce_cython;
 static PyObject *__pyx_n_s_Sampler___setstate_cython;
@@ -1250,6 +1243,7 @@ static PyObject *__pyx_n_s_high;
 static PyObject *__pyx_n_s_low;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_name;
+static PyObject *__pyx_kp_s_no_default___reduce___due_to_non;
 static PyObject *__pyx_n_s_pyx_state;
 static PyObject *__pyx_n_s_pyx_vtable;
 static PyObject *__pyx_n_s_reduce;
@@ -1258,12 +1252,11 @@ static PyObject *__pyx_n_s_reduce_ex;
 static PyObject *__pyx_n_s_sampler;
 static PyObject *__pyx_n_s_seed;
 static PyObject *__pyx_n_s_self;
-static PyObject *__pyx_kp_s_self_engine_self_uniform_cannot;
 static PyObject *__pyx_n_s_setstate;
 static PyObject *__pyx_n_s_setstate_cython;
 static PyObject *__pyx_kp_s_stringsource;
 static PyObject *__pyx_n_s_test;
-static int __pyx_pf_7sampler_7Sampler___init__(struct __pyx_obj_7sampler_Sampler *__pyx_v_self, int __pyx_v_seed, float __pyx_v_low, float __pyx_v_high); /* proto */
+static int __pyx_pf_7sampler_7Sampler___cinit__(struct __pyx_obj_7sampler_Sampler *__pyx_v_self, int __pyx_v_seed, float __pyx_v_low, float __pyx_v_high); /* proto */
 static PyObject *__pyx_pf_7sampler_7Sampler_2__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_7sampler_Sampler *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7sampler_7Sampler_4__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_7sampler_Sampler *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_tp_new_7sampler_Sampler(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -1278,20 +1271,20 @@ static PyObject *__pyx_codeobj__6;
 /* "sampler.pyx":15
  * cdef class Sampler:
  * 
- *     def __init__(self, int seed, float low, float high):             # <<<<<<<<<<<<<<
+ *     def __cinit__(self, int seed, float low, float high):             # <<<<<<<<<<<<<<
  *         self.engine  = mt19937(seed)
  *         self.uniform = uniform_real_distribution[float](low, high)
  */
 
 /* Python wrapper */
-static int __pyx_pw_7sampler_7Sampler_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_7sampler_7Sampler_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_7sampler_7Sampler_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_7sampler_7Sampler_1__cinit__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_seed;
   float __pyx_v_low;
   float __pyx_v_high;
   int __pyx_r;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("__init__ (wrapper)", 0);
+  __Pyx_RefNannySetupContext("__cinit__ (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_seed,&__pyx_n_s_low,&__pyx_n_s_high,0};
     PyObject* values[3] = {0,0,0};
@@ -1317,17 +1310,17 @@ static int __pyx_pw_7sampler_7Sampler_1__init__(PyObject *__pyx_v_self, PyObject
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_low)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 1); __PYX_ERR(1, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); __PYX_ERR(1, 15, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_high)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, 2); __PYX_ERR(1, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); __PYX_ERR(1, 15, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__init__") < 0)) __PYX_ERR(1, 15, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(1, 15, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -1342,28 +1335,28 @@ static int __pyx_pw_7sampler_7Sampler_1__init__(PyObject *__pyx_v_self, PyObject
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 15, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 15, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("sampler.Sampler.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sampler.Sampler.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7sampler_7Sampler___init__(((struct __pyx_obj_7sampler_Sampler *)__pyx_v_self), __pyx_v_seed, __pyx_v_low, __pyx_v_high);
+  __pyx_r = __pyx_pf_7sampler_7Sampler___cinit__(((struct __pyx_obj_7sampler_Sampler *)__pyx_v_self), __pyx_v_seed, __pyx_v_low, __pyx_v_high);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_7sampler_7Sampler___init__(struct __pyx_obj_7sampler_Sampler *__pyx_v_self, int __pyx_v_seed, float __pyx_v_low, float __pyx_v_high) {
+static int __pyx_pf_7sampler_7Sampler___cinit__(struct __pyx_obj_7sampler_Sampler *__pyx_v_self, int __pyx_v_seed, float __pyx_v_low, float __pyx_v_high) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   std::mt19937 __pyx_t_1;
-  __Pyx_RefNannySetupContext("__init__", 0);
+  __Pyx_RefNannySetupContext("__cinit__", 0);
 
   /* "sampler.pyx":16
  * 
- *     def __init__(self, int seed, float low, float high):
+ *     def __cinit__(self, int seed, float low, float high):
  *         self.engine  = mt19937(seed)             # <<<<<<<<<<<<<<
  *         self.uniform = uniform_real_distribution[float](low, high)
  * 
@@ -1377,7 +1370,7 @@ static int __pyx_pf_7sampler_7Sampler___init__(struct __pyx_obj_7sampler_Sampler
   __pyx_v_self->engine = __pyx_t_1;
 
   /* "sampler.pyx":17
- *     def __init__(self, int seed, float low, float high):
+ *     def __cinit__(self, int seed, float low, float high):
  *         self.engine  = mt19937(seed)
  *         self.uniform = uniform_real_distribution[float](low, high)             # <<<<<<<<<<<<<<
  * 
@@ -1388,7 +1381,7 @@ static int __pyx_pf_7sampler_7Sampler___init__(struct __pyx_obj_7sampler_Sampler
   /* "sampler.pyx":15
  * cdef class Sampler:
  * 
- *     def __init__(self, int seed, float low, float high):             # <<<<<<<<<<<<<<
+ *     def __cinit__(self, int seed, float low, float high):             # <<<<<<<<<<<<<<
  *         self.engine  = mt19937(seed)
  *         self.uniform = uniform_real_distribution[float](low, high)
  */
@@ -1397,7 +1390,7 @@ static int __pyx_pf_7sampler_7Sampler___init__(struct __pyx_obj_7sampler_Sampler
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("sampler.Sampler.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("sampler.Sampler.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -1449,7 +1442,7 @@ static PyObject *__pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Samp
 
 /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  */
 
@@ -1475,9 +1468,9 @@ static PyObject *__pyx_pf_7sampler_7Sampler_2__reduce_cython__(CYTHON_UNUSED str
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")             # <<<<<<<<<<<<<<
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
   __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -1487,7 +1480,7 @@ static PyObject *__pyx_pf_7sampler_7Sampler_2__reduce_cython__(CYTHON_UNUSED str
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  */
 
@@ -1503,9 +1496,9 @@ static PyObject *__pyx_pf_7sampler_7Sampler_2__reduce_cython__(CYTHON_UNUSED str
 
 /* "(tree fragment)":3
  * def __reduce_cython__(self):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
 
 /* Python wrapper */
@@ -1529,9 +1522,9 @@ static PyObject *__pyx_pf_7sampler_7Sampler_4__setstate_cython__(CYTHON_UNUSED s
   __Pyx_RefNannySetupContext("__setstate_cython__", 0);
 
   /* "(tree fragment)":4
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")             # <<<<<<<<<<<<<<
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
   __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_TypeError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -1541,9 +1534,9 @@ static PyObject *__pyx_pf_7sampler_7Sampler_4__setstate_cython__(CYTHON_UNUSED s
 
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
 
   /* function exit code */
@@ -1557,29 +1550,24 @@ static PyObject *__pyx_pf_7sampler_7Sampler_4__setstate_cython__(CYTHON_UNUSED s
 }
 static struct __pyx_vtabstruct_7sampler_Sampler __pyx_vtable_7sampler_Sampler;
 
-static PyObject *__pyx_tp_new_7sampler_Sampler(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
+static PyObject *__pyx_tp_new_7sampler_Sampler(PyTypeObject *t, PyObject *a, PyObject *k) {
   struct __pyx_obj_7sampler_Sampler *p;
   PyObject *o;
-  if (likely((t->tp_flags & Py_TPFLAGS_IS_ABSTRACT) == 0)) {
-    o = (*t->tp_alloc)(t, 0);
-  } else {
-    o = (PyObject *) PyBaseObject_Type.tp_new(t, __pyx_empty_tuple, 0);
-  }
+  o = (*t->tp_alloc)(t, 0);
   if (unlikely(!o)) return 0;
   p = ((struct __pyx_obj_7sampler_Sampler *)o);
   p->__pyx_vtab = __pyx_vtabptr_7sampler_Sampler;
   new((void*)&(p->engine)) std::mt19937();
   new((void*)&(p->uniform)) std::uniform_real_distribution<float> ();
+  if (unlikely(__pyx_pw_7sampler_7Sampler_1__cinit__(o, a, k) < 0)) goto bad;
   return o;
+  bad:
+  Py_DECREF(o); o = 0;
+  return NULL;
 }
 
 static void __pyx_tp_dealloc_7sampler_Sampler(PyObject *o) {
   struct __pyx_obj_7sampler_Sampler *p = (struct __pyx_obj_7sampler_Sampler *)o;
-  #if CYTHON_USE_TP_FINALIZE
-  if (unlikely(PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE) && Py_TYPE(o)->tp_finalize) && (!PyType_IS_GC(Py_TYPE(o)) || !_PyGC_FINALIZED(o))) {
-    if (PyObject_CallFinalizerFromDealloc(o)) return;
-  }
-  #endif
   __Pyx_call_destructor(p->engine);
   __Pyx_call_destructor(p->uniform);
   (*Py_TYPE(o)->tp_free)(o);
@@ -1616,7 +1604,7 @@ static PyTypeObject __pyx_type_7sampler_Sampler = {
   0, /*tp_getattro*/
   0, /*tp_setattro*/
   0, /*tp_as_buffer*/
-  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE, /*tp_flags*/
+  Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER, /*tp_flags*/
   0, /*tp_doc*/
   0, /*tp_traverse*/
   0, /*tp_clear*/
@@ -1632,7 +1620,7 @@ static PyTypeObject __pyx_type_7sampler_Sampler = {
   0, /*tp_descr_get*/
   0, /*tp_descr_set*/
   0, /*tp_dictoffset*/
-  __pyx_pw_7sampler_7Sampler_1__init__, /*tp_init*/
+  0, /*tp_init*/
   0, /*tp_alloc*/
   __pyx_tp_new_7sampler_Sampler, /*tp_new*/
   0, /*tp_free*/
@@ -1705,6 +1693,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_low, __pyx_k_low, sizeof(__pyx_k_low), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
+  {&__pyx_kp_s_no_default___reduce___due_to_non, __pyx_k_no_default___reduce___due_to_non, sizeof(__pyx_k_no_default___reduce___due_to_non), 0, 0, 1, 0},
   {&__pyx_n_s_pyx_state, __pyx_k_pyx_state, sizeof(__pyx_k_pyx_state), 0, 0, 1, 1},
   {&__pyx_n_s_pyx_vtable, __pyx_k_pyx_vtable, sizeof(__pyx_k_pyx_vtable), 0, 0, 1, 1},
   {&__pyx_n_s_reduce, __pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 0, 1, 1},
@@ -1713,7 +1702,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_sampler, __pyx_k_sampler, sizeof(__pyx_k_sampler), 0, 0, 1, 1},
   {&__pyx_n_s_seed, __pyx_k_seed, sizeof(__pyx_k_seed), 0, 0, 1, 1},
   {&__pyx_n_s_self, __pyx_k_self, sizeof(__pyx_k_self), 0, 0, 1, 1},
-  {&__pyx_kp_s_self_engine_self_uniform_cannot, __pyx_k_self_engine_self_uniform_cannot, sizeof(__pyx_k_self_engine_self_uniform_cannot), 0, 0, 1, 0},
   {&__pyx_n_s_setstate, __pyx_k_setstate, sizeof(__pyx_k_setstate), 0, 0, 1, 1},
   {&__pyx_n_s_setstate_cython, __pyx_k_setstate_cython, sizeof(__pyx_k_setstate_cython), 0, 0, 1, 1},
   {&__pyx_kp_s_stringsource, __pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 0, 1, 0},
@@ -1733,26 +1721,26 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "(tree fragment)":2
  * def __reduce_cython__(self):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")             # <<<<<<<<<<<<<<
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_self_engine_self_uniform_cannot); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
   /* "(tree fragment)":4
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")             # <<<<<<<<<<<<<<
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")             # <<<<<<<<<<<<<<
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_self_engine_self_uniform_cannot); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_no_default___reduce___due_to_non); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  */
   __pyx_tuple__3 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -1762,9 +1750,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
   __pyx_tuple__5 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_pyx_state); if (unlikely(!__pyx_tuple__5)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__5);
@@ -1825,7 +1813,7 @@ static int __Pyx_modinit_type_init_code(void) {
   if (PyType_Ready(&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
   __pyx_type_7sampler_Sampler.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_7sampler_Sampler.tp_dictoffset && __pyx_type_7sampler_Sampler.tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_type_7sampler_Sampler.tp_getattro = __Pyx_PyObject_GenericGetAttr;
+    __pyx_type_7sampler_Sampler.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
   if (__Pyx_SetVtable(__pyx_type_7sampler_Sampler.tp_dict, __pyx_vtabptr_7sampler_Sampler) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
   if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Sampler, (PyObject *)&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
@@ -2060,7 +2048,7 @@ if (!__Pyx_RefNanny) {
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):
  */
   __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_7sampler_7Sampler_3__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Sampler___reduce_cython, NULL, __pyx_n_s_sampler, __pyx_d, ((PyObject *)__pyx_codeobj__4)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -2070,9 +2058,9 @@ if (!__Pyx_RefNanny) {
 
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
- *     raise TypeError("self.engine,self.uniform cannot be converted to a Python object for pickling")
+ *     raise TypeError("no default __reduce__ due to non-trivial __cinit__")
  */
   __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_7sampler_7Sampler_5__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Sampler___setstate_cython, NULL, __pyx_n_s_sampler, __pyx_d, ((PyObject *)__pyx_codeobj__6)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -2541,16 +2529,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GenericGetAttrNoDict(PyObject* obj
         }
     }
     return descr;
-}
-#endif
-
-/* PyObject_GenericGetAttr */
-#if CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP && PY_VERSION_HEX < 0x03070000
-static PyObject* __Pyx_PyObject_GenericGetAttr(PyObject* obj, PyObject* attr_name) {
-    if (unlikely(Py_TYPE(obj)->tp_dictoffset)) {
-        return PyObject_GenericGetAttr(obj, attr_name);
-    }
-    return __Pyx_PyObject_GenericGetAttrNoDict(obj, attr_name);
 }
 #endif
 

@@ -6,7 +6,13 @@
 # import ctypes
 # from libc.stdio cimport printf
 # import time
-#
+
+from sampler cimport Sampler
+
+cdef Sampler s = Sampler(0, 0, 1)
+
+for i in range(10):
+    print(s.sample())
 # graph = nx.path_graph(3, nx.DiGraph())
 # from fastIsing cimport Ising
 # from cython cimport parallel

@@ -1320,9 +1320,9 @@ struct __pyx_t_6models_Connection {
  */
 typedef PyObject *__pyx_t_6models_DTYPE_T;
 
-/* "sampler.pxd":13
- * 
- * 
+/* "sampler.pxd":14
+ * import cython
+ * @cython.final
  * cdef class Sampler:             # <<<<<<<<<<<<<<
  *     cdef:
  *         mt19937 engine
@@ -1452,9 +1452,9 @@ struct __pyx_memoryviewslice_obj {
 
 
 
-/* "sampler.pxd":13
- * 
- * 
+/* "sampler.pxd":14
+ * import cython
+ * @cython.final
  * cdef class Sampler:             # <<<<<<<<<<<<<<
  *     cdef:
  *         mt19937 engine
@@ -2528,16 +2528,16 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, cha
 
 /* Module declarations from 'libcpp.unordered_map' */
 
+/* Module declarations from 'cython.view' */
+static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
+
+/* Module declarations from 'cython' */
+
 /* Module declarations from 'sampler' */
 static PyTypeObject *__pyx_ptype_7sampler_Sampler = 0;
 
 /* Module declarations from 'RNG' */
 static PyTypeObject *__pyx_ptype_3RNG_RNG = 0;
-
-/* Module declarations from 'cython.view' */
-static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
-
-/* Module declarations from 'cython' */
 
 /* Module declarations from 'libc.stdlib' */
 
@@ -25758,11 +25758,11 @@ static int __Pyx_modinit_type_import_code(void) {
   __pyx_ptype_5numpy_ufunc = __Pyx_ImportType(__pyx_t_1, "numpy", "ufunc", sizeof(PyUFuncObject), __Pyx_ImportType_CheckSize_Warn);
    if (!__pyx_ptype_5numpy_ufunc) __PYX_ERR(2, 918, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyImport_ImportModule("sampler"); if (unlikely(!__pyx_t_1)) __PYX_ERR(4, 13, __pyx_L1_error)
+  __pyx_t_1 = PyImport_ImportModule("sampler"); if (unlikely(!__pyx_t_1)) __PYX_ERR(4, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_ptype_7sampler_Sampler = __Pyx_ImportType(__pyx_t_1, "sampler", "Sampler", sizeof(struct __pyx_obj_7sampler_Sampler), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7sampler_Sampler) __PYX_ERR(4, 13, __pyx_L1_error)
-  __pyx_vtabptr_7sampler_Sampler = (struct __pyx_vtabstruct_7sampler_Sampler*)__Pyx_GetVtable(__pyx_ptype_7sampler_Sampler->tp_dict); if (unlikely(!__pyx_vtabptr_7sampler_Sampler)) __PYX_ERR(4, 13, __pyx_L1_error)
+   if (!__pyx_ptype_7sampler_Sampler) __PYX_ERR(4, 14, __pyx_L1_error)
+  __pyx_vtabptr_7sampler_Sampler = (struct __pyx_vtabstruct_7sampler_Sampler*)__Pyx_GetVtable(__pyx_ptype_7sampler_Sampler->tp_dict); if (unlikely(!__pyx_vtabptr_7sampler_Sampler)) __PYX_ERR(4, 14, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = PyImport_ImportModule("RNG"); if (unlikely(!__pyx_t_1)) __PYX_ERR(5, 13, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);

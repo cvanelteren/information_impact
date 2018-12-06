@@ -9,7 +9,8 @@ cdef extern from "<random>" namespace "std" :
         uniform_real_distribution(float, float)
         T operator()(mt19937)
 
-
+import cython
+@cython.final
 cdef class Sampler:
     cdef:
         mt19937 engine

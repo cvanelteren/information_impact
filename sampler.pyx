@@ -9,10 +9,10 @@ cdef extern from "<random>" namespace "std" :
         uniform_real_distribution()
         uniform_real_distribution(float, float)
         T operator()(mt19937)
-
+@cython.final
 cdef class Sampler:
 
-    def __init__(self, int seed, float low, float high):
+    def __cinit__(self, int seed, float low, float high):
         self.engine  = mt19937(seed)
         self.uniform = uniform_real_distribution[float](low, high)
 
