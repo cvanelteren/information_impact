@@ -22,7 +22,7 @@ for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(10, 2)
+graph = nx.barabasi_albert_graph(3, 2)
 # graph = nx.path_graph(10)
 import fastIsing
 #graph = nx.path_graph(20)
@@ -40,31 +40,24 @@ mags, sus = m.matchMagnetization(temps, 1000, 0)
 fig, ax = subplots()
 ax.scatter(temps, mags)
 
-
-xx = infcy.getSnapShots(m, 1000, step = 100)
-repeats = 100000
-deltas = 3
-y  = infcy.monteCarlo(m, xx, deltas, repeats)
-
-
-
-# for k in y:
-    # print(k)
-px, mi= infcy.mutualInformation(y, deltas, xx, m )
+#for i in range(10):
+#    xx = infcy.getSnapShots(m, 1000, step = 100)
+#    repeats = 100000
+#    deltas = 3
+#    y  = infcy.monteCarlo(m, xx, deltas, repeats)
+#    
+#    
+#    
+#    # for k in y:
+#        # print(k)
+#    px, mi= infcy.mutualInformation(y, deltas, xx, m )
 
 
 
 # %%
 
-d = nansum(log2(px ) * px, -1)
-fig, ax = subplots()
-ax.plot(mi, label = 'test', alpha = 0.5 )
-#plot(tt - mi, '--', label = 'testest')
-#plot(-mi - tt)
-#plot(d)
-#plot(px[..., 0])
-legend()
-show()
+
+
 # fig, ax = subplots()
 # for idx, i in enumerate(mi.base.T):
 #     print(i)

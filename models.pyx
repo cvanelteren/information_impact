@@ -36,7 +36,7 @@ cdef extern from "limits.h":
 cdef class Model
 # from sampler cimport Sampler # mersenne sampler
 
-@cython.auto_pickle(True)
+# @cython.final
 cdef class Model: # see pxd
     def __init__(self, \
                  graph, agentStates = [-1, 1], \
@@ -238,6 +238,11 @@ cdef class Model: # see pxd
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
         return self._nodeids
 
+    # property _states:
+    #     def __get__(self):
+    #         return self._states.base
+    #     def __set__(self, values):
+    #         cdef long[::1] self._states
 
     @cython.boundscheck(False)
     @cython.wraparound(False)

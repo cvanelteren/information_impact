@@ -25,7 +25,9 @@ data   = IO.extractData(extractThis)
 thetas  = logspace(log10(.9), log10(finfo(float).eps), 100)
 #thetas  = array([.5, .1, .01, .001])
 t       = next(iter(data))
-model   = data[t]['{}'][0].model
+
+from fastIsing import Ising
+model   = Ising(data[t]['{}'][0].graph)
 
 # %% Extract data
 settings = IO.readSettings(extractThis)
@@ -47,12 +49,16 @@ for condition, samples in data[t].items():
             # panzeri-treves correction
             cpx = sample.conditional
             N = repeats 
-            rs  = 0
+            
             mi = sample.mi
+            rs  = zeros(mi.shape)
             for key, value in cpx.items():
 #                xx  = value[0] if isinstance(value, list) else value
-                rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
-                              for j in value])
+                for zdx, deltaInfo in enumerate(value):
+                    for jdx, nodeInfo in enumerate(deltaInfo):
+                        rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats)
+#                rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
+#                              for j in value])
             Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
                          for i in sample.px])
             
@@ -61,10 +67,11 @@ for condition, samples in data[t].items():
             dd[idx, ..., 0] = corrected[:deltas // 2, :].T
         else:
             control = data[t]['{}'][idx].px
-            impact = stats.hellingerDistance(\
-                             sample.px, control).mean(-1)
-#            impact = nanmean(stats.KL(control, sample.px), axis = -1)
-            print(impact)
+            px      = sample.px
+#            impact = stats.hellingerDistance(\
+#                             px, control).mean(-1)
+            impact = nanmean(stats.KL(control, sample.px), axis = -1)
+#            print(impact)
             redIm = impact[deltas // 2  + 1 : ][None, :].T
 #            print(impact)
             # TODO: check if this works with tuples (not sure)
@@ -90,7 +97,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = 0)
 zd[zd < finfo(float).eps] = 0
 
@@ -105,7 +112,7 @@ zd = zd.reshape(dd.shape)
 # show means with spread
 fig, ax = subplots(1, 2, sharey = 'all')
 x = arange(deltas // 2)
-sidx = 1
+sidx = .5
 for axi, zdi, zdstd in zip(ax, zd.mean(0).T, zd.std(0).T):
     axi.plot(x, zdi, linestyle = '--', markeredgecolor = 'black')
     [axi.fill_between(x, a + sidx* b, a - sidx * b, alpha = .5,\

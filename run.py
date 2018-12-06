@@ -34,12 +34,12 @@ if __name__ == '__main__':
     step          = 1
     nSamples      = int(1e4) if real else 10000
     burninSamples = 1000
-    pulseSize     = 1
+    pulseSize     = np.inf
 
     numIter       = int(5e1) if real else 5
     magSide       = 'neg'
-    updateMethod  = 'single'
-    CHECK         = [.9, .8, .7]  if real else [.8]  # match magnetiztion at 80 percent of max
+    updateMethod  = 'async'
+    CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     if real:
         graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
@@ -76,9 +76,11 @@ if __name__ == '__main__':
         IO.saveSettings(targetDirectory, settings)
 
         # graph = nx.barabasi_albert_graph(10, 3)
-        model = fastIsing.Ising(graph = graph, \
+        model = fastIsing.Ising(\
+                                graph       = graph, \
                                 temperature = 0, \
-                                updateType= updateMethod, magSide = magSide)
+                                updateType  = updateMethod,\
+                                magSide     = magSide)
 
 
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'
@@ -134,9 +136,9 @@ if __name__ == '__main__':
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
                 print(f'{time()} Getting snapshots')
-                pulse       = {}
+                pulse        = {}
                 model.nudges = pulse
-                snapshots   = infcy.getSnapShots(model, nSamples, \
+                snapshots    = infcy.getSnapShots(model, nSamples, \
                                                burninSamples = burninSamples, \
                                                step          = step)
 
@@ -157,10 +159,11 @@ if __name__ == '__main__':
                 conditional, deltas, snapshots, model)
                 # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
                 fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                sr = IO.SimulationResult(mi = mi,
-                                        conditional = conditional,
-                                        graph = model.graph,\
-                                        px = px, snapshots = snapshots)
+                sr = IO.SimulationResult(\
+                                         mi         = mi,\
+                                        conditional = conditional,\
+                                        graph       = model.graph,\
+                                        px          = px, snapshots = snapshots)
                 IO.savePickle(fileName, sr)
 
                 pulses = {node : pulseSize for node in model.graph.nodes()}
@@ -174,8 +177,9 @@ if __name__ == '__main__':
                     px, mi = infcy.mutualInformation(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                     fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                    sr = IO.SimulationResult(mi = mi,
-                                            conditional = conditional,
-                                            graph = model.graph,\
-                                            px = px, snapshots = snapshots)
+                    sr = IO.SimulationResult(\
+                                             mi         = mi,\
+                                            conditional = conditional,\
+                                            graph       = model.graph,\
+                                            px          = px, snapshots = snapshots)
                     IO.savePickle(fileName, sr)

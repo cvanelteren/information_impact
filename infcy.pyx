@@ -1,3 +1,4 @@
+
 # cython: infer_types=True
 # distutils: language=c++
 # __author__ = 'Casper van Elteren'
@@ -9,10 +10,11 @@ from cython.parallel cimport parallel, prange, threadid
 # cimport numpy as np
 # cimport cython
 import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
-fastIsing, copy, time
+ copy, time
 # from pathos import multiprocessing as mp
 import multiprocessing as mp
 from models cimport Model
+from fastIsing cimport Ising
 # import multiprocess as mp
 # import pathos.multiprocessing as mp
 from tqdm import tqdm   #progress bar
@@ -125,7 +127,7 @@ cpdef dict monteCarlo(\
     cdef float past = time.process_time()
     # pre-declaration
     cdef double Z            = <double> repeats
-    cdef double[:] copyNudge = model._nudges.copy()
+    cdef double[:] copyNudge = model.nudges.copy()
     cdef bint reset          = True
     # loop stuff
     cdef long[:, ::1]  s     = np.array([decodeState(i, model._nNodes) for i in snapshots])
@@ -138,12 +140,17 @@ cpdef dict monteCarlo(\
     counter = 0
     sc      = 0
 
-    cdef list kdxs    = list(snapshots.keys())
+    cdef list kdxs        = list(snapshots.keys())
     cdef dict conditional = {}
     cdef long[::1] startState
     pbar = tqdm(total = N )
     cdef int idx, jdx
+    cdef int tid = -1
+    # cdef list models = [copy.deepcopy(prototype) for _  in range(mp.cpu_count())]
+    # cdef Model model
     for n in prange(N, nogil = True ):
+        # tid   = threadid()
+        # model = models[tid]
         for k in range(repeats):
             for node in range(model._nNodes):
                 model._states[node] = s[n][node]
@@ -167,6 +174,10 @@ cpdef dict monteCarlo(\
                 if reset:
                     if model.__nudgeType == 'pulse' or \
                     model.__nudgeType    == 'constant' and delta >= half:
+
+                        with gil:
+                            if np.sum(copyNudge) > 0:
+                                print(np.asarray(copyNudge), model.nudges.base)
                         model._nudges[:] = 0
                         reset            = False
         # pbar.update(1)

@@ -51,7 +51,8 @@ cdef class Ising(Model)
 
 # class implementation
 # @cython.final # enforce extension type
-@cython.auto_pickle(True) # for storage of the model.. technically not needed
+# @cython.auto_pickle(True) # for storage of the model.. technically not needed
+# @cython.final
 cdef class Ising(Model):
     def __init__(self, \
                  graph,\
@@ -173,6 +174,8 @@ cdef class Ising(Model):
             energy  -= states[node] * states[neighbor] * weight + \
                         self._H [neighbor] * states[neighbor]
         energy += self._nudges[node]
+        # if self._nudges[node] > 0:
+        #     printf('%f ', self._nudges[node])
         return energy
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
