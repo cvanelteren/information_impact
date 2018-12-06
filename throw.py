@@ -22,7 +22,7 @@ for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(10, 2)
+graph = nx.barabasi_albert_graph(3, 2)
 # graph = nx.path_graph(10)
 import fastIsing
 #graph = nx.path_graph(20)

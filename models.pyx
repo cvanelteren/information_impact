@@ -128,9 +128,10 @@ cdef class Model: # see pxd
             dict mapping = {} # made nodelabe to internal
             dict rmapping= {} # reverse
             str delim = '\t'
-            states = np.zeros(graph.number_of_nodes(), int, 'C')
+            np.ndarray states = np.zeros(graph.number_of_nodes(), int, 'C')
             int counter
-            double[::1] nudges = np.zeros(graph.number_of_nodes(), dtype = float)
+            # double[::1] nudges = np.zeros(graph.number_of_nodes(), dtype = float)
+            np.ndarray nudges = np.zeros(graph.number_of_nodes(), dtype = float)
             unordered_map[long, Connection] adj # see .pxd
 
 

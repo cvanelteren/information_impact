@@ -129,27 +129,31 @@ cpdef dict monteCarlo(\
      # store nudges already there
     cdef list models = []
     cdef dict params
+    import copy
     for startidx, val in snapshots.items():
         params = dict(\
-                    model      = model,\
+                    model      = copy.copy(model),\
                     repeats    = repeats,\
                     deltas     = deltas,\
-                    idx        = startidx
+                    idx        = startidx,\
+                    startState = np.asarray(decodeState(startidx, model._nNodes)),\
                     )
         models.append(Worker(**params))
-    cdef long[:, ::1] s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
+    # cdef np.ndarray s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
     cdef dict conditional
     with mp.Pool(mp.cpu_count()) as p:
-        conditional = {kdx : res for kdx, res in zip(snapshots, p.map(models, tqdm(s)))}
+        conditional = {kdx : res for kdx, res in zip(snapshots, p.map(f, models))}
     print(conditional)
     print(f"Delta = {time.process_time() - past}")
     return {}
-
+def f(x):
+    return x.parallWrap()
 @cython.auto_pickle(True)
 cdef class Worker:
     cdef int deltas
     cdef int idx
     cdef int repeats
+    cdef np.ndarray startState
     cdef Model model
     cdef dict __dict__
     def __init__(self, *args, **kwargs):
@@ -157,11 +161,9 @@ cdef class Worker:
         # print('in worker', kwargs)
         for k, v in kwargs.items():
             setattr(self, k, v)
-        print(self.__dict__)
-    def __call__(self, startState):
-        return self.parallWrap(startState)
 
-    cpdef parallWrap(self, long[::1] startState):
+    cpdef parallWrap(self):
+        cdef long[::1] startState = self.startState
         # start unpacking
         cdef int deltas           = self.deltas
         cdef int repeats          = self.repeats
@@ -171,17 +173,18 @@ cdef class Worker:
         # pre-declaration
         cdef double[::1] out = np.zeros((deltas + 1) * model._nNodes * model._nStates)
         cdef double Z              = <double> repeats
+        print(' here')
+        print(model._nudges)
         cdef double[:] copyNudge   = model._nudges.copy()
-        cdef bint reset            = True
-
-        # loop stuff
-        cdef long[:, ::1] r = self.sampleNodes(repeats * (deltas + 1))
-        cdef int k, delta, node, statei, counter = 0, half = deltas // 2
         print('starting loops')
+        cdef bint reset            = True
+        # loop stuff
+        cdef long[:, ::1] r = model.sampleNodes(repeats * (deltas + 1))
+        cdef int k, delta, node, statei, counter = 0, half = deltas // 2
         for k in range(repeats):
             for node in range(model._nNodes):
                 model._states[node] = startState[node]
-                self._nudges[node] = copyNudge[node]
+                model._nudges[node] = copyNudge[node]
             # reset simulation
             reset = True
             for delta in range(deltas + 1):
@@ -199,7 +202,6 @@ cdef class Worker:
                     model._nudgeMode == 'constant' and delta >= half:
                         model._nudges[:] = 0
                         reset            = False
-        print(out.base)
         return out.base.reshape((deltas + 1, model._nNodes, model._nStates))
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive

@@ -11,12 +11,21 @@ import networkx as nx,  numpy as np, matplotlib.pyplot as plt
 
 graph = nx.path_graph(4)
 
-m = fastIsing.Ising(graph, 1)
+m = fastIsing.Ising(graph, 1000)
 
-x = [m, m]
+import copy
+x = [m for i in range(10)]
 def func(x):
-    return 0
+#    print(id(x))
+#    print(mp.current_process())
+    for i in range(10000):
+        x.updateState(x.nodeids)
+    return x.states
 import multiprocessing as mp
 
-with mp.Pool(3) as p:
-    p.map(func, x)
+xx = np.array([m.states for m in x])
+print(np.unique(xx, axis = 0).shape)
+with mp.Pool(4)  as p:
+   y =  np.asarray(p.map(func, x))
+   
+print(np.unique(y, axis = 0).shape)

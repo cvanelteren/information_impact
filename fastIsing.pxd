@@ -17,8 +17,8 @@ cdef class Ising(Model):
     cdef:
         # public
         long _magSide   # which side to sample on
-        # np.ndarray _H # external magnetic field
-        double[::1]  _H # external magnetic field
+        np.ndarray _H # external magnetic field
+        # double[::1]  _H # external magnetic field
         double beta
 
 
