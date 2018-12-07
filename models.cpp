@@ -1365,7 +1365,7 @@ struct __pyx_obj_6models_Model {
   __Pyx_memviewslice agentStates;
   int _nNodes;
   PyObject *_updateType;
-  PyObject *__pyx___nudgeType;
+  PyObject *_nudgeType;
   __Pyx_memviewslice _nudges;
   struct __pyx_obj_3RNG_RNG *sampler;
   std::unordered_map<long,struct __pyx_t_6models_Connection>  adj;
@@ -2717,7 +2717,6 @@ static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_Model_reset[] = "Model.reset";
 static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_agentStates[] = "agentStates";
-static const char __pyx_k_nudgeType_2[] = "_nudgeType";
 static const char __pyx_k_updateState[] = "updateState";
 static const char __pyx_k_RuntimeError[] = "RuntimeError";
 static const char __pyx_k_literal_eval[] = "literal_eval";
@@ -2767,8 +2766,8 @@ static const char __pyx_k_Cannot_assign_to_read_only_memor[] = "Cannot assign to
 static const char __pyx_k_Cannot_create_writable_memory_vi[] = "Cannot create writable memory view from read-only memoryview";
 static const char __pyx_k_Empty_shape_tuple_for_cython_arr[] = "Empty shape tuple for cython.array";
 static const char __pyx_k_Format_string_allocated_too_shor[] = "Format string allocated too short, see comment in numpy.pxd";
+static const char __pyx_k_Incompatible_checksums_s_vs_0x1b[] = "Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))";
 static const char __pyx_k_Incompatible_checksums_s_vs_0xb0[] = "Incompatible checksums (%s vs 0xb068931 = (name))";
-static const char __pyx_k_Incompatible_checksums_s_vs_0xd4[] = "Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))";
 static const char __pyx_k_Indirect_dimensions_not_supporte[] = "Indirect dimensions not supported";
 static const char __pyx_k_Invalid_mode_expected_c_or_fortr[] = "Invalid mode, expected 'c' or 'fortran', got %s";
 static const char __pyx_k_No_value_specified_for_struct_at[] = "No value specified for struct attribute 'neighbors'";
@@ -2796,8 +2795,8 @@ static PyObject *__pyx_kp_u_Format_string_allocated_too_shor;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor_2;
 static PyObject *__pyx_n_s_Graph;
 static PyObject *__pyx_n_s_ImportError;
+static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0x1b;
 static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xb0;
-static PyObject *__pyx_kp_s_Incompatible_checksums_s_vs_0xd4;
 static PyObject *__pyx_n_s_IndexError;
 static PyObject *__pyx_kp_s_Indirect_dimensions_not_supporte;
 static PyObject *__pyx_kp_s_Invalid_mode_expected_c_or_fortr;
@@ -2889,7 +2888,6 @@ static PyObject *__pyx_n_s_nodesToUpdate;
 static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_u_nudge;
 static PyObject *__pyx_n_s_nudgeType;
-static PyObject *__pyx_n_s_nudgeType_2;
 static PyObject *__pyx_n_s_nudges;
 static PyObject *__pyx_n_s_number_of_nodes;
 static PyObject *__pyx_n_s_numpy;
@@ -3025,8 +3023,8 @@ static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject 
 static PyObject *__pyx_tp_new__memoryviewslice(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_int_0;
 static PyObject *__pyx_int_1;
+static PyObject *__pyx_int_28576029;
 static PyObject *__pyx_int_184977713;
-static PyObject *__pyx_int_222764031;
 static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_k_;
 static PyObject *__pyx_slice__3;
@@ -3702,20 +3700,13 @@ static PyObject *__pyx_pw_6models_5Model_9nudgeType_1__get__(PyObject *__pyx_v_s
 static PyObject *__pyx_pf_6models_5Model_9nudgeType___get__(struct __pyx_obj_6models_Model *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_nudgeType_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_INCREF(__pyx_v_self->_nudgeType);
+  __pyx_r = __pyx_v_self->_nudgeType;
   goto __pyx_L0;
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("models.Model.nudgeType.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -3747,6 +3738,7 @@ static int __pyx_pf_6models_5Model_9nudgeType_2__set__(struct __pyx_obj_6models_
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
   __Pyx_RefNannySetupContext("__set__", 0);
 
   /* "models.pyx":103
@@ -3773,7 +3765,14 @@ static int __pyx_pf_6models_5Model_9nudgeType_2__set__(struct __pyx_obj_6models_
  * 
  *     @states.setter # TODO: expand
  */
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_nudgeType_2, __pyx_v_value) < 0) __PYX_ERR(0, 104, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_v_value))||((__pyx_v_value) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_v_value)->tp_name), 0))) __PYX_ERR(0, 104, __pyx_L1_error)
+  __pyx_t_2 = __pyx_v_value;
+  __Pyx_INCREF(__pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_2);
+  __Pyx_GOTREF(__pyx_v_self->_nudgeType);
+  __Pyx_DECREF(__pyx_v_self->_nudgeType);
+  __pyx_v_self->_nudgeType = ((PyObject*)__pyx_t_2);
+  __pyx_t_2 = 0;
 
   /* "models.pyx":102
  * 
@@ -3787,6 +3786,7 @@ static int __pyx_pf_6models_5Model_9nudgeType_2__set__(struct __pyx_obj_6models_
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
   __Pyx_AddTraceback("models.Model.nudgeType.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
@@ -7003,7 +7003,7 @@ static PyObject *__pyx_pf_6models_5Model_10simulate(struct __pyx_obj_6models_Mod
 /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     cdef bint use_setstate
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
  */
 
 /* Python wrapper */
@@ -7043,7 +7043,7 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
  *     cdef bint use_setstate
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)             # <<<<<<<<<<<<<<
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)             # <<<<<<<<<<<<<<
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:
  */
@@ -7070,17 +7070,17 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
   __Pyx_GOTREF(__pyx_t_8);
   __pyx_t_9 = PyTuple_New(11); if (unlikely(!__pyx_t_9)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
-  __Pyx_INCREF(__pyx_v_self->__pyx___nudgeType);
-  __Pyx_GIVEREF(__pyx_v_self->__pyx___nudgeType);
-  PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_v_self->__pyx___nudgeType);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_3);
-  PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_3);
+  PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_t_4);
+  PyTuple_SET_ITEM(__pyx_t_9, 3, __pyx_t_4);
+  __Pyx_INCREF(__pyx_v_self->_nudgeType);
+  __Pyx_GIVEREF(__pyx_v_self->_nudgeType);
+  PyTuple_SET_ITEM(__pyx_t_9, 4, __pyx_v_self->_nudgeType);
   __Pyx_GIVEREF(__pyx_t_5);
   PyTuple_SET_ITEM(__pyx_t_9, 5, __pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_6);
@@ -7108,7 +7108,7 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
 
   /* "(tree fragment)":4
  *     cdef bint use_setstate
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
  *     _dict = getattr(self, '__dict__', None)             # <<<<<<<<<<<<<<
  *     if _dict is not None:
  *         state += (_dict,)
@@ -7119,7 +7119,7 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
   __pyx_t_9 = 0;
 
   /* "(tree fragment)":5
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -7152,12 +7152,12 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
  *         state += (_dict,)
  *         use_setstate = True             # <<<<<<<<<<<<<<
  *     else:
- *         use_setstate = self.__nudgeType is not None or self._updateType is not None or self.sampler is not None
+ *         use_setstate = self._nudgeType is not None or self._updateType is not None or self.sampler is not None
  */
     __pyx_v_use_setstate = 1;
 
     /* "(tree fragment)":5
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
  *     _dict = getattr(self, '__dict__', None)
  *     if _dict is not None:             # <<<<<<<<<<<<<<
  *         state += (_dict,)
@@ -7169,12 +7169,12 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
   /* "(tree fragment)":9
  *         use_setstate = True
  *     else:
- *         use_setstate = self.__nudgeType is not None or self._updateType is not None or self.sampler is not None             # <<<<<<<<<<<<<<
+ *         use_setstate = self._nudgeType is not None or self._updateType is not None or self.sampler is not None             # <<<<<<<<<<<<<<
  *     if use_setstate:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, None), state
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, None), state
  */
   /*else*/ {
-    __pyx_t_10 = (__pyx_v_self->__pyx___nudgeType != ((PyObject*)Py_None));
+    __pyx_t_10 = (__pyx_v_self->_nudgeType != ((PyObject*)Py_None));
     __pyx_t_12 = (__pyx_t_10 != 0);
     if (!__pyx_t_12) {
     } else {
@@ -7198,20 +7198,20 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
 
   /* "(tree fragment)":10
  *     else:
- *         use_setstate = self.__nudgeType is not None or self._updateType is not None or self.sampler is not None
+ *         use_setstate = self._nudgeType is not None or self._updateType is not None or self.sampler is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, None), state
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, None), state
  *     else:
  */
   __pyx_t_11 = (__pyx_v_use_setstate != 0);
   if (__pyx_t_11) {
 
     /* "(tree fragment)":11
- *         use_setstate = self.__nudgeType is not None or self._updateType is not None or self.sampler is not None
+ *         use_setstate = self._nudgeType is not None or self._updateType is not None or self.sampler is not None
  *     if use_setstate:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, None), state             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, None), state             # <<<<<<<<<<<<<<
  *     else:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, state)
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, state)
  */
     __Pyx_XDECREF(__pyx_r);
     __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_pyx_unpickle_Model); if (unlikely(!__pyx_t_8)) __PYX_ERR(1, 11, __pyx_L1_error)
@@ -7221,9 +7221,9 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_9, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_222764031);
-    __Pyx_GIVEREF(__pyx_int_222764031);
-    PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_int_222764031);
+    __Pyx_INCREF(__pyx_int_28576029);
+    __Pyx_GIVEREF(__pyx_int_28576029);
+    PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_int_28576029);
     __Pyx_INCREF(Py_None);
     __Pyx_GIVEREF(Py_None);
     PyTuple_SET_ITEM(__pyx_t_9, 2, Py_None);
@@ -7244,17 +7244,17 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
 
     /* "(tree fragment)":10
  *     else:
- *         use_setstate = self.__nudgeType is not None or self._updateType is not None or self.sampler is not None
+ *         use_setstate = self._nudgeType is not None or self._updateType is not None or self.sampler is not None
  *     if use_setstate:             # <<<<<<<<<<<<<<
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, None), state
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, None), state
  *     else:
  */
   }
 
   /* "(tree fragment)":13
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, None), state
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, None), state
  *     else:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, state)             # <<<<<<<<<<<<<<
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, state)             # <<<<<<<<<<<<<<
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Model__set_state(self, __pyx_state)
  */
@@ -7267,9 +7267,9 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
     __Pyx_INCREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     __Pyx_GIVEREF(((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
     PyTuple_SET_ITEM(__pyx_t_9, 0, ((PyObject *)Py_TYPE(((PyObject *)__pyx_v_self))));
-    __Pyx_INCREF(__pyx_int_222764031);
-    __Pyx_GIVEREF(__pyx_int_222764031);
-    PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_int_222764031);
+    __Pyx_INCREF(__pyx_int_28576029);
+    __Pyx_GIVEREF(__pyx_int_28576029);
+    PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_int_28576029);
     __Pyx_INCREF(__pyx_v_state);
     __Pyx_GIVEREF(__pyx_v_state);
     PyTuple_SET_ITEM(__pyx_t_9, 2, __pyx_v_state);
@@ -7289,7 +7289,7 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     cdef bint use_setstate
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
  */
 
   /* function exit code */
@@ -7315,7 +7315,7 @@ static PyObject *__pyx_pf_6models_5Model_12__reduce_cython__(struct __pyx_obj_6m
 
 /* "(tree fragment)":14
  *     else:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, state)
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Model__set_state(self, __pyx_state)
  */
@@ -7341,7 +7341,7 @@ static PyObject *__pyx_pf_6models_5Model_14__setstate_cython__(struct __pyx_obj_
   __Pyx_RefNannySetupContext("__setstate_cython__", 0);
 
   /* "(tree fragment)":15
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, state)
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, state)
  * def __setstate_cython__(self, __pyx_state):
  *     __pyx_unpickle_Model__set_state(self, __pyx_state)             # <<<<<<<<<<<<<<
  */
@@ -7352,7 +7352,7 @@ static PyObject *__pyx_pf_6models_5Model_14__setstate_cython__(struct __pyx_obj_
 
   /* "(tree fragment)":14
  *     else:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, state)
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Model__set_state(self, __pyx_state)
  */
@@ -7372,7 +7372,7 @@ static PyObject *__pyx_pf_6models_5Model_14__setstate_cython__(struct __pyx_obj_
 
 /* "(tree fragment)":1
  * def __pyx_unpickle_Model(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
- *     if __pyx_checksum != 0xd471bff:
+ *     if __pyx_checksum != 0x1b4091d:
  *         from pickle import PickleError as __pyx_PickleError
  */
 
@@ -7464,18 +7464,18 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
 
   /* "(tree fragment)":2
  * def __pyx_unpickle_Model(__pyx_type, long __pyx_checksum, __pyx_state):
- *     if __pyx_checksum != 0xd471bff:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0x1b4091d:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
  */
-  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0xd471bff) != 0);
+  __pyx_t_1 = ((__pyx_v___pyx_checksum != 0x1b4091d) != 0);
   if (__pyx_t_1) {
 
     /* "(tree fragment)":3
  * def __pyx_unpickle_Model(__pyx_type, long __pyx_checksum, __pyx_state):
- *     if __pyx_checksum != 0xd471bff:
+ *     if __pyx_checksum != 0x1b4091d:
  *         from pickle import PickleError as __pyx_PickleError             # <<<<<<<<<<<<<<
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
  *     __pyx_result = Model.__new__(__pyx_type)
  */
     __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
@@ -7494,15 +7494,15 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":4
- *     if __pyx_checksum != 0xd471bff:
+ *     if __pyx_checksum != 0x1b4091d:
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)             # <<<<<<<<<<<<<<
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)             # <<<<<<<<<<<<<<
  *     __pyx_result = Model.__new__(__pyx_type)
  *     if __pyx_state is not None:
  */
     __pyx_t_2 = __Pyx_PyInt_From_long(__pyx_v___pyx_checksum); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 4, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0xd4, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 4, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_Incompatible_checksums_s_vs_0x1b, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 4, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_INCREF(__pyx_v___pyx_PickleError);
@@ -7528,15 +7528,15 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
 
     /* "(tree fragment)":2
  * def __pyx_unpickle_Model(__pyx_type, long __pyx_checksum, __pyx_state):
- *     if __pyx_checksum != 0xd471bff:             # <<<<<<<<<<<<<<
+ *     if __pyx_checksum != 0x1b4091d:             # <<<<<<<<<<<<<<
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
  */
   }
 
   /* "(tree fragment)":5
  *         from pickle import PickleError as __pyx_PickleError
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
  *     __pyx_result = Model.__new__(__pyx_type)             # <<<<<<<<<<<<<<
  *     if __pyx_state is not None:
  *         __pyx_unpickle_Model__set_state(<Model> __pyx_result, __pyx_state)
@@ -7562,7 +7562,7 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
   __pyx_t_3 = 0;
 
   /* "(tree fragment)":6
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
  *     __pyx_result = Model.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Model__set_state(<Model> __pyx_result, __pyx_state)
@@ -7585,7 +7585,7 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
     /* "(tree fragment)":6
- *         raise __pyx_PickleError("Incompatible checksums (%s vs 0xd471bff = (__nudgeType, _nNodes, _nStates, _newstates, _nodeids, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
+ *         raise __pyx_PickleError("Incompatible checksums (%s vs 0x1b4091d = (_nNodes, _nStates, _newstates, _nodeids, _nudgeType, _nudges, _states, _updateType, adj, agentStates, sampler))" % __pyx_checksum)
  *     __pyx_result = Model.__new__(__pyx_type)
  *     if __pyx_state is not None:             # <<<<<<<<<<<<<<
  *         __pyx_unpickle_Model__set_state(<Model> __pyx_result, __pyx_state)
@@ -7598,7 +7598,7 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
  *         __pyx_unpickle_Model__set_state(<Model> __pyx_result, __pyx_state)
  *     return __pyx_result             # <<<<<<<<<<<<<<
  * cdef __pyx_unpickle_Model__set_state(Model __pyx_result, tuple __pyx_state):
- *     __pyx_result.__nudgeType = __pyx_state[0]; __pyx_result._nNodes = __pyx_state[1]; __pyx_result._nStates = __pyx_state[2]; __pyx_result._newstates = __pyx_state[3]; __pyx_result._nodeids = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
+ *     __pyx_result._nNodes = __pyx_state[0]; __pyx_result._nStates = __pyx_state[1]; __pyx_result._newstates = __pyx_state[2]; __pyx_result._nodeids = __pyx_state[3]; __pyx_result._nudgeType = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v___pyx_result);
@@ -7607,7 +7607,7 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Model(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
- *     if __pyx_checksum != 0xd471bff:
+ *     if __pyx_checksum != 0x1b4091d:
  *         from pickle import PickleError as __pyx_PickleError
  */
 
@@ -7631,7 +7631,7 @@ static PyObject *__pyx_pf_6models___pyx_unpickle_Model(CYTHON_UNUSED PyObject *_
  *         __pyx_unpickle_Model__set_state(<Model> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Model__set_state(Model __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.__nudgeType = __pyx_state[0]; __pyx_result._nNodes = __pyx_state[1]; __pyx_result._nStates = __pyx_state[2]; __pyx_result._newstates = __pyx_state[3]; __pyx_result._nodeids = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
+ *     __pyx_result._nNodes = __pyx_state[0]; __pyx_result._nStates = __pyx_state[1]; __pyx_result._newstates = __pyx_state[2]; __pyx_result._nodeids = __pyx_state[3]; __pyx_result._nudgeType = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
  *     if len(__pyx_state) > 11 and hasattr(__pyx_result, '__dict__'):
  */
 
@@ -7655,7 +7655,7 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
   /* "(tree fragment)":10
  *     return __pyx_result
  * cdef __pyx_unpickle_Model__set_state(Model __pyx_result, tuple __pyx_state):
- *     __pyx_result.__nudgeType = __pyx_state[0]; __pyx_result._nNodes = __pyx_state[1]; __pyx_result._nStates = __pyx_state[2]; __pyx_result._newstates = __pyx_state[3]; __pyx_result._nodeids = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]             # <<<<<<<<<<<<<<
+ *     __pyx_result._nNodes = __pyx_state[0]; __pyx_result._nStates = __pyx_state[1]; __pyx_result._newstates = __pyx_state[2]; __pyx_result._nodeids = __pyx_state[3]; __pyx_result._nudgeType = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]             # <<<<<<<<<<<<<<
  *     if len(__pyx_state) > 11 and hasattr(__pyx_result, '__dict__'):
  *         __pyx_result.__dict__.update(__pyx_state[11])
  */
@@ -7665,12 +7665,9 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
   }
   __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 10, __pyx_L1_error)
-  __Pyx_GIVEREF(__pyx_t_1);
-  __Pyx_GOTREF(__pyx_v___pyx_result->__pyx___nudgeType);
-  __Pyx_DECREF(__pyx_v___pyx_result->__pyx___nudgeType);
-  __pyx_v___pyx_result->__pyx___nudgeType = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
+  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 10, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_v___pyx_result->_nNodes = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 10, __pyx_L1_error)
@@ -7679,21 +7676,12 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v___pyx_result->_nNodes = __pyx_t_2;
-  if (unlikely(__pyx_v___pyx_state == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(1, 10, __pyx_L1_error)
-  }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 10, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyInt_As_int(__pyx_t_1); if (unlikely((__pyx_t_2 == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 10, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v___pyx_result->_nStates = __pyx_t_2;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 10, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 10, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 2, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = __Pyx_PyObject_to_MemoryviewSlice_dc_long(__pyx_t_1, PyBUF_WRITABLE); if (unlikely(!__pyx_t_3.memview)) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7705,7 +7693,7 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 10, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 10, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = __Pyx_PyObject_to_MemoryviewSlice_dc_long(__pyx_t_1, PyBUF_WRITABLE); if (unlikely(!__pyx_t_3.memview)) __PYX_ERR(1, 10, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7713,6 +7701,18 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
   __pyx_v___pyx_result->_nodeids = __pyx_t_3;
   __pyx_t_3.memview = NULL;
   __pyx_t_3.data = NULL;
+  if (unlikely(__pyx_v___pyx_state == Py_None)) {
+    PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
+    __PYX_ERR(1, 10, __pyx_L1_error)
+  }
+  __pyx_t_1 = __Pyx_GetItemInt_Tuple(__pyx_v___pyx_state, 4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 10, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "unicode", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(1, 10, __pyx_L1_error)
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v___pyx_result->_nudgeType);
+  __Pyx_DECREF(__pyx_v___pyx_result->_nudgeType);
+  __pyx_v___pyx_result->_nudgeType = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
   if (unlikely(__pyx_v___pyx_state == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
     __PYX_ERR(1, 10, __pyx_L1_error)
@@ -7785,7 +7785,7 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
 
   /* "(tree fragment)":11
  * cdef __pyx_unpickle_Model__set_state(Model __pyx_result, tuple __pyx_state):
- *     __pyx_result.__nudgeType = __pyx_state[0]; __pyx_result._nNodes = __pyx_state[1]; __pyx_result._nStates = __pyx_state[2]; __pyx_result._newstates = __pyx_state[3]; __pyx_result._nodeids = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
+ *     __pyx_result._nNodes = __pyx_state[0]; __pyx_result._nStates = __pyx_state[1]; __pyx_result._newstates = __pyx_state[2]; __pyx_result._nodeids = __pyx_state[3]; __pyx_result._nudgeType = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
  *     if len(__pyx_state) > 11 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
  *         __pyx_result.__dict__.update(__pyx_state[11])
  */
@@ -7807,7 +7807,7 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
   if (__pyx_t_6) {
 
     /* "(tree fragment)":12
- *     __pyx_result.__nudgeType = __pyx_state[0]; __pyx_result._nNodes = __pyx_state[1]; __pyx_result._nStates = __pyx_state[2]; __pyx_result._newstates = __pyx_state[3]; __pyx_result._nodeids = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
+ *     __pyx_result._nNodes = __pyx_state[0]; __pyx_result._nStates = __pyx_state[1]; __pyx_result._newstates = __pyx_state[2]; __pyx_result._nodeids = __pyx_state[3]; __pyx_result._nudgeType = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
  *     if len(__pyx_state) > 11 and hasattr(__pyx_result, '__dict__'):
  *         __pyx_result.__dict__.update(__pyx_state[11])             # <<<<<<<<<<<<<<
  */
@@ -7839,7 +7839,7 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
 
     /* "(tree fragment)":11
  * cdef __pyx_unpickle_Model__set_state(Model __pyx_result, tuple __pyx_state):
- *     __pyx_result.__nudgeType = __pyx_state[0]; __pyx_result._nNodes = __pyx_state[1]; __pyx_result._nStates = __pyx_state[2]; __pyx_result._newstates = __pyx_state[3]; __pyx_result._nodeids = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
+ *     __pyx_result._nNodes = __pyx_state[0]; __pyx_result._nStates = __pyx_state[1]; __pyx_result._newstates = __pyx_state[2]; __pyx_result._nodeids = __pyx_state[3]; __pyx_result._nudgeType = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
  *     if len(__pyx_state) > 11 and hasattr(__pyx_result, '__dict__'):             # <<<<<<<<<<<<<<
  *         __pyx_result.__dict__.update(__pyx_state[11])
  */
@@ -7849,7 +7849,7 @@ static PyObject *__pyx_f_6models___pyx_unpickle_Model__set_state(struct __pyx_ob
  *         __pyx_unpickle_Model__set_state(<Model> __pyx_result, __pyx_state)
  *     return __pyx_result
  * cdef __pyx_unpickle_Model__set_state(Model __pyx_result, tuple __pyx_state):             # <<<<<<<<<<<<<<
- *     __pyx_result.__nudgeType = __pyx_state[0]; __pyx_result._nNodes = __pyx_state[1]; __pyx_result._nStates = __pyx_state[2]; __pyx_result._newstates = __pyx_state[3]; __pyx_result._nodeids = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
+ *     __pyx_result._nNodes = __pyx_state[0]; __pyx_result._nStates = __pyx_state[1]; __pyx_result._newstates = __pyx_state[2]; __pyx_result._nodeids = __pyx_state[3]; __pyx_result._nudgeType = __pyx_state[4]; __pyx_result._nudges = __pyx_state[5]; __pyx_result._states = __pyx_state[6]; __pyx_result._updateType = __pyx_state[7]; __pyx_result.adj = __pyx_state[8]; __pyx_result.agentStates = __pyx_state[9]; __pyx_result.sampler = __pyx_state[10]
  *     if len(__pyx_state) > 11 and hasattr(__pyx_result, '__dict__'):
  */
 
@@ -23953,7 +23953,7 @@ static PyObject *__pyx_tp_new_6models_Model(PyTypeObject *t, CYTHON_UNUSED PyObj
   p->__pyx_vtab = __pyx_vtabptr_6models_Model;
   new((void*)&(p->adj)) std::unordered_map<long,struct __pyx_t_6models_Connection> ();
   p->_updateType = ((PyObject*)Py_None); Py_INCREF(Py_None);
-  p->__pyx___nudgeType = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->_nudgeType = ((PyObject*)Py_None); Py_INCREF(Py_None);
   p->sampler = ((struct __pyx_obj_3RNG_RNG *)Py_None); Py_INCREF(Py_None);
   p->__dict__ = PyDict_New(); if (unlikely(!p->__dict__)) goto bad;p->_states.data = NULL;
   p->_states.memview = NULL;
@@ -23982,7 +23982,7 @@ static void __pyx_tp_dealloc_6models_Model(PyObject *o) {
   if (p->__dict__) PyDict_Clear(p->__dict__);
   __Pyx_call_destructor(p->adj);
   Py_CLEAR(p->_updateType);
-  Py_CLEAR(p->__pyx___nudgeType);
+  Py_CLEAR(p->_nudgeType);
   Py_CLEAR(p->sampler);
   Py_CLEAR(p->__dict__);
   __PYX_XDEC_MEMVIEW(&p->_states, 1);
@@ -24902,8 +24902,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_u_Format_string_allocated_too_shor_2, __pyx_k_Format_string_allocated_too_shor_2, sizeof(__pyx_k_Format_string_allocated_too_shor_2), 0, 1, 0, 0},
   {&__pyx_n_s_Graph, __pyx_k_Graph, sizeof(__pyx_k_Graph), 0, 0, 1, 1},
   {&__pyx_n_s_ImportError, __pyx_k_ImportError, sizeof(__pyx_k_ImportError), 0, 0, 1, 1},
+  {&__pyx_kp_s_Incompatible_checksums_s_vs_0x1b, __pyx_k_Incompatible_checksums_s_vs_0x1b, sizeof(__pyx_k_Incompatible_checksums_s_vs_0x1b), 0, 0, 1, 0},
   {&__pyx_kp_s_Incompatible_checksums_s_vs_0xb0, __pyx_k_Incompatible_checksums_s_vs_0xb0, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xb0), 0, 0, 1, 0},
-  {&__pyx_kp_s_Incompatible_checksums_s_vs_0xd4, __pyx_k_Incompatible_checksums_s_vs_0xd4, sizeof(__pyx_k_Incompatible_checksums_s_vs_0xd4), 0, 0, 1, 0},
   {&__pyx_n_s_IndexError, __pyx_k_IndexError, sizeof(__pyx_k_IndexError), 0, 0, 1, 1},
   {&__pyx_kp_s_Indirect_dimensions_not_supporte, __pyx_k_Indirect_dimensions_not_supporte, sizeof(__pyx_k_Indirect_dimensions_not_supporte), 0, 0, 1, 0},
   {&__pyx_kp_s_Invalid_mode_expected_c_or_fortr, __pyx_k_Invalid_mode_expected_c_or_fortr, sizeof(__pyx_k_Invalid_mode_expected_c_or_fortr), 0, 0, 1, 0},
@@ -24995,7 +24995,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_np, __pyx_k_np, sizeof(__pyx_k_np), 0, 0, 1, 1},
   {&__pyx_n_u_nudge, __pyx_k_nudge, sizeof(__pyx_k_nudge), 0, 1, 0, 1},
   {&__pyx_n_s_nudgeType, __pyx_k_nudgeType, sizeof(__pyx_k_nudgeType), 0, 0, 1, 1},
-  {&__pyx_n_s_nudgeType_2, __pyx_k_nudgeType_2, sizeof(__pyx_k_nudgeType_2), 0, 0, 1, 1},
   {&__pyx_n_s_nudges, __pyx_k_nudges, sizeof(__pyx_k_nudges), 0, 0, 1, 1},
   {&__pyx_n_s_number_of_nodes, __pyx_k_number_of_nodes, sizeof(__pyx_k_number_of_nodes), 0, 0, 1, 1},
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
@@ -25490,7 +25489,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     cdef bint use_setstate
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
  */
   __pyx_tuple__40 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_use_setstate, __pyx_n_s_state, __pyx_n_s_dict_2); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__40);
@@ -25499,7 +25498,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "(tree fragment)":14
  *     else:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, state)
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Model__set_state(self, __pyx_state)
  */
@@ -25510,7 +25509,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Model(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
- *     if __pyx_checksum != 0xd471bff:
+ *     if __pyx_checksum != 0x1b4091d:
  *         from pickle import PickleError as __pyx_PickleError
  */
   __pyx_tuple__44 = PyTuple_Pack(5, __pyx_n_s_pyx_type, __pyx_n_s_pyx_checksum, __pyx_n_s_pyx_state, __pyx_n_s_pyx_PickleError, __pyx_n_s_pyx_result); if (unlikely(!__pyx_tuple__44)) __PYX_ERR(1, 1, __pyx_L1_error)
@@ -25607,8 +25606,8 @@ if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 1, __pyx_L1_error)
   if (__Pyx_InitStrings(__pyx_string_tab) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   __pyx_int_0 = PyInt_FromLong(0); if (unlikely(!__pyx_int_0)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_1 = PyInt_FromLong(1); if (unlikely(!__pyx_int_1)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_int_28576029 = PyInt_FromLong(28576029L); if (unlikely(!__pyx_int_28576029)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_184977713 = PyInt_FromLong(184977713L); if (unlikely(!__pyx_int_184977713)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_int_222764031 = PyInt_FromLong(222764031L); if (unlikely(!__pyx_int_222764031)) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_int_neg_1 = PyInt_FromLong(-1); if (unlikely(!__pyx_int_neg_1)) __PYX_ERR(0, 1, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
@@ -26147,7 +26146,7 @@ if (!__Pyx_RefNanny) {
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     cdef bint use_setstate
- *     state = (self.__nudgeType, self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
+ *     state = (self._nNodes, self._nStates, self._newstates, self._nodeids, self._nudgeType, self._nudges, self._states, self._updateType, self.adj, self.agentStates, self.sampler)
  */
   __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_6models_5Model_13__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Model___reduce_cython, NULL, __pyx_n_s_models, __pyx_d, ((PyObject *)__pyx_codeobj__41)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -26156,7 +26155,7 @@ if (!__Pyx_RefNanny) {
 
   /* "(tree fragment)":14
  *     else:
- *         return __pyx_unpickle_Model, (type(self), 0xd471bff, state)
+ *         return __pyx_unpickle_Model, (type(self), 0x1b4091d, state)
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     __pyx_unpickle_Model__set_state(self, __pyx_state)
  */
@@ -26167,7 +26166,7 @@ if (!__Pyx_RefNanny) {
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_Model(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
- *     if __pyx_checksum != 0xd471bff:
+ *     if __pyx_checksum != 0x1b4091d:
  *         from pickle import PickleError as __pyx_PickleError
  */
   __pyx_t_1 = __Pyx_CyFunction_NewEx(&__pyx_mdef_6models_1__pyx_unpickle_Model, 0, __pyx_n_s_pyx_unpickle_Model, NULL, __pyx_n_s_models, __pyx_d, ((PyObject *)__pyx_codeobj__45)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)

@@ -31,7 +31,7 @@ cdef class Model:
         # public sparse.csr.csr_matrix adj
         int _nNodes
         str _updateType
-        str __nudgeType
+        str _nudgeType
         double[::1] _nudges
         RNG sampler
         # np.ndarray _nudges

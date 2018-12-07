@@ -25,7 +25,7 @@ from libcpp.unordered_map cimport unordered_map
 # from libcpp.concurrent_unordered_map cimport concurrent_unordered_map
 from libc.stdio cimport printf
 import ctypes
-
+from cython.view cimport array as cvarray
 # srand(time.time()) # set seed
 # # TODO: the numpy approach should be re-written in a dictionary only approach in order to prevent memory issues;
 # # the general outline would be to yield the results and immediately bin them accordingly and write state to disk
@@ -41,7 +41,12 @@ def checkDistribution():
         print('Warning: Windows detected. Please remember to respect the GIL'\
               ' when using multi-core functions')
 checkDistribution() # print it only once
-
+from posix.time cimport clock_gettime, timespec, CLOCK_REALTIME
+cdef timespec ts
+cdef int current
+clock_gettime(CLOCK_REALTIME, &ts)
+current = ts.tv_sec
+srand(current) # set seed
 
 # cdef int encodeState(long[::1] state) :
 #     cdef int i, N = state.shape[0]
@@ -142,8 +147,8 @@ cpdef dict monteCarlo(\
     cdef long[:, ::1]  s     = np.array([decodeState(i, model._nNodes) for i in snapshots])
     cdef int N = s.shape[0]
     # cdef double[::1] out     = np.zeros(N * (deltas + 1) * model._nNodes * model._nStates)
-    cdef double[:, :, :, ::1] out     = np.zeros((N , (deltas + 1),  model._nNodes,  model._nStates))
-    cdef long[:, ::1] r      = model.sampleNodes(N * repeats * (deltas + 1) )
+
+    # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
     cdef int k, delta, node, statei, counter, sc,  half = deltas // 2, n
     # pbar = tqdm(total = repeats)
     counter = 0
@@ -157,15 +162,17 @@ cpdef dict monteCarlo(\
     cdef int tid = -1
     # cdef list models = [copy.deepcopy(prototype) for _  in range(mp.cpu_count())]
     # cdef Model model
+    cdef timespec ts
+    cdef int current
+    # cdef cvarray(shape=(3, 3, 3), ?Witemsize=sizeof(int), format="i")
+
+    cdef double[:, :, :, ::1] out     = np.zeros((N , (deltas + 1), model._nNodes, model._nStates))
+    cdef long[  :,       ::1] r       = model.sampleNodes(N * repeats * (deltas + 1) )
     with nogil, parallel():
-        # tid = threadid()
-        # printf('%d ', tid)
-        with gil:
-            srand(time.time())
+        current = ts.tv_sec
+        srand(current) # set seed for each thread
         for n in prange(N, schedule = 'dynamic'):
-            # tid   = threadid()
-            # model = models[tid]
-            with gil: # TODO: have a fix for this...
+            with gil:
                 for k in range(repeats):
                     for node in range(model._nNodes):
                         model._states[node] = s[n][node]
@@ -184,12 +191,14 @@ cpdef dict monteCarlo(\
                         jdx  = (delta +  1) * (node + 1) * (statei + 1) + (n + 1) * (k + 1)
                         # printf('%d ', jdx)
                         model._updateState(r[jdx])
+                        # model._updateState(model.sampleNodes(1)[0])
                         # turn-off
                         if reset:
                             if model._nudgeType == 'pulse' or \
                             model._nudgeType    == 'constant' and delta >= half:
                                 model._nudges[:] = 0
                                 reset            = False
+
                 pbar.update(1)
                 conditional[kdxs[n]] = out.base[n]
     pbar.close()

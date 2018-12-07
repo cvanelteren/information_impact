@@ -97,7 +97,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, 5, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = 0)
 zd[zd < finfo(float).eps] = 0
 

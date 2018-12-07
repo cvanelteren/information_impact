@@ -22,11 +22,13 @@ for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 
 nx.set_node_attributes(graph, attr)
-graph = nx.barabasi_albert_graph(10, 5)
+graph = nx.gnp_random_graph(10, 0.2)
 # graph = nx.path_graph(10)
 import fastIsing
 #graph = nx.path_graph(20)
 s = time.process_time()
+fig, ax = subplots()
+nx.draw(graph, with_labels = 1)
 m = fastIsing.Ising(graph, temperature = 2)
 from time import time
 m.updateType = 'single'
