@@ -257,6 +257,6 @@ cdef class Ising(Model):
             tmp             = self.simulate(n)
             results[0, idx] = abs(tmp.mean())
             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
-        print(results[0])
+        # print(results[0])
         self.t = tcopy
         return results

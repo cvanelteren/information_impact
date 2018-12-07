@@ -5745,7 +5745,7 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
  *             tmp             = self.simulate(n)
  *             results[0, idx] = abs(tmp.mean())             # <<<<<<<<<<<<<<
  *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
- *         print(results[0])
+ *         # print(results[0])
  */
     __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_tmp, __pyx_n_s_mean); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 258, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
@@ -5783,7 +5783,7 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
  *             tmp             = self.simulate(n)
  *             results[0, idx] = abs(tmp.mean())
  *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta             # <<<<<<<<<<<<<<
- *         print(results[0])
+ *         # print(results[0])
  *         self.t = tcopy
  */
     __pyx_t_4 = PyNumber_Power(__pyx_v_tmp, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 259, __pyx_L1_error)
@@ -5859,33 +5859,19 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "fastIsing.pyx":260
- *             results[0, idx] = abs(tmp.mean())
- *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
- *         print(results[0])             # <<<<<<<<<<<<<<
- *         self.t = tcopy
- *         return results
- */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_results, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 260, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 260, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
   /* "fastIsing.pyx":261
  *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
- *         print(results[0])
+ *         # print(results[0])
  *         self.t = tcopy             # <<<<<<<<<<<<<<
  *         return results
  */
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_tcopy); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 261, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_t, __pyx_t_5) < 0) __PYX_ERR(0, 261, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_tcopy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 261, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_t, __pyx_t_1) < 0) __PYX_ERR(0, 261, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "fastIsing.pyx":262
- *         print(results[0])
+ *         # print(results[0])
  *         self.t = tcopy
  *         return results             # <<<<<<<<<<<<<<
  */
