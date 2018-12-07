@@ -27,9 +27,9 @@ graph = nx.barabasi_albert_graph(10, 5)
 import fastIsing
 #graph = nx.path_graph(20)
 s = time.process_time()
-m = fastIsing.Ising(graph, temperature = 10)
+m = fastIsing.Ising(graph, temperature = 2)
 from time import time
-m.updateType = 'async'
+m.updateType = 'single'
 
 m.magSide    = 'pos'
 #m.reset()
@@ -40,17 +40,16 @@ mags, sus = m.matchMagnetization(temps, 1000, 0)
 fig, ax = subplots()
 ax.scatter(temps, mags)
 
-#for i in range(10):
-#    xx = infcy.getSnapShots(m, 1000, step = 100)
-#    repeats = 100000
-#    deltas = 3
-#    y  = infcy.monteCarlo(m, xx, deltas, repeats)
-#
+xx = infcy.getSnapShots(m, 1000, step = 100)
+repeats = 100000
+deltas = 3
+y  = infcy.monteCarlo(m, xx, deltas, repeats)
+
 #
 #
 #    # for k in y:
 #        # print(k)
-#    px, mi= infcy.mutualInformation(y, deltas, xx, m )
+px, mi= infcy.mutualInformation(y, deltas, xx, m )
 
 
 
@@ -58,7 +57,8 @@ ax.scatter(temps, mags)
 
 
 
-# fig, ax = subplots()
+fig, ax = subplots()
+ax.plot(mi)
 # for idx, i in enumerate(mi.base.T):
 #     print(i)
 #     ax.plot(arange(len(i)), i, color = colors[idx], label = m.rmapping[idx]) #, colors[idx], label = m.rmapping[idx])

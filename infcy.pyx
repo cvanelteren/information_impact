@@ -20,11 +20,13 @@ from fastIsing cimport Ising
 from tqdm import tqdm   #progress bar
 #from joblib import Parallel, delayed, Memory
 from libcpp.vector cimport vector
+from libc.stdlib cimport srand
 from libcpp.unordered_map cimport unordered_map
 # from libcpp.concurrent_unordered_map cimport concurrent_unordered_map
 from libc.stdio cimport printf
 import ctypes
-#
+
+# srand(time.time()) # set seed
 # # TODO: the numpy approach should be re-written in a dictionary only approach in order to prevent memory issues;
 # # the general outline would be to yield the results and immediately bin them accordingly and write state to disk
 # from models cimport Model
@@ -158,6 +160,8 @@ cpdef dict monteCarlo(\
     with nogil, parallel():
         # tid = threadid()
         # printf('%d ', tid)
+        with gil:
+            srand(time.time())
         for n in prange(N, schedule = 'dynamic'):
             # tid   = threadid()
             # model = models[tid]
@@ -182,8 +186,8 @@ cpdef dict monteCarlo(\
                         model._updateState(r[jdx])
                         # turn-off
                         if reset:
-                            if model.__nudgeType == 'pulse' or \
-                            model.__nudgeType    == 'constant' and delta >= half:
+                            if model._nudgeType == 'pulse' or \
+                            model._nudgeType    == 'constant' and delta >= half:
                                 model._nudges[:] = 0
                                 reset            = False
                 pbar.update(1)

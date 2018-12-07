@@ -1,18 +1,31 @@
 # # distutils: language=c++
 # from libcpp.vector cimport vector
-# import numpy as np
-# cimport numpy as np
+import numpy as np
+cimport numpy as np
 # import networkx as nx
 # import ctypes
 # from libc.stdio cimport printf
-# import time
+import time
 
 from sampler cimport Sampler
 
-cdef Sampler s = Sampler(0, 0, 1)
+cdef Sampler s = Sampler(time.time(), 0, 1)
 
-for i in range(10):
-    print(s.sample())
+from matplotlib.pyplot import subplots, show
+from libc.stdlib cimport rand, srand
+srand(time.time())
+cdef extern from "limits.h":
+    int INT_MAX
+    int RAND_MAX
+n = int(1e5)
+x = np.zeros((n, 2))
+
+for i in range(n):
+    x[i] = [rand() / RAND_MAX, s.sample()]
+fig, ax = subplots()
+for i in range(2):
+    ax.hist(x[:, i], alpha = .5)
+show()
 # graph = nx.path_graph(3, nx.DiGraph())
 # from fastIsing cimport Ising
 # from cython cimport parallel

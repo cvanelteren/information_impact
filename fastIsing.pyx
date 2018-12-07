@@ -36,8 +36,6 @@ cdef extern from "limits.h":
     int INT_MAX
     int RAND_MAX
 
-from RNG cimport RNG
-
 
 from models cimport Model
 cdef class Ising(Model)

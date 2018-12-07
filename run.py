@@ -29,8 +29,7 @@ if __name__ == '__main__':
         real = sys.argv[1]
     else:
         real = 0
-    print(sys.argv, real)
-    repeats       = int(1e4) if real else 100000
+    repeats       = int(1e4) if real else 10000
     deltas        = 10       if real else 30
     step          = 1
     nSamples      = int(1e4) if real else 10000
@@ -40,13 +39,13 @@ if __name__ == '__main__':
     numIter       = int(5e1) if real else 5
     magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [.9, .8, .7]  if real else [.7]  # match magnetiztion at 80 percent of max
+    CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     if real:
         graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
     else:
         graphs = [nx.path_graph(10)]
-        graphs = [nx.barabasi_albert_graph(10, 5)]
+        graphs = [nx.barabasi_albert_graph(10, 2)]
 #     dataDir = 'Psycho' # relative path careful
 #     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 #     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
@@ -98,7 +97,7 @@ if __name__ == '__main__':
 
             # magRange = array([.9, .2])
             temps = linspace(0, 10, 100)
-            print(model.magSide)
+
 #            model.magSide = 'neg'
             mag, sus = model.matchMagnetization(temps = temps,\
              n = 10000)
@@ -128,8 +127,7 @@ if __name__ == '__main__':
             tmp = dict(temps = temps, \
             temperatures = temperatures, magRange = magRange, mag = mag)
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
-            show()
-            assert 0 
+
 
         for t in temperatures:
             print(f'{time()} Setting {t}')
