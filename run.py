@@ -34,7 +34,7 @@ if __name__ == '__main__':
     step          = 1
     nSamples      = int(1e4) if real else 10000
     burninSamples = 100000
-    pulseSize     = 1
+    pulseSize     = .1
 
     numIter       = int(5e1) if real else 5
     magSide       = 'neg'
@@ -45,7 +45,7 @@ if __name__ == '__main__':
         graphs = [nx.barabasi_albert_graph(n, int(i)) for i in linspace(1, n - 1, 3)]
     else:
         graphs = [nx.path_graph(10)]
-        graphs = [nx.barabasi_albert_graph(3, 2)]
+#        graphs = [nx.barabasi_albert_graph(3, 2)]
 #     dataDir = 'Psycho' # relative path careful
 #     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 #     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)

@@ -883,19 +883,19 @@ struct __pyx_obj_7sampler_Sampler {
 
 
 
-/* "sampler.pyx":13
+/* "sampler.pyx":12
+ *         uniform_real_distribution(float, float)
  *         T operator()(mt19937)
- * @cython.final
  * cdef class Sampler:             # <<<<<<<<<<<<<<
- * 
  *     def __cinit__(self, int seed, float low, float high):
+ *         self.engine  = mt19937(seed)
  */
 
 struct __pyx_vtabstruct_7sampler_Sampler {
-  PyObject *(*sample)(struct __pyx_obj_7sampler_Sampler *);
+  double (*sample)(struct __pyx_obj_7sampler_Sampler *);
 };
 static struct __pyx_vtabstruct_7sampler_Sampler *__pyx_vtabptr_7sampler_Sampler;
-static PyObject *__pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *);
+static double __pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *);
 
 /* --- Runtime support code (head) --- */
 /* Refnanny.proto */
@@ -1198,7 +1198,7 @@ static int __Pyx_check_binary_version(void);
 /* InitStrings.proto */
 static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
-static PyObject *__pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *__pyx_v_self); /* proto*/
+static double __pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *__pyx_v_self); /* proto*/
 
 /* Module declarations from 'cython' */
 
@@ -1268,9 +1268,9 @@ static PyObject *__pyx_codeobj__4;
 static PyObject *__pyx_codeobj__6;
 /* Late includes */
 
-/* "sampler.pyx":15
+/* "sampler.pyx":13
+ *         T operator()(mt19937)
  * cdef class Sampler:
- * 
  *     def __cinit__(self, int seed, float low, float high):             # <<<<<<<<<<<<<<
  *         self.engine  = mt19937(seed)
  *         self.uniform = uniform_real_distribution[float](low, high)
@@ -1310,17 +1310,17 @@ static int __pyx_pw_7sampler_7Sampler_1__cinit__(PyObject *__pyx_v_self, PyObjec
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_low)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); __PYX_ERR(1, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); __PYX_ERR(1, 13, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_high)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); __PYX_ERR(1, 15, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); __PYX_ERR(1, 13, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(1, 15, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) __PYX_ERR(1, 13, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -1329,13 +1329,13 @@ static int __pyx_pw_7sampler_7Sampler_1__cinit__(PyObject *__pyx_v_self, PyObjec
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_seed = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_seed == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 15, __pyx_L3_error)
-    __pyx_v_low = __pyx_PyFloat_AsFloat(values[1]); if (unlikely((__pyx_v_low == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 15, __pyx_L3_error)
-    __pyx_v_high = __pyx_PyFloat_AsFloat(values[2]); if (unlikely((__pyx_v_high == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 15, __pyx_L3_error)
+    __pyx_v_seed = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_seed == (int)-1) && PyErr_Occurred())) __PYX_ERR(1, 13, __pyx_L3_error)
+    __pyx_v_low = __pyx_PyFloat_AsFloat(values[1]); if (unlikely((__pyx_v_low == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 13, __pyx_L3_error)
+    __pyx_v_high = __pyx_PyFloat_AsFloat(values[2]); if (unlikely((__pyx_v_high == (float)-1) && PyErr_Occurred())) __PYX_ERR(1, 13, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 15, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(1, 13, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("sampler.Sampler.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1354,8 +1354,8 @@ static int __pyx_pf_7sampler_7Sampler___cinit__(struct __pyx_obj_7sampler_Sample
   std::mt19937 __pyx_t_1;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "sampler.pyx":16
- * 
+  /* "sampler.pyx":14
+ * cdef class Sampler:
  *     def __cinit__(self, int seed, float low, float high):
  *         self.engine  = mt19937(seed)             # <<<<<<<<<<<<<<
  *         self.uniform = uniform_real_distribution[float](low, high)
@@ -1365,22 +1365,22 @@ static int __pyx_pf_7sampler_7Sampler___cinit__(struct __pyx_obj_7sampler_Sample
     __pyx_t_1 = std::mt19937(__pyx_v_seed);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(1, 16, __pyx_L1_error)
+    __PYX_ERR(1, 14, __pyx_L1_error)
   }
   __pyx_v_self->engine = __pyx_t_1;
 
-  /* "sampler.pyx":17
+  /* "sampler.pyx":15
  *     def __cinit__(self, int seed, float low, float high):
  *         self.engine  = mt19937(seed)
  *         self.uniform = uniform_real_distribution[float](low, high)             # <<<<<<<<<<<<<<
  * 
- *     cdef sample(Sampler self):
+ *     cdef double sample( self):
  */
   __pyx_v_self->uniform = std::uniform_real_distribution<float> (__pyx_v_low, __pyx_v_high);
 
-  /* "sampler.pyx":15
+  /* "sampler.pyx":13
+ *         T operator()(mt19937)
  * cdef class Sampler:
- * 
  *     def __cinit__(self, int seed, float low, float high):             # <<<<<<<<<<<<<<
  *         self.engine  = mt19937(seed)
  *         self.uniform = uniform_real_distribution[float](low, high)
@@ -1397,45 +1397,35 @@ static int __pyx_pf_7sampler_7Sampler___cinit__(struct __pyx_obj_7sampler_Sample
   return __pyx_r;
 }
 
-/* "sampler.pyx":19
+/* "sampler.pyx":17
  *         self.uniform = uniform_real_distribution[float](low, high)
  * 
- *     cdef sample(Sampler self):             # <<<<<<<<<<<<<<
+ *     cdef double sample( self):             # <<<<<<<<<<<<<<
  *         return self.uniform(self.engine)
  */
 
-static PyObject *__pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *__pyx_v_self) {
-  PyObject *__pyx_r = NULL;
+static double __pyx_f_7sampler_7Sampler_sample(struct __pyx_obj_7sampler_Sampler *__pyx_v_self) {
+  double __pyx_r;
   __Pyx_RefNannyDeclarations
-  PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("sample", 0);
 
-  /* "sampler.pyx":20
+  /* "sampler.pyx":18
  * 
- *     cdef sample(Sampler self):
+ *     cdef double sample( self):
  *         return self.uniform(self.engine)             # <<<<<<<<<<<<<<
  */
-  __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_self->uniform(__pyx_v_self->engine)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 20, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_r = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_r = __pyx_v_self->uniform(__pyx_v_self->engine);
   goto __pyx_L0;
 
-  /* "sampler.pyx":19
+  /* "sampler.pyx":17
  *         self.uniform = uniform_real_distribution[float](low, high)
  * 
- *     cdef sample(Sampler self):             # <<<<<<<<<<<<<<
+ *     cdef double sample( self):             # <<<<<<<<<<<<<<
  *         return self.uniform(self.engine)
  */
 
   /* function exit code */
-  __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("sampler.Sampler.sample", __pyx_clineno, __pyx_lineno, __pyx_filename);
-  __pyx_r = 0;
   __pyx_L0:;
-  __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -1809,15 +1799,15 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   __pyx_vtabptr_7sampler_Sampler = &__pyx_vtable_7sampler_Sampler;
-  __pyx_vtable_7sampler_Sampler.sample = (PyObject *(*)(struct __pyx_obj_7sampler_Sampler *))__pyx_f_7sampler_7Sampler_sample;
-  if (PyType_Ready(&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
+  __pyx_vtable_7sampler_Sampler.sample = (double (*)(struct __pyx_obj_7sampler_Sampler *))__pyx_f_7sampler_7Sampler_sample;
+  if (PyType_Ready(&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 12, __pyx_L1_error)
   __pyx_type_7sampler_Sampler.tp_print = 0;
   if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_type_7sampler_Sampler.tp_dictoffset && __pyx_type_7sampler_Sampler.tp_getattro == PyObject_GenericGetAttr)) {
     __pyx_type_7sampler_Sampler.tp_getattro = __Pyx_PyObject_GenericGetAttrNoDict;
   }
-  if (__Pyx_SetVtable(__pyx_type_7sampler_Sampler.tp_dict, __pyx_vtabptr_7sampler_Sampler) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Sampler, (PyObject *)&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 13, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7sampler_Sampler.tp_dict, __pyx_vtabptr_7sampler_Sampler) < 0) __PYX_ERR(1, 12, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Sampler, (PyObject *)&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 12, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_7sampler_Sampler) < 0) __PYX_ERR(1, 12, __pyx_L1_error)
   __pyx_ptype_7sampler_Sampler = &__pyx_type_7sampler_Sampler;
   __Pyx_RefNannyFinishContext();
   return 0;

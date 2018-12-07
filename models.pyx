@@ -19,7 +19,7 @@ ctypedef np.int DTYPE_T
 # from libcpp.map cimport map as cmap
 # from libcpp.string cimport string
 # from libcpp.vector cimport vector
-from libc.stdlib cimport rand
+# from libc.stdlib cimport rand
 
 from cython.operator cimport dereference, preincrement
 # from libc.stdlib cimport rand
@@ -29,12 +29,21 @@ from libcpp.vector cimport vector
 from libcpp.map cimport map
 from libcpp.unordered_map cimport unordered_map
 # from RNG cimport RNG
+from sampler cimport Sampler
 cdef extern from "limits.h":
     int INT_MAX
     int RAND_MAX
 
-
+cdef Sampler sampler = Sampler(1234, 0., 1.)
 cdef class Model
+
+
+# SEED SETUP
+from posix.time cimport clock_gettime,\
+timespec, CLOCK_REALTIME
+
+
+
 # from sampler cimport Sampler # mersenne sampler
 # @cython.final
 cdef class Model: # see pxd
@@ -51,12 +60,17 @@ cdef class Model: # see pxd
         It translates the networkx graph into numpy dependencies for speed.
         '''
 
+        cdef timespec ts
+        clock_gettime(CLOCK_REALTIME, &ts)
+        cdef unsigned int seed = ts.tv_sec
+        self.dist              = uniform_real_distribution[double](0.0,1.0)
+        self.seed              = 1
+        self.gen               = mt19937(seed)
 
         self.construct(graph, agentStates)
         self.nudgeType  = nudgeType
         self.updateType = updateType
         # self.sampler    = Sampler(42, 0., 1.)
-        # self.sampler    = RNG(time.time())
 
     # TODO: make class pickable
     # hence the wrappers
@@ -77,6 +91,8 @@ cdef class Model: # see pxd
     @property
     def nStates(self)   : return self._nStates
 
+    @property
+    def nodeids(self)   : return self._nodeids
 
     # TODO: reset all after new?
     @nudges.setter
@@ -112,6 +128,9 @@ cdef class Model: # see pxd
             self._newstates = value
             self._states    = value
 
+
+    cdef double rand(self) nogil:
+        return self.dist(self.gen)
     cpdef void construct(self, object graph, list agentStates):
         """
         Constructs adj matrix using structs
@@ -279,8 +298,8 @@ cdef class Model: # see pxd
             start = (samplei * sampleSize) % self._nNodes
             if start + sampleSize >= self._nNodes:
                 for i in range(self._nNodes): # TODO: replace this with new samplers
-                    # j = <long> i + dist(gen) * (self._nNodes - i) + 1
-                    j                = <long> (i + rand() / (RAND_MAX / (self._nNodes - i) + 1) )
+                    j                = <long> (i + self.rand() * (self._nNodes - i) + 1)
+                    # j                = <long> (i + rand() / (RAND_MAX / (self._nNodes - i) + 1) )
                     k                = self._nodeids[j]
                     self._nodeids[j] = self._nodeids[i]
                     self._nodeids[i] = k

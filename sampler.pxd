@@ -15,4 +15,4 @@ cdef class Sampler:
     cdef:
         mt19937 engine
         uniform_real_distribution[float] uniform
-    cdef sample(Sampler self)
+    cdef double sample( self)

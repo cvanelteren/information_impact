@@ -23,7 +23,6 @@ from cython.parallel cimport prange, parallel
 cimport numpy as np # overwrite some c  backend from above
 
 from libc.math cimport exp
-from libc.stdlib cimport rand
 from libcpp.map cimport map
 from libcpp.vector cimport vector
 from cython.operator cimport dereference, preincrement
@@ -36,6 +35,30 @@ cdef extern from "limits.h":
     int INT_MAX
     int RAND_MAX
 
+
+
+# SEED SETUP
+# from posix.time cimport clock_gettime,\
+# timespec, CLOCK_REALTIME
+# cdef timespec ts
+# clock_gettime(CLOCK_REALTIME, &ts)
+# cdef int seed  = ts.tv_sec
+# cdef extern from "<random>" namespace "std" nogil:
+#     cdef cppclass mt19937:
+#         mt19937() # we need to define this constructor to stack allocate classes in Cython
+#         mt19937(unsigned int seed) # not worrying about matching the exact int type for seed
+#
+#     cdef cppclass uniform_real_distribution[T]:
+#         uniform_real_distribution()
+#         uniform_real_distribution(T a, T b)
+#         T operator()(mt19937 gen) # ignore the possibility of using other classes for "gen"
+#
+# cdef:
+#     mt19937 gen = mt19937(seed)
+#     uniform_real_distribution[double] dist = uniform_real_distribution[double](0.0,1.0)
+# cdef double mersenne() nogil:
+#     global gen, dist
+#     return dist(gen)
 
 from models cimport Model
 cdef class Ising(Model)
@@ -196,7 +219,7 @@ cdef class Ising(Model):
             # p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
             p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
 
-            if rand() / float(RAND_MAX) < p: # fast but not random
+            if self.rand() < p: # fast but not random
             # if sampler.rand() < p: # best option
             # if np.random.rand()  < p: # slow but easy
                 newstates[node] = -states[node]

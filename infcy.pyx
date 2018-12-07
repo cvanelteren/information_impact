@@ -41,12 +41,28 @@ def checkDistribution():
         print('Warning: Windows detected. Please remember to respect the GIL'\
               ' when using multi-core functions')
 checkDistribution() # print it only once
-from posix.time cimport clock_gettime, timespec, CLOCK_REALTIME
-cdef timespec ts
-cdef int current
-clock_gettime(CLOCK_REALTIME, &ts)
-current = ts.tv_sec
-srand(current) # set seed
+# SEED SETUP
+# from posix.time cimport clock_gettime,\
+# timespec, CLOCK_REALTIME
+# cdef timespec ts
+# clock_gettime(CLOCK_REALTIME, &ts)
+# cdef int seed  = ts.tv_sec
+# cdef extern from "<random>" namespace "std" nogil:
+#     cdef cppclass mt19937:
+#         mt19937() # we need to define this constructor to stack allocate classes in Cython
+#         mt19937(unsigned int seed) # not worrying about matching the exact int type for seed
+#
+#     cdef cppclass uniform_real_distribution[T]:
+#         uniform_real_distribution()
+#         uniform_real_distribution(T a, T b)
+#         T operator()(mt19937 gen) # ignore the possibility of using other classes for "gen"
+#
+# cdef:
+#     mt19937 gen = mt19937(seed)
+#     uniform_real_distribution[double] dist = uniform_real_distribution[double](0.0,1.0)
+# cdef double mersenne() nogil:
+#     global gen, dist
+#     return dist(gen)
 
 # cdef int encodeState(long[::1] state) :
 #     cdef int i, N = state.shape[0]
@@ -162,15 +178,15 @@ cpdef dict monteCarlo(\
     cdef int tid = -1
     # cdef list models = [copy.deepcopy(prototype) for _  in range(mp.cpu_count())]
     # cdef Model model
-    cdef timespec ts
-    cdef int current
+    # cdef timespec ts
+    # cdef int current
     # cdef cvarray(shape=(3, 3, 3), ?Witemsize=sizeof(int), format="i")
 
     cdef double[:, :, :, ::1] out     = np.zeros((N , (deltas + 1), model._nNodes, model._nStates))
     cdef long[  :,       ::1] r       = model.sampleNodes(N * repeats * (deltas + 1) )
     with nogil, parallel():
-        current = ts.tv_sec
-        srand(current) # set seed for each thread
+        # current = ts.tv_sec
+        # srand(current) # set seed for each thread
         for n in prange(N, schedule = 'dynamic'):
             with gil:
                 for k in range(repeats):
