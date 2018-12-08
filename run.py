@@ -31,10 +31,10 @@ if __name__ == '__main__':
         real = 0
     print(real)
     repeats       = int(1e4) if real else 10000
-    deltas        = 30       if real else 30
+    deltas        = 10       if real else 30
     step          = 1000
-    nSamples      = int(1e4) if real else 10000
-    burninSamples = 10000
+    nSamples      = int(1e4) if real else 100000
+    burninSamples = 100000
     pulseSize     = 1
 
     numIter       = int(1e1) if real else 5
@@ -46,20 +46,20 @@ if __name__ == '__main__':
         graphs = [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
     else:
         graphs = [nx.path_graph(5)]
-        graphs = [nx.barabasi_albert_graph(10, 5)]
-#     dataDir = 'Psycho' # relative path careful
-#     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-#     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-# #
-#     graph   = nx.from_pandas_adjacency(df)
-#     for i, j in graph.edges():
-#         graph[i][j]['weight'] = 1
-#     #
-#     attr = {}
-#     for node, row in h.iterrows():
-#         attr[node] = dict(H = row['externalField'], nudges = 0)
-#     nx.set_node_attributes(graph, attr)
-
+        graphs = [nx.barabasi_albert_graph(10, 2)]
+    dataDir = 'Psycho' # relative path careful
+    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+#
+    graph   = nx.from_pandas_adjacency(df)
+    for i, j in graph.edges():
+        graph[i][j]['weight'] = 1
+    #
+    attr = {}
+    for node, row in h.iterrows():
+        attr[node] = dict(H = row['externalField'], nudges = 0)
+    nx.set_node_attributes(graph, attr)
+    graphs = [graph]
 
     for graph in graphs:
         now = time()

@@ -2,8 +2,10 @@ from distutils.core import setup, Extension
 from Cython.Build import cythonize
 import numpy
 import os
-os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv"
-os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv"
+
+# clang seems faster on my machine
+os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast"
+os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast"
 
 exts = []
 nums = numpy.get_include()
@@ -36,8 +38,9 @@ ext_modules = cythonize(exts,\
             annotate            = True,\
             language_level      = 3,\
             compiler_directives = dict(\
-                                        fast_gil = True,\
-                                       binding  = True),\
+                                    fast_gil = True,\
+                                    binding  = True,\
+                                    ),\
             # gdb_debug=True,
             )\
 )

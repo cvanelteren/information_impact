@@ -1323,8 +1323,8 @@ struct __pyx_t_9fastIsing_Connection {
 };
 
 /* "fastIsing.pxd":34
- *     cpdef np.ndarray[double] computeProb(self)
  * 
+ *     # does burnin of the model; matches the magnetizatin until it levels
  *     cpdef np.ndarray[double] burnin(self,\             # <<<<<<<<<<<<<<
  *                  int samples=*,\
  *                  double threshold =*)
@@ -1335,9 +1335,9 @@ struct __pyx_opt_args_9fastIsing_5Ising_burnin {
   double threshold;
 };
 
-/* "fastIsing.pxd":38
- *                  double threshold =*)
+/* "fastIsing.pxd":39
  * 
+ *     # compute mag for different temps
  *     cpdef np.ndarray matchMagnetization(self,\             # <<<<<<<<<<<<<<
  *                            np.ndarray temps =*,\
  *                            int n =*,\
@@ -5182,8 +5182,8 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *         # printf('%d ', mu)
  *         # compute mean
  *         for node in range(self._nNodes):             # <<<<<<<<<<<<<<
- *             mu          += states[node] / Z
  *             states[node] = newstates[node] # update
+ *             mu          += states[node] / Z
  */
   __pyx_t_2 = __pyx_v_self->__pyx_base._nNodes;
   __pyx_t_3 = __pyx_t_2;
@@ -5193,31 +5193,31 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
     /* "fastIsing.pyx":197
  *         # compute mean
  *         for node in range(self._nNodes):
- *             mu          += states[node] / Z             # <<<<<<<<<<<<<<
- *             states[node] = newstates[node] # update
+ *             states[node] = newstates[node] # update             # <<<<<<<<<<<<<<
+ *             mu          += states[node] / Z
  *             # check if conditions are met
  */
     __pyx_t_10 = __pyx_v_node;
-    __pyx_v_mu = (__pyx_v_mu + (((double)(*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_10)) )))) / __pyx_v_Z));
+    __pyx_t_11 = __pyx_v_node;
+    *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_11)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_newstates.data) + __pyx_t_10)) )));
 
     /* "fastIsing.pyx":198
  *         for node in range(self._nNodes):
- *             mu          += states[node] / Z
- *             states[node] = newstates[node] # update             # <<<<<<<<<<<<<<
+ *             states[node] = newstates[node] # update
+ *             mu          += states[node] / Z             # <<<<<<<<<<<<<<
  *             # check if conditions are met
  *         if (mu < 0 and self._magSide == POS) or\
  */
-    __pyx_t_11 = __pyx_v_node;
     __pyx_t_12 = __pyx_v_node;
-    *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_12)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_newstates.data) + __pyx_t_11)) )));
+    __pyx_v_mu = (__pyx_v_mu + (((double)(*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_12)) )))) / __pyx_v_Z));
   }
 
   /* "fastIsing.pyx":200
- *             states[node] = newstates[node] # update
+ *             mu          += states[node] / Z
  *             # check if conditions are met
  *         if (mu < 0 and self._magSide == POS) or\             # <<<<<<<<<<<<<<
  *          (mu > 0 and self._magSide == NEG):
- *             # printf('%f %d\n', mu, self._magSide)
+ *             printf('%f %d\n', mu, self._magSide)
  */
   __pyx_t_13 = ((__pyx_v_mu < 0.0) != 0);
   if (!__pyx_t_13) {
@@ -5236,7 +5236,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *             # check if conditions are met
  *         if (mu < 0 and self._magSide == POS) or\
  *          (mu > 0 and self._magSide == NEG):             # <<<<<<<<<<<<<<
- *             # printf('%f %d\n', mu, self._magSide)
+ *             printf('%f %d\n', mu, self._magSide)
  *             # flip if true
  */
   __pyx_t_13 = ((__pyx_v_mu > 0.0) != 0);
@@ -5250,16 +5250,25 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
   __pyx_L9_bool_binop_done:;
 
   /* "fastIsing.pyx":200
- *             states[node] = newstates[node] # update
+ *             mu          += states[node] / Z
  *             # check if conditions are met
  *         if (mu < 0 and self._magSide == POS) or\             # <<<<<<<<<<<<<<
  *          (mu > 0 and self._magSide == NEG):
- *             # printf('%f %d\n', mu, self._magSide)
+ *             printf('%f %d\n', mu, self._magSide)
  */
   if (__pyx_t_6) {
 
+    /* "fastIsing.pyx":202
+ *         if (mu < 0 and self._magSide == POS) or\
+ *          (mu > 0 and self._magSide == NEG):
+ *             printf('%f %d\n', mu, self._magSide)             # <<<<<<<<<<<<<<
+ *             # flip if true
+ *             for node in range(self._nNodes):
+ */
+    (void)(printf(((char const *)"%f %d\n"), __pyx_v_mu, __pyx_v_self->_magSide));
+
     /* "fastIsing.pyx":204
- *             # printf('%f %d\n', mu, self._magSide)
+ *             printf('%f %d\n', mu, self._magSide)
  *             # flip if true
  *             for node in range(self._nNodes):             # <<<<<<<<<<<<<<
  *                 states[node] = -states[node]
@@ -5283,11 +5292,11 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
     }
 
     /* "fastIsing.pyx":200
- *             states[node] = newstates[node] # update
+ *             mu          += states[node] / Z
  *             # check if conditions are met
  *         if (mu < 0 and self._magSide == POS) or\             # <<<<<<<<<<<<<<
  *          (mu > 0 and self._magSide == NEG):
- *             # printf('%f %d\n', mu, self._magSide)
+ *             printf('%f %d\n', mu, self._magSide)
  */
   }
 
@@ -5772,7 +5781,7 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
   /* "fastIsing.pyx":236
  *               :sus:  the magnetic susceptibility
  *         """
- *         cdef double tcopy   = self.t             # <<<<<<<<<<<<<<
+ *         cdef double tcopy   = self.t # store current temp             # <<<<<<<<<<<<<<
  *         cdef results = np.zeros((2, temps.shape[0]))
  *         self.reset()
  */
@@ -5784,7 +5793,7 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
 
   /* "fastIsing.pyx":237
  *         """
- *         cdef double tcopy   = self.t
+ *         cdef double tcopy   = self.t # store current temp
  *         cdef results = np.zeros((2, temps.shape[0]))             # <<<<<<<<<<<<<<
  *         self.reset()
  *         for idx, t in enumerate(temps):
@@ -5824,7 +5833,7 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
   __pyx_t_1 = 0;
 
   /* "fastIsing.pyx":238
- *         cdef double tcopy   = self.t
+ *         cdef double tcopy   = self.t # store current temp
  *         cdef results = np.zeros((2, temps.shape[0]))
  *         self.reset()             # <<<<<<<<<<<<<<
  *         for idx, t in enumerate(temps):
@@ -5952,7 +5961,7 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
  *             tmp             = self.simulate(n)
  *             results[0, idx] = abs(tmp.mean())             # <<<<<<<<<<<<<<
  *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
- *         print(results[0])
+ *         # print(results[0])
  */
     __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_tmp, __pyx_n_s_mean); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 245, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
@@ -5990,8 +5999,8 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
  *             tmp             = self.simulate(n)
  *             results[0, idx] = abs(tmp.mean())
  *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta             # <<<<<<<<<<<<<<
- *         print(results[0])
- *         self.t = tcopy
+ *         # print(results[0])
+ *         self.t = tcopy # reset temp
  */
     __pyx_t_4 = PyNumber_Power(__pyx_v_tmp, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 246, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
@@ -6066,34 +6075,20 @@ static PyArrayObject *__pyx_f_9fastIsing_5Ising_matchMagnetization(struct __pyx_
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "fastIsing.pyx":247
- *             results[0, idx] = abs(tmp.mean())
- *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
- *         print(results[0])             # <<<<<<<<<<<<<<
- *         self.t = tcopy
- *         return results
- */
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_results, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 247, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 247, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
   /* "fastIsing.pyx":248
  *             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
- *         print(results[0])
- *         self.t = tcopy             # <<<<<<<<<<<<<<
+ *         # print(results[0])
+ *         self.t = tcopy # reset temp             # <<<<<<<<<<<<<<
  *         return results
  */
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_tcopy); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 248, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_t, __pyx_t_5) < 0) __PYX_ERR(0, 248, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_tcopy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 248, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_t, __pyx_t_1) < 0) __PYX_ERR(0, 248, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "fastIsing.pyx":249
- *         print(results[0])
- *         self.t = tcopy
+ *         # print(results[0])
+ *         self.t = tcopy # reset temp
  *         return results             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(((PyObject *)__pyx_r));

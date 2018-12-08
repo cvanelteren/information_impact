@@ -65,7 +65,7 @@ cdef class Model: # see pxd
         self.updateType = updateType
         # self.sampler    = Sampler(42, 0., 1.)
 
-    # TODO: make class pickable 
+    # TODO: make class pickable
     # hence the wrappers
     @property
     def adj(self)       : return self._adj

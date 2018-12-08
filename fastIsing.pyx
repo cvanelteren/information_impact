@@ -194,12 +194,12 @@ cdef class Ising(Model):
         # printf('%d ', mu)
         # compute mean
         for node in range(self._nNodes):
-            mu          += states[node] / Z
             states[node] = newstates[node] # update
+            mu          += states[node] / Z
             # check if conditions are met
         if (mu < 0 and self._magSide == POS) or\
          (mu > 0 and self._magSide == NEG):
-            # printf('%f %d\n', mu, self._magSide)
+            printf('%f %d\n', mu, self._magSide)
             # flip if true
             for node in range(self._nNodes):
                 states[node] = -states[node]
@@ -233,7 +233,7 @@ cdef class Ising(Model):
               :mag:  the magnetization for t in temps
               :sus:  the magnetic susceptibility
         """
-        cdef double tcopy   = self.t
+        cdef double tcopy   = self.t # store current temp
         cdef results = np.zeros((2, temps.shape[0]))
         self.reset()
         for idx, t in enumerate(temps):
@@ -244,6 +244,6 @@ cdef class Ising(Model):
             tmp             = self.simulate(n)
             results[0, idx] = abs(tmp.mean())
             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
-        print(results[0])
-        self.t = tcopy
+        # print(results[0])
+        self.t = tcopy # reset temp
         return results

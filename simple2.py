@@ -14,7 +14,7 @@ import IO, os, plotting as plotz, stats, re
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
-extractThis      = IO.newest(dataPath)[-1]
+extractThis      = IO.newest(dataPath)[-2]
 #extractThis      = '1539187363.9923286' # th.is is 100
 #extractThis      = '1540135977.9857328'
 extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}" 
@@ -68,9 +68,8 @@ for condition, samples in data[t].items():
         else:
             control = data[t]['{}'][idx].px
             px      = sample.px
-#            impact = stats.hellingerDistance(\
-#                             px, control).mean(-1)
-            impact = nanmean(stats.KL(control, sample.px), axis = -1)
+            impact = stats.hellingerDistance(px, control).mean(-1)
+#            impact = nanmean(stats.KL(control, sample.px), axis = -1)
 #            print(impact)
             redIm = impact[deltas // 2  + 1 : ][None, :].T
 #            print(impact)
@@ -97,7 +96,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 3, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = 0)
 zd[zd < finfo(float).eps] = 0
 

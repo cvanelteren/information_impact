@@ -1,15 +1,34 @@
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
+import numpy as np
+cimport numpy as np
+cimport cython
 
-cdef extern from "<random>" namespace "std" nogil:
-    cdef cppclass mt19937:
-        mt19937() # we need to define this constructor to stack allocate classes in Cython
-        mt19937(unsigned int seed) # not worrying about matching the exact int type for seed
+@cython.auto_pickle(True)
+cdef class Test:
+    cdef:
+        np.ndarray _states
+        dict __dict__
+    def __init__(self, states):
+        self._states = states
+        print(self._states)
 
-    cdef cppclass uniform_real_distribution[T]:
-        uniform_real_distribution()
-        uniform_real_distribution(T a, T b)
-        T operator()(mt19937 gen) # ignore the possibility of using other classes for "gen"
+    @property
+    def states(self): return np.asarray(self._states)
 
+    @states.setter
+    def states(self, value):
+        self._states [:] = value
 
-from fastIsing cimport Ising
+    cdef double func(self, long [::1] x):
+        return np.sum(x)
+    # property _states:
+    #     def __get__(self):
+    #         return np.asarray(self._states)
+    #     def __set__(self, values):
+    #         cdef long[::1] self._states = self.states
+
+import pickle
+test = np.ones(10, dtype = int)
+a = Test(test)
+pickle.dumps(a)
