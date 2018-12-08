@@ -109,16 +109,21 @@ MIN = MIN[:, newaxis, :]
 MAX = MAX[:, newaxis, :]
 zd = (zd - MIN) / (MAX - MIN)
 zd = zd.reshape(dd.shape)
+
 # show means with spread
 fig, ax = subplots(1, 2, sharey = 'all')
 x = arange(deltas // 2)
 sidx = 2
 for axi, zdi, zdstd in zip(ax, zd.mean(0).T, zd.std(0).T):
-    axi.plot(x, zdi, linestyle = '--', markeredgecolor = 'black')
-    [axi.fill_between(x, a + sidx* b, a - sidx * b, alpha = .5,\
-                      color = c) for a, b, c in \
-                zip(zdi.T, zdstd.T, colors)]
+    for node, idx in model.mapping.items():
+        a = zdi[:, idx]  + sidx * zdstd[:, idx]
+        b = zdi[:, idx]  - sidx * zdstd[:, idx]
+        axi.plot(x, zdi[:, idx], linestyle = '--', \
+                 markeredgecolor = 'black', label = node,\
+                 color = colors[idx])
+        axi.fill_between(x, a, b, color = colors[idx], alpha  = .4)
 labels = 'MI IMPACT'.split()
+axi.legend()
 [axi.set(ylabel = label) for axi, label in zip(ax, labels)]        
 # %% root based on data
 p0             = ones((func.__code__.co_argcount - 1)); p0[0] = 0
