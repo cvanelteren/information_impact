@@ -1,39 +1,29 @@
-
 # cython: infer_types=True
 # distutils: language=c++
 # __author__ = 'Casper van Elteren'
 import numpy as np
 cimport numpy as np
 cimport cython
-
+import time
 from cython.parallel cimport parallel, prange, threadid
-# cimport numpy as np
-# cimport cython
-import IO, plotting as plotz, networkx as nx, functools, itertools, platform, pickle,\
- copy, time
-# from pathos import multiprocessing as mp
 import multiprocessing as mp
+
+# MODELS
 from models cimport Model
 from fastIsing cimport Ising
-# import multiprocess as mp
-# import pathos.multiprocessing as mp
+
+# progressbar
 from tqdm import tqdm   #progress bar
-#from joblib import Parallel, delayed, Memory
+
+# cython
 from libcpp.vector cimport vector
 from libc.stdlib cimport srand
 from libcpp.unordered_map cimport unordered_map
-# from libcpp.concurrent_unordered_map cimport concurrent_unordered_map
 from libc.stdio cimport printf
 import ctypes
 from cython.view cimport array as cvarray
-# srand(time.time()) # set seed
-# # TODO: the numpy approach should be re-written in a dictionary only approach in order to prevent memory issues;
-# # the general outline would be to yield the results and immediately bin them accordingly and write state to disk
-# from models cimport Model
-# # array = functools.partial(np.array, dtype = np.float16) # tmp hack
-# from libc.stdio cimport printf
-# cdef int _CORE = 1  # for imap
-# INT16 = np.int16
+
+# print gil stuff; no mp used currenlty so ....useless
 def checkDistribution():
     '''Warning statement'''
     from platform import platform
@@ -41,44 +31,14 @@ def checkDistribution():
         print('Warning: Windows detected. Please remember to respect the GIL'\
               ' when using multi-core functions')
 checkDistribution() # print it only once
-# SEED SETUP
-# from posix.time cimport clock_gettime,\
-# timespec, CLOCK_REALTIME
-# cdef timespec ts
-# clock_gettime(CLOCK_REALTIME, &ts)
-# cdef int seed  = ts.tv_sec
-# cdef extern from "<random>" namespace "std" nogil:
-#     cdef cppclass mt19937:
-#         mt19937() # we need to define this constructor to stack allocate classes in Cython
-#         mt19937(unsigned int seed) # not worrying about matching the exact int type for seed
-#
-#     cdef cppclass uniform_real_distribution[T]:
-#         uniform_real_distribution()
-#         uniform_real_distribution(T a, T b)
-#         T operator()(mt19937 gen) # ignore the possibility of using other classes for "gen"
-#
-# cdef:
-#     mt19937 gen = mt19937(seed)
-#     uniform_real_distribution[double] dist = uniform_real_distribution[double](0.0,1.0)
-# cdef double mersenne() nogil:
-#     global gen, dist
-#     return dist(gen)
 
-# cdef int encodeState(long[::1] state) :
-#     cdef int i, N = state.shape[0]
-#     cdef int out = 1
-#     for i in range(N):
-#         if state[i] != -1:
-#             out *=  2 ** i
-#     return out
-# def encodeState(state, nStates):
-#     return int(''.join(format(1 if i == 1 else 0, f'0{nStates - 1}b') for i in state), 2)
+# TODO rework this to include agentStates
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
 cdef int encodeState(long[::1] state) nogil:
-
+    """Maps state to decimal number"""
     cdef int binNum = 1
     cdef int N = state.shape[0]
     cdef int i
@@ -89,11 +49,13 @@ cdef int encodeState(long[::1] state) nogil:
         binNum *= 2
     return dec
 
+# TODO rework this to include agentStates
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
 cdef vector[long] decodeState(int dec, int N) nogil:
+    """Decodes decimal number to state"""
     cdef:
         int i = 0
         # long[::1] buffer = np.zeros(N, dtype = int) - 1
@@ -111,15 +73,18 @@ cdef vector[long] decodeState(int dec, int N) nogil:
 @cython.cdivision(True)
 cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
                    int burninSamples = int(1e3)):
+    """
+    Use single Markov chain to extract snapshots from the model
+    """
     # start sampling
-    cdef unordered_map[int, double] snapshots
-    # cdef dict snapshots = {}
-    cdef int i
-    cdef int N = nSamples * step
-    cdef long[:, ::1] r = model.sampleNodes(N )
-    cdef double Z = <double> nSamples
-    cdef int idx
-    cdef double past = time.process_time()
+    cdef:
+        unordered_map[int, double] snapshots
+        int i
+        int N = nSamples * step
+        long[:, ::1] r = model.sampleNodes(N )
+        double Z = <double> nSamples
+        int idx
+        double past = time.process_time()
     pbar = tqdm(total = nSamples)
     for i in range(N):
         if i % step == 0:
@@ -147,61 +112,81 @@ cpdef dict monteCarlo(\
         the model states. Best would be to copy the extensions. However,
         I dunno how to properly reference them in arrays
     """
-
-    cdef float past = time.process_time()
+    # TODO: solve the memory issues;  currently way too much is ofloaded to the memory
+    # one idea would be to have the buffers inside the for loop. However prange is not possible
+    # if that is used.
+    cdef:
+        float past = time.process_time()
     # pre-declaration
-    cdef double Z            = <double> repeats
-    cdef double[:] copyNudge = model.nudges.copy()
-    cdef bint reset          = True
+        double Z            = <double> repeats
+        double[:] copyNudge = model.nudges.copy()
+        bint reset          = True
     # loop stuff
-    cdef long[:, ::1]  s     = np.array([decodeState(i, model._nNodes) for i in snapshots])
-    cdef int N = s.shape[0]
-    # cdef double[::1] out     = np.zeros(N * (deltas + 1) * model._nNodes * model._nStates)
+    # extract startstates
+        long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in snapshots])
+        int states     = s.shape[0]
 
     # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
-    cdef int k, delta, node, statei, counter, sc,  half = deltas // 2, n
-    # pbar = tqdm(total = repeats)
-    counter = 0
-    sc      = 0
+    # loop parameters
+        int repeat, delta, node, statei, half = deltas // 2, state
+        list kdxs        = list(snapshots.keys()) # extra mapping idx
+        dict conditional = {}
+        long[::1] startState
+        int jdx
+        double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
+        long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )
 
-    cdef list kdxs        = list(snapshots.keys())
-    cdef dict conditional = {}
-    cdef long[::1] startState
-    pbar = tqdm(total = N )
-    cdef int jdx
-    cdef double[:, :, :, ::1] out     = np.zeros((N , (deltas + 1), model._nNodes, model._nStates))
-    cdef long[  :,       ::1] r       = model.sampleNodes(N * repeats * (deltas + 1) )
-    # current = ts.tv_sec
-    # srand(current) # set seed for each thread
-    for n in range(N):
-        for k in range(repeats):
+    pbar = tqdm(total = states) # init  progbar
+    # for al the snapshots
+    for state in range(states):
+        # repeats n times
+        for repeat in range(repeats):
+            # reset the buffers to the start state
             for node in range(model._nNodes):
-                model._states[node] = s[n][node]
+                model._states[node] = s[state][node]
                 model._nudges[node] = copyNudge[node]
             # reset simulation
             reset   = True
+            # sample for N times
             for delta in range(deltas + 1):
                 # bin data
                 for node in range(model._nNodes):
                     for statei in range(model._nStates):
                         if model._states[node] == model.agentStates[statei]:
-                            out[n, delta, node, statei] += 1 / Z
+                            out[state, delta, node, statei] += 1 / Z
                 # update
-                jdx  = (delta +  1)  + (n + 1) * (k + 1)
-                # printf('%d ', jdx)
+                jdx  = (delta +  1)  + (state + 1) * (repeat + 1)
                 model._updateState(r[jdx])
-                # turn-off
+                # turn-off the nudges
                 if reset:
+                    # check for type of nudge
                     if model._nudgeType == 'pulse' or \
                     model._nudgeType    == 'constant' and delta >= half:
                         model._nudges[:] = 0
                         reset            = False
-
         pbar.update(1)
-        conditional[kdxs[n]] = out.base[n]
+        conditional[kdxs[state]] = out.base[state]
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional
+
+
+@cython.boundscheck(False) # compiler directive
+@cython.wraparound(False) # compiler directive
+cpdef mutualInformation(dict conditional, int deltas, \
+                          dict snapshots, Model model):
+    '''
+    Returns the node distribution and the mutual information decay
+    '''
+    cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
+    cdef  np.ndarray H     = np.zeros((deltas + 1, model._nNodes))
+    for key, p in conditional.items():
+        # p    = np.asarray(p)
+        H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]
+        px  += p  * snapshots[key] # update node distribution
+    H += np.nansum(px *  np.log2(px), -1)
+    return px, -H
+# belongs to worker
 # @cython.boundscheck(False) # compiler directive
 # @cython.wraparound(False) # compiler directive
 # @cython.nonecheck(False)
@@ -242,6 +227,12 @@ cpdef np.ndarray f(Worker x):
 
 @cython.auto_pickle(True)
 cdef class Worker:
+    """
+    This class was used to wrap the c classes for use with the multiprocessing toolbox.
+    However, the performance decreased a lot. I think this may be a combination of the nogil
+    sections. Regardless the 'single' threaded stuff above is plenty fast for me.
+    Future me should look into dealing with the gil  and wrapping everything in  c arrays
+    """
     cdef int deltas
     cdef int idx
     cdef int repeats
@@ -301,18 +292,3 @@ cdef class Worker:
             # pbar.update(1)
         # pbar.close()
         return out.base.reshape((deltas + 1, model._nNodes, model._nStates))
-@cython.boundscheck(False) # compiler directive
-@cython.wraparound(False) # compiler directive
-cpdef mutualInformation(dict conditional, int deltas, \
-                          dict snapshots, Model model):
-    '''
-    Returns the node distribution and the mutual information decay
-    '''
-    cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
-    cdef  np.ndarray H     = np.zeros((deltas + 1, model._nNodes))
-    for key, p in conditional.items():
-        # p    = np.asarray(p)
-        H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]
-        px  += p  * snapshots[key] # update node distribution
-    H += np.nansum(px *  np.log2(px), -1)
-    return px, -H

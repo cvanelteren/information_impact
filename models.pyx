@@ -50,7 +50,7 @@ cdef class Model: # see pxd
         to suite your personal needs but the methods defined here need are relied on
         by the rest of the package.
 
-        It translates the networkx graph into numpy dependencies for speed.
+        It translates the networkx graph into c++ unordered_map map for speed
         '''
 
         cdef timespec ts
@@ -65,7 +65,7 @@ cdef class Model: # see pxd
         self.updateType = updateType
         # self.sampler    = Sampler(42, 0., 1.)
 
-    # TODO: make class pickable
+    # TODO: make class pickable 
     # hence the wrappers
     @property
     def adj(self)       : return self._adj
@@ -109,6 +109,14 @@ cdef class Model: # see pxd
 
     @updateType.setter
     def updateType(self, value):
+        """
+        Input validation of the update of the model
+        Options:
+            - sync  : synchronous; update independently from t > t + 1
+            - async : asynchronous; update n Nodes but with mutation possible
+            - single: update 1 node random
+            - serial: like like scan
+        """
         assert value in 'sync async single serial'
         self._updateType = value
         # allow for mutation if async else independent updates
@@ -230,21 +238,21 @@ cdef class Model: # see pxd
                     adj[sincID].weights.push_back( <double> graph[node][source]['weight'])
 
         # public and python accessible
-        self.graph    = graph
-        self.mapping  = mapping
-        self.rmapping = rmapping
-        self._adj = adj
+        self.graph       = graph
+        self.mapping     = mapping
+        self.rmapping    = rmapping
+        self._adj        = adj
 
         self.agentStates = np.asarray(agentStates, dtype = int)
 
-        self._nudges = nudges
-        self._nStates = len(agentStates)
+        self._nudges     = nudges
+        self._nStates    = len(agentStates)
 
 
         #private
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
-        _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
+        _nodeids        = np.arange(graph.number_of_nodes(), dtype = long)
         self._nodeids   = _nodeids
         self._states    = states
         self._newstates = states.copy()
@@ -269,9 +277,9 @@ cdef class Model: # see pxd
     @cython.cdivision(True)
     cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
         """
-        Shuffles nodeID only when the current sample is larger
+        Shuffles nodeids only when the current sample is larger
         than the shuffled array
-
+        N.B. nodeids are mutable
         """
         # check the amount of samples to get
         cdef int sampleSize
@@ -296,11 +304,13 @@ cdef class Model: # see pxd
             # shuffle if the current tracker is larger than the array
             start = (samplei * sampleSize) % self._nNodes
             if start + sampleSize >= self._nNodes or sampleSize == 1:
-                for i in range(self._nNodes): # TODO: replace this with new samplers
+                for i in range(self._nNodes):
+                    # shuffle the array without replacement
                     j                = <long> (i + self.rand() * (self._nNodes - i))
                     k                = self._nodeids[j]
                     self._nodeids[j] = self._nodeids[i]
                     self._nodeids[i] = k
+                    # enforce atleast one shuffle in single updates; otherwise same picked
                     if sampleSize == 1 : break
             # assign the samples
             for j in range(sampleSize):

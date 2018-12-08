@@ -16,25 +16,26 @@ cdef class Ising(Model):
         double[::1]  _H # external magnetic field
         double beta
 
-
+    # computes the energy
     cdef double energy(self, \
                        int  node, \
                        long[::1] states) nogil
 
 
-    # cdef _updateState(self, long [:] nodesToUpdate)
-    # c binding
+    # overload the parent functions
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
     cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
     # # python wrapper
-    # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 
+    # computes state probability; kinda not used atm
     cpdef np.ndarray[double] computeProb(self)
-    
+
+    # does burnin of the model; matches the magnetizatin until it levels
     cpdef np.ndarray[double] burnin(self,\
                  int samples=*,\
                  double threshold =*)
 
+    # compute mag for different temps
     cpdef np.ndarray matchMagnetization(self,\
                            np.ndarray temps =*,\
                            int n =*,\
