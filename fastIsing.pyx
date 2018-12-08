@@ -199,7 +199,7 @@ cdef class Ising(Model):
             # check if conditions are met
         if (mu < 0 and self._magSide == POS) or\
          (mu > 0 and self._magSide == NEG):
-            printf('%f %d\n', mu, self._magSide)
+            # printf('%f %d\n', mu, self._magSide)
             # flip if true
             for node in range(self._nNodes):
                 states[node] = -states[node]
