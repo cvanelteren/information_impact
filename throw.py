@@ -22,14 +22,15 @@ for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 
 nx.set_node_attributes(graph, attr)
-graph = nx.gnp_random_graph(10, 0.2)
+#graph = nx.gnp_random_graph(10, 0.2)
+graph  = nx.path_graph(3)
 # graph = nx.path_graph(10)
 import fastIsing
 #graph = nx.path_graph(20)
 s = time.process_time()
 fig, ax = subplots()
 nx.draw(graph, with_labels = 1)
-m = fastIsing.Ising(graph, temperature = 2)
+m = fastIsing.Ising(graph, temperature = 1)
 from time import time
 m.updateType = 'single'
 
@@ -37,74 +38,15 @@ m.magSide    = 'pos'
 #m.reset()
 import infcy
 s = time()
-temps = linspace(0, 29, 100)
-mags, sus = m.matchMagnetization(temps, 1000, 0)
+temps = linspace(0, 10, 100)
+mags, sus = m.matchMagnetization(temps, 10000, 0)
 fig, ax = subplots()
 ax.scatter(temps, mags)
-
+#
 xx = infcy.getSnapShots(m, 1000, step = 100)
 repeats = 100000
 deltas = 3
 y  = infcy.monteCarlo(m, xx, deltas, repeats)
-
-#
-#
-#    # for k in y:
-#        # print(k)
 px, mi= infcy.mutualInformation(y, deltas, xx, m )
-
-
-
-# %%
-
-
-
 fig, ax = subplots()
 ax.plot(mi)
-# for idx, i in enumerate(mi.base.T):
-#     print(i)
-#     ax.plot(arange(len(i)), i, color = colors[idx], label = m.rmapping[idx]) #, colors[idx], label = m.rmapping[idx])
-# ax.legend()
-# %%
-# from scipy import integrate, optimize
-# f = lambda x, a, b, c, d, e: a + b * exp(-c *x) + d * exp(-e * x)
-# xx = arange(mi.shape[0])
-# fig, ax = subplots(figsize = (10,10))
-# d = nx.degree(m.graph)
-# for dd, k in dict(d).items():
-#     idx = m.mapping[dd]
-#     x = mi.base[:, idx]
-#     a, b = optimize.curve_fit(f, xx, x)
-#     auc, _ = integrate.quad(f, 0, np.inf, args = tuple(a))
-#
-#     print(auc, dd)
-#     ax.scatter(k, auc, color = colors[idx])
-#     ax.scatter(k, px.base[-1, idx, :].max(), color = colors[idx], alpha = .2)
-#
-# idx = px.base[-1, :, :].argmax(axis = 0)
-#
-
-# %%
-
-#print(m.graph.degree(m.rmapping[idx[0]]))
-#for k, v in xx.items():
-#    print(k)
-#    print(decodeState(k, 2, 10))
-
-# for k, v in y.items():
-#     print(k.base, v.base)
-#
-# px, mi = infcy.mutualInformation(y, deltas, xx, m, )
-# fig, ax = subplots()
-# ax.plot(mi)
-# ax.plot(temps, mags)
-# print(time() - s)
-# fig, ax = subplots()
-# ax.plot(mi)
-# show()
-# x = array(x)
-# plot(x.mean(1))
-# %%
-
-
-show()

@@ -29,7 +29,8 @@ cdef class Ising(Model):
     # # python wrapper
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 
-
+    cpdef np.ndarray[double] computeProb(self)
+    
     cpdef np.ndarray[double] burnin(self,\
                  int samples=*,\
                  double threshold =*)

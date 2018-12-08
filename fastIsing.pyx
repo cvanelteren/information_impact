@@ -185,8 +185,7 @@ cdef class Ising(Model):
             energy    = self.energy(node, states)
             # p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
             p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
-
-            if self.rand() < p: 
+            if self.rand() < p:
                 newstates[node] = -states[node]
 
         cdef double mu   = 0 # MEAN
@@ -208,16 +207,16 @@ cdef class Ising(Model):
 
 
 
-    # cpdef computeProb(self):
-    #     """
-    #     Compute the node probability for the current state p_i = 1/z * (1 + exp( -beta * energy))**-1
-    #     """
-    #
-    #     probs = np.zeros(self.nNodes)
-    #     for node in self.nodeIDs:
-    #         en = self.energy(node, self.states[node])
-    #         probs[node] = exp(-self.beta * en)
-    #     return probs / np.nansum(probs)
+    cpdef np.ndarray[double] computeProb(self):
+        """
+        Compute the node probability for the current state p_i = 1/z * (1 + exp( -beta * energy))**-1
+        """
+
+        probs = np.zeros(self.nNodes)
+        for node in self.nodeIDs:
+            en = self.energy(node, self.states[node])
+            probs[node] = exp(-self.beta * en)
+        return probs / np.nansum(probs)
 
     cpdef  np.ndarray matchMagnetization(self,\
                               np.ndarray temps  = np.logspace(-3, 2, 20),\
@@ -245,6 +244,6 @@ cdef class Ising(Model):
             tmp             = self.simulate(n)
             results[0, idx] = abs(tmp.mean())
             results[1, idx] = ((tmp**2).mean() - tmp.mean()**2) * self.beta
-        # print(results[0])
+        print(results[0])
         self.t = tcopy
         return results

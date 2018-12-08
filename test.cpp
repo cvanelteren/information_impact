@@ -1321,8 +1321,8 @@ struct __pyx_t_9fastIsing_Connection {
   std::vector<double>  weights;
 };
 
-/* "fastIsing.pxd":33
- * 
+/* "fastIsing.pxd":34
+ *     cpdef np.ndarray[double] computeProb(self)
  * 
  *     cpdef np.ndarray[double] burnin(self,\             # <<<<<<<<<<<<<<
  *                  int samples=*,\
@@ -1334,7 +1334,7 @@ struct __pyx_opt_args_9fastIsing_5Ising_burnin {
   double threshold;
 };
 
-/* "fastIsing.pxd":37
+/* "fastIsing.pxd":38
  *                  double threshold =*)
  * 
  *     cpdef np.ndarray matchMagnetization(self,\             # <<<<<<<<<<<<<<
@@ -1499,6 +1499,7 @@ static struct __pyx_vtabstruct_6models_Model *__pyx_vtabptr_6models_Model;
 struct __pyx_vtabstruct_9fastIsing_Ising {
   struct __pyx_vtabstruct_6models_Model __pyx_base;
   double (*energy)(struct __pyx_obj_9fastIsing_Ising *, int, __Pyx_memviewslice);
+  PyArrayObject *(*computeProb)(struct __pyx_obj_9fastIsing_Ising *, int __pyx_skip_dispatch);
   PyArrayObject *(*burnin)(struct __pyx_obj_9fastIsing_Ising *, int __pyx_skip_dispatch, struct __pyx_opt_args_9fastIsing_5Ising_burnin *__pyx_optional_args);
   PyArrayObject *(*matchMagnetization)(struct __pyx_obj_9fastIsing_Ising *, int __pyx_skip_dispatch, struct __pyx_opt_args_9fastIsing_5Ising_matchMagnetization *__pyx_optional_args);
 };

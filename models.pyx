@@ -56,9 +56,9 @@ cdef class Model: # see pxd
         cdef timespec ts
         clock_gettime(CLOCK_REALTIME, &ts)
         cdef unsigned int seed = ts.tv_sec
-        self.dist              = uniform_real_distribution[double](0.0,1.0)
-        self._seed              = seed
-        self.gen               = mt19937(seed)
+        self.dist = uniform_real_distribution[double](0.0,1.0)
+        self.seed = seed
+        self.gen  = mt19937(self.seed)
 
         self.construct(graph, agentStates)
         self.nudgeType  = nudgeType
@@ -87,7 +87,6 @@ cdef class Model: # see pxd
     def nStates(self)   : return self._nStates
     @property
     def nodeids(self)   : return self._nodeids
-
     @property
     def seed(self)      : return self._seed
 
@@ -211,10 +210,6 @@ cdef class Model: # see pxd
                     mapping[node]     = counter
                     rmapping[counter] = node
 
-                # _neighbors[sourceID].push_back(mapping[node])
-                # _weights[sourceID].push_back(graph[source][node]['weight'])
-                # _weights[sourceID]   = _weights.get(sourceID, []) + [graph[source][node]['weight']]
-                # _neighbors[sourceID] = _neighbors.get(sourceID, []) + [mapping[node]]
                 # check if it has a reverse edge
                 if graph.has_edge(node, source):
                     sincID = mapping[node]
@@ -222,8 +217,6 @@ cdef class Model: # see pxd
                     # check if t he node is already in stack
                     if sourceID in set(adj[sincID]) :
                         add = True
-                            # _weights[tmp]   = _weights.get(tmp, []) + [weight]
-                            # _neighbors[sincID] = _neighbors.get(sincID, []) + [sourceID]
                     # not found so we should add
                     else:
                         add = True
@@ -240,8 +233,7 @@ cdef class Model: # see pxd
         self.graph    = graph
         self.mapping  = mapping
         self.rmapping = rmapping
-
-        self._ajd = adj
+        self._adj = adj
 
         self.agentStates = np.asarray(agentStates, dtype = int)
 
@@ -253,10 +245,10 @@ cdef class Model: # see pxd
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
         _nodeids = np.arange(graph.number_of_nodes(), dtype = long)
-        self._nodeids      = _nodeids
-        self._states       = states
-        self._newstates    = states.copy()
-        self._nNodes = graph.number_of_nodes()
+        self._nodeids   = _nodeids
+        self._states    = states
+        self._newstates = states.copy()
+        self._nNodes    = graph.number_of_nodes()
 
     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
         return self._nodeids
@@ -305,8 +297,7 @@ cdef class Model: # see pxd
             start = (samplei * sampleSize) % self._nNodes
             if start + sampleSize >= self._nNodes or sampleSize == 1:
                 for i in range(self._nNodes): # TODO: replace this with new samplers
-                    j                = <long> (i + self.rand() * (self._nNodes - i) + 1)
-                    # j                = <long> (i + rand() / (RAND_MAX / (self._nNodes - i) + 1) )
+                    j                = <long> (i + self.rand() * (self._nNodes - i))
                     k                = self._nodeids[j]
                     self._nodeids[j] = self._nodeids[i]
                     self._nodeids[i] = k

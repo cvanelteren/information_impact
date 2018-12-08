@@ -105,12 +105,6 @@ cdef vector[long] decodeState(int dec, int N) nogil:
         dec = dec // 2
     return buffer
 
-
-import time
-import faulthandler
-faulthandler.enable()
-from cython.operator cimport dereference as deref, preincrement as pre
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.nonecheck(False)
@@ -193,11 +187,9 @@ cpdef dict monteCarlo(\
                         if model._states[node] == model.agentStates[statei]:
                             out[n, delta, node, statei] += 1 / Z
                 # update
-                # print(counter, sc, r.base.size, out.base.size)
-                jdx  = (delta +  1) * (node + 1) * (statei + 1) + (n + 1) * (k + 1)
+                jdx  = (delta +  1)  + (n + 1) * (k + 1)
                 # printf('%d ', jdx)
                 model._updateState(r[jdx])
-                # model._updateState(model.sampleNodes(1)[0])
                 # turn-off
                 if reset:
                     if model._nudgeType == 'pulse' or \
