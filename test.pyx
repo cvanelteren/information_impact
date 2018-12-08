@@ -12,24 +12,4 @@ cdef extern from "<random>" namespace "std" nogil:
         T operator()(mt19937 gen) # ignore the possibility of using other classes for "gen"
 
 
-from posix.time cimport clock_gettime, timespec, CLOCK_REALTIME
-
-cdef double test() nogil:
-    global gen, seed, dist
-    return dist(gen)
-
-import numpy as np
-cimport numpy as np
-from libc.stdio cimport printf
-cdef int i
-cdef timespec ts
-cdef int current
-clock_gettime(CLOCK_REALTIME, &ts)
-seed = ts.tv_sec
-
-cdef:
-    mt19937 gen = mt19937(seed)
-    uniform_real_distribution[double] dist = uniform_real_distribution[double](0.0,1.0)
-with nogil:
-    for i in range(100):
-        printf('%f %f \n', dist(gen), test())
+from fastIsing cimport Ising

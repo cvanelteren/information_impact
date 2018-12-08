@@ -31,43 +31,12 @@ from libc.stdio cimport printf
 # use external exp
 cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double)
-cdef extern from "limits.h":
-    int INT_MAX
-    int RAND_MAX
 
-
-
-# SEED SETUP
-# from posix.time cimport clock_gettime,\
-# timespec, CLOCK_REALTIME
-# cdef timespec ts
-# clock_gettime(CLOCK_REALTIME, &ts)
-# cdef int seed  = ts.tv_sec
-# cdef extern from "<random>" namespace "std" nogil:
-#     cdef cppclass mt19937:
-#         mt19937() # we need to define this constructor to stack allocate classes in Cython
-#         mt19937(unsigned int seed) # not worrying about matching the exact int type for seed
-#
-#     cdef cppclass uniform_real_distribution[T]:
-#         uniform_real_distribution()
-#         uniform_real_distribution(T a, T b)
-#         T operator()(mt19937 gen) # ignore the possibility of using other classes for "gen"
-#
-# cdef:
-#     mt19937 gen = mt19937(seed)
-#     uniform_real_distribution[double] dist = uniform_real_distribution[double](0.0,1.0)
-# cdef double mersenne() nogil:
-#     global gen, dist
-#     return dist(gen)
 
 from models cimport Model
 cdef class Ising(Model)
 
-# cdef RNG sampler = RNG(time.time())
-# class implementation
-# @cython.final # enforce extension type
-# @cython.auto_pickle(True) # for storage of the model.. technically not needed
-# @cython.final
+
 cdef class Ising(Model):
     def __init__(self, \
                  graph,\
@@ -179,18 +148,16 @@ cdef class Ising(Model):
                 :energy: current energy of systme config for node
         """
         cdef:
-            long length            = self.adj[node].neighbors.size()
+            long length            = self._adj[node].neighbors.size()
             long neighbor, i
             double weight
             double energy          = 0
         for i in range(length):
-            neighbor = self.adj[node].neighbors[i]
-            weight   = self.adj[node].weights[i]
+            neighbor = self._adj[node].neighbors[i]
+            weight   = self._adj[node].weights[i]
             energy  -= states[node] * states[neighbor] * weight + \
                         self._H [neighbor] * states[neighbor]
-        energy += self._nudges[node]
-        # if self._nudges[node] > 0:
-        #     printf('%f ', self._nudges[node])
+        energy += self._nudges[node] * states[node]
         return energy
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
@@ -219,9 +186,7 @@ cdef class Ising(Model):
             # p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
             p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
 
-            if self.rand() < p: # fast but not random
-            # if sampler.rand() < p: # best option
-            # if np.random.rand()  < p: # slow but easy
+            if self.rand() < p: 
                 newstates[node] = -states[node]
 
         cdef double mu   = 0 # MEAN

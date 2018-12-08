@@ -1,13 +1,8 @@
 from models cimport Model
-from cython cimport numeric
 from libcpp.vector cimport vector
 from libcpp.map cimport map
 from libcpp.unordered_map cimport unordered_map
 cimport numpy as np
-
-cdef extern from "vfastexp.h":
-    double exp_approx "EXP" (double)
-
 
 cdef struct Connection:
     vector[int] neighbors

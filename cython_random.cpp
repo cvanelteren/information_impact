@@ -13,8 +13,7 @@
             "-Ofast",
             "-march=native",
             "-std=c++11",
-            "-fno-wrapv",
-            "-g"
+            "-fno-wrapv"
         ],
         "extra_link_args": [
             "-fopenmp",

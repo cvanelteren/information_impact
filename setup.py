@@ -2,8 +2,8 @@ from distutils.core import setup, Extension
 from Cython.Build import cythonize
 import numpy
 import os
-# os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv"
-# os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv"
+os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv"
+os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv"
 
 exts = []
 nums = numpy.get_include()

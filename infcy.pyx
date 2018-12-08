@@ -77,7 +77,7 @@ checkDistribution() # print it only once
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cpdef int encodeState(long[::1] state):
+cdef int encodeState(long[::1] state) nogil:
 
     cdef int binNum = 1
     cdef int N = state.shape[0]
@@ -93,7 +93,7 @@ cpdef int encodeState(long[::1] state):
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cpdef vector[long] decodeState(int dec, int N):
+cdef vector[long] decodeState(int dec, int N) nogil:
     cdef:
         int i = 0
         # long[::1] buffer = np.zeros(N, dtype = int) - 1
@@ -174,49 +174,39 @@ cpdef dict monteCarlo(\
     cdef dict conditional = {}
     cdef long[::1] startState
     pbar = tqdm(total = N )
-    cdef int idx, jdx
-    cdef int tid = -1
-    # cdef list models = [copy.deepcopy(prototype) for _  in range(mp.cpu_count())]
-    # cdef Model model
-    # cdef timespec ts
-    # cdef int current
-    # cdef cvarray(shape=(3, 3, 3), ?Witemsize=sizeof(int), format="i")
-
+    cdef int jdx
     cdef double[:, :, :, ::1] out     = np.zeros((N , (deltas + 1), model._nNodes, model._nStates))
     cdef long[  :,       ::1] r       = model.sampleNodes(N * repeats * (deltas + 1) )
-    with nogil, parallel():
-        # current = ts.tv_sec
-        # srand(current) # set seed for each thread
-        for n in prange(N, schedule = 'dynamic'):
-            with gil:
-                for k in range(repeats):
-                    for node in range(model._nNodes):
-                        model._states[node] = s[n][node]
-                        model._nudges[node] = copyNudge[node]
-                    # reset simulation
-                    reset   = True
-                    for delta in range(deltas + 1):
-                        # bin data
-                        for node in range(model._nNodes):
-                            for statei in range(model._nStates):
-                                idx = (delta +  1) * (node + 1) * (statei + 1) + (n + 1)
-                                if model._states[node] == model.agentStates[statei]:
-                                    out[n, delta, node, statei] += 1 / Z
-                        # update
-                        # print(counter, sc, r.base.size, out.base.size)
-                        jdx  = (delta +  1) * (node + 1) * (statei + 1) + (n + 1) * (k + 1)
-                        # printf('%d ', jdx)
-                        model._updateState(r[jdx])
-                        # model._updateState(model.sampleNodes(1)[0])
-                        # turn-off
-                        if reset:
-                            if model._nudgeType == 'pulse' or \
-                            model._nudgeType    == 'constant' and delta >= half:
-                                model._nudges[:] = 0
-                                reset            = False
+    # current = ts.tv_sec
+    # srand(current) # set seed for each thread
+    for n in range(N):
+        for k in range(repeats):
+            for node in range(model._nNodes):
+                model._states[node] = s[n][node]
+                model._nudges[node] = copyNudge[node]
+            # reset simulation
+            reset   = True
+            for delta in range(deltas + 1):
+                # bin data
+                for node in range(model._nNodes):
+                    for statei in range(model._nStates):
+                        if model._states[node] == model.agentStates[statei]:
+                            out[n, delta, node, statei] += 1 / Z
+                # update
+                # print(counter, sc, r.base.size, out.base.size)
+                jdx  = (delta +  1) * (node + 1) * (statei + 1) + (n + 1) * (k + 1)
+                # printf('%d ', jdx)
+                model._updateState(r[jdx])
+                # model._updateState(model.sampleNodes(1)[0])
+                # turn-off
+                if reset:
+                    if model._nudgeType == 'pulse' or \
+                    model._nudgeType    == 'constant' and delta >= half:
+                        model._nudges[:] = 0
+                        reset            = False
 
-                pbar.update(1)
-                conditional[kdxs[n]] = out.base[n]
+        pbar.update(1)
+        conditional[kdxs[n]] = out.base[n]
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional
@@ -312,8 +302,8 @@ cdef class Worker:
 
                 # turn-off
                 if reset:
-                    if model.__nudgeType == 'pulse' or \
-                    model.__nudgeType    == 'constant' and delta >= half:
+                    if model._nudgeType == 'pulse' or \
+                    model._nudgeType    == 'constant' and delta >= half:
                         model._nudges[:] = 0
                         reset            = False
             # pbar.update(1)

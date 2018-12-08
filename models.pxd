@@ -3,8 +3,6 @@ cimport numpy as np
 from libcpp.vector cimport vector
 from libcpp.map cimport map
 from libcpp.unordered_map cimport unordered_map
-from sampler cimport Sampler
-from RNG cimport RNG
 
 cdef extern from "<random>" namespace "std" nogil:
     cdef cppclass mt19937:
@@ -35,7 +33,7 @@ cdef class Model:
         long[::1]  agentStates
 
         mt19937 gen
-        unsigned long seed
+        unsigned long _seed
         uniform_real_distribution[double] dist
         # np.ndarray _states
         # np.ndarray _newstates # alias
@@ -51,7 +49,7 @@ cdef class Model:
 
         # Sampler sampler
 
-        unordered_map[long, Connection] adj # adjacency lists
+        unordered_map[long, Connection] _adj # adjacency lists
 
         # map[int, vector[int]] neighbors
         # map[int, vector[double]] weights
