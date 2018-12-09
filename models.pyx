@@ -38,6 +38,7 @@ from posix.time cimport clock_gettime,\
 timespec, CLOCK_REALTIME
 
 # from sampler cimport Sampler # mersenne sampler
+@cython.final
 cdef class Model: # see pxd
     def __init__(self, \
                  object graph, \
@@ -52,7 +53,7 @@ cdef class Model: # see pxd
 
         It translates the networkx graph into c++ unordered_map map for speed
         '''
-
+        # use current time as seed for rng
         cdef timespec ts
         clock_gettime(CLOCK_REALTIME, &ts)
         cdef unsigned int seed = ts.tv_sec
