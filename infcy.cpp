@@ -4286,13 +4286,13 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
  *         long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in snapshots])
  *         int states     = s.shape[0]             # <<<<<<<<<<<<<<
  * 
- *     # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
+ *         # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
  */
   __pyx_v_states = (__pyx_v_s.shape[0]);
 
   /* "infcy.pyx":131
- *     # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
- *     # loop parameters
+ *         # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
+ *         # loop parameters
  *         int repeat, delta, node, statei, half = deltas // 2, state             # <<<<<<<<<<<<<<
  *         list kdxs        = list(snapshots.keys()) # extra mapping idx
  *         dict conditional = {}
@@ -4300,7 +4300,7 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
   __pyx_v_half = (__pyx_v_deltas / 2);
 
   /* "infcy.pyx":132
- *     # loop parameters
+ *         # loop parameters
  *         int repeat, delta, node, statei, half = deltas // 2, state
  *         list kdxs        = list(snapshots.keys()) # extra mapping idx             # <<<<<<<<<<<<<<
  *         dict conditional = {}
@@ -4335,7 +4335,7 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
  *         int jdx
  *         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))             # <<<<<<<<<<<<<<
  *         long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )
- * 
+ *         # list m = []
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -4390,7 +4390,7 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
  *         int jdx
  *         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
  *         long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )             # <<<<<<<<<<<<<<
- * 
+ *         # list m = []
  *     pbar = tqdm(total = states) # init  progbar
  */
   __pyx_t_12 = ((struct __pyx_vtabstruct_6models_Model *)__pyx_v_model->__pyx_vtab)->sampleNodes(__pyx_v_model, ((__pyx_v_states * __pyx_v_repeats) * (__pyx_v_deltas + 1))); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 137, __pyx_L1_error)
@@ -4400,7 +4400,7 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
 
   /* "infcy.pyx":139
  *         long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )
- * 
+ *         # list m = []
  *     pbar = tqdm(total = states) # init  progbar             # <<<<<<<<<<<<<<
  *     # for al the snapshots
  *     for state in range(states):

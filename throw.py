@@ -36,24 +36,24 @@ import copy
 
 c = copy.deepcopy(m)
 from time import time
-#m.updateType = 'single'
+m.updateType = 'single'
+
+m.magSide    = 'pos'
+##m.reset()
+import infcy
+s = time()
+temps = linspace(0, 10, 100)
+mags, sus = m.matchMagnetization(temps, 1000, 0)
+fig, ax = subplots()
+ax.scatter(temps, mags)
 #
-#m.magSide    = 'pos'
-###m.reset()
-#import infcy
-#s = time()
-#temps = linspace(0, 10, 100)
-#mags, sus = m.matchMagnetization(temps, 1000, 0)
-#fig, ax = subplots()
-#ax.scatter(temps, mags)
-##
-#xx = infcy.getSnapShots(m, 1000, step = 100)
-#repeats = 10000
-#deltas = 10
-#y  = infcy.monteCarlo(m, xx, deltas, repeats)
-#px, mi= infcy.mutualInformation(y, deltas, xx, m )
-#fig, ax = subplots()
-#ax.plot(mi)
+xx = infcy.getSnapShots(m, 1000, step = 100)
+repeats = 10000
+deltas = 10
+y  = infcy.monteCarlo(m, xx, deltas, repeats)
+px, mi= infcy.mutualInformation(y, deltas, xx, m )
+fig, ax = subplots()
+ax.plot(mi)
 
 # %%
 # c = copy.deepcopy(m)

@@ -29,7 +29,7 @@ cdef class Test:
     #     def __set__(self, values):
     #         cdef long[::1] self._states = self.states
 
-import pickle
-test = np.ones(10, dtype = int)
-a = Test(test)
-pickle.dumps(a)
+
+from fastIsing cimport Ising
+
+# cdef <Ising *> test
