@@ -36,7 +36,7 @@ cdef extern from "vfastexp.h":
 from models cimport Model
 cdef class Ising(Model)
 
-
+# @cython.final
 cdef class Ising(Model):
     def __init__(self, \
                  graph,\
@@ -64,33 +64,6 @@ cdef class Ising(Model):
         self.t                = temperature
         self.magSideOptions   = {'': 0, 'neg': -1, 'pos': 1}
         self.magSide          = magSide
-
-
-    @property
-    def magSide(self):
-        for k, v in self.magSideOptions.items():
-            if v == self._magSide:
-                return k
-    @magSide.setter
-    def magSide(self, value):
-        idx = self.magSideOptions.get(value,\
-              f'Option not recognized. Options {self.magSideOptions.keys()}')
-        if isinstance(idx, int):
-            self._magSide = idx
-        else:
-            print(idx)
-
-    @property
-    def H(self): return self._H
-
-    @property
-    def t(self):
-        return self._t
-
-    @t.setter
-    def t(self, value):
-        self._t   = value
-        self.beta = 1 / value if value != 0 else np.inf
 
 
     @cython.boundscheck(False)
@@ -247,3 +220,46 @@ cdef class Ising(Model):
         # print(results[0])
         self.t = tcopy # reset temp
         return results
+
+    def __reduce__(self):
+        return (rebuild, (self.graph, \
+                          self.t,\
+                          list(self.agentStates.base),\
+                          self.updateType,\
+                          self.nudgeType,\
+                          self.magSide))
+    # property states:
+    #     def __get__(self):
+    #         return self._states.base
+    #     def __set__(self, values):
+    #         return np.array(self._states)
+
+    # PROPERTIES
+    @property
+    def magSide(self):
+        for k, v in self.magSideOptions.items():
+            if v == self._magSide:
+                return k
+    @magSide.setter
+    def magSide(self, value):
+        idx = self.magSideOptions.get(value,\
+              f'Option not recognized. Options {self.magSideOptions.keys()}')
+        if isinstance(idx, int):
+            self._magSide = idx
+        else:
+            print(idx)
+
+    @property
+    def H(self): return self._H
+
+    @property
+    def t(self):
+        return self._t
+
+    @t.setter
+    def t(self, value):
+        self._t   = value
+        self.beta = 1 / value if value != 0 else np.inf
+
+def rebuild(graph, t, agentStates, updateType, nudgeType, magSide):
+    return Ising(graph, t, agentStates, nudgeType, updateType, magSide)

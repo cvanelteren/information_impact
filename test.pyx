@@ -4,6 +4,7 @@ import numpy as np
 cimport numpy as np
 cimport cython
 
+@cython.final
 @cython.auto_pickle(True)
 cdef class Test:
     cdef:

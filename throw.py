@@ -3,7 +3,7 @@ faulthandler.enable()
 import networkx as nx
 from numpy import *
 from matplotlib.pyplot import *
-import plotting as plotz
+import plotting as plotz, copy
 
 style.use('seaborn-poster')
 dataDir = 'Psycho' # relative path careful
@@ -22,31 +22,38 @@ for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 
 nx.set_node_attributes(graph, attr)
-#graph = nx.gnp_random_graph(10, 0.2)
-graph  = nx.path_graph(3)
+#graph  = nx.path_graph(3)
+graph = nx.barabasi_albert_graph(10, 5)
+
 # graph = nx.path_graph(10)
 import fastIsing
 #graph = nx.path_graph(20)
 s = time.process_time()
 fig, ax = subplots()
 nx.draw(graph, with_labels = 1)
-m = fastIsing.Ising(graph, temperature = 1)
-from time import time
-m.updateType = 'single'
+m = fastIsing.Ising(graph, temperature = 2)
+import copy
 
-m.magSide    = 'pos'
-#m.reset()
-import infcy
-s = time()
-temps = linspace(0, 10, 100)
-mags, sus = m.matchMagnetization(temps, 10000, 0)
-fig, ax = subplots()
-ax.scatter(temps, mags)
+c = copy.deepcopy(m)
+from time import time
+#m.updateType = 'single'
 #
-xx = infcy.getSnapShots(m, 1000, step = 100)
-repeats = 100000
-deltas = 3
-y  = infcy.monteCarlo(m, xx, deltas, repeats)
-px, mi= infcy.mutualInformation(y, deltas, xx, m )
-fig, ax = subplots()
-ax.plot(mi)
+#m.magSide    = 'pos'
+###m.reset()
+#import infcy
+#s = time()
+#temps = linspace(0, 10, 100)
+#mags, sus = m.matchMagnetization(temps, 1000, 0)
+#fig, ax = subplots()
+#ax.scatter(temps, mags)
+##
+#xx = infcy.getSnapShots(m, 1000, step = 100)
+#repeats = 10000
+#deltas = 10
+#y  = infcy.monteCarlo(m, xx, deltas, repeats)
+#px, mi= infcy.mutualInformation(y, deltas, xx, m )
+#fig, ax = subplots()
+#ax.plot(mi)
+
+# %%
+# c = copy.deepcopy(m)

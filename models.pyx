@@ -38,12 +38,12 @@ from posix.time cimport clock_gettime,\
 timespec, CLOCK_REALTIME
 
 # from sampler cimport Sampler # mersenne sampler
-# @cython.final
 cdef class Model: # see pxd
     def __init__(self, \
-                 graph, agentStates = [-1, 1], \
-                 updateType         = 'single',\
-                 nudgeType          = 'constant'):
+                 object graph, \
+                 list agentStates = [-1, 1], \
+                 str updateType   = 'single',\
+                 str nudgeType    = 'constant'):
         '''
         General class for the models
         It defines the expected methods for the model; this can be expanded
@@ -65,85 +65,7 @@ cdef class Model: # see pxd
         self.updateType = updateType
         # self.sampler    = Sampler(42, 0., 1.)
 
-    # TODO: make class pickable
-    # hence the wrappers
-    @property
-    def adj(self)       : return self._adj
-    @property
-    def states(self)    : return self._states
-    @property
-    def updateType(self): return self._updateType
-    @property
-    def nudgeType(self) : return self._nudgeType
-    @property #return mem view of states
-    def states(self)    : return self._states
-    @property
-    def nodeids(self)   : return self._nodeids
-    @property
-    def nudges(self)    : return self._nudges
-    @property
-    def nNodes(self)    : return self._nNodes
-    @property
-    def nStates(self)   : return self._nStates
-    @property
-    def nodeids(self)   : return self._nodeids
-    @property
-    def seed(self)      : return self._seed
 
-    @seed.setter
-    def seed(self, value):
-        if isinstance(value, int) and value > 0:
-            self._seed = value
-            self.gen   = mt19937(self.seed)
-        else:
-            print("Value is not unsigned long")
-
-
-    # TODO: reset all after new?
-    @nudges.setter
-    def nudges(self, vals):
-        self._nudges[:] =  0
-        for k, v in vals.items():
-            idx = self.mapping[k]
-            self._nudges[idx] = v
-
-    @updateType.setter
-    def updateType(self, value):
-        """
-        Input validation of the update of the model
-        Options:
-            - sync  : synchronous; update independently from t > t + 1
-            - async : asynchronous; update n Nodes but with mutation possible
-            - single: update 1 node random
-            - serial: like like scan
-        """
-        assert value in 'sync async single serial'
-        self._updateType = value
-        # allow for mutation if async else independent updates
-        if value == 'async':
-            self._newstates = self._states
-        else:
-            if value == 'serial':
-                self._nodeids = np.sort(self._nodeids) # enforce  for sampler
-            self._newstates = self._states.copy()
-
-    @nudgeType.setter
-    def nudgeType(self, value):
-        assert value in 'constant pulse'
-        self._nudgeType = value
-
-    @states.setter # TODO: expand
-    def states(self, value):
-        if isinstance(value, int):
-            self._newstates[:] = value
-            self._states   [:] = value
-        elif isinstance(value, np.ndarray):
-            self._newstates = value
-            self._states    = value
-
-
-    cdef double rand(self) nogil:
-        return self.dist(self.gen)
 
     cpdef void construct(self, object graph, list agentStates):
         """
@@ -243,9 +165,9 @@ cdef class Model: # see pxd
         self.rmapping    = rmapping
         self._adj        = adj
 
-        self.agentStates = np.asarray(agentStates, dtype = int)
+        self.agentStates = np.asarray(agentStates, dtype = int).copy()
 
-        self._nudges     = nudges
+        self._nudges     = nudges.copy()
         self._nStates    = len(agentStates)
 
 
@@ -253,8 +175,8 @@ cdef class Model: # see pxd
         # note nodeids will be shuffled and cannot be trusted for mapping
         # use mapping to get the correct state for the nodes
         _nodeids        = np.arange(graph.number_of_nodes(), dtype = long)
-        self._nodeids   = _nodeids
-        self._states    = states
+        self._nodeids   = _nodeids.copy()
+        self._states    = states.copy()
         self._newstates = states.copy()
         self._nNodes    = graph.number_of_nodes()
 
@@ -265,11 +187,9 @@ cdef class Model: # see pxd
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
         return self._nodeids
 
-    # property _states:
-    #     def __get__(self):
-    #         return self._states.base
-    #     def __set__(self, values):
-    #         cdef long[::1] self._states
+
+    cdef double rand(self) nogil:
+        return self.dist(self.gen)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -306,7 +226,7 @@ cdef class Model: # see pxd
             if start + sampleSize >= self._nNodes or sampleSize == 1:
                 for i in range(self._nNodes):
                     # shuffle the array without replacement
-                    j                = <long> (i + self.rand() * (self._nNodes - i))
+                    j                = <long> (self.rand() * (self._nNodes - i))
                     k                = self._nodeids[j]
                     self._nodeids[j] = self._nodeids[i]
                     self._nodeids[i] = k
@@ -317,8 +237,6 @@ cdef class Model: # see pxd
                 samples[samplei, j] = self._nodeids[start + j]
                 # samples[samplei] = nodeIDs[start : start + sampleSize]
         return samples
-
-
 
     cpdef void reset(self):
         self.states = np.random.choice(\
@@ -344,7 +262,81 @@ cdef class Model: # see pxd
             results[i] = self.updateState(r[i])
         return results.base # convert back to normal arraay
 
+    # TODO: make class pickable
+    # hence the wrappers
+    @property
+    def adj(self)       : return self._adj
+    @property
+    def states(self)    : return self._states
+    @property
+    def updateType(self): return self._updateType
+    @property
+    def nudgeType(self) : return self._nudgeType
+    @property #return mem view of states
+    def states(self)    : return self._states
+    @property
+    def nodeids(self)   : return self._nodeids
+    @property
+    def nudges(self)    : return self._nudges
+    @property
+    def nNodes(self)    : return self._nNodes
+    @property
+    def nStates(self)   : return self._nStates
+    @property
+    def nodeids(self)   : return self._nodeids
+    @property
+    def seed(self)      : return self._seed
 
+    @seed.setter
+    def seed(self, value):
+        if isinstance(value, int) and value > 0:
+            self._seed = value
+            self.gen   = mt19937(self.seed)
+        else:
+            print("Value is not unsigned long")
+
+
+    # TODO: reset all after new?
+    @nudges.setter
+    def nudges(self, vals):
+        self._nudges[:] =  0
+        for k, v in vals.items():
+            idx = self.mapping[k]
+            self._nudges[idx] = v
+
+    @updateType.setter
+    def updateType(self, value):
+        """
+        Input validation of the update of the model
+        Options:
+            - sync  : synchronous; update independently from t > t + 1
+            - async : asynchronous; update n Nodes but with mutation possible
+            - single: update 1 node random
+            - serial: like like scan
+        """
+        assert value in 'sync async single serial'
+        self._updateType = value
+        # allow for mutation if async else independent updates
+        if value == 'async':
+            self._newstates = self._states
+        else:
+            if value == 'serial':
+                self._nodeids = np.sort(self._nodeids) # enforce  for sampler
+            self._newstates = self._states.copy()
+
+    @nudgeType.setter
+    def nudgeType(self, value):
+        assert value in 'constant pulse'
+        self._nudgeType = value
+
+    @states.setter # TODO: expand
+    def states(self, value):
+        if isinstance(value, int):
+            self._newstates[:] = value
+            self._states   [:] = value
+        elif isinstance(value, np.ndarray):
+            self._newstates = value
+            self._states    = value
     # TODOL move this back ^
     # cdef long[::1] updateState(self, int[:] nodesToUpdate):
     #     ""
