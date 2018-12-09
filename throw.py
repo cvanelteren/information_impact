@@ -56,4 +56,4 @@ fig, ax = subplots()
 ax.plot(mi)
 
 # %%
-# c = copy.deepcopy(m)
+c = copy.deepcopy(m)
