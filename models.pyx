@@ -336,6 +336,7 @@ cdef class Model: # see pxd
             self._newstates[:] = value
             self._states   [:] = value
         elif isinstance(value, np.ndarray):
+            assert value.size == self.nNodes
             self._newstates = value
             self._states    = value
     # TODOL move this back ^
