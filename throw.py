@@ -41,19 +41,23 @@ m.updateType = 'single'
 m.magSide    = 'pos'
 ##m.reset()
 import infcy
-s = time()
-temps = linspace(0, 10, 100)
-mags, sus = m.matchMagnetization(temps, 1000, 0)
-fig, ax = subplots()
-ax.scatter(temps, mags)
-#
-xx = infcy.getSnapShots(m, 1000, step = 100)
-repeats = 100000
-deltas = 10
-y  = infcy.monteCarlo(m, xx, deltas, repeats)
-px, mi= infcy.mutualInformation(y, deltas, xx, m )
-fig, ax = subplots()
-ax.plot(mi)
+#s = time()
+#temps = linspace(0, 10, 100)
+#mags, sus = m.matchMagnetization(temps, 1000, 0)
+#fig, ax = subplots()
+#ax.scatter(temps, mags)
+##
+#xx = infcy.getSnapShots(m, 1000, step = 100)
+#repeats = 100000
+#deltas = 10
+#y  = infcy.monteCarlo(m, xx, deltas, repeats)
+#px, mi= infcy.mutualInformation(y, deltas, xx, m )
+#fig, ax = subplots()
+#ax.plot(mi)
 
 # %%
-c = copy.deepcopy(m)
+x = []
+for i in range(10):
+    x.append(fastIsing.Ising(graph, 1))
+    
+print(unique([id(i) for i in x]).size)

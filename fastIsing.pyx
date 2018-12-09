@@ -34,10 +34,11 @@ cdef extern from "vfastexp.h":
 
 
 from models cimport Model
-cdef class Ising(Model)
 
 # @cython.final
 cdef class Ising(Model):
+    def __cinit__(self, *args, **kwargs):
+        print('cinit fastIsing')
     def __init__(self, \
                  graph,\
                  temperature = 1,\
@@ -46,7 +47,7 @@ cdef class Ising(Model):
                  updateType  = 'async', \
                  magSide     = 'neg',\
                  ):
-
+        print('Init ising')
         super(Ising, self).__init__(\
                   graph       = graph, \
                   agentStates = agentStates, \
@@ -220,11 +221,19 @@ cdef class Ising(Model):
         # print(results[0])
         self.t = tcopy # reset temp
         return results
+    def __deepcopy__(self, memo):
+        return Ising(
+                    graph       = copy.deepcopy(self.graph), \
+                    temperature = self.t,\
+                    agentStates = list(self.agentStates.base),\
+                    updateType  = self.updateType,\
+                    nudgeType   = self.nudgeType,\
+                    magSide     = self.magSide)
 
     def __reduce__(self):
         return (rebuild, (self.graph, \
                           self.t,\
-                          list(self.agentStates.base),\
+                          list(self.agentStates.base.copy()),\
                           self.updateType,\
                           self.nudgeType,\
                           self.magSide))

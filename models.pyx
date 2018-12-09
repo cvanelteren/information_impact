@@ -4,6 +4,7 @@ import numpy as np
 cimport numpy as np
 import networkx as nx, functools, time
 from tqdm import tqdm
+import copy
 
 cimport cython
 from cython.parallel cimport parallel, prange
@@ -38,9 +39,17 @@ from posix.time cimport clock_gettime,\
 timespec, CLOCK_REALTIME
 
 # from sampler cimport Sampler # mersenne sampler
-@cython.final
 cdef class Model: # see pxd
-    def __init__(self, \
+    def __cinit__(self, *args, **kwargs):
+        print(kwargs)
+        # print ('cinit model')
+        # graph           = kwargs.get('graph', [])
+        # agentStates     = kwargs.get('agentStates', [-1, 1])
+        # self.construct(graph, agentStates)
+        # self.updateType = kwargs.get('updateType', 'single')
+        # self.nudgeType  = kwargs.get('nudgeType', 'constant')
+
+    def __init__(self,\
                  object graph, \
                  list agentStates = [-1, 1], \
                  str updateType   = 'single',\
@@ -53,6 +62,7 @@ cdef class Model: # see pxd
 
         It translates the networkx graph into c++ unordered_map map for speed
         '''
+        print('Init model')
         # use current time as seed for rng
         cdef timespec ts
         clock_gettime(CLOCK_REALTIME, &ts)
@@ -60,9 +70,8 @@ cdef class Model: # see pxd
         self.dist = uniform_real_distribution[double](0.0,1.0)
         self.seed = seed
         self.gen  = mt19937(self.seed)
-
         self.construct(graph, agentStates)
-        self.nudgeType  = nudgeType
+        self.nudgeType  = copy.copy(nudgeType)
         self.updateType = updateType
         # self.sampler    = Sampler(42, 0., 1.)
 
@@ -72,6 +81,7 @@ cdef class Model: # see pxd
         """
         Constructs adj matrix using structs
         """
+        print('Constructing')
         # check if graph has weights or states assigned and or nudges
         # note does not check all combinations
         # input validation / construct adj lists
@@ -113,6 +123,7 @@ cdef class Model: # see pxd
             # check properties, assign defaults
             if 'state' not in graph.node[node]:
                 idx = np.random.choice(agentStates)
+                print(idx, agentStates)
                 graph.node[node]['state'] = idx
             if 'nudge' not in graph.node[node]:
                 graph.node[node]['nudge'] =  DEFAULTNUDGE
@@ -167,6 +178,7 @@ cdef class Model: # see pxd
         self._adj        = adj
 
         self.agentStates = np.asarray(agentStates, dtype = int).copy()
+        print(states, agentStates)
 
         self._nudges     = nudges.copy()
         self._nStates    = len(agentStates)
@@ -180,6 +192,7 @@ cdef class Model: # see pxd
         self._states    = states.copy()
         self._newstates = states.copy()
         self._nNodes    = graph.number_of_nodes()
+        print(f'Done {id(self)}')
 
     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
         return self._nodeids

@@ -1,5 +1,6 @@
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
+# cython: infer_types=True
 import numpy as np
 cimport numpy as np
 cimport cython
@@ -37,32 +38,37 @@ cimport cython
 
 
 from fastIsing cimport Ising
-from models cimport Model
 import networkx as nx, copy
-g = nx.path_graph(3)
-m = Ising(g, 2)
+from models cimport Model
 from cpython.ref cimport PyObject
-cdef PyObject * ptr = <PyObject *> m
 from libcpp.vector cimport vector
-from cython.operator cimport dereference, preincrement
-from libc.stdlib cimport malloc, free, abort
-# cdef vector[Ising] test
-# cdef class Test:
-#     cdef void *ptr
-#     def __init__(self, a):
-#         if self.ptr is not NULL:
-#             free(self.ptr)
-#         self.a = a
-#     @staticmethod
-#     cdef create(void* ptr):
-#         p = Test(self.a)
-#         p.ptr = ptr
-#         return p
-
-# cdef Ising test = Ising(g, 1)
-cdef long[:, ::1] func(long[:, ::1] x ):
-    return x
-from cython.view cimport array as cvar
-cdef  long[10][10] test
-func(test)
-print(test)
+from libc.stdio cimport printf
+# cdef Model tmp
+cdef class Temp:
+    cdef int a
+    def __init__(self, a):
+        self.a = a
+g = nx.path_graph(3)
+# cdef Ising tmp
+def f():
+    cdef vector[PyObject *] vec
+    cdef int i, n = 3
+    # cdef Ising tmp
+    cdef list ids = []
+    cdef list classes  = [] # force reference counter?
+    for i in range(n):
+        tmp = Ising(g, 1)
+        classes.append(tmp)
+        vec.push_back(<PyObject *> tmp)
+        printf('%p ', <PyObject *> tmp)
+        ids.append(id(tmp))
+    print(ids)
+    # del classes
+    for i in range(n):
+        tmp = <Ising> vec[i]
+        print(tmp)
+    print(ids)
+f()
+# print(l.states, k.states)
+#
+# print(np.unique(ids), ids)

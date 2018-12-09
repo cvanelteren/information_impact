@@ -8,6 +8,8 @@ import time
 from cython.parallel cimport parallel, prange, threadid
 import multiprocessing as mp
 from concurrent.futures import ThreadPoolExecutor
+import copy
+from cpython.ref cimport PyObject
 # MODELS
 from models cimport Model
 from fastIsing cimport Ising
@@ -137,6 +139,20 @@ cpdef dict monteCarlo(\
         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
         long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )
         # list m = []
+        vector[PyObject *] models
+        Model tmp
+        list models_ignore    = []
+        int nThread, nThreads = 3
+        int nNodes = model._nNodes
+        str nudgeType = model._nudgeType
+
+    for nThread in range(nThreads):
+        tmp = copy.deepcopy(model)
+        models_ignore.append(tmp)
+        models.push_back(<PyObject *> tmp)
+
+    # for i in range(nThreads)):
+    #     models.push_back
     pbar = tqdm(total = states) # init  progbar
     # for al the snapshots
     for state in range(states):
@@ -161,8 +177,8 @@ cpdef dict monteCarlo(\
                 # turn-off the nudges
                 if reset:
                     # check for type of nudge
-                    if model._nudgeType == 'pulse' or \
-                    model._nudgeType    == 'constant' and delta >= half:
+                    if nudgeType == 'pulse' or \
+                    nudgeType    == 'constant' and delta >= half:
                         model._nudges[:] = 0
                         reset            = False
         pbar.update(1)
