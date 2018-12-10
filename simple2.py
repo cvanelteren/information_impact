@@ -56,7 +56,7 @@ for condition, samples in data[t].items():
 #                xx  = value[0] if isinstance(value, list) else value
                 for zdx, deltaInfo in enumerate(value):
                     for jdx, nodeInfo in enumerate(deltaInfo):
-                        rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats)
+                        rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats) - 1
 #                rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
 #                              for j in value])
             Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
@@ -101,19 +101,24 @@ zd = dd;
 zd[zd < finfo(float).eps] = 0
 
 # scale data 0-1 along each sample (nodes x delta)
-zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
-
-MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
-MIN = MIN[:, newaxis, :]
-MAX = MAX[:, newaxis, :]
-zd = (zd - MIN) / (MAX - MIN)
-zd = zd.reshape(dd.shape)
+#zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
+#
+#MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
+#MIN = MIN[:, newaxis, :]
+#MAX = MAX[:, newaxis, :]
+#zd = (zd - MIN) / (MAX - MIN)
+#zd = zd.reshape(dd.shape)
 
 # show means with spread
-fig, ax = subplots(1, 2, sharey = 'all')
+fig, ax = subplots(1, 2)
 x = arange(deltas // 2)
 sidx = 2
-for axi, zdi, zdstd in zip(ax, zd.mean(0).T, zd.std(0).T):
+labels = 'MI IMPACT'.split()
+
+from matplotlib.ticker import FormatStrFormatter
+mins, maxs = zd.reshape(-1, COND).min(0), zd.reshape(-1, COND).max(0)
+for tmp in zip(ax, zd.mean(0).T, zd.std(0).T, labels, mins, maxs):
+    axi, zdi, zdstd, label, minner, maxer = tmp
     for node, idx in model.mapping.items():
         a = zdi[:, idx]  + sidx * zdstd[:, idx]
         b = zdi[:, idx]  - sidx * zdstd[:, idx]
@@ -121,9 +126,12 @@ for axi, zdi, zdstd in zip(ax, zd.mean(0).T, zd.std(0).T):
                  markeredgecolor = 'black', label = node,\
                  color = colors[idx])
         axi.fill_between(x, a, b, color = colors[idx], alpha  = .4)
-labels = 'MI IMPACT'.split()
+#        axi.yaxis.set_major_formatter(FormatStrFormatter('%1.0e'))
+        
+    axi.set(yticks = (minner, maxer))
+    axi.ticklabel_format(axis = 'y', style = 'sci', scilimits = (0, 4))
+    axi.set_ylabel(label, labelpad = -50)
 axi.legend()
-[axi.set(ylabel = label) for axi, label in zip(ax, labels)]        
 # %% root based on data
 p0             = ones((func.__code__.co_argcount - 1)); p0[0] = 0
 fitParam['p0'] = p0
