@@ -24,7 +24,7 @@ data   = IO.extractData(extractThis)
 # thetas = [10**-i for i in range(1, 20)]
 thetas  = logspace(log10(.9), log10(finfo(float).eps), 100)
 #thetas  = array([.5, .1, .01, .001])
-temp    = next(iter(data))
+temp    = list(data.keys())[0]
 
 from fastIsing import Ising
 model   = Ising(data[temp]['{}'][0].graph)
