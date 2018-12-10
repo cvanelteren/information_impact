@@ -24,16 +24,16 @@ data   = IO.extractData(extractThis)
 # thetas = [10**-i for i in range(1, 20)]
 thetas  = logspace(log10(.9), log10(finfo(float).eps), 100)
 #thetas  = array([.5, .1, .01, .001])
-t       = next(iter(data))
+temp    = next(iter(data))
 
 from fastIsing import Ising
-model   = Ising(data[t]['{}'][0].graph)
+model   = Ising(data[temp]['{}'][0].graph)
 
 # %% Extract data
 settings = IO.readSettings(extractThis)
 deltas   = settings['deltas']
 repeats  = settings['repeat']
-controls = array([i.mi for i in data[t]['{}']])
+controls = array([i.mi for i in data[temp]['{}']])
 roots    = zeros((len(controls), model.nNodes, len(thetas), 2))
 
 colors = cm.tab20(arange(model.nNodes))
@@ -43,7 +43,7 @@ rcParams['axes.prop_cycle'] = cycler('color', colors)
 NSAMPLES, NODES, DELTAS, COND = len(controls), model.nNodes, deltas // 2, 2
 THETAS = thetas.size
 dd = zeros((NSAMPLES, NODES, DELTAS, COND), dtype = float32)
-for condition, samples in data[t].items():
+for condition, samples in data[temp].items():
     for idx, sample in enumerate(samples):
         if condition == '{}':
             # panzeri-treves correction
@@ -66,7 +66,7 @@ for condition, samples in data[t].items():
             corrected = mi - bias
             dd[idx, ..., 0] = corrected[:deltas // 2, :].T
         else:
-            control = data[t]['{}'][idx].px
+            control = data[temp]['{}'][idx].px
             px      = sample.px
             impact = stats.hellingerDistance(px, control).mean(-1)
 #            impact = nanmean(stats.KL(control, sample.px), axis = -1)
@@ -111,6 +111,9 @@ zd[zd < finfo(float).eps] = 0
 
 # show means with spread
 fig, ax = subplots(1, 2)
+mainax  = fig.add_subplot(111, frameon = 0)
+mainax.set(xticks = [], yticks = [])
+mainax.set_title(temp + '\n\n')
 x = arange(deltas // 2)
 sidx = 2
 labels = 'MI IMPACT'.split()
@@ -130,7 +133,7 @@ for tmp in zip(ax, zd.mean(0).T, zd.std(0).T, labels, mins, maxs):
         
     axi.set(yticks = (minner, maxer))
     axi.ticklabel_format(axis = 'y', style = 'sci', scilimits = (0, 4))
-    axi.set_ylabel(label, labelpad = -50)
+    axi.set_ylabel(label, labelpad = -30)
 axi.legend()
 # %% root based on data
 p0             = ones((func.__code__.co_argcount - 1)); p0[0] = 0
