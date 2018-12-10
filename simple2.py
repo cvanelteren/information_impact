@@ -14,8 +14,8 @@ import IO, os, plotting as plotz, stats, re
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
-extractThis      = IO.newest(dataPath)[-1]
-#extractThis      = '1539187363.9923286' # th.is is 100
+extractThis      = IO.newest(dataPath)[-2]
+#extractThis      = '1539187363.9923286'    # th.is is 100
 #extractThis      = '1540135977.9857328'
 extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}" 
 
@@ -86,7 +86,7 @@ double = lambda x, a, b, c, d, e, f: a + b * exp(-c*x) + d * exp(- e * (x-f))
 single = lambda x, a, b, c : a + b * exp(-c * x)
 single_= lambda x, b, c : b * exp(-c * x)
 func   = single
-p0          = ones((func.__code__.co_argcount - 1)); p0[0] = 0
+p0          = ones((func.__code__.co_argcount - 1));# p0[0] = 0
 fitParam    = dict(maxfev = int(1e4), bounds = (0, inf), p0 = p0)
 
 settings = IO.readSettings(extractThis)
@@ -97,7 +97,7 @@ repeats  = settings['repeat']
 from scipy import ndimage
 zd = dd;
 #zd = ndimage.filters.gaussian_filter1d(zd, 3, axis = -2)
-#zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = 0)
+#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
 zd[zd < finfo(float).eps] = 0
 
 # scale data 0-1 along each sample (nodes x delta)
@@ -190,10 +190,11 @@ def showResults(data):
 
 fig, ax = subplots()
 
-for c, i in zip( colors, aucs.T):
-    ax.scatter(*i, color = c)
+for idx, (c, i) in enumerate(zip( colors, aucs.T)):
+    ax.scatter(*i, color = c, label = model.rmapping[idx])
     ax.scatter(*median(i, 1), marker = 's', color = c, edgecolors = 'k')
     ax.scatter(*mean(i, 1), marker = '^', color = c, edgecolors = 'k')
+ax.legend()
  # %% compute concistency
  
 bins = arange(-.5, model.nNodes + .5)

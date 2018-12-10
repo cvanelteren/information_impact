@@ -33,6 +33,33 @@ def checkDistribution():
         print('Warning: Windows detected. Please remember to respect the GIL'\
               ' when using multi-core functions')
 checkDistribution() # print it only once
+from cpython cimport PyObject,Py_XINCREF, Py_XDECREF
+cdef extern from *:
+    """
+    #include <Python.h>
+    class PyObjectHolder{
+    public:
+        PyObject *ptr;
+        PyObjectHolder():ptr(nullptr){}
+        PyObjectHolder(PyObject *o):ptr(o){
+           Py_XINCREF(ptr);
+        }
+        //rule of 3
+        ~PyObjectHolder(){
+            Py_XDECREF(ptr);
+        }
+        PyObjectHolder(const PyObjectHolder &h):
+            PyObjectHolder(h.ptr){}
+        PyObjectHolder& operator=(const PyObjectHolder &other){
+            Py_XDECREF(ptr);
+            ptr=other.ptr;
+            Py_XINCREF(ptr);
+            return *this;
+        }
+    };
+    """
+    cdef cppclass PyObjectHolder:
+        PyObjectHolder(PyObject *o)
 
 # TODO rework this to include agentStates
 @cython.boundscheck(False)
@@ -139,36 +166,50 @@ cpdef dict monteCarlo(\
         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
         long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )
         # list m = []
-        vector[void* ] models
-        Model tmp
-        list models_ignore    = []
+
         int nThread, nThreads = 3
         int nNodes = model._nNodes, nStates = model._nStates
         long[::1] agentStates = model.agentStates
         str nudgeType = model._nudgeType
 
-    for nThread in range(nThreads):
-        tmp = copy.deepcopy(model)
-        models_ignore.append(tmp)
-        models.push_back(<void *> tmp)
-
+        # setup-models
+    #     vector[PyObject *] models
+    #     list models_ignore    = [] # tmp storage for copies of the model
+    #     Model  tmp
+    #     PyObject * tmp_ptr
+    # # create copies of the models
+    # # Please note they will probably have the same seed
+    # # due to the speed of assignment
+    #     int n = state
+    # for nThread in range(states):
+    #     tmp = copy.deepcopy(model)
+    #     # tmp.seed = tmp.seed + nThread
+    #     print(tmp, id(tmp))
+    #     tmp_ptr = <PyObject *> tmp
+    #     Py_XINCREF(tmp_ptr) # keep in memory
+    #     models_ignore.append(tmp)
+    #     models.push_back(tmp_ptr)
+    #
+    # print(len(models_ignore))
     # for i in range(nThreads)):
     #     models.push_back
     pbar = tqdm(total = states) # init  progbar
     # for al the snapshots
     cdef int tid
-    # for state in prange(states, nogil = True, num_threads = nThreads):
+    print('starting runs')
+
     for state in range(states):
-        # tid = threadid()
-        # printf('%d ', tid)
+        # printf('%d %d\n', tid, state)
         # repeats n times
+        # for repeat in range(repeats):
         for repeat in range(repeats):
             # reset the buffers to the start state
-            for node in range(model._nNodes):
-                # (<Model>models[tid])._states[node] = s[state][node]
-                # (<Model>models[tid])._nudges[node] = copyNudge[node]
+            for node in range(nNodes):
+                # (<Model>models[n])._states[node] = s[state][node]
+                # (<Model>models[n])._nudges[node] = copyNudge[node]
                 model._states[node] = s[state][node]
                 model._nudges[node] = copyNudge[node]
+
             # reset simulation
             reset   = True
             # sample for N times
@@ -176,26 +217,38 @@ cpdef dict monteCarlo(\
                 # bin data
                 for node in range(nNodes):
                     for statei in range(nStates):
-                        # if (<Model>models[tid])._states[node] == agentStates[statei]:
+                        # if (<Model>models[n])._states[node] == agentStates[statei]:
                         if model._states[node] == agentStates[statei]:
                             out[state, delta, node, statei] += 1 / Z
+                            break
                 # update
                 jdx  = (delta +  1)  + (state + 1) * (repeat + 1)
-                # (<Model>models[tid])._updateState(r[jdx])
+                # (<Model>models[n])._updateState(r[jdx])
                 model._updateState(r[jdx])
                 # with gil:
-                    # print((<Model>models[tid])._updateState(r[jdx]).base, tid)
+
+                    # print((<Model>models[0])._updateState(r[jdx]).base,\
+                          # (<Model>models[1]).states.base)
+
                 # turn-off the nudges
                 if reset:
                     # check for type of nudge
                     if nudgeType == 'pulse' or \
                     nudgeType    == 'constant' and delta >= half:
-                        # (<Model>models[tid])._nudges[:] = 0
+                        # (<Model>models[n])._nudges[:] = 0
                         model._nudges[:] = 0
+                        # printf('%d %d\n', tid, deltas)
+                        # with gil:
+
+                        # model._nudges[:] = 0
                         reset            = False
-        # with gil:
+    # with gil:
         pbar.update(1)
         conditional[kdxs[state]] = out.base[state]
+
+    # # free memory
+    # for nThread in range(n):
+    #     Py_XDECREF(models.at(nThread))
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional
@@ -243,10 +296,12 @@ cpdef mutualInformation(dict conditional, int deltas, \
 #
 #         models.append(Worker(**params))
 #     # cdef np.ndarray s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
-#     cdef dict conditional
+#     cdef dict conditional = {}
 #     # with mp.Pool(2) as p:
-#     with ThreadPoolExecutor(2) as p:
-#         conditional = {kdx : res for kdx, res in zip(snapshots, p.map(f, tqdm(models)))}
+#     with mp.Pool(3) as p:
+#         for kdx, res in zip(snapshots, p.apply_async(f, tqdm(models)):
+#             conditional[kdx] = res
+#         # conditional = {kdx : res for kdx, res in zip(snapshots, p.map(f, tqdm(models)))}
 #     print(conditional)
 #     print(f"Delta = {time.process_time() - past}")
 #     return conditional
@@ -281,7 +336,7 @@ cdef class Worker:
         self.startState = kwargs['startState']
         self.idx        = kwargs['idx']
 
-    cpdef np.ndarray parallWrap(self):
+    cdef np.ndarray parallWrap(self):
         cdef long[::1] startState = self.startState
         # start unpacking
         cdef int deltas           = self.deltas

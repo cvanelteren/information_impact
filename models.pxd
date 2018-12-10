@@ -66,7 +66,7 @@ cdef class Model:
     cdef  long[:, ::1] sampleNodes(self, long Samples) nogil
 
     cdef double rand(self) nogil
-    cpdef simulate(self, long long int  samples)
+    cpdef np.ndarray simulate(self, long long int  samples)
 
     # cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
 

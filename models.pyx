@@ -62,7 +62,7 @@ cdef class Model: # see pxd
 
         It translates the networkx graph into c++ unordered_map map for speed
         '''
-        print('Init model')
+        # print('Init model')
         # use current time as seed for rng
         cdef timespec ts
         clock_gettime(CLOCK_REALTIME, &ts)
@@ -81,7 +81,7 @@ cdef class Model: # see pxd
         """
         Constructs adj matrix using structs
         """
-        print('Constructing')
+        # print('Constructing')
         # check if graph has weights or states assigned and or nudges
         # note does not check all combinations
         # input validation / construct adj lists
@@ -267,7 +267,7 @@ cdef class Model: # see pxd
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cpdef simulate(self, long long int  samples):
+    cpdef np.ndarray simulate(self, long long int  samples):
         cdef:
             long[:, ::1] results = np.zeros((samples, self._nNodes), int)
             long[:, ::1] r = self.sampleNodes(samples)

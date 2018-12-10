@@ -30,10 +30,10 @@ if __name__ == '__main__':
     else:
         real = 0
     print(real)
-    repeats       = int(5e4) if real else 10000
-    deltas        = 50       if real else 30
+    repeats       = int(5e4) if real else 100000
+    deltas        = 50       if real else 50
     step          = 1000
-    nSamples      = int(1e4) if real else 100000
+    nSamples      = int(1e4) if real else 10000
     burninSamples = 100000
     pulseSize     = 1
 
@@ -62,6 +62,7 @@ if __name__ == '__main__':
     graphs.append(graph)
 
     graphs = [nx.barabasi_albert_graph(10,3)]
+#    graphs = [nx.path_graph(3)]
 
     for graph in graphs:
         now = time()

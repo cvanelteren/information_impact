@@ -23,14 +23,14 @@ for node, row in h.iterrows():
 
 nx.set_node_attributes(graph, attr)
 #graph  = nx.path_graph(3)
-graph = nx.barabasi_albert_graph(3, 2)
+graph = nx.barabasi_albert_graph(13, 2)
 
 # graph = nx.path_graph(10)
 import fastIsing
 #graph = nx.path_graph(20)
 s = time.process_time()
 fig, ax = subplots()
-nx.draw(graph, with_labels = 1) 
+nx.draw(graph, with_labels = 1)
 m = fastIsing.Ising(graph, temperature = 2)
 import copy
 
