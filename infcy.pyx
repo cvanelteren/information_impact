@@ -139,50 +139,57 @@ cpdef dict monteCarlo(\
         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
         long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )
         # list m = []
-        vector[PyObject *] models
+        vector[void* ] models
         Model tmp
         list models_ignore    = []
         int nThread, nThreads = 3
-        int nNodes = model._nNodes
+        int nNodes = model._nNodes, nStates = model._nStates
+        long[::1] agentStates = model.agentStates
         str nudgeType = model._nudgeType
 
     for nThread in range(nThreads):
         tmp = copy.deepcopy(model)
         models_ignore.append(tmp)
-        models.push_back(<PyObject *> tmp)
+        models.push_back(<void *> tmp)
 
     # for i in range(nThreads)):
     #     models.push_back
     pbar = tqdm(total = states) # init  progbar
     # for al the snapshots
-    for state in range(states):
+    cdef int tid
+    for state in prange(states, nogil = True, num_threads = nThreads):
+        tid = threadid()
+        printf('%d ', tid)
         # repeats n times
         for repeat in range(repeats):
             # reset the buffers to the start state
             for node in range(model._nNodes):
-                model._states[node] = s[state][node]
-                model._nudges[node] = copyNudge[node]
+                (<Model>models[tid])._states[node] = s[state][node]
+                (<Model>models[tid])._nudges[node] = copyNudge[node]
             # reset simulation
             reset   = True
             # sample for N times
             for delta in range(deltas + 1):
                 # bin data
-                for node in range(model._nNodes):
-                    for statei in range(model._nStates):
-                        if model._states[node] == model.agentStates[statei]:
+                for node in range(nNodes):
+                    for statei in range(nStates):
+                        if (<Model>models[tid])._states[node] == agentStates[statei]:
                             out[state, delta, node, statei] += 1 / Z
                 # update
                 jdx  = (delta +  1)  + (state + 1) * (repeat + 1)
-                model._updateState(r[jdx])
+                (<Model>models[tid])._updateState(r[jdx])
+                with gil:
+                    print((<Model>models[tid])._updateState(r[jdx]).base, tid)
                 # turn-off the nudges
                 if reset:
                     # check for type of nudge
                     if nudgeType == 'pulse' or \
                     nudgeType    == 'constant' and delta >= half:
-                        model._nudges[:] = 0
+                        (<Model>models[tid])._nudges[:] = 0
                         reset            = False
-        pbar.update(1)
-        conditional[kdxs[state]] = out.base[state]
+        with gil:
+            pbar.update(1)
+            conditional[kdxs[state]] = out.base[state]
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional

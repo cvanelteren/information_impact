@@ -48,25 +48,24 @@ cdef class Temp:
     cdef int a
     def __init__(self, a):
         self.a = a
+    cdef double test(self):
+        return 0.
 g = nx.path_graph(3)
 # cdef Ising tmp
 def f():
-    cdef vector[PyObject *] vec
+    cdef vector[void *] vec
     cdef int i, n = 3
     # cdef Ising tmp
     cdef list ids = []
     cdef list classes  = [] # force reference counter?
+    cdef Temp tmp
     for i in range(n):
-        tmp = Ising(g, 1)
-        classes.append(tmp)
-        vec.push_back(<PyObject *> tmp)
-        printf('%p ', <PyObject *> tmp)
-        ids.append(id(tmp))
+        tmp = Temp(1)
+        # classes.append(tmp)
+        vec.push_back(<void *>tmp)
+    print((<Temp>vec[0]).test())
     print(ids)
     # del classes
-    for i in range(n):
-        tmp = <Ising> vec[i]
-        print(tmp)
     print(ids)
 f()
 # print(l.states, k.states)
