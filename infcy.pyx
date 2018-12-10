@@ -157,15 +157,18 @@ cpdef dict monteCarlo(\
     pbar = tqdm(total = states) # init  progbar
     # for al the snapshots
     cdef int tid
-    for state in prange(states, nogil = True, num_threads = nThreads):
-        tid = threadid()
-        printf('%d ', tid)
+    # for state in prange(states, nogil = True, num_threads = nThreads):
+    for state in range(states):
+        # tid = threadid()
+        # printf('%d ', tid)
         # repeats n times
         for repeat in range(repeats):
             # reset the buffers to the start state
             for node in range(model._nNodes):
-                (<Model>models[tid])._states[node] = s[state][node]
-                (<Model>models[tid])._nudges[node] = copyNudge[node]
+                # (<Model>models[tid])._states[node] = s[state][node]
+                # (<Model>models[tid])._nudges[node] = copyNudge[node]
+                model._states[node] = s[state][node]
+                model._nudges[node] = copyNudge[node]
             # reset simulation
             reset   = True
             # sample for N times
@@ -173,23 +176,26 @@ cpdef dict monteCarlo(\
                 # bin data
                 for node in range(nNodes):
                     for statei in range(nStates):
-                        if (<Model>models[tid])._states[node] == agentStates[statei]:
+                        # if (<Model>models[tid])._states[node] == agentStates[statei]:
+                        if model._states[node] == agentStates[statei]:
                             out[state, delta, node, statei] += 1 / Z
                 # update
                 jdx  = (delta +  1)  + (state + 1) * (repeat + 1)
-                (<Model>models[tid])._updateState(r[jdx])
-                with gil:
-                    print((<Model>models[tid])._updateState(r[jdx]).base, tid)
+                # (<Model>models[tid])._updateState(r[jdx])
+                model._updateState(r[jdx])
+                # with gil:
+                    # print((<Model>models[tid])._updateState(r[jdx]).base, tid)
                 # turn-off the nudges
                 if reset:
                     # check for type of nudge
                     if nudgeType == 'pulse' or \
                     nudgeType    == 'constant' and delta >= half:
-                        (<Model>models[tid])._nudges[:] = 0
+                        # (<Model>models[tid])._nudges[:] = 0
+                        model._nudges[:] = 0
                         reset            = False
-        with gil:
-            pbar.update(1)
-            conditional[kdxs[state]] = out.base[state]
+        # with gil:
+        pbar.update(1)
+        conditional[kdxs[state]] = out.base[state]
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional

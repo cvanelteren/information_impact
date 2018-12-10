@@ -40,8 +40,8 @@ timespec, CLOCK_REALTIME
 
 # from sampler cimport Sampler # mersenne sampler
 cdef class Model: # see pxd
-    def __cinit__(self, *args, **kwargs):
-        print(kwargs)
+    # def __cinit__(self, *args, **kwargs):
+        # print(kwargs)
         # print ('cinit model')
         # graph           = kwargs.get('graph', [])
         # agentStates     = kwargs.get('agentStates', [-1, 1])
@@ -123,7 +123,7 @@ cdef class Model: # see pxd
             # check properties, assign defaults
             if 'state' not in graph.node[node]:
                 idx = np.random.choice(agentStates)
-                print(idx, agentStates)
+                # print(idx, agentStates)
                 graph.node[node]['state'] = idx
             if 'nudge' not in graph.node[node]:
                 graph.node[node]['nudge'] =  DEFAULTNUDGE
@@ -178,7 +178,7 @@ cdef class Model: # see pxd
         self._adj        = adj
 
         self.agentStates = np.asarray(agentStates, dtype = int).copy()
-        print(states, agentStates)
+        # print(states, agentStates)
 
         self._nudges     = nudges.copy()
         self._nStates    = len(agentStates)
