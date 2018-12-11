@@ -60,6 +60,10 @@ cdef class Ising(Model):
             H[nodeID] = graph.nodes()[node].get('H', 0)
 
         # specific model parameters
+        tmp = np.asarray(self.states).copy()
+        tmp2= np.asarray(self.nudges).copy()
+        self.states           = tmp
+        self.nudges           = tmp2 #np.asarray(self.nudges).copy()
         self._H               = H
         self.beta             = np.inf if temperature == 0 else 1 / temperature
         self.t                = temperature

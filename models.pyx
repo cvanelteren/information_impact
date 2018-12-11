@@ -192,7 +192,7 @@ cdef class Model: # see pxd
         self._states    = states.copy()
         self._newstates = states.copy()
         self._nNodes    = graph.number_of_nodes()
-        print(f'Done {id(self)}')
+        # print(f'Done {id(self)}')
 
     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
         return self._nodeids
@@ -231,13 +231,14 @@ cdef class Model: # see pxd
             long start
             long i, j, k
             long samplei
+            int correcter = nSamples * sampleSize
         with gil:
             samples = np.ndarray((nSamples, sampleSize), dtype = int)
         # TODO: single updates of size one won't get shuffled
         for samplei in range(nSamples):
             # shuffle if the current tracker is larger than the array
             start = (samplei * sampleSize) % self._nNodes
-            if start + sampleSize >= self._nNodes or nSamples * sampleSize == 1:
+            if start + sampleSize >= self._nNodes or correcter == 1:
                 for i in range(self._nNodes):
                     # shuffle the array without replacement
                     j                = <long> (self.rand() * (self._nNodes - i))
@@ -245,7 +246,7 @@ cdef class Model: # see pxd
                     self._nodeids[j] = self._nodeids[i]
                     self._nodeids[i] = k
                     # enforce atleast one shuffle in single updates; otherwise same picked
-                    if nSamples * sampleSize == 1 : break
+                    if correcter == 1 : break
             # assign the samples
             for j in range(sampleSize):
                 samples[samplei, j] = self._nodeids[start + j]
@@ -314,9 +315,12 @@ cdef class Model: # see pxd
     @nudges.setter
     def nudges(self, vals):
         self._nudges[:] =  0
-        for k, v in vals.items():
-            idx = self.mapping[k]
-            self._nudges[idx] = v
+        if isinstance(vals, np.ndarray):
+            self._nudges = vals.copy()
+        elif isinstance(vals, dict):
+            for k, v in vals.items():
+                idx = self.mapping[k]
+                self._nudges[idx] = v
 
     @updateType.setter
     def updateType(self, value):

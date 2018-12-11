@@ -61,7 +61,7 @@ if __name__ == '__main__':
     nx.set_node_attributes(graph, attr)
     graphs.append(graph)
 
-    graphs = [nx.barabasi_albert_graph(10,3)]
+    graphs = [nx.barabasi_albert_graph(3,2)]
 #    graphs = [nx.path_graph(3)]
 
     for graph in graphs:

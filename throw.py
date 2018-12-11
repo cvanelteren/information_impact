@@ -23,7 +23,7 @@ for node, row in h.iterrows():
 
 nx.set_node_attributes(graph, attr)
 #graph  = nx.path_graph(3)
-graph = nx.barabasi_albert_graph(13, 2)
+graph = nx.barabasi_albert_graph(10, 2)
 
 # graph = nx.path_graph(10)
 import fastIsing
@@ -35,6 +35,7 @@ m = fastIsing.Ising(graph, temperature = 2)
 import copy
 
 c = copy.deepcopy(m)
+assert id(c.states) != id(m.states)
 from time import time
 m.updateType = 'single'
 
@@ -46,6 +47,7 @@ temps = linspace(0, 10, 100)
 mags, sus = m.matchMagnetization(temps, 1000, 0)
 fig, ax = subplots()
 ax.scatter(temps, mags)
+fig.canvas.flush_events()
 #
 xx = infcy.getSnapShots(m, 1000, step = 100)
 repeats = 10000
@@ -54,5 +56,5 @@ y  = infcy.monteCarlo(m, xx, deltas, repeats)
 px, mi= infcy.mutualInformation(y, deltas, xx, m )
 fig, ax = subplots()
 ax.plot(mi)
-
+show()
 # %%

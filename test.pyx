@@ -27,13 +27,6 @@ cdef extern from *:
     """
     cdef cppclass PyObjectHolder:
         PyObjectHolder(PyObject *o)
-
-cdef class Temp:
-    cdef int a
-    def __init__(self, a):
-        self.a = 1
-    cdef double rand(self):
-        return 5.
 from fastIsing cimport Ising
 from models cimport Model
 from libcpp.vector cimport vector
@@ -42,19 +35,31 @@ from cython.operator cimport dereference as deref
 import networkx as nx
 import numpy as np
 cimport numpy as np
+import copy
+cimport cython
+@cython.auto_pickle(True)
+cdef class Temp:
+    cdef dict __dict__
+    cdef int N
+    cdef np.ndarray a
+    def __init__(self, a):
+        self.a = a
+        self.N = a.size
 
-cdef int i, j, k, N = 10
-
-g =  nx.path_graph(30)
-cdef Ising m = Ising(g, 1)
-from cython.parallel cimport prange
-cdef double func(Model m, int deltas)nogil:
-    with gil:
-        print(id(m))
-    cdef int i
-    for i in range(deltas):
-        m.sampleNodes(1)
-    return 0
-
-for i in prange(N, nogil = 1):
-    func(m, 10)
+    cdef double test(self) nogil:
+        cdef int i
+        cdef double[::1] a = self.a
+        cdef double mu
+        cdef double* ptr
+        for i in range(self.N):
+            mu += a[i]
+        return mu
+x = np.ones(10)
+cdef Temp a = Temp(x)
+cdef double y = a.test()
+print(y)
+    # def __getstate__(self):
+    #     return (self.a)
+    # def __setstate__(self, state):
+    #     print(id(state))
+    #     self._a = state
