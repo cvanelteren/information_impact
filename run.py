@@ -30,7 +30,7 @@ if __name__ == '__main__':
     else:
         real = 0
     print(real)
-    repeats       = int(5e4) if real else 100000
+    repeats       = int(5e4) if real else 100_000
     deltas        = 50       if real else 50
     step          = 1000
     nSamples      = int(1e4) if real else 10000
