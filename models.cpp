@@ -5532,7 +5532,7 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
  *         for samplei in range(nSamples):
  *             # shuffle if the current tracker is larger than the array
  *             start = (samplei * sampleSize) % self._nNodes             # <<<<<<<<<<<<<<
- *             if start + sampleSize >= self._nNodes or sampleSize == 1:
+ *             if start + sampleSize >= self._nNodes or nSamples * sampleSize == 1:
  *                 for i in range(self._nNodes):
  */
       __pyx_v_start = ((__pyx_v_samplei * __pyx_v_sampleSize) % __pyx_v_self->_nNodes);
@@ -5540,7 +5540,7 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
       /* "models.pyx":240
  *             # shuffle if the current tracker is larger than the array
  *             start = (samplei * sampleSize) % self._nNodes
- *             if start + sampleSize >= self._nNodes or sampleSize == 1:             # <<<<<<<<<<<<<<
+ *             if start + sampleSize >= self._nNodes or nSamples * sampleSize == 1:             # <<<<<<<<<<<<<<
  *                 for i in range(self._nNodes):
  *                     # shuffle the array without replacement
  */
@@ -5550,14 +5550,14 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
         __pyx_t_2 = __pyx_t_1;
         goto __pyx_L13_bool_binop_done;
       }
-      __pyx_t_1 = ((__pyx_v_sampleSize == 1) != 0);
+      __pyx_t_1 = (((__pyx_v_nSamples * __pyx_v_sampleSize) == 1) != 0);
       __pyx_t_2 = __pyx_t_1;
       __pyx_L13_bool_binop_done:;
       if (__pyx_t_2) {
 
         /* "models.pyx":241
  *             start = (samplei * sampleSize) % self._nNodes
- *             if start + sampleSize >= self._nNodes or sampleSize == 1:
+ *             if start + sampleSize >= self._nNodes or nSamples * sampleSize == 1:
  *                 for i in range(self._nNodes):             # <<<<<<<<<<<<<<
  *                     # shuffle the array without replacement
  *                     j                = <long> (self.rand() * (self._nNodes - i))
@@ -5605,7 +5605,7 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
  *                     self._nodeids[j] = self._nodeids[i]
  *                     self._nodeids[i] = k             # <<<<<<<<<<<<<<
  *                     # enforce atleast one shuffle in single updates; otherwise same picked
- *                     if sampleSize == 1 : break
+ *                     if nSamples * sampleSize == 1 : break
  */
           if (unlikely(!__pyx_v_self->_nodeids.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 246, __pyx_L4_error)}
           __pyx_t_16 = __pyx_v_i;
@@ -5614,11 +5614,11 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
           /* "models.pyx":248
  *                     self._nodeids[i] = k
  *                     # enforce atleast one shuffle in single updates; otherwise same picked
- *                     if sampleSize == 1 : break             # <<<<<<<<<<<<<<
+ *                     if nSamples * sampleSize == 1 : break             # <<<<<<<<<<<<<<
  *             # assign the samples
  *             for j in range(sampleSize):
  */
-          __pyx_t_2 = ((__pyx_v_sampleSize == 1) != 0);
+          __pyx_t_2 = (((__pyx_v_nSamples * __pyx_v_sampleSize) == 1) != 0);
           if (__pyx_t_2) {
             goto __pyx_L16_break;
           }
@@ -5628,14 +5628,14 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
         /* "models.pyx":240
  *             # shuffle if the current tracker is larger than the array
  *             start = (samplei * sampleSize) % self._nNodes
- *             if start + sampleSize >= self._nNodes or sampleSize == 1:             # <<<<<<<<<<<<<<
+ *             if start + sampleSize >= self._nNodes or nSamples * sampleSize == 1:             # <<<<<<<<<<<<<<
  *                 for i in range(self._nNodes):
  *                     # shuffle the array without replacement
  */
       }
 
       /* "models.pyx":250
- *                     if sampleSize == 1 : break
+ *                     if nSamples * sampleSize == 1 : break
  *             # assign the samples
  *             for j in range(sampleSize):             # <<<<<<<<<<<<<<
  *                 samples[samplei, j] = self._nodeids[start + j]

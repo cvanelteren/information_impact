@@ -237,7 +237,7 @@ cdef class Model: # see pxd
         for samplei in range(nSamples):
             # shuffle if the current tracker is larger than the array
             start = (samplei * sampleSize) % self._nNodes
-            if start + sampleSize >= self._nNodes or sampleSize == 1:
+            if start + sampleSize >= self._nNodes or nSamples * sampleSize == 1:
                 for i in range(self._nNodes):
                     # shuffle the array without replacement
                     j                = <long> (self.rand() * (self._nNodes - i))
@@ -245,7 +245,7 @@ cdef class Model: # see pxd
                     self._nodeids[j] = self._nodeids[i]
                     self._nodeids[i] = k
                     # enforce atleast one shuffle in single updates; otherwise same picked
-                    if sampleSize == 1 : break
+                    if nSamples * sampleSize == 1 : break
             # assign the samples
             for j in range(sampleSize):
                 samples[samplei, j] = self._nodeids[start + j]

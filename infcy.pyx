@@ -167,10 +167,10 @@ cpdef dict monteCarlo(\
         long[  :,       ::1] r       = model.sampleNodes(states * repeats * (deltas + 1) )
         # list m = []
 
-        int nThread, nThreads = 3
         int nNodes = model._nNodes, nStates = model._nStates
         long[::1] agentStates = model.agentStates
         str nudgeType = model._nudgeType
+        # int nThread, nThreads = 3
 
         # setup-models
     #     vector[PyObject *] models
@@ -199,9 +199,10 @@ cpdef dict monteCarlo(\
     print('starting runs')
 
     for state in range(states):
-        # printf('%d %d\n', tid, state)
-        # repeats n times
-        # for repeat in range(repeats):
+            # printf('%d %d\n', tid, state)
+            # repeats n times
+            # for repeat in range(repeats):
+        # with gil:
         for repeat in range(repeats):
             # reset the buffers to the start state
             for node in range(nNodes):
@@ -222,8 +223,9 @@ cpdef dict monteCarlo(\
                             out[state, delta, node, statei] += 1 / Z
                             break
                 # update
-                jdx  = (delta +  1)  + (state + 1) * (repeat + 1)
+                jdx  = (delta +  1) * (state + 1) * (repeat + 1)
                 # (<Model>models[n])._updateState(r[jdx])
+                # model._updateState(model.sampleNodes(1)[0])
                 model._updateState(r[jdx])
                 # with gil:
 

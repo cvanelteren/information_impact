@@ -7,3 +7,11 @@ indicate pythnon interactions [done; replaced by mersenne]
 The memory views make it very fast (c array fast). Changing the defintions in pxd to np.darray fixes
 this issues, however it reduces the speed somewhat. The ultimate goal would be to replace it with full
 c arrays instead of memviews. I did try it with cpp vectors but it was (for some reason) slower.
+
+
+# Notes on threading
+For some reasons using prange has some problems with it. First,  it requires
+separate models to be accessed independently. Although this should be possible
+and I attempted to do this on rewrite-vectors branch, it produces erroneous results. Performing everything single thread/core is the fastest currently.
+Ideally I would want to utilize all the cores to compute the snapshots repeats
+in parallel.
