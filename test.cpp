@@ -1384,8 +1384,8 @@ struct __pyx_opt_args_9fastIsing_5Ising_matchMagnetization {
 struct __pyx_obj_6models_Model {
   PyObject_HEAD
   struct __pyx_vtabstruct_6models_Model *__pyx_vtab;
-  __Pyx_memviewslice _states;
-  __Pyx_memviewslice _newstates;
+  PyArrayObject *_states;
+  PyArrayObject *_newstates;
   __Pyx_memviewslice _nodeids;
   __Pyx_memviewslice agentStates;
   std::mt19937 gen;
@@ -19968,7 +19968,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 59, __pyx_L1_error)
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 54, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(2, 272, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(2, 856, __pyx_L1_error)
@@ -20325,7 +20325,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         return mu
  * x = np.ones(10)             # <<<<<<<<<<<<<<
  * cdef Temp a = Temp(x)
- * cdef double y = a.test()
+ * print(a.a)
  */
   __pyx_tuple__30 = PyTuple_Pack(1, __pyx_int_10); if (unlikely(!__pyx_tuple__30)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__30);
@@ -20867,7 +20867,7 @@ if (!__Pyx_RefNanny) {
  *         return mu
  * x = np.ones(10)             # <<<<<<<<<<<<<<
  * cdef Temp a = Temp(x)
- * cdef double y = a.test()
+ * print(a.a)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -20884,8 +20884,8 @@ if (!__Pyx_RefNanny) {
  *         return mu
  * x = np.ones(10)
  * cdef Temp a = Temp(x)             # <<<<<<<<<<<<<<
+ * print(a.a)
  * cdef double y = a.test()
- * print(y)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_x); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -20900,22 +20900,33 @@ if (!__Pyx_RefNanny) {
   /* "test.pyx":59
  * x = np.ones(10)
  * cdef Temp a = Temp(x)
+ * print(a.a)             # <<<<<<<<<<<<<<
+ * cdef double y = a.test()
+ * print(y)
+ */
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, ((PyObject *)__pyx_v_4test_a->a)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "test.pyx":60
+ * cdef Temp a = Temp(x)
+ * print(a.a)
  * cdef double y = a.test()             # <<<<<<<<<<<<<<
  * print(y)
  *     # def __getstate__(self):
  */
   __pyx_v_4test_y = ((struct __pyx_vtabstruct_4test_Temp *)__pyx_v_4test_a->__pyx_vtab)->test(__pyx_v_4test_a);
 
-  /* "test.pyx":60
- * cdef Temp a = Temp(x)
+  /* "test.pyx":61
+ * print(a.a)
  * cdef double y = a.test()
  * print(y)             # <<<<<<<<<<<<<<
  *     # def __getstate__(self):
  *     #     return (self.a)
  */
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_4test_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_4test_y); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;

@@ -23,12 +23,15 @@ cdef struct Connection:
 cdef class Model:
     cdef:
         # public
-        # np.ndarray _states
-        # np.ndarray _newstates
+        np.ndarray _states
+        np.ndarray _newstates
+
         # np.ndarray  _nodeids
         # np.ndarray  agentStates
-        long[::1] _states
-        long[::1] _newstates # alias
+
+        # long[::1] _states
+        # long[::1] _newstates # alias
+
         long[::1]  _nodeids
         long[::1]  agentStates
 

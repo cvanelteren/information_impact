@@ -15,3 +15,7 @@ separate models to be accessed independently. Although this should be possible
 and I attempted to do this on rewrite-vectors branch, it produces erroneous results. Performing everything single thread/core is the fastest currently.
 Ideally I would want to utilize all the cores to compute the snapshots repeats
 in parallel.
+
+
+- Found the segfault; writing to the buffer is not threadsafe, even though the keys are unique.
+- If you replace the memviews with ndarrays and slice into them, the speed will be reduces by 300 percent. This is the cause of issues in mp

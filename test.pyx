@@ -56,6 +56,7 @@ cdef class Temp:
         return mu
 x = np.ones(10)
 cdef Temp a = Temp(x)
+print(a.a)
 cdef double y = a.test()
 print(y)
     # def __getstate__(self):

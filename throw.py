@@ -31,11 +31,14 @@ import fastIsing
 s = time.process_time()
 fig, ax = subplots()
 nx.draw(graph, with_labels = 1)
-m = fastIsing.Ising(graph, temperature = 2)
+m = fastIsing.Ising(graph, temperature = 1)
 import copy
 
 c = copy.deepcopy(m)
-assert id(c.states) != id(m.states)
+c.states = 2
+
+print(id(c.states) == id(m.states))
+#assert id(c.states) != id(m.states)
 from time import time
 m.updateType = 'single'
 
@@ -45,16 +48,18 @@ import infcy
 s = time()
 temps = linspace(0, 10, 100)
 mags, sus = m.matchMagnetization(temps, 1000, 0)
-fig, ax = subplots()
-ax.scatter(temps, mags)
-fig.canvas.flush_events()
+print(m.states)
+#fig, ax = subplots()
+#ax.scatter(temps, mags)
+#fig.canvas.flush_events()
 #
 xx = infcy.getSnapShots(m, 1000, step = 100)
-repeats = 10000
+repeats = 1000
 deltas = 100
 y  = infcy.monteCarlo(m, xx, deltas, repeats)
+print(m.states)
 px, mi= infcy.mutualInformation(y, deltas, xx, m )
 fig, ax = subplots()
-ax.plot(mi)
-show()
+#ax.plot(mi)
+#show()
 # %%
