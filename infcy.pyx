@@ -261,9 +261,6 @@ cpdef dict monteCarlo(\
     print('starting runs')
 
     for state in range(states):
-            # printf('%d %d\n', tid, state)
-            # repeats n times
-            # for repeat in range(repeats):
         # with gil:
         for repeat in range(repeats):
             # reset the buffers to the start state
@@ -289,11 +286,6 @@ cpdef dict monteCarlo(\
                 # (<Model>models[n])._updateState(r[jdx])
                 # model._updateState(model.sampleNodes(1)[0])
                 model._updateState(r[jdx])
-                # with gil:
-
-                    # print((<Model>models[0])._updateState(r[jdx]).base,\
-                          # (<Model>models[1]).states.base)
-
                 # turn-off the nudges
                 if reset:
                     # check for type of nudge

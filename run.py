@@ -30,7 +30,7 @@ if __name__ == '__main__':
     else:
         real = 0
     print(real)
-    repeats       = int(5e4) if real else 100_000
+    repeats       = int(5e4) if real else 10_000
     deltas        = 50       if real else 50
     step          = 1000
     nSamples      = int(1e4) if real else 10000
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'
     #    fileName = f'Data/{f}'
-        updateType= model.updateType
+        updateType = model.updateType
         # match the temperature to sample from
         # magRange = [.2]
         if os.path.isfile(f'{targetDirectory}/mags.pickle'):

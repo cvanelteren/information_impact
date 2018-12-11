@@ -56,7 +56,8 @@ print(m.states)
 xx = infcy.getSnapShots(m, 1000, step = 100)
 repeats = 1000
 deltas = 100
-y  = infcy.monteCarlo(m, xx, deltas, repeats)
+while True:
+    y  = infcy.monteCarlo(m, xx, deltas, repeats)
 print(m.states)
 px, mi= infcy.mutualInformation(y, deltas, xx, m )
 fig, ax = subplots()

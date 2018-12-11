@@ -38,11 +38,6 @@ cdef class Model:
         mt19937 gen
         unsigned long _seed
         uniform_real_distribution[double] dist
-        # np.ndarray _states
-        # np.ndarray _newstates # alias
-        # np.ndarray  _nodeids
-        # np.ndarray  agentStates
-        # public sparse.csr.csr_matrix adj
 
         int _nNodes
         str _updateType

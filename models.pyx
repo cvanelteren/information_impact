@@ -315,9 +315,9 @@ cdef class Model: # see pxd
     @nudges.setter
     def nudges(self, vals):
         self._nudges[:] =  0
-        if isinstance(vals, np.ndarray):
-            self._nudges = vals.copy()
-        elif isinstance(vals, dict):
+        # if isinstance(vals, np.ndarray):
+            # self._nudges = vals.copy()
+        if isinstance(vals, dict):
             for k, v in vals.items():
                 idx = self.mapping[k]
                 self._nudges[idx] = v
