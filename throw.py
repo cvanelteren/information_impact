@@ -60,6 +60,6 @@ y  = infcy.monteCarlo(m, xx, deltas, repeats)
 print(m.states)
 px, mi= infcy.mutualInformation(y, deltas, xx, m )
 fig, ax = subplots()
-#ax.plot(mi)
+ax.plot(mi)
 #show()
 # %%

@@ -1384,8 +1384,8 @@ struct __pyx_opt_args_9fastIsing_5Ising_matchMagnetization {
 struct __pyx_obj_6models_Model {
   PyObject_HEAD
   struct __pyx_vtabstruct_6models_Model *__pyx_vtab;
-  PyArrayObject *_states;
-  PyArrayObject *_newstates;
+  __Pyx_memviewslice _states;
+  __Pyx_memviewslice _newstates;
   __Pyx_memviewslice _nodeids;
   __Pyx_memviewslice agentStates;
   std::mt19937 gen;

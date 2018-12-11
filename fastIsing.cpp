@@ -1359,8 +1359,8 @@ struct __pyx_opt_args_9fastIsing_5Ising_matchMagnetization {
 struct __pyx_obj_6models_Model {
   PyObject_HEAD
   struct __pyx_vtabstruct_6models_Model *__pyx_vtab;
-  PyArrayObject *_states;
-  PyArrayObject *_newstates;
+  __Pyx_memviewslice _states;
+  __Pyx_memviewslice _newstates;
   __Pyx_memviewslice _nodeids;
   __Pyx_memviewslice agentStates;
   std::mt19937 gen;
@@ -4667,7 +4667,9 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *             long[::1] newstates = self._newstates
  *             int  length = nodesToUpdate.shape[0]
  */
-  __pyx_t_1 = __Pyx_PyObject_to_MemoryviewSlice_dc_long(((PyObject *)__pyx_v_self->__pyx_base._states), PyBUF_WRITABLE); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 155, __pyx_L1_error)
+  if (unlikely(!__pyx_v_self->__pyx_base._states.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 155, __pyx_L1_error)}
+  __pyx_t_1 = __pyx_v_self->__pyx_base._states;
+  __PYX_INC_MEMVIEW(&__pyx_t_1, 0);
   __pyx_v_states = __pyx_t_1;
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
@@ -4679,7 +4681,9 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *             int  length = nodesToUpdate.shape[0]
  *             long node
  */
-  __pyx_t_1 = __Pyx_PyObject_to_MemoryviewSlice_dc_long(((PyObject *)__pyx_v_self->__pyx_base._newstates), PyBUF_WRITABLE); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 156, __pyx_L1_error)
+  if (unlikely(!__pyx_v_self->__pyx_base._newstates.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 156, __pyx_L1_error)}
+  __pyx_t_1 = __pyx_v_self->__pyx_base._newstates;
+  __PYX_INC_MEMVIEW(&__pyx_t_1, 0);
   __pyx_v_newstates = __pyx_t_1;
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;

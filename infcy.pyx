@@ -259,7 +259,7 @@ cpdef dict monteCarlo(\
     # for al the snapshots
     cdef int tid
     print('starting runs')
-    
+
     for state in range(states):
             # printf('%d %d\n', tid, state)
             # repeats n times
@@ -281,7 +281,7 @@ cpdef dict monteCarlo(\
                 for node in range(nNodes):
                     for statei in range(nStates):
                         # if (<Model>models[n])._states[node] == agentStates[statei]:
-                        if model._states[node] == agentStates[statei]:
+                        if model._states[node] == model.agentStates[statei]:
                             out[state, delta, node, statei] += 1 / Z
                             break
                 # update
@@ -306,7 +306,6 @@ cpdef dict monteCarlo(\
 
                         # model._nudges[:] = 0
                         reset            = False
-    # with gil:
         pbar.update(1)
         conditional[kdxs[state]] = out.base[state]
 
