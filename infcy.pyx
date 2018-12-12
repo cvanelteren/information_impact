@@ -102,95 +102,8 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     print(f'Delta = {time.process_time() - past}')
     return snapshots
 
-# # belongs to worker
-# @cython.boundscheck(False) # compiler directive
-# @cython.wraparound(False) # compiler directive
-# @cython.nonecheck(False)
-# @cython.cdivision(True)
-# cpdef dict monteCarlo(\
-#                Model model, dict snapshots,
-#                int deltas = 10,  int repeats = 11,
-#                ):
-#
-#     cdef float past = time.process_time()
-#      # store nudges already there
-#     cdef list models = []
-#     cdef dict params
-#     import copy
-#     from functools import partial
-#     params = dict(\
-#                   snapshots = snapshots,\
-#                   deltas    = deltas, \
-#                   repeats   = repeats)
-#     f = partial(pmc, **params)
-#     s = [(copy.deepcopy(model), \
-#                     decodeState(q, model._nNodes)) for q in snapshots]
-#     # cdef np.ndarray s = np.array([decodeState(q, model._nNodes) for q in snapshots], ndmin = 2)
-#     cdef dict conditional = {}
-#     # with mp.Pool(2) as p:
-#     with mp.Pool(4) as p:
-#         for res in p.imap(f, tqdm(s)):
-#             for k, v in res.items():
-#                 conditional[k] = v
-#             # conditional[kdx] = res
-#         # conditional = {kdx : res for kdx, res in zip(snapshots, p.map(f, tqdm(models)))}
-#     # print(conditional)
-#     print(f"Delta = {time.process_time() - past}")
-#     return conditional
-#
-#
-# # @cython.boundscheck(False) # compiler directive
-# @cython.wraparound(False) # compiler directive
-# @cython.nonecheck(False)
-# @cython.cdivision(True)
-# @cython.initializedcheck(False)
-# cpdef dict pmc(tuple x, \
-#                int deltas, \
-#                int repeats, \
-#                dict snapshots):
-#     cdef Ising model           = Ising(x[0].graph, x[0].t)
-#     cdef long[::1] startState  = np.asarray(x[1])
-#
-#     cdef int jdx, node, statei
-#     cdef copyNudges            = model.nudges.copy()
-#     cdef double[::1] copyNudge = copyNudges # copyNudges
-#     cdef str nudgeType         = model.nudgeType
-#     cdef int nNodes            = model.nNodes
-#     cdef int nStates           = model._nStates
-#
-#     cdef int half = deltas // 2
-#     cdef double Z = <double> repeats
-#
-#     cdef long[::1] agentStates = model.agentStates
-#     # cdef long[::1] startState = decodeState(idx, nNodes)
-#     cdef double[:, :, ::1] out = np.zeros((deltas + 1, nNodes, nStates))
-#     cdef long[  :,   ::1] r    = model.sampleNodes(repeats * (deltas + 1))
-#     print(id(model), mp.current_process().name)
-#     for repeat in range(repeats):
-#        # reset the buffers to the start state
-#        for node in range(nNodes):
-#            model._states[node] = startState[node]
-#            model._nudges[node] = copyNudge[node]
-#
-#        # reset simulation
-#        # sample for N times
-#        for delta in range(deltas + 1):
-#            # bin data
-#            for node in range(nNodes):
-#                for statei in range(nStates):
-#                    if model._states[node] == agentStates[statei]:
-#                        out[delta, node, statei] += 1 / Z
-#                        break
-#            # update
-#            jdx  = (delta +  1) + (repeat + 1)
-#            model._updateState(r[jdx])
-#
-#            # turn-off the nudges
-#            # check for type of nudge
-#            if nudgeType == 'pulse' or \
-#            nudgeType    == 'constant' and delta >= half:
-#                model._nudges[:] = 0
-#     return {encodeState(startState) : out.base}
+
+
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
@@ -214,9 +127,9 @@ cpdef dict monteCarlo(\
     cdef:
         float past = time.process_time()
     # pre-declaration
-        double Z            = <double> repeats
-        double[:] copyNudge = model.nudges.copy()
-        bint reset          = True
+        double Z              = <double> repeats
+        double[::1] copyNudge = model.nudges.copy()
+        bint reset            = True
     # loop stuff
     # extract startstates
         long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in snapshots])
@@ -238,29 +151,6 @@ cpdef dict monteCarlo(\
         str nudgeType = model._nudgeType
 
         unordered_map[int, int] idxer = {state : idx for idx, state in enumerate(agentStates)}
-        # int nThread, nThreads = 3
-        # setup-models
-    #     vector[PyObject *] models
-    #     list models_ignore    = [] # tmp storage for copies of the model
-    #     Model  tmp
-    #     PyObject * tmp_ptr
-    # # create copies of the models
-    # # Please note they will probably have the same seed
-    # # due to the speed of assignment
-    #     int n = state
-    # for nThread in range(states):
-    #     tmp = copy.deepcopy(model)
-    #     # tmp.seed = tmp.seed + nThread
-    #     print(tmp, id(tmp))
-    #     tmp_ptr = <PyObject *> tmp
-    #     Py_XINCREF(tmp_ptr) # keep in memory
-    #     models_ignore.append(tmp)
-    #     models.push_back(tmp_ptr)
-    #
-    # print(len(models_ignore))
-    # for i in range(nThreads)):
-    #     models.push_back
-    # for al the snapshots
     print('starting runs')
 
     pbar = tqdm(total = states) # init  progbar
@@ -271,11 +161,11 @@ cpdef dict monteCarlo(\
             # reset the buffers to the start state
             model._states[:] = s[state]
             model._nudges[:] = copyNudge
-            for node in range(nNodes):
-                # (<Model>models[n])._states[node] = /s[state][node]
-                # (<Model>models[n])._nudges[node] = copyNudge[node]
-                model._states[node] = s[state][node]
-                model._nudges[node] = copyNudge[node]
+            # for node in range(nNodes):
+            #     # (<Model>models[n])._states[node] = /s[state][node]
+            #     # (<Model>models[n])._nudges[node] = copyNudge[node]
+            #     model._states[node] = s[state][node]
+            #     model._nudges[node] = copyNudge[node]
             # reset simulation
             reset   = True
             # sample for N times
@@ -315,6 +205,126 @@ cpdef dict monteCarlo(\
     pbar.close()
     print(f"Delta = {time.process_time() - past}")
     return conditional
+
+
+# @cython.boundscheck(False) # compiler directive
+# @cython.wraparound(False) # compiler directive
+# @cython.nonecheck(False)
+# @cython.cdivision(True)
+# cpdef dict monteCarlo(\
+#                Model model, dict snapshots,
+#                int deltas = 10,  int repeats = 11,
+#                ):
+#
+#     cdef float past = time.process_time()
+#      # store nudges already there
+#     cdef list models = []
+#     cdef dict params
+#     import copy
+#     params = dict(\
+#                 model      = model,\
+#                 # graph      = model.graph,\
+#                 # nudges     = model.nudges.base.copy(),\
+#                 temp       = model.t,\
+#                 repeats    = repeats,\
+#                 deltas     = deltas,\
+#                 )
+#     from functools import partial
+#     f = partial(worker, **params)
+#     print(f)
+#     cdef np.ndarray s = np.array([q for q in snapshots])
+#     cdef int n = len(s) // (mp.cpu_count() - 1)
+#     if n == 0:
+#         n = 1
+#     cdef list states  = [s[i : i + n] for i in range(0, len(s), n)]
+#     cdef dict conditional = {}
+#     # with mp.Pool(2) as p:
+#     with mp.Pool(mp.cpu_count() - 1) as p:
+#         for res in p.imap(f, tqdm(states)):
+#             for k, v in res.items():
+#                 conditional[k] = v
+#         # conditional = {kdx : res for kdx, res in zip(snapshots, p.map(f, tqdm(models)))}
+#     # print(conditional)
+#     print(f"Delta = {time.process_time() - past}")
+#     return conditional
+#
+#
+#     # object graph,\
+#     # np.ndarray nudges,\
+# @cython.boundscheck(False) # compiler directive
+# @cython.wraparound(False) # compiler directive
+# @cython.nonecheck(False)
+# @cython.cdivision(True)
+# @cython.initializedcheck(False)
+# cpdef dict worker(\
+#                 np.ndarray idx,\
+#                 Model model,\
+#                 double temp,\
+#                 int repeats, \
+#                 int deltas,\
+#                   ):
+#     # setup the worker
+#     # cdef Ising model = copy.deepcopy(Ising(graph, temperature = temp, updateType = 'single'))
+#     # model.nudges     = nudges.copy()
+#     # cdef Model model = copy.deepcopy(m)
+#     # cdef Ising model = copy.deepcopy(model)
+#     # model.nudges = nudges.copy()
+#     print(id(model))
+#     cdef dict conditional = {}
+#     # print(model.seed)
+#     cdef int states            = idx.size
+#     # decode the states
+#     cdef int nNodes            = model.nNodes
+#     cdef int nStates           = model.nStates
+#     cdef str nudgeType         = model.nudgeType
+#     cdef double[::1] copyNudge = model.nudges.base.copy()
+#
+#     cdef long[:, ::1] s = np.asarray([decodeState(i, nNodes) for i in idx])
+#     cdef long[:, ::1] r = model.sampleNodes( states * (deltas + 1) * repeats)
+#     # mape state to index
+#     cdef unordered_map[int, int] idxer = {i : j for j, i in enumerate(model.agentStates)}
+#     cdef double[:, :, :, ::1] out = np.zeros((states, deltas + 1, nNodes, nStates))
+#     cdef int half = deltas // 2
+#     cdef state, repeat, node, jdx
+#     cdef double Z = <double> repeats
+#     print(id(model), id(model.states.base), mp.current_process().name, id(model.nudges.base))
+#     cdef bint reset
+#     for state in range(states):
+#         # with gil:
+#         for repeat in range(repeats):
+#             # reset the buffers to the start state
+#             # model._states[:] = s[state]
+#             # model._nudges[:] = copyNudge
+#             for node in range(nNodes):
+#                 model._states[node] = s[state][node]
+#                 model._nudges[node] = copyNudge[node]
+#             # reset simulation
+#             reset   = True
+#             # sample for N times
+#             for delta in range(deltas + 1):
+#                 # bin data
+#                 for node in range(nNodes):
+#                     out[state, delta, node, idxer[model._states[node]]] += 1 / Z
+#                 # update
+#                 jdx  = (delta + 1) * (repeat + 1)  * (state + 1) - 1
+#                 # (<Model>models[n])._updateState(r[jdx])
+#                 # model._updateState(model.sampleNodes(1)[0])
+#                 model._updateState(r[jdx])
+#                 # turn-off the nudges
+#                 if reset:
+#                     # check for type of nudge
+#                     if nudgeType == 'pulse' or \
+#                     nudgeType    == 'constant' and delta >= half:
+#                         for node in range(nNodes):
+#                             model._nudges[node] = 0
+#                         reset            = False
+#         # pbar.update(1)
+#         conditional[idx[state]] = out.base[state]
+#     return conditional
+
+#
+
+
 
 
 @cython.boundscheck(False) # compiler directive

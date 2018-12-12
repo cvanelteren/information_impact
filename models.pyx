@@ -195,8 +195,8 @@ cdef class Model: # see pxd
         self._nNodes    = graph.number_of_nodes()
         # print(f'Done {id(self)}')
 
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
-    # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+    # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
         return self._nodeids
 
 
@@ -213,8 +213,8 @@ cdef class Model: # see pxd
     @cython.cdivision(True)
     @cython.initializedcheck(False)
     @cython.overflowcheck(False)
-    cdef long [:, ::1] sampleNodes(self, long  nSamples):
-    # cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+    cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+    # cdef long [:, ::1] sampleNodes(self, long  nSamples):
         """
         Shuffles nodeids only when the current sample is larger
         than the shuffled array
@@ -231,14 +231,14 @@ cdef class Model: # see pxd
 
         cdef:
             # TODO replace this with a nogil version
-            long [:, ::1] samples = np.ndarray((nSamples, sampleSize), dtype = int)
+            long [:, ::1] samples # = np.ndarray((nSamples, sampleSize), dtype = int)
             long sample
             long start
             long i, j, k
             long samplei
             int correcter = nSamples * sampleSize
-        # with gil:
-            # samples = np.ndarray((nSamples, sampleSize), dtype = int)
+        with gil:
+            samples = np.ndarray((nSamples, sampleSize), dtype = int)
         # TODO: single updates of size one won't get shuffled
         for samplei in range(nSamples):
             # shuffle if the current tracker is larger than the array
@@ -311,7 +311,7 @@ cdef class Model: # see pxd
 
     @seed.setter
     def seed(self, value):
-        if isinstance(value, int) and value > 0:
+        if isinstance(value, int) and value >= 0:
             self._seed = value
             self.gen   = mt19937(self.seed)
         else:

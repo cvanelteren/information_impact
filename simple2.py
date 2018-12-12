@@ -85,9 +85,9 @@ for condition, samples in data[temp].items():
 double = lambda x, a, b, c, d, e, f: a + b * exp(-c*x) + d * exp(- e * (x-f))   
 single = lambda x, a, b, c : a + b * exp(-c * x)
 single_= lambda x, b, c : b * exp(-c * x)
-func   = double
+func        = double
 p0          = ones((func.__code__.co_argcount - 1));# p0[0] = 0
-fitParam    = dict(maxfev = int(1e4), bounds = (0, inf), p0 = p0)
+fitParam    = dict(maxfev = int(1e5), bounds = (0, inf), p0 = p0)
 
 settings = IO.readSettings(extractThis)
 repeats  = settings['repeat']
@@ -96,9 +96,9 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, .5, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
-zd[zd < finfo(float).eps] = 0
+zd[zd < finfo(float).eps] = 0 # remove everything below machine error
 
 # scale data 0-1 along each sample (nodes x delta)
 #zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
@@ -115,28 +115,32 @@ mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
 mainax.set_title(temp + '\n\n')
 x = arange(deltas // 2)
-sidx = 1.
+sidx = 1 #.96
 labels = 'MI IMPACT'.split()
 
 from matplotlib.ticker import FormatStrFormatter
 mins, maxs = zd.reshape(-1, COND).min(0), zd.reshape(-1, COND).max(0)
-for tmp in zip(ax, zd.mean(0).T, zd.std(0).T, labels, mins, maxs):
-    axi, zdi, zdstd, label, minner, maxer = tmp
+
+mins_, maxs_ = zd.min(0), zd.max(0)
+for tmp in zip(ax, zd.mean(0).T, zd.std(0).T, labels, mins, maxs, mins_.T, maxs_.T):
+    axi, zdi, zdstd, label, minner, maxer, min_, max_ = tmp
     for node, idx in model.mapping.items():
-        a = zdi[:, idx]  + sidx * zdstd[:, idx]
-        b = zdi[:, idx]  - sidx * zdstd[:, idx]
+        a = min_[:, idx]
+        b = max_[:, idx]
+#        a = zdi[:, idx]  + sidx * zdstd[:, idx]
+#        b = zdi[:, idx]  - sidx * zdstd[:, idx]
         axi.plot(x, zdi[:, idx], linestyle = '--', \
                  markeredgecolor = 'black', label = node,\
                  color = colors[idx])
         axi.fill_between(x, a, b, color = colors[idx], alpha  = .4)
 #        axi.yaxis.set_major_formatter(FormatStrFormatter('%1.0e'))
         
-    axi.set(yticks = (minner, maxer))
+#    axi.set(yticks = (minner, maxer))
     axi.ticklabel_format(axis = 'y', style = 'sci', scilimits = (0, 4))
     axi.set_ylabel(label, labelpad = -30)
 axi.legend()
 # %% root based on data
-p0             = ones((func.__code__.co_argcount - 1)); p0[0] = 0
+p0             = ones((func.__code__.co_argcount - 1)); #p0[0] = 0
 fitParam['p0'] = p0
 aucs       = zeros((\
                         NSAMPLES, COND,\
@@ -162,32 +166,7 @@ for samplei, sample in enumerate(zd):
                 
           
 
-# %%
-def showResults(data):
-    
-    fig, ax = subplots(1,2, sharex = 'all')
-    mainax  = fig.add_subplot(111, frameon = False, 
-                              **dict(xticks =  [], yticks = []))
-    timer = 1.
-    for idx, (c, stds, mus) in enumerate(zip(colors, data.std(0,ddof = 1).T, data.mean(0).T)):
-        for axi, stdev, mu in zip(ax, stds, mus):
-            # plot means
-            axi.plot(thetas, mu, '-', color = c, \
-                     markeredgewidth = 10, markeredgecolor = 'black',\
-                     alpha = .7)
-            axi.fill_between(thetas, mu - timer * stdev, \
-                             mu + timer * stdev, color = c,\
-                             alpha = .6)
-            axi.set_xscale('log')
-            axi.set_xlim(thetas[0], thetas[-1])
-    
-    ylabels = 'MI IMPACT'.split()            
-    mainax.set_xlabel(r'$\theta$', labelpad = 30)
-    mainax.set(**dict(title = 'Main Results\n'))
-    axi.legend(list(model.mapping.keys()), bbox_to_anchor = (1.0, 1))
-    tight_layout(w_pad = 5)
-    [axi.set_ylabel(label) for axi, label in zip(ax, ylabels)]
-
+# %% show idt auc vs impact auc
 fig, ax = subplots()
 
 for idx, (c, i) in enumerate(zip( colors, aucs.T)):
@@ -195,7 +174,7 @@ for idx, (c, i) in enumerate(zip( colors, aucs.T)):
     ax.scatter(*median(i, 1), marker = 's', color = c, edgecolors = 'k')
     ax.scatter(*mean(i, 1), marker = '^', color = c, edgecolors = 'k')
 ax.legend(loc = 'upper right', bbox_to_anchor = (1.15, 1))
-#ax.set(yscale = 'log')
+ax.set(yscale = 'symlog')
  # %% compute concistency
  
 bins = arange(-.5, model.nNodes + .5)

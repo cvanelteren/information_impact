@@ -33,6 +33,7 @@ def fit(y, func, x = None,\
     errors       = zeros((nNodes))
     for idx, yi in enumerate(y.T):
         coeffs, coeffs_var = scipy.optimize.curve_fit(func, x, yi, **params)
+#        print(coeffs, coeffs_var)
         errors[idx]        = ((func(x, *coeffs) - yi)**2).mean()
         coefficients[idx]  = coeffs
 

@@ -58,7 +58,9 @@ cdef class Ising(Model):
         cdef np.ndarray H  = np.zeros(self.graph.number_of_nodes(), float)
         for node, nodeID in self.mapping.items():
             H[nodeID] = graph.nodes()[node].get('H', 0)
-
+        # for some reason deepcopy works with this enabled...
+        self.states           = np.asarray(self.states.base).copy()
+        self.nudges           = np.asarray(self.nudges.base).copy()
         # specific model parameters
         self._H               = H
         self.beta             = np.inf if temperature == 0 else 1 / temperature
@@ -118,11 +120,11 @@ cdef class Ising(Model):
     @cython.initializedcheck(False)
     @cython.overflowcheck(False)
     cdef double energy(self, \
-                       int  node, \
-                       long[::1] states)  :
+                        int  node, \
+                        long[::1] states) nogil :
                        # cdef double energy(self, \
-                       # int  node, \
-                       # long[::1] states) nogil :
+                       #                    int  node, \
+                       #                    long[::1] states)  :
         """
         input:
             :nsyncode: member of nodeIDs
@@ -150,8 +152,8 @@ cdef class Ising(Model):
     @cython.cdivision(True)
     @cython.initializedcheck(False)
     @cython.overflowcheck(False)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
-        # cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
+    # cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
@@ -172,14 +174,15 @@ cdef class Ising(Model):
             if self.rand() < p:
                 self._newstates[node] = -self._states[node]
 
-        cdef double mu   =  0 # MEAN
+        cdef double mu   =  0 # sign
         cdef long   NEG  = -1 # see the self.magSideOptions
         cdef long   POS  =  1
         # printf('%d ', mu)
         # compute mean
         for node in range(self._nNodes):
             self._states[node] = self._newstates[node] # update
-            mu          += self._states[node] / Z
+            mu          += self._states[node] # normalization not really needed
+
             # check if conditions are met
         if (mu < 0 and self._magSide == POS) or\
          (mu > 0 and self._magSide == NEG):
@@ -248,7 +251,7 @@ cdef class Ising(Model):
                           list(self.agentStates.base.copy()),\
                           self.updateType,\
                           self.nudgeType,\
-                          self.magSide))
+                          self.magSide, self.nudges.base))
     # property states:
     #     def __get__(self):
     #         return self._states.base
@@ -282,5 +285,8 @@ cdef class Ising(Model):
         self._t   = value
         self.beta = 1 / value if value != 0 else np.inf
 
-def rebuild(graph, t, agentStates, updateType, nudgeType, magSide):
-    return Ising(graph, t, agentStates, nudgeType, updateType, magSide)
+cpdef Ising rebuild(object graph, double t, list agentStates, str updateType, str nudgeType, str magSide, \
+              np.ndarray nudges):
+    cdef Ising tmp = copy.deepcopy(Ising(graph, t, agentStates, nudgeType, updateType, magSide))
+    tmp.nudges = nudges.copy()
+    return tmp

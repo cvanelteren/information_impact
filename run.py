@@ -30,7 +30,7 @@ if __name__ == '__main__':
     else:
         real = 0
     print(real)
-    repeats       = int(5e4) if real else 10_000
+    repeats       = int(1e4) if real else 10_000
     deltas        = 50       if real else 50
     step          = 1000
     nSamples      = int(1e4) if real else 10000
@@ -62,7 +62,7 @@ if __name__ == '__main__':
         graphs = [nx.barabasi_albert_graph(10, 2)]
 
 
-    graphs = [nx.barabasi_albert_graph(10,5)]
+    # graphs = [nx.barabasi_albert_graph(10,5)]
 #    graphs = [nx.path_graph(3)]
 
     for graph in graphs:
@@ -81,11 +81,12 @@ if __name__ == '__main__':
         IO.saveSettings(targetDirectory, settings)
 
         # graph = nx.barabasi_albert_graph(10, 3)
-        model = fastIsing.Ising(\
-                                graph       = graph, \
-                                temperature = 0, \
-                                updateType  = updateType,\
-                                magSide     = magSide)
+        modelSettings = dict(\
+                             graph       = graph,\
+                             temperature = 0,\
+                             updateType  = updateType,\
+                             magSide     = magSide)
+        model = fastIsing.Ising(**modelSettings)
 
 
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'

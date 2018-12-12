@@ -1850,6 +1850,9 @@ static void __Pyx_WriteUnraisable(const char *name, int clineno,
                                   int lineno, const char *filename,
                                   int full_traceback, int nogil);
 
+/* FetchCommonPointer.proto */
+static void* __Pyx_FetchCommonPointer(void* pointer, const char* name);
+
 /* IncludeStringH.proto */
 #include <string.h>
 
@@ -2024,9 +2027,6 @@ static CYTHON_INLINE int __Pyx_PyList_Extend(PyObject* L, PyObject* v) {
     return PyList_SetSlice(L, PY_SSIZE_T_MAX, PY_SSIZE_T_MAX, v);
 #endif
 }
-
-/* FetchCommonPointer.proto */
-static void* __Pyx_FetchCommonPointer(void* pointer, const char* name);
 
 /* None.proto */
 static CYTHON_INLINE long __Pyx_div_long(long, long);
@@ -4949,51 +4949,56 @@ static PyObject *__pyx_pf_6models_5Model_2construct(struct __pyx_obj_6models_Mod
   return __pyx_r;
 }
 
-/* "models.pyx":198
- *         # print(f'Done {id(self)}')
+/* "models.pyx":199
  * 
- *     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :             # <<<<<<<<<<<<<<
- *     # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+ *     # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
+ *     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:             # <<<<<<<<<<<<<<
  *         return self._nodeids
+ * 
  */
 
 static __Pyx_memviewslice __pyx_f_6models_5Model__updateState(struct __pyx_obj_6models_Model *__pyx_v_self, CYTHON_UNUSED __Pyx_memviewslice __pyx_v_nodesToUpdate) {
   __Pyx_memviewslice __pyx_r = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("_updateState", 0);
 
   /* "models.pyx":200
- *     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
- *     # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+ *     # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
+ *     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
  *         return self._nodeids             # <<<<<<<<<<<<<<
  * 
  * 
  */
   if (unlikely(!__pyx_v_self->_nodeids.memview)) {PyErr_SetString(PyExc_AttributeError,"Memoryview is not initialized");__PYX_ERR(0, 200, __pyx_L1_error)}
-  __PYX_INC_MEMVIEW(&__pyx_v_self->_nodeids, 0);
+  __PYX_INC_MEMVIEW(&__pyx_v_self->_nodeids, 1);
   __pyx_r = __pyx_v_self->_nodeids;
   goto __pyx_L0;
 
-  /* "models.pyx":198
- *         # print(f'Done {id(self)}')
+  /* "models.pyx":199
  * 
- *     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :             # <<<<<<<<<<<<<<
- *     # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:
+ *     # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) :
+ *     cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil:             # <<<<<<<<<<<<<<
  *         return self._nodeids
+ * 
  */
 
   /* function exit code */
   __pyx_L1_error:;
   __pyx_r.data = NULL;
   __pyx_r.memview = NULL;
-  __Pyx_AddTraceback("models.Model._updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  {
+    #ifdef WITH_THREAD
+    PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
+    #endif
+    __Pyx_AddTraceback("models.Model._updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+    #ifdef WITH_THREAD
+    __Pyx_PyGILState_Release(__pyx_gilstate_save);
+    #endif
+  }
   goto __pyx_L2;
   __pyx_L0:;
   if (unlikely(!__pyx_r.memview)) {
     PyErr_SetString(PyExc_TypeError, "Memoryview return value is not initialized");
   }
   __pyx_L2:;
-  __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
@@ -5202,8 +5207,8 @@ static double __pyx_f_6models_5Model_rand(struct __pyx_obj_6models_Model *__pyx_
 /* "models.pyx":216
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
- *     cdef long [:, ::1] sampleNodes(self, long  nSamples):             # <<<<<<<<<<<<<<
- *     # cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+ *     cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:             # <<<<<<<<<<<<<<
+ *     # cdef long [:, ::1] sampleNodes(self, long  nSamples):
  *         """
  */
 
@@ -5237,27 +5242,22 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
   Py_ssize_t __pyx_t_17;
   Py_ssize_t __pyx_t_18;
   Py_ssize_t __pyx_t_19;
+  #ifdef WITH_THREAD
+  PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
+  #endif
   __Pyx_RefNannySetupContext("sampleNodes", 0);
+  #ifdef WITH_THREAD
+  __Pyx_PyGILState_Release(__pyx_gilstate_save);
+  #endif
 
-  /* "models.pyx":225
- *         # check the amount of samples to get
- *         cdef int sampleSize
- *         if self._updateType == 'single':             # <<<<<<<<<<<<<<
- *             sampleSize = 1
- *         # elif self._updateType == 'serial':
+  /* "models.pyx":218
+ *     cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+ *     # cdef long [:, ::1] sampleNodes(self, long  nSamples):
+ *         """             # <<<<<<<<<<<<<<
+ *         Shuffles nodeids only when the current sample is larger
+ *         than the shuffled array
  */
-  __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_self->_updateType, __pyx_n_u_single, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 225, __pyx_L1_error)
-  __pyx_t_2 = (__pyx_t_1 != 0);
-  if (__pyx_t_2) {
-
-    /* "models.pyx":226
- *         cdef int sampleSize
- *         if self._updateType == 'single':
- *             sampleSize = 1             # <<<<<<<<<<<<<<
- *         # elif self._updateType == 'serial':
- *         #     return self._nodeids
- */
-    __pyx_v_sampleSize = 1;
+  /*try:*/ {
 
     /* "models.pyx":225
  *         # check the amount of samples to get
@@ -5266,172 +5266,146 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
  *             sampleSize = 1
  *         # elif self._updateType == 'serial':
  */
-    goto __pyx_L3;
-  }
+    __pyx_t_1 = (__Pyx_PyUnicode_Equals(__pyx_v_self->_updateType, __pyx_n_u_single, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) __PYX_ERR(0, 225, __pyx_L4_error)
+    __pyx_t_2 = (__pyx_t_1 != 0);
+    if (__pyx_t_2) {
 
-  /* "models.pyx":230
+      /* "models.pyx":226
+ *         cdef int sampleSize
+ *         if self._updateType == 'single':
+ *             sampleSize = 1             # <<<<<<<<<<<<<<
+ *         # elif self._updateType == 'serial':
+ *         #     return self._nodeids
+ */
+      __pyx_v_sampleSize = 1;
+
+      /* "models.pyx":225
+ *         # check the amount of samples to get
+ *         cdef int sampleSize
+ *         if self._updateType == 'single':             # <<<<<<<<<<<<<<
+ *             sampleSize = 1
+ *         # elif self._updateType == 'serial':
+ */
+      goto __pyx_L6;
+    }
+
+    /* "models.pyx":230
  *         #     return self._nodeids
  *         else:
  *             sampleSize = self._nNodes             # <<<<<<<<<<<<<<
  * 
  *         cdef:
  */
-  /*else*/ {
-    __pyx_t_3 = __pyx_v_self->_nNodes;
-    __pyx_v_sampleSize = __pyx_t_3;
-  }
-  __pyx_L3:;
+    /*else*/ {
+      __pyx_t_3 = __pyx_v_self->_nNodes;
+      __pyx_v_sampleSize = __pyx_t_3;
+    }
+    __pyx_L6:;
 
-  /* "models.pyx":234
- *         cdef:
- *             # TODO replace this with a nogil version
- *             long [:, ::1] samples = np.ndarray((nSamples, sampleSize), dtype = int)             # <<<<<<<<<<<<<<
- *             long sample
- *             long start
- */
-  __pyx_t_4 = __Pyx_PyInt_From_long(__pyx_v_nSamples); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_sampleSize); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __Pyx_GIVEREF(__pyx_t_4);
-  PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4);
-  __Pyx_GIVEREF(__pyx_t_5);
-  PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_5);
-  __pyx_t_4 = 0;
-  __pyx_t_5 = 0;
-  __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_GIVEREF(__pyx_t_6);
-  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6);
-  __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, ((PyObject *)(&PyInt_Type))) < 0) __PYX_ERR(0, 234, __pyx_L1_error)
-  __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5numpy_ndarray), __pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long(__pyx_t_4, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 234, __pyx_L1_error)
-  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_v_samples = __pyx_t_7;
-  __pyx_t_7.memview = NULL;
-  __pyx_t_7.data = NULL;
-
-  /* "models.pyx":239
+    /* "models.pyx":239
  *             long i, j, k
  *             long samplei
  *             int correcter = nSamples * sampleSize             # <<<<<<<<<<<<<<
- *         # with gil:
- *             # samples = np.ndarray((nSamples, sampleSize), dtype = int)
+ *         with gil:
+ *             samples = np.ndarray((nSamples, sampleSize), dtype = int)
  */
-  __pyx_v_correcter = (__pyx_v_nSamples * __pyx_v_sampleSize);
+    __pyx_v_correcter = (__pyx_v_nSamples * __pyx_v_sampleSize);
 
-  /* "models.pyx":243
- *             # samples = np.ndarray((nSamples, sampleSize), dtype = int)
+    /* "models.pyx":240
+ *             long samplei
+ *             int correcter = nSamples * sampleSize
+ *         with gil:             # <<<<<<<<<<<<<<
+ *             samples = np.ndarray((nSamples, sampleSize), dtype = int)
+ *         # TODO: single updates of size one won't get shuffled
+ */
+    {
+        #ifdef WITH_THREAD
+        PyGILState_STATE __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
+        #endif
+        /*try:*/ {
+
+          /* "models.pyx":241
+ *             int correcter = nSamples * sampleSize
+ *         with gil:
+ *             samples = np.ndarray((nSamples, sampleSize), dtype = int)             # <<<<<<<<<<<<<<
+ *         # TODO: single updates of size one won't get shuffled
+ *         for samplei in range(nSamples):
+ */
+          __pyx_t_4 = __Pyx_PyInt_From_long(__pyx_v_nSamples); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 241, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_sampleSize); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 241, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 241, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          __Pyx_GIVEREF(__pyx_t_4);
+          PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4);
+          __Pyx_GIVEREF(__pyx_t_5);
+          PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_5);
+          __pyx_t_4 = 0;
+          __pyx_t_5 = 0;
+          __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 241, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_5);
+          __Pyx_GIVEREF(__pyx_t_6);
+          PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6);
+          __pyx_t_6 = 0;
+          __pyx_t_6 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 241, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          if (PyDict_SetItem(__pyx_t_6, __pyx_n_s_dtype, ((PyObject *)(&PyInt_Type))) < 0) __PYX_ERR(0, 241, __pyx_L8_error)
+          __pyx_t_4 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5numpy_ndarray), __pyx_t_5, __pyx_t_6); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 241, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+          __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+          __pyx_t_7 = __Pyx_PyObject_to_MemoryviewSlice_d_dc_long(__pyx_t_4, PyBUF_WRITABLE); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 241, __pyx_L8_error)
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __pyx_v_samples = __pyx_t_7;
+          __pyx_t_7.memview = NULL;
+          __pyx_t_7.data = NULL;
+        }
+
+        /* "models.pyx":240
+ *             long samplei
+ *             int correcter = nSamples * sampleSize
+ *         with gil:             # <<<<<<<<<<<<<<
+ *             samples = np.ndarray((nSamples, sampleSize), dtype = int)
+ *         # TODO: single updates of size one won't get shuffled
+ */
+        /*finally:*/ {
+          /*normal exit:*/{
+            #ifdef WITH_THREAD
+            __Pyx_PyGILState_Release(__pyx_gilstate_save);
+            #endif
+            goto __pyx_L9;
+          }
+          __pyx_L8_error: {
+            #ifdef WITH_THREAD
+            __Pyx_PyGILState_Release(__pyx_gilstate_save);
+            #endif
+            goto __pyx_L4_error;
+          }
+          __pyx_L9:;
+        }
+    }
+
+    /* "models.pyx":243
+ *             samples = np.ndarray((nSamples, sampleSize), dtype = int)
  *         # TODO: single updates of size one won't get shuffled
  *         for samplei in range(nSamples):             # <<<<<<<<<<<<<<
  *             # shuffle if the current tracker is larger than the array
  *             start = (samplei * sampleSize) % self._nNodes
  */
-  __pyx_t_8 = __pyx_v_nSamples;
-  __pyx_t_9 = __pyx_t_8;
-  for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
-    __pyx_v_samplei = __pyx_t_10;
+    __pyx_t_8 = __pyx_v_nSamples;
+    __pyx_t_9 = __pyx_t_8;
+    for (__pyx_t_10 = 0; __pyx_t_10 < __pyx_t_9; __pyx_t_10+=1) {
+      __pyx_v_samplei = __pyx_t_10;
 
-    /* "models.pyx":245
+      /* "models.pyx":245
  *         for samplei in range(nSamples):
  *             # shuffle if the current tracker is larger than the array
  *             start = (samplei * sampleSize) % self._nNodes             # <<<<<<<<<<<<<<
  *             if start + sampleSize >= self._nNodes or correcter == 1:
  *                 for i in range(self._nNodes):
  */
-    __pyx_v_start = ((__pyx_v_samplei * __pyx_v_sampleSize) % __pyx_v_self->_nNodes);
-
-    /* "models.pyx":246
- *             # shuffle if the current tracker is larger than the array
- *             start = (samplei * sampleSize) % self._nNodes
- *             if start + sampleSize >= self._nNodes or correcter == 1:             # <<<<<<<<<<<<<<
- *                 for i in range(self._nNodes):
- *                     # shuffle the array without replacement
- */
-    __pyx_t_1 = (((__pyx_v_start + __pyx_v_sampleSize) >= __pyx_v_self->_nNodes) != 0);
-    if (!__pyx_t_1) {
-    } else {
-      __pyx_t_2 = __pyx_t_1;
-      goto __pyx_L7_bool_binop_done;
-    }
-    __pyx_t_1 = ((__pyx_v_correcter == 1) != 0);
-    __pyx_t_2 = __pyx_t_1;
-    __pyx_L7_bool_binop_done:;
-    if (__pyx_t_2) {
-
-      /* "models.pyx":247
- *             start = (samplei * sampleSize) % self._nNodes
- *             if start + sampleSize >= self._nNodes or correcter == 1:
- *                 for i in range(self._nNodes):             # <<<<<<<<<<<<<<
- *                     # shuffle the array without replacement
- *                     j                = lround(self.rand() * (self._nNodes - 1))
- */
-      __pyx_t_3 = __pyx_v_self->_nNodes;
-      __pyx_t_11 = __pyx_t_3;
-      for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
-        __pyx_v_i = __pyx_t_12;
-
-        /* "models.pyx":249
- *                 for i in range(self._nNodes):
- *                     # shuffle the array without replacement
- *                     j                = lround(self.rand() * (self._nNodes - 1))             # <<<<<<<<<<<<<<
- *                     k                = self._nodeids[j]
- *                     self._nodeids[j] = self._nodeids[i]
- */
-        __pyx_v_j = lround((((struct __pyx_vtabstruct_6models_Model *)__pyx_v_self->__pyx_vtab)->rand(__pyx_v_self) * (__pyx_v_self->_nNodes - 1)));
-
-        /* "models.pyx":250
- *                     # shuffle the array without replacement
- *                     j                = lround(self.rand() * (self._nNodes - 1))
- *                     k                = self._nodeids[j]             # <<<<<<<<<<<<<<
- *                     self._nodeids[j] = self._nodeids[i]
- *                     self._nodeids[i] = k
- */
-        __pyx_t_13 = __pyx_v_j;
-        __pyx_v_k = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_13)) )));
-
-        /* "models.pyx":251
- *                     j                = lround(self.rand() * (self._nNodes - 1))
- *                     k                = self._nodeids[j]
- *                     self._nodeids[j] = self._nodeids[i]             # <<<<<<<<<<<<<<
- *                     self._nodeids[i] = k
- *                     # enforce atleast one shuffle in single updates; otherwise same picked
- */
-        __pyx_t_14 = __pyx_v_i;
-        __pyx_t_15 = __pyx_v_j;
-        *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_15)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_14)) )));
-
-        /* "models.pyx":252
- *                     k                = self._nodeids[j]
- *                     self._nodeids[j] = self._nodeids[i]
- *                     self._nodeids[i] = k             # <<<<<<<<<<<<<<
- *                     # enforce atleast one shuffle in single updates; otherwise same picked
- *                     if correcter == 1 : break
- */
-        __pyx_t_16 = __pyx_v_i;
-        *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_16)) )) = __pyx_v_k;
-
-        /* "models.pyx":254
- *                     self._nodeids[i] = k
- *                     # enforce atleast one shuffle in single updates; otherwise same picked
- *                     if correcter == 1 : break             # <<<<<<<<<<<<<<
- *             # assign the samples
- *             for j in range(sampleSize):
- */
-        __pyx_t_2 = ((__pyx_v_correcter == 1) != 0);
-        if (__pyx_t_2) {
-          goto __pyx_L10_break;
-        }
-      }
-      __pyx_L10_break:;
+      __pyx_v_start = ((__pyx_v_samplei * __pyx_v_sampleSize) % __pyx_v_self->_nNodes);
 
       /* "models.pyx":246
  *             # shuffle if the current tracker is larger than the array
@@ -5440,59 +5414,168 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
  *                 for i in range(self._nNodes):
  *                     # shuffle the array without replacement
  */
-    }
+      __pyx_t_1 = (((__pyx_v_start + __pyx_v_sampleSize) >= __pyx_v_self->_nNodes) != 0);
+      if (!__pyx_t_1) {
+      } else {
+        __pyx_t_2 = __pyx_t_1;
+        goto __pyx_L13_bool_binop_done;
+      }
+      __pyx_t_1 = ((__pyx_v_correcter == 1) != 0);
+      __pyx_t_2 = __pyx_t_1;
+      __pyx_L13_bool_binop_done:;
+      if (__pyx_t_2) {
 
-    /* "models.pyx":256
+        /* "models.pyx":247
+ *             start = (samplei * sampleSize) % self._nNodes
+ *             if start + sampleSize >= self._nNodes or correcter == 1:
+ *                 for i in range(self._nNodes):             # <<<<<<<<<<<<<<
+ *                     # shuffle the array without replacement
+ *                     j                = lround(self.rand() * (self._nNodes - 1))
+ */
+        __pyx_t_3 = __pyx_v_self->_nNodes;
+        __pyx_t_11 = __pyx_t_3;
+        for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+          __pyx_v_i = __pyx_t_12;
+
+          /* "models.pyx":249
+ *                 for i in range(self._nNodes):
+ *                     # shuffle the array without replacement
+ *                     j                = lround(self.rand() * (self._nNodes - 1))             # <<<<<<<<<<<<<<
+ *                     k                = self._nodeids[j]
+ *                     self._nodeids[j] = self._nodeids[i]
+ */
+          __pyx_v_j = lround((((struct __pyx_vtabstruct_6models_Model *)__pyx_v_self->__pyx_vtab)->rand(__pyx_v_self) * (__pyx_v_self->_nNodes - 1)));
+
+          /* "models.pyx":250
+ *                     # shuffle the array without replacement
+ *                     j                = lround(self.rand() * (self._nNodes - 1))
+ *                     k                = self._nodeids[j]             # <<<<<<<<<<<<<<
+ *                     self._nodeids[j] = self._nodeids[i]
+ *                     self._nodeids[i] = k
+ */
+          __pyx_t_13 = __pyx_v_j;
+          __pyx_v_k = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_13)) )));
+
+          /* "models.pyx":251
+ *                     j                = lround(self.rand() * (self._nNodes - 1))
+ *                     k                = self._nodeids[j]
+ *                     self._nodeids[j] = self._nodeids[i]             # <<<<<<<<<<<<<<
+ *                     self._nodeids[i] = k
+ *                     # enforce atleast one shuffle in single updates; otherwise same picked
+ */
+          __pyx_t_14 = __pyx_v_i;
+          __pyx_t_15 = __pyx_v_j;
+          *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_15)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_14)) )));
+
+          /* "models.pyx":252
+ *                     k                = self._nodeids[j]
+ *                     self._nodeids[j] = self._nodeids[i]
+ *                     self._nodeids[i] = k             # <<<<<<<<<<<<<<
+ *                     # enforce atleast one shuffle in single updates; otherwise same picked
+ *                     if correcter == 1 : break
+ */
+          __pyx_t_16 = __pyx_v_i;
+          *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_16)) )) = __pyx_v_k;
+
+          /* "models.pyx":254
+ *                     self._nodeids[i] = k
+ *                     # enforce atleast one shuffle in single updates; otherwise same picked
+ *                     if correcter == 1 : break             # <<<<<<<<<<<<<<
+ *             # assign the samples
+ *             for j in range(sampleSize):
+ */
+          __pyx_t_2 = ((__pyx_v_correcter == 1) != 0);
+          if (__pyx_t_2) {
+            goto __pyx_L16_break;
+          }
+        }
+        __pyx_L16_break:;
+
+        /* "models.pyx":246
+ *             # shuffle if the current tracker is larger than the array
+ *             start = (samplei * sampleSize) % self._nNodes
+ *             if start + sampleSize >= self._nNodes or correcter == 1:             # <<<<<<<<<<<<<<
+ *                 for i in range(self._nNodes):
+ *                     # shuffle the array without replacement
+ */
+      }
+
+      /* "models.pyx":256
  *                     if correcter == 1 : break
  *             # assign the samples
  *             for j in range(sampleSize):             # <<<<<<<<<<<<<<
  *                 samples[samplei, j] = self._nodeids[start + j]
  *                 # samples[samplei] = nodeIDs[start : start + sampleSize]
  */
-    __pyx_t_3 = __pyx_v_sampleSize;
-    __pyx_t_11 = __pyx_t_3;
-    for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
-      __pyx_v_j = __pyx_t_12;
+      __pyx_t_3 = __pyx_v_sampleSize;
+      __pyx_t_11 = __pyx_t_3;
+      for (__pyx_t_12 = 0; __pyx_t_12 < __pyx_t_11; __pyx_t_12+=1) {
+        __pyx_v_j = __pyx_t_12;
 
-      /* "models.pyx":257
+        /* "models.pyx":257
  *             # assign the samples
  *             for j in range(sampleSize):
  *                 samples[samplei, j] = self._nodeids[start + j]             # <<<<<<<<<<<<<<
  *                 # samples[samplei] = nodeIDs[start : start + sampleSize]
  *         return samples
  */
-      __pyx_t_17 = (__pyx_v_start + __pyx_v_j);
-      __pyx_t_18 = __pyx_v_samplei;
-      __pyx_t_19 = __pyx_v_j;
-      *((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_samples.data + __pyx_t_18 * __pyx_v_samples.strides[0]) )) + __pyx_t_19)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_17)) )));
+        __pyx_t_17 = (__pyx_v_start + __pyx_v_j);
+        __pyx_t_18 = __pyx_v_samplei;
+        __pyx_t_19 = __pyx_v_j;
+        *((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_samples.data + __pyx_t_18 * __pyx_v_samples.strides[0]) )) + __pyx_t_19)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->_nodeids.data) + __pyx_t_17)) )));
+      }
     }
-  }
 
-  /* "models.pyx":259
+    /* "models.pyx":259
  *                 samples[samplei, j] = self._nodeids[start + j]
  *                 # samples[samplei] = nodeIDs[start : start + sampleSize]
  *         return samples             # <<<<<<<<<<<<<<
  * 
  *     cpdef void reset(self):
  */
-  __PYX_INC_MEMVIEW(&__pyx_v_samples, 0);
-  __pyx_r = __pyx_v_samples;
-  goto __pyx_L0;
+    __PYX_INC_MEMVIEW(&__pyx_v_samples, 1);
+    __pyx_r = __pyx_v_samples;
+    goto __pyx_L3_return;
+  }
+
+  /* "models.pyx":218
+ *     cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+ *     # cdef long [:, ::1] sampleNodes(self, long  nSamples):
+ *         """             # <<<<<<<<<<<<<<
+ *         Shuffles nodeids only when the current sample is larger
+ *         than the shuffled array
+ */
+  /*finally:*/ {
+    __pyx_L3_return: {
+      #ifdef WITH_THREAD
+      __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
+      #endif
+      goto __pyx_L0;
+    }
+    __pyx_L4_error: {
+      #ifdef WITH_THREAD
+      __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
+      #endif
+      goto __pyx_L1_error;
+    }
+  }
 
   /* "models.pyx":216
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
- *     cdef long [:, ::1] sampleNodes(self, long  nSamples):             # <<<<<<<<<<<<<<
- *     # cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:
+ *     cdef long [:, ::1] sampleNodes(self, long  nSamples) nogil:             # <<<<<<<<<<<<<<
+ *     # cdef long [:, ::1] sampleNodes(self, long  nSamples):
  *         """
  */
 
   /* function exit code */
+  __Pyx_pretend_to_initialize(&__pyx_r);
+  goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_7, 1);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_7, 0);
   __pyx_r.data = NULL;
   __pyx_r.memview = NULL;
   __Pyx_AddTraceback("models.Model.sampleNodes", __pyx_clineno, __pyx_lineno, __pyx_filename);
@@ -5502,8 +5585,10 @@ static __Pyx_memviewslice __pyx_f_6models_5Model_sampleNodes(struct __pyx_obj_6m
     PyErr_SetString(PyExc_TypeError, "Memoryview return value is not initialized");
   }
   __pyx_L2:;
-  __PYX_XDEC_MEMVIEW(&__pyx_v_samples, 1);
-  __Pyx_RefNannyFinishContext();
+  __PYX_XDEC_MEMVIEW(&__pyx_v_samples, 0);
+  #ifdef WITH_THREAD
+  __Pyx_PyGILState_Release(__pyx_gilstate_save);
+  #endif
   return __pyx_r;
 }
 
@@ -7122,7 +7207,7 @@ static PyObject *__pyx_pf_6models_5Model_4seed___get__(struct __pyx_obj_6models_
  * 
  *     @seed.setter
  *     def seed(self, value):             # <<<<<<<<<<<<<<
- *         if isinstance(value, int) and value > 0:
+ *         if isinstance(value, int) and value >= 0:
  *             self._seed = value
  */
 
@@ -7153,7 +7238,7 @@ static int __pyx_pf_6models_5Model_4seed_2__set__(struct __pyx_obj_6models_Model
   /* "models.pyx":314
  *     @seed.setter
  *     def seed(self, value):
- *         if isinstance(value, int) and value > 0:             # <<<<<<<<<<<<<<
+ *         if isinstance(value, int) and value >= 0:             # <<<<<<<<<<<<<<
  *             self._seed = value
  *             self.gen   = mt19937(self.seed)
  */
@@ -7164,7 +7249,7 @@ static int __pyx_pf_6models_5Model_4seed_2__set__(struct __pyx_obj_6models_Model
     __pyx_t_1 = __pyx_t_3;
     goto __pyx_L4_bool_binop_done;
   }
-  __pyx_t_4 = PyObject_RichCompare(__pyx_v_value, __pyx_int_0, Py_GT); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 314, __pyx_L1_error)
+  __pyx_t_4 = PyObject_RichCompare(__pyx_v_value, __pyx_int_0, Py_GE); __Pyx_XGOTREF(__pyx_t_4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 314, __pyx_L1_error)
   __pyx_t_3 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 314, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_1 = __pyx_t_3;
@@ -7173,7 +7258,7 @@ static int __pyx_pf_6models_5Model_4seed_2__set__(struct __pyx_obj_6models_Model
 
     /* "models.pyx":315
  *     def seed(self, value):
- *         if isinstance(value, int) and value > 0:
+ *         if isinstance(value, int) and value >= 0:
  *             self._seed = value             # <<<<<<<<<<<<<<
  *             self.gen   = mt19937(self.seed)
  *         else:
@@ -7182,7 +7267,7 @@ static int __pyx_pf_6models_5Model_4seed_2__set__(struct __pyx_obj_6models_Model
     __pyx_v_self->_seed = __pyx_t_5;
 
     /* "models.pyx":316
- *         if isinstance(value, int) and value > 0:
+ *         if isinstance(value, int) and value >= 0:
  *             self._seed = value
  *             self.gen   = mt19937(self.seed)             # <<<<<<<<<<<<<<
  *         else:
@@ -7197,7 +7282,7 @@ static int __pyx_pf_6models_5Model_4seed_2__set__(struct __pyx_obj_6models_Model
     /* "models.pyx":314
  *     @seed.setter
  *     def seed(self, value):
- *         if isinstance(value, int) and value > 0:             # <<<<<<<<<<<<<<
+ *         if isinstance(value, int) and value >= 0:             # <<<<<<<<<<<<<<
  *             self._seed = value
  *             self.gen   = mt19937(self.seed)
  */
@@ -7222,7 +7307,7 @@ static int __pyx_pf_6models_5Model_4seed_2__set__(struct __pyx_obj_6models_Model
  * 
  *     @seed.setter
  *     def seed(self, value):             # <<<<<<<<<<<<<<
- *         if isinstance(value, int) and value > 0:
+ *         if isinstance(value, int) and value >= 0:
  *             self._seed = value
  */
 
@@ -26185,6 +26270,132 @@ static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
 #endif
 }
 
+/* FetchCommonPointer */
+static void* __Pyx_FetchCommonPointer(void* pointer, const char* name) {
+#if PY_VERSION_HEX >= 0x02070000
+    PyObject* fake_module = NULL;
+    PyObject* capsule = NULL;
+    void* value = NULL;
+    fake_module = PyImport_AddModule((char*) "_cython_" CYTHON_ABI);
+    if (!fake_module) return NULL;
+    Py_INCREF(fake_module);
+    capsule = PyObject_GetAttrString(fake_module, name);
+    if (!capsule) {
+        if (!PyErr_ExceptionMatches(PyExc_AttributeError)) goto bad;
+        PyErr_Clear();
+        capsule = PyCapsule_New(pointer, name, NULL);
+        if (!capsule) goto bad;
+        if (PyObject_SetAttrString(fake_module, name, capsule) < 0)
+            goto bad;
+    }
+    value = PyCapsule_GetPointer(capsule, name);
+bad:
+    Py_XDECREF(capsule);
+    Py_DECREF(fake_module);
+    return value;
+#else
+    return pointer;
+#endif
+}
+
+/* FastGil */
+#define __Pyx_FastGIL_ABI_module "_cython_" CYTHON_ABI
+#define __Pyx_FastGIL_PyCapsuleName "FastGilFuncs"
+#define __Pyx_FastGIL_PyCapsule\
+    __Pyx_FastGIL_ABI_module "." __Pyx_FastGIL_PyCapsuleName
+#if PY_VERSION_HEX < 0x02070000
+  #undef CYTHON_THREAD_LOCAL
+#endif
+#ifdef CYTHON_THREAD_LOCAL
+#include "pythread.h"
+#include "pystate.h"
+static CYTHON_THREAD_LOCAL PyThreadState *__Pyx_FastGil_tcur = NULL;
+static CYTHON_THREAD_LOCAL int __Pyx_FastGil_tcur_depth = 0;
+static int __Pyx_FastGil_autoTLSkey = -1;
+static CYTHON_INLINE void __Pyx_FastGIL_Remember0(void) {
+  ++__Pyx_FastGil_tcur_depth;
+}
+static CYTHON_INLINE void __Pyx_FastGIL_Forget0(void) {
+  if (--__Pyx_FastGil_tcur_depth == 0) {
+    __Pyx_FastGil_tcur = NULL;
+  }
+}
+static CYTHON_INLINE PyThreadState *__Pyx_FastGil_get_tcur(void) {
+  PyThreadState *tcur = __Pyx_FastGil_tcur;
+  if (tcur == NULL) {
+    tcur = __Pyx_FastGil_tcur = (PyThreadState*)PyThread_get_key_value(__Pyx_FastGil_autoTLSkey);
+  }
+  return tcur;
+}
+static PyGILState_STATE __Pyx_FastGil_PyGILState_Ensure(void) {
+  int current;
+  __Pyx_FastGIL_Remember0();
+  PyThreadState *tcur = __Pyx_FastGil_get_tcur();
+  if (tcur == NULL) {
+    return PyGILState_Ensure();
+  }
+  current = tcur == __Pyx_PyThreadState_Current;
+  if (current == 0) {
+    PyEval_RestoreThread(tcur);
+  }
+  ++tcur->gilstate_counter;
+  return current ? PyGILState_LOCKED : PyGILState_UNLOCKED;
+}
+static void __Pyx_FastGil_PyGILState_Release(PyGILState_STATE oldstate) {
+  PyThreadState *tcur = __Pyx_FastGil_get_tcur();
+  __Pyx_FastGIL_Forget0();
+  if (tcur->gilstate_counter == 1) {
+    PyGILState_Release(oldstate);
+  } else {
+    --tcur->gilstate_counter;
+    if (oldstate == PyGILState_UNLOCKED) {
+      PyEval_SaveThread();
+    }
+  }
+}
+static void __Pyx_FastGilFuncInit0(void) {
+  int key;
+  void* this_thread_state = (void*) PyGILState_GetThisThreadState();
+  for (key = 0; key < 100; key++) {
+    if (PyThread_get_key_value(key) == this_thread_state) {
+      __Pyx_FastGil_autoTLSkey = key;
+      break;
+    }
+  }
+  if (__Pyx_FastGil_autoTLSkey != -1) {
+    PyObject* capsule = NULL;
+    PyObject* abi_module = NULL;
+    __Pyx_PyGILState_Ensure = __Pyx_FastGil_PyGILState_Ensure;
+    __Pyx_PyGILState_Release = __Pyx_FastGil_PyGILState_Release;
+    __Pyx_FastGIL_Remember = __Pyx_FastGIL_Remember0;
+    __Pyx_FastGIL_Forget = __Pyx_FastGIL_Forget0;
+    capsule = PyCapsule_New(&__Pyx_FastGilFuncs, __Pyx_FastGIL_PyCapsule, NULL);
+    abi_module = PyImport_AddModule(__Pyx_FastGIL_ABI_module);
+    if (capsule && abi_module) {
+      PyObject_SetAttrString(abi_module, __Pyx_FastGIL_PyCapsuleName, capsule);
+    }
+    Py_XDECREF(capsule);
+  }
+}
+#else
+static void __Pyx_FastGilFuncInit0(void) {
+  CYTHON_UNUSED void* force_use = (void*)&__Pyx_FetchCommonPointer;
+}
+#endif
+static void __Pyx_FastGilFuncInit(void) {
+#if PY_VERSION_HEX >= 0x02070000
+  struct __Pyx_FastGilVtab* shared = (struct __Pyx_FastGilVtab*)PyCapsule_Import(__Pyx_FastGIL_PyCapsule, 1);
+#else
+  struct __Pyx_FastGilVtab* shared = NULL;
+#endif
+  if (shared) {
+    __Pyx_FastGilFuncs = *shared;
+  } else {
+   PyErr_Clear();
+    __Pyx_FastGilFuncInit0();
+  }
+}
+
 /* BytesEquals */
 static CYTHON_INLINE int __Pyx_PyBytes_Equals(PyObject* s1, PyObject* s2, int equals) {
 #if CYTHON_COMPILING_IN_PYPY
@@ -27287,132 +27498,6 @@ static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED
     return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
 }
 #endif
-
-/* FetchCommonPointer */
-static void* __Pyx_FetchCommonPointer(void* pointer, const char* name) {
-#if PY_VERSION_HEX >= 0x02070000
-    PyObject* fake_module = NULL;
-    PyObject* capsule = NULL;
-    void* value = NULL;
-    fake_module = PyImport_AddModule((char*) "_cython_" CYTHON_ABI);
-    if (!fake_module) return NULL;
-    Py_INCREF(fake_module);
-    capsule = PyObject_GetAttrString(fake_module, name);
-    if (!capsule) {
-        if (!PyErr_ExceptionMatches(PyExc_AttributeError)) goto bad;
-        PyErr_Clear();
-        capsule = PyCapsule_New(pointer, name, NULL);
-        if (!capsule) goto bad;
-        if (PyObject_SetAttrString(fake_module, name, capsule) < 0)
-            goto bad;
-    }
-    value = PyCapsule_GetPointer(capsule, name);
-bad:
-    Py_XDECREF(capsule);
-    Py_DECREF(fake_module);
-    return value;
-#else
-    return pointer;
-#endif
-}
-
-/* FastGil */
-#define __Pyx_FastGIL_ABI_module "_cython_" CYTHON_ABI
-#define __Pyx_FastGIL_PyCapsuleName "FastGilFuncs"
-#define __Pyx_FastGIL_PyCapsule\
-    __Pyx_FastGIL_ABI_module "." __Pyx_FastGIL_PyCapsuleName
-#if PY_VERSION_HEX < 0x02070000
-  #undef CYTHON_THREAD_LOCAL
-#endif
-#ifdef CYTHON_THREAD_LOCAL
-#include "pythread.h"
-#include "pystate.h"
-static CYTHON_THREAD_LOCAL PyThreadState *__Pyx_FastGil_tcur = NULL;
-static CYTHON_THREAD_LOCAL int __Pyx_FastGil_tcur_depth = 0;
-static int __Pyx_FastGil_autoTLSkey = -1;
-static CYTHON_INLINE void __Pyx_FastGIL_Remember0(void) {
-  ++__Pyx_FastGil_tcur_depth;
-}
-static CYTHON_INLINE void __Pyx_FastGIL_Forget0(void) {
-  if (--__Pyx_FastGil_tcur_depth == 0) {
-    __Pyx_FastGil_tcur = NULL;
-  }
-}
-static CYTHON_INLINE PyThreadState *__Pyx_FastGil_get_tcur(void) {
-  PyThreadState *tcur = __Pyx_FastGil_tcur;
-  if (tcur == NULL) {
-    tcur = __Pyx_FastGil_tcur = (PyThreadState*)PyThread_get_key_value(__Pyx_FastGil_autoTLSkey);
-  }
-  return tcur;
-}
-static PyGILState_STATE __Pyx_FastGil_PyGILState_Ensure(void) {
-  int current;
-  __Pyx_FastGIL_Remember0();
-  PyThreadState *tcur = __Pyx_FastGil_get_tcur();
-  if (tcur == NULL) {
-    return PyGILState_Ensure();
-  }
-  current = tcur == __Pyx_PyThreadState_Current;
-  if (current == 0) {
-    PyEval_RestoreThread(tcur);
-  }
-  ++tcur->gilstate_counter;
-  return current ? PyGILState_LOCKED : PyGILState_UNLOCKED;
-}
-static void __Pyx_FastGil_PyGILState_Release(PyGILState_STATE oldstate) {
-  PyThreadState *tcur = __Pyx_FastGil_get_tcur();
-  __Pyx_FastGIL_Forget0();
-  if (tcur->gilstate_counter == 1) {
-    PyGILState_Release(oldstate);
-  } else {
-    --tcur->gilstate_counter;
-    if (oldstate == PyGILState_UNLOCKED) {
-      PyEval_SaveThread();
-    }
-  }
-}
-static void __Pyx_FastGilFuncInit0(void) {
-  int key;
-  void* this_thread_state = (void*) PyGILState_GetThisThreadState();
-  for (key = 0; key < 100; key++) {
-    if (PyThread_get_key_value(key) == this_thread_state) {
-      __Pyx_FastGil_autoTLSkey = key;
-      break;
-    }
-  }
-  if (__Pyx_FastGil_autoTLSkey != -1) {
-    PyObject* capsule = NULL;
-    PyObject* abi_module = NULL;
-    __Pyx_PyGILState_Ensure = __Pyx_FastGil_PyGILState_Ensure;
-    __Pyx_PyGILState_Release = __Pyx_FastGil_PyGILState_Release;
-    __Pyx_FastGIL_Remember = __Pyx_FastGIL_Remember0;
-    __Pyx_FastGIL_Forget = __Pyx_FastGIL_Forget0;
-    capsule = PyCapsule_New(&__Pyx_FastGilFuncs, __Pyx_FastGIL_PyCapsule, NULL);
-    abi_module = PyImport_AddModule(__Pyx_FastGIL_ABI_module);
-    if (capsule && abi_module) {
-      PyObject_SetAttrString(abi_module, __Pyx_FastGIL_PyCapsuleName, capsule);
-    }
-    Py_XDECREF(capsule);
-  }
-}
-#else
-static void __Pyx_FastGilFuncInit0(void) {
-  CYTHON_UNUSED void* force_use = (void*)&__Pyx_FetchCommonPointer;
-}
-#endif
-static void __Pyx_FastGilFuncInit(void) {
-#if PY_VERSION_HEX >= 0x02070000
-  struct __Pyx_FastGilVtab* shared = (struct __Pyx_FastGilVtab*)PyCapsule_Import(__Pyx_FastGIL_PyCapsule, 1);
-#else
-  struct __Pyx_FastGilVtab* shared = NULL;
-#endif
-  if (shared) {
-    __Pyx_FastGilFuncs = *shared;
-  } else {
-   PyErr_Clear();
-    __Pyx_FastGilFuncInit0();
-  }
-}
 
 /* None */
 static CYTHON_INLINE long __Pyx_div_long(long a, long b) {
