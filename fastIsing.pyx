@@ -165,6 +165,7 @@ cdef class Ising(Model):
             double Z            = <double> self._nNodes
             long node
             double energy, p
+            cdef int n
         # for n in prange(length,  = True): # dont prange this
         for n in range(length):
             node      = nodesToUpdate[n]
