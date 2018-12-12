@@ -17,14 +17,18 @@ cdef class Ising(Model):
         double beta
 
     # computes the energy
+    # cdef double energy(self, \
+    #                    int  node, \
+    #                    long[::1] states) nogil
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states) nogil
+                       long[::1] states)
 
 
     # overload the parent functions
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate)
+    # cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil
     # # python wrapper
 
     # computes state probability; kinda not used atm

@@ -31,7 +31,7 @@ import fastIsing
 s = time.process_time()
 fig, ax = subplots()
 nx.draw(graph, with_labels = 1)
-m = fastIsing.Ising(graph, temperature = 1)
+m = fastIsing.Ising(graph, temperature = np.inf)
 import copy
 
 c = copy.deepcopy(m)
@@ -43,24 +43,51 @@ from time import time
 m.updateType = 'single'
 
 m.magSide    = 'pos'
-##m.reset()
-import infcy
-s = time()
-temps = linspace(0, 10, 100)
-mags, sus = m.matchMagnetization(temps, 1000, 0)
-print(m.states)
+###m.reset()
+#import infcy
+#s = time()
+#temps = linspace(0, 10, 100)
+#mags, sus = m.matchMagnetization(temps, 1000, 0)
+#print(m.states)
+##fig, ax = subplots()
+##ax.scatter(temps, mags)
+##fig.canvas.flush_events()
+##
+#xx = infcy.getSnapShots(m, 10000, step = 100)
+#repeats = 10000
+#deltas = 100
+##while True:
+#y  = infcy.monteCarlo(m, xx, deltas, repeats)
+#print(m.states)
+#px, mi= infcy.mutualInformation(y, deltas, xx, m )
 #fig, ax = subplots()
-#ax.scatter(temps, mags)
-#fig.canvas.flush_events()
-#
-xx = infcy.getSnapShots(m, 1000, step = 100)
-repeats = 1000
-deltas = 100
-while True:
-    y  = infcy.monteCarlo(m, xx, deltas, repeats)
-print(m.states)
-px, mi= infcy.mutualInformation(y, deltas, xx, m )
-fig, ax = subplots()
-ax.plot(mi)
+#ax.plot(mi)
 #show()
 # %%
+import multiprocessing as mp
+
+def f(model):
+    
+    x = []
+    for i in range(100):
+        mm = copy.deepcopy(model)
+        x.append(mm)
+    with mp.Pool(4) as p:
+        return np.asarray(p.map(ff, x))
+
+def ff(model):
+    model.reset()
+    y = model.simulate(100)
+    print('>', mp.current_process().pid, id(model.states.base))
+#    print('<', mp.current_process().pid, model.states.base)
+    
+    return y
+
+g = f(m)
+
+
+
+
+
+
+

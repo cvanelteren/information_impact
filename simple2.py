@@ -68,8 +68,8 @@ for condition, samples in data[temp].items():
         else:
             control = data[temp]['{}'][idx].px
             px      = sample.px
-            impact = stats.hellingerDistance(px, control).mean(-1)
-#            impact = nanmean(stats.KL(control, sample.px), axis = -1)
+#            impact = stats.hellingerDistance(px, control).mean(-1)
+            impact = nanmean(stats.KL(control, sample.px), axis = -1)
 #            print(impact)
             redIm = impact[deltas // 2  + 1 : ][None, :].T
 #            print(impact)
@@ -78,14 +78,14 @@ for condition, samples in data[temp].items():
                 for key in model.mapping\
                 for j in re.findall(str(key), re.sub(':(.*?)\}', '', condition))]
             dd[idx, jdx, ...,  1] = redIm.squeeze().T
-dd [dd < finfo(float).eps ] = 0
+#dd [dd < finfo(float).eps ] = 0
 # %% extract root from samples
             
 # fit functions
 double = lambda x, a, b, c, d, e, f: a + b * exp(-c*x) + d * exp(- e * (x-f))   
 single = lambda x, a, b, c : a + b * exp(-c * x)
 single_= lambda x, b, c : b * exp(-c * x)
-func   = single
+func   = double
 p0          = ones((func.__code__.co_argcount - 1));# p0[0] = 0
 fitParam    = dict(maxfev = int(1e4), bounds = (0, inf), p0 = p0)
 
@@ -96,7 +96,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, 3, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, .5, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
 zd[zd < finfo(float).eps] = 0
 
@@ -115,7 +115,7 @@ mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
 mainax.set_title(temp + '\n\n')
 x = arange(deltas // 2)
-sidx = 2
+sidx = 1.
 labels = 'MI IMPACT'.split()
 
 from matplotlib.ticker import FormatStrFormatter
@@ -194,7 +194,8 @@ for idx, (c, i) in enumerate(zip( colors, aucs.T)):
     ax.scatter(*i, color = c, label = model.rmapping[idx])
     ax.scatter(*median(i, 1), marker = 's', color = c, edgecolors = 'k')
     ax.scatter(*mean(i, 1), marker = '^', color = c, edgecolors = 'k')
-ax.legend()
+ax.legend(loc = 'upper right', bbox_to_anchor = (1.15, 1))
+#ax.set(yscale = 'log')
  # %% compute concistency
  
 bins = arange(-.5, model.nNodes + .5)

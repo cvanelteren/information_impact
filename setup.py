@@ -4,8 +4,8 @@ import numpy
 import os
 
 # clang seems faster on my machine
-os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast"
-os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast"
+os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast -std=c++17"
+os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast -std=c++17"
 
 exts = []
 nums = numpy.get_include()
@@ -21,12 +21,12 @@ for file in os.listdir(os.getcwd()):
                        extra_compile_args = ['-fopenmp',\
                                              '-ffast-math','-Ofast', \
                                              '-march=native',\
-                                             '-std=c++11',\
+                                             '-std=c++17',\
                                             '-fno-wrapv',\
                                             # '-g',\
                                             ],\
                        extra_link_args = ['-fopenmp',\
-                                          "-std=c++11",
+                                          '-std=c++17',
                                           # '-g'\
                                           ],\
         )
@@ -39,7 +39,7 @@ ext_modules = cythonize(exts,\
             language_level      = 3,\
             compiler_directives = dict(\
                                     fast_gil = True,\
-                                    binding  = True,\
+                                    # binding  = True,\
                                     ),\
             # gdb_debug=True,
             )\

@@ -30,7 +30,7 @@ from libc.stdio cimport printf
 
 # use external exp
 cdef extern from "vfastexp.h":
-    double exp_approx "EXP" (double)
+    double exp_approx "EXP" (double) nogil
 
 
 from models cimport Model
@@ -60,10 +60,6 @@ cdef class Ising(Model):
             H[nodeID] = graph.nodes()[node].get('H', 0)
 
         # specific model parameters
-        tmp = np.asarray(self.states).copy()
-        tmp2= np.asarray(self.nudges).copy()
-        self.states           = tmp
-        self.nudges           = tmp2 #np.asarray(self.nudges).copy()
         self._H               = H
         self.beta             = np.inf if temperature == 0 else 1 / temperature
         self.t                = temperature
@@ -75,8 +71,11 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
+    @cython.initializedcheck(False)
+    @cython.overflowcheck(False)
     cpdef np.ndarray burnin(self,\
-                 int samples = int(1e2), double threshold = 1e-2, ):
+                 int samples = int(1e2), \
+                 double threshold = 1e-2, ):
         """
         Go to equilibrium distribution; uses magnetization and linear regression
         to see if the system is stabel
@@ -116,9 +115,14 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
+    @cython.initializedcheck(False)
+    @cython.overflowcheck(False)
     cdef double energy(self, \
                        int  node, \
-                       long[::1] states) nogil :
+                       long[::1] states)  :
+                       # cdef double energy(self, \
+                       # int  node, \
+                       # long[::1] states) nogil :
         """
         input:
             :nsyncode: member of nodeIDs
@@ -134,7 +138,7 @@ cdef class Ising(Model):
             neighbor = self._adj[node].neighbors[i]
             weight   = self._adj[node].weights[i]
             energy  -= states[node] * states[neighbor] * weight
-        energy -= self._nudges[node]  + self._H [node] * states[node]
+        energy -= self._nudges[node] * states[node]  + self._H [node] * states[node]
         return energy
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
@@ -144,43 +148,46 @@ cdef class Ising(Model):
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
-    cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
+    @cython.initializedcheck(False)
+    @cython.overflowcheck(False)
+    cdef long[::1] _updateState(self, long[::1] nodesToUpdate):
+        # cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:
         """
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         """
         cdef:
-            long[::1] states    = self._states # alias
-            long[::1] newstates = self._newstates
-            int  length = nodesToUpdate.shape[0]
+            # long[::1] states    = self._states # alias
+            # long[::1] newstates = self._newstates
+            int length          = nodesToUpdate.shape[0]
+            double Z            = <double> self._nNodes
             long node
-            double Z = <double> self._nNodes
             double energy, p
         # for n in prange(length,  = True): # dont prange this
         for n in range(length):
             node      = nodesToUpdate[n]
-            energy    = self.energy(node, states)
+            energy    = self.energy(node, self._states)
             # p = 1 / ( 1. + exp_approx(-self.beta * 2. * energy) )
-            p = 1 / ( 1. + exp(-self.beta * 2. * energy) )
+            p = 1 / ( 1. + exp(-self.beta * 2. * energy))
             if self.rand() < p:
-                newstates[node] = -states[node]
+                self._newstates[node] = -self._states[node]
 
-        cdef double mu   = 0 # MEAN
+        cdef double mu   =  0 # MEAN
         cdef long   NEG  = -1 # see the self.magSideOptions
-        cdef long   POS  = 1
+        cdef long   POS  =  1
         # printf('%d ', mu)
         # compute mean
         for node in range(self._nNodes):
-            states[node] = newstates[node] # update
-            mu          += states[node] / Z
+            self._states[node] = self._newstates[node] # update
+            mu          += self._states[node] / Z
             # check if conditions are met
         if (mu < 0 and self._magSide == POS) or\
          (mu > 0 and self._magSide == NEG):
             # printf('%f %d\n', mu, self._magSide)
             # flip if true
             for node in range(self._nNodes):
-                states[node] = -states[node]
-        return states
+                self._states[node] = -self._states[node]
+        return self._states
 
 
 

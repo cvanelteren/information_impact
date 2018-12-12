@@ -45,13 +45,7 @@ cdef class Model:
         double[::1] _nudges
         # np.ndarray _nudges
 
-        # Sampler sampler
-
         unordered_map[long, Connection] _adj # adjacency lists
-
-        # map[int, vector[int]] neighbors
-        # map[int, vector[double]] weights
-        # vector[int, vector[vector[int], vector[double]]] adj
         int _nStates
         #private
         dict __dict__ # allow dynamic python objects
@@ -59,9 +53,11 @@ cdef class Model:
                     list agentStates)
 
     cpdef long[::1] updateState(self, long[::1] nodesToUpdate)
-    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
+    # cdef long[::1]  _updateState(self, long[::1] nodesToUpdate) nogil
+    cdef long[::1]  _updateState(self, long[::1] nodesToUpdate)
 
-    cdef  long[:, ::1] sampleNodes(self, long Samples) nogil
+    # cdef  long[:, ::1] sampleNodes(self, long Samples) nogil
+    cdef  long[:, ::1] sampleNodes(self, long Samples)
 
     cdef double rand(self) nogil
     cpdef np.ndarray simulate(self, long long int  samples)
