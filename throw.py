@@ -23,7 +23,7 @@ for node, row in h.iterrows():
 
 nx.set_node_attributes(graph, attr)
 #graph  = nx.path_graph(3)
-graph = nx.barabasi_albert_graph(13, 2)
+graph = nx.barabasi_albert_graph(10, 2)
 
 # graph = nx.path_graph(10)
 import fastIsing
@@ -55,7 +55,7 @@ print(m.states)
 #
 xx = infcy.getSnapShots(m, 10000, step = 100)
 repeats = 10000
-deltas = 100
+deltas = 20
 #while True:
 s = time()
 y  = infcy.monteCarlo(m, xx, deltas, repeats)

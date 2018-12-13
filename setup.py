@@ -4,8 +4,8 @@ import numpy
 import os
 
 # clang seems faster on my machine
-# os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv -lmkl -Ofast -std=c++17"
-# os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv -lmkl -Ofast -std=c++17"
+os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast -std=c++17 -march=native"
+os.environ['CC'] = "clang++ -Xclang -fopenmp -fno-wrapv -Ofast -std=c++17 -march=native"
 
 exts = []
 nums = numpy.get_include()
@@ -27,6 +27,7 @@ for file in os.listdir(os.getcwd()):
                                             ],\
                        extra_link_args = ['-fopenmp',\
                                           '-std=c++17',
+
                                           # '-g'\
                                           ],\
         )

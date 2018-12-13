@@ -25,6 +25,46 @@ from libc.stdio cimport printf
 import ctypes
 from cython.view cimport array as cvarray
 
+
+from cpython cimport PyObject, Py_XINCREF, Py_XDECREF
+cdef extern from *:
+    """
+    #include <Python.h>
+    #include <mutex>
+
+    std::mutex ref_mutex;
+
+    class PyObjectHolder{
+    public:
+        PyObject *ptr;
+        PyObjectHolder():ptr(nullptr){}
+        PyObjectHolder(PyObject *o):ptr(o){
+            std::lock_guard<std::mutex> guard(ref_mutex);
+            Py_XINCREF(ptr);
+        }
+        //rule of 3
+        ~PyObjectHolder(){
+            std::lock_guard<std::mutex> guard(ref_mutex);
+            Py_XDECREF(ptr);
+        }
+        PyObjectHolder(const PyObjectHolder &h):
+            PyObjectHolder(h.ptr){}
+        PyObjectHolder& operator=(const PyObjectHolder &other){
+            {
+                std::lock_guard<std::mutex> guard(ref_mutex);
+                Py_XDECREF(ptr);
+                ptr=other.ptr;
+                Py_XINCREF(ptr);
+            }
+            return *this;
+
+        }
+    };
+    """
+    cdef cppclass PyObjectHolder:
+        PyObject *ptr
+        PyObjectHolder(PyObject *o) nogil
+
 # print gil stuff; no mp used currenlty so ....useless
 def checkDistribution():
     '''Warning statement'''
@@ -151,28 +191,39 @@ cpdef dict monteCarlo(\
         str nudgeType = model._nudgeType
 
         unordered_map[int, int] idxer = {state : idx for idx, state in enumerate(agentStates)}
+
+        list modelsPy = []
+        vector[PyObjectHolder] models_
+        Model tmp
+    for state in range(states):
+        tmp = copy.deepcopy(model)
+        modelsPy.append(tmp)
+        models_.push_back(PyObjectHolder(<PyObject *> tmp))
+
     print('starting runs')
 
     pbar = tqdm(total = states) # init  progbar
     # for state in prange(states, nogil = 1, schedule = 'static'):
-    for state in range(states):
+    for state in prange(states, nogil = True):
         # with gil:
         for repeat in range(repeats):
             # reset the buffers to the start state
-            model._states[:] = s[state]
-            model._nudges[:] = copyNudge
-            # for node in range(nNodes):
-            #     # (<Model>models[n])._states[node] = /s[state][node]
-            #     # (<Model>models[n])._nudges[node] = copyNudge[node]
+            # model._states[:] = s[state]
+            # model._nudges[:] = copyNudge
+            # (<Model>models_[state].ptr)._states = s[state]
+            # (<Model>models_[state].ptr)._nudges = copyNudge
+            for node in range(nNodes):
+                (<Model>models_[state].ptr)._states[node] = s[state][node]
+                (<Model>models_[state].ptr)._nudges[node] = copyNudge[node]
+                # (<Model>models[n])._nudges[node] = copyNudge[node]
             #     model._states[node] = s[state][node]
             #     model._nudges[node] = copyNudge[node]
             # reset simulation
-            reset   = True
             # sample for N times
             for delta in range(deltas + 1):
                 # bin data
                 for node in range(nNodes):
-                    out[state, delta, node, idxer[model._states[node]]] += 1 / Z
+                    out[state, delta, node, idxer[(<Model>models_[state].ptr)._states[node]]] += 1 / Z
                     # for statei in range(nStates):
                         # if (<Model>models[n])._states[node] == agentStates[statei]:
                         # if model._states[node] == model.agentStates[statei]:
@@ -182,22 +233,24 @@ cpdef dict monteCarlo(\
                 jdx  = (delta + 1) * (repeat + 1)  * (state + 1)- 1
                 # (<Model>models[n])._updateState(r[jdx])
                 # model._updateState(model.sampleNodes(1)[0])
-                model._updateState(r[jdx])
+                (<Model>models_[state].ptr)._updateState(r[jdx])
+                # with gil:
+                #     print(np.all((<Model>models_[state].ptr)._states.base == s[state].base))
                 # turn-off the nudges
-                if reset:
                     # check for type of nudge
-                    if nudgeType == 'pulse' or \
-                    nudgeType    == 'constant' and delta >= half:
-                        # (<Model>models[n])._nudges[:] = 0
-                        for node in range(nNodes):
-                            model._nudges[node] = 0
-                        # printf('%d %d\n', tid, deltas)
-                        # with gil:
+                if nudgeType == 'pulse' or \
+                nudgeType    == 'constant' and delta >= half:
+                    # (<Model>models[n])._nudges[:] =
+                    (<Model>models_[state].ptr)._nudges[:] = 0
+                    # for node in range(nNodes):
+                        # model._nudges[node] = 0
+                    # printf('%d %d\n', tid, deltas)
+                    # with gil:
 
-                        # model._nudges[:] = 0
-                        reset            = False
-        pbar.update(1)
-        conditional[kdxs[state]] = out.base[state]
+                    # model._nudges[:] = 0
+        with gil:
+            pbar.update(1)
+            conditional[kdxs[state]] = out.base[state]
     # assert 0
     # # free memory
     # for nThread in range(n):
@@ -321,8 +374,8 @@ cpdef dict monteCarlo(\
 #         # pbar.update(1)
 #         conditional[idx[state]] = out.base[state]
 #     return conditional
-
 #
+# #
 
 
 
