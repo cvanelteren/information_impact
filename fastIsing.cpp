@@ -4524,7 +4524,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
   __pyx_v_Z = ((double)__pyx_v_self->__pyx_base._nNodes);
 
   /* "fastIsing.pyx":170
- *             cdef int n
+ *             int n
  *         # for n in prange(length,  = True): # dont prange this
  *         for n in range(length):             # <<<<<<<<<<<<<<
  *             node      = nodesToUpdate[n]
@@ -4568,7 +4568,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *             p = 1 / ( 1. + exp(-self.beta * 2. * energy))
  *             if self.rand() < p:             # <<<<<<<<<<<<<<
  *                 self._newstates[node] = -self._states[node]
- * 
+ *         # uggly
  */
     __pyx_t_5 = ((((struct __pyx_vtabstruct_9fastIsing_Ising *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6models_Model *)__pyx_v_self)) < __pyx_v_p) != 0);
     if (__pyx_t_5) {
@@ -4577,7 +4577,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *             p = 1 / ( 1. + exp(-self.beta * 2. * energy))
  *             if self.rand() < p:
  *                 self._newstates[node] = -self._states[node]             # <<<<<<<<<<<<<<
- * 
+ *         # uggly
  *         cdef double mu   =  0 # sign
  */
       __pyx_t_6 = __pyx_v_node;
@@ -4589,14 +4589,14 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *             p = 1 / ( 1. + exp(-self.beta * 2. * energy))
  *             if self.rand() < p:             # <<<<<<<<<<<<<<
  *                 self._newstates[node] = -self._states[node]
- * 
+ *         # uggly
  */
     }
   }
 
   /* "fastIsing.pyx":178
  *                 self._newstates[node] = -self._states[node]
- * 
+ *         # uggly
  *         cdef double mu   =  0 # sign             # <<<<<<<<<<<<<<
  *         cdef long   NEG  = -1 # see the self.magSideOptions
  *         cdef long   POS  =  1
@@ -4604,7 +4604,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
   __pyx_v_mu = 0.0;
 
   /* "fastIsing.pyx":179
- * 
+ *         # uggly
  *         cdef double mu   =  0 # sign
  *         cdef long   NEG  = -1 # see the self.magSideOptions             # <<<<<<<<<<<<<<
  *         cdef long   POS  =  1
@@ -4649,7 +4649,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
  *             self._states[node] = self._newstates[node] # update
  *             mu          += self._states[node] # normalization not really needed             # <<<<<<<<<<<<<<
  * 
- *             # check if conditions are met
+ *         # out of state equilibrium?
  */
     __pyx_t_11 = __pyx_v_node;
     __pyx_v_mu = (__pyx_v_mu + (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_11)) ))));
@@ -4657,7 +4657,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
 
   /* "fastIsing.pyx":188
  * 
- *             # check if conditions are met
+ *         # out of state equilibrium?
  *         if (mu < 0 and self._magSide == POS) or\             # <<<<<<<<<<<<<<
  *          (mu > 0 and self._magSide == NEG):
  *             # printf('%f %d\n', mu, self._magSide)
@@ -4676,7 +4676,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
   __pyx_L10_next_or:;
 
   /* "fastIsing.pyx":189
- *             # check if conditions are met
+ *         # out of state equilibrium?
  *         if (mu < 0 and self._magSide == POS) or\
  *          (mu > 0 and self._magSide == NEG):             # <<<<<<<<<<<<<<
  *             # printf('%f %d\n', mu, self._magSide)
@@ -4694,7 +4694,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
 
   /* "fastIsing.pyx":188
  * 
- *             # check if conditions are met
+ *         # out of state equilibrium?
  *         if (mu < 0 and self._magSide == POS) or\             # <<<<<<<<<<<<<<
  *          (mu > 0 and self._magSide == NEG):
  *             # printf('%f %d\n', mu, self._magSide)
@@ -4727,7 +4727,7 @@ static __Pyx_memviewslice __pyx_f_9fastIsing_5Ising__updateState(struct __pyx_ob
 
     /* "fastIsing.pyx":188
  * 
- *             # check if conditions are met
+ *         # out of state equilibrium?
  *         if (mu < 0 and self._magSide == POS) or\             # <<<<<<<<<<<<<<
  *          (mu > 0 and self._magSide == NEG):
  *             # printf('%f %d\n', mu, self._magSide)

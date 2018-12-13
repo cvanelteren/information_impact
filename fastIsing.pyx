@@ -165,7 +165,7 @@ cdef class Ising(Model):
             double Z            = <double> self._nNodes
             long node
             double energy, p
-            cdef int n
+            int n
         # for n in prange(length,  = True): # dont prange this
         for n in range(length):
             node      = nodesToUpdate[n]
@@ -174,7 +174,7 @@ cdef class Ising(Model):
             p = 1 / ( 1. + exp(-self.beta * 2. * energy))
             if self.rand() < p:
                 self._newstates[node] = -self._states[node]
-
+        # uggly
         cdef double mu   =  0 # sign
         cdef long   NEG  = -1 # see the self.magSideOptions
         cdef long   POS  =  1
@@ -184,7 +184,7 @@ cdef class Ising(Model):
             self._states[node] = self._newstates[node] # update
             mu          += self._states[node] # normalization not really needed
 
-            # check if conditions are met
+        # out of state equilibrium?
         if (mu < 0 and self._magSide == POS) or\
          (mu > 0 and self._magSide == NEG):
             # printf('%f %d\n', mu, self._magSide)

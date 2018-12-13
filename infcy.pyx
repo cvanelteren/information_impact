@@ -24,8 +24,8 @@ from libcpp.unordered_map cimport unordered_map
 from libc.stdio cimport printf
 import ctypes
 from cython.view cimport array as cvarray
-
-
+from timeit import default_timer as timer
+from cython.operator cimport dereference as deref, preincrement as prec
 from cpython cimport PyObject, Py_XINCREF, Py_XDECREF
 cdef extern from *:
     """
@@ -129,7 +129,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         long[:, ::1] r = model.sampleNodes(N )
         double Z       = <double> nSamples
         int idx
-        double past    = time.process_time()
+        double past    = timer()
     pbar = tqdm(total = nSamples)
     for i in range(N):
         if i % step == 0:
@@ -139,7 +139,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         model._updateState(r[i])
     pbar.close()
     print(f'Found {len(snapshots)} states')
-    print(f'Delta = {time.process_time() - past}')
+    print(f"Delta = {timer() - past: .2f} sec")
     return snapshots
 
 
@@ -153,7 +153,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
 cpdef dict monteCarlo(\
                Model model, dict snapshots,
                int deltas = 10,  int repeats = 11,
-               ):
+               int nThreads = -1):
     """
     Monte carlo sampling of the snapshots
     ISSUES:
@@ -164,8 +164,9 @@ cpdef dict monteCarlo(\
     # TODO: solve the memory issues;  currently way too much is ofloaded to the memory
     # one idea would be to have the buffers inside the for loop. However prange is not possible
     # if that is used.
+    print('Pre-computing rngs')
     cdef:
-        float past = time.process_time()
+        float past = timer()
     # pre-declaration
         double Z              = <double> repeats
         double[::1] copyNudge = model.nudges.copy()
@@ -178,8 +179,9 @@ cpdef dict monteCarlo(\
         # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
         # loop parameters
         int repeat, delta, node, statei, half = deltas // 2, state
-        list kdxs        = list(snapshots.keys()) # extra mapping idx
+        vector[int] kdxs        = list(snapshots.keys()) # extra mapping idx
         dict conditional = {}
+        # unordered_map[int, double *] conditional
         long[::1] startState
         int jdx
         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
@@ -195,24 +197,30 @@ cpdef dict monteCarlo(\
         list modelsPy = []
         vector[PyObjectHolder] models_
         Model tmp
+
+    # threadsafe model access; can be reduces to n_threads
     for state in range(states):
         tmp = copy.deepcopy(model)
+        tmp.seed += state # enforce different seeds
         modelsPy.append(tmp)
         models_.push_back(PyObjectHolder(<PyObject *> tmp))
 
     print('starting runs')
-
+    if nThreads is -1:
+        nThreads = mp.cpu_count()
     pbar = tqdm(total = states) # init  progbar
-    # for state in prange(states, nogil = 1, schedule = 'static'):
-    for state in prange(states, nogil = True):
+    for state in prange(states, nogil = True, schedule = 'static', num_threads = nThreads):
+    # for state in range(states):
         # with gil:
         for repeat in range(repeats):
             # reset the buffers to the start state
             # model._states[:] = s[state]
             # model._nudges[:] = copyNudge
-            # (<Model>models_[state].ptr)._states = s[state]
+            # (<Model>models_[state].ptr)._states = s[state] # this overwrites s ; don't
             # (<Model>models_[state].ptr)._nudges = copyNudge
+            # only copy values
             for node in range(nNodes):
+                # kinda uggly syntax
                 (<Model>models_[state].ptr)._states[node] = s[state][node]
                 (<Model>models_[state].ptr)._nudges[node] = copyNudge[node]
                 # (<Model>models[n])._nudges[node] = copyNudge[node]
@@ -248,15 +256,28 @@ cpdef dict monteCarlo(\
                     # with gil:
 
                     # model._nudges[:] = 0
+        # TODO: replace this with a concurrent unordered_map
         with gil:
             pbar.update(1)
-            conditional[kdxs[state]] = out.base[state]
-    # assert 0
+            conditional[kdxs[state]] = out.base[state]# [state, 0, 0, 0]
+    # cdef unordered_map[int, double *].iterator start = conditional.begin()
+    # cdef unordered_map[int, double *].iterator end   = conditional.end()
+    # cdef int length = (deltas + 1) * nNodes * nStates
+    # cdef np.ndarray buffer = np.zeros(length)
+    # cdef _tmp = {}
+    # while start != end:
+    #     idx = deref(start).first
+    #     for state in range(length):
+    #         buffer[state] = deref(start).second[state]
+    #     _tmp[idx] = buffer.reshape((deltas + 1, nNodes, nStates)).copy()
+    #     prec(start)
+
+
     # # free memory
     # for nThread in range(n):
     #     Py_XDECREF(models.at(nThread))
     pbar.close()
-    print(f"Delta = {time.process_time() - past}")
+    print(f"Delta = {timer() - past: .2f} sec")
     return conditional
 
 

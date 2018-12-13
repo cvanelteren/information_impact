@@ -40,7 +40,7 @@ if __name__ == '__main__':
     numIter       = int(1e1) if real else 5
     magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.9, .8, .7]  if real else [.4]  # match magnetiztion at 80 percent of max
     n = 10
     if real:
         graphs = [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
