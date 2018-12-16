@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# distutils: language=c
 """
 Created on Tue Feb  6 09:36:17 2018
 
@@ -13,7 +12,6 @@ cimport numpy as np
 from scipy.stats import linregress
 import networkx as nx, multiprocessing as mp, functools, tqdm, information, scipy,  functools, copy
 cimport cython
-from cython.parallel cimport parallel, prange
 from models import Model
 from libc.math cimport exp
 from libc.stdlib cimport rand
@@ -21,7 +19,6 @@ cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double)
 cdef extern from "limits.h":
     int INT_MAX
-from libc.stdlib cimport rand
 # TODO: this is still too pythonic. The conversion was made from direct python code; future me needs to hack this into c
 class Ising(Model):
     def __init__(self, graph, temperature, doBurnin = False, \
@@ -41,7 +38,7 @@ class Ising(Model):
         if not hPresent:
             if verbose : print('external field not detected assuming 0')
             nx.set_node_attributes(graph, 0, 'H')
-        H  = np.zeros(self.nNodes)
+        H  = np.zeros(self.nNodes, dtype = float)
         for node, nodeID in self.mapping.items():
             H[nodeID] = graph.nodes()[node]['H']
 
@@ -51,8 +48,7 @@ class Ising(Model):
         self.betaThreshold  = betaThreshold
         self.verbose        = verbose
         self._t             = temperature
-        self.statesDtype    = np.int64
-        self.states         = self.statesDtype(self.states) # enforce low memory
+        self.states         = np.int16(self.states) # enforce low memory
         self.magSide        = magSide
 
         # define the update method
@@ -98,8 +94,7 @@ class Ising(Model):
         if self.verbose: print('Starting burnin')
         alpha = True
         while alpha:
-            # states = self.updateState(self.sampleNodes[self.mode](self.nodeIDs))
-            states = self.updateState(self.sampleNodes(1)[0])
+            states = self.updateState(self.sampleNodes[self.mode](self.nodeIDs))
             y      = np.hstack((y, magnetization(states)))
             if counter > useAtleastNSamples : # run atleast 10 samples
                 # do linear regression
@@ -127,7 +122,7 @@ class Ising(Model):
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
-    def energy(self, int node, long [:] states):
+    def energy(self, long node, np.ndarray states):
         '''
         input:
             :node: member of nodeIDs
@@ -135,21 +130,28 @@ class Ising(Model):
                 :energy: current energy of systme config for node
                 :flipEnergy: energy if node flips state
         '''
-        return c_energy(node, states, self.edgeData[node], self.interaction[node], self.H, self.nudges[node])
-        # cdef int [   :] neighboridx    = self.edgeData[node]
-        # cdef double [:] interaction    = self.interaction[node]
-        # cdef long [   :] neighborStates = states[neighboridx]
-        # cdef double [:] H              = self.H[neighboridx].dot(neighborStates)
-        # # computing (flip) energy per node
-        # cdef double tmp   = states[node] * neighborStates.dot(interaction)
-        #
-        # energy     = -tmp - H # empty list sums to zero
-        #
-        # # adding nudges
-        # nudge       = self.nudges[node] * states[node]
-        #
-        # energy     = energy - nudge # TODO: checks to not allow for multiple nudges
-        # return energy
+        neighboridx      = self.edgeData[node]
+        interaction      = self.interaction[node]
+        neighborStates   = states[neighboridx]
+        H                = self.H[node] * states[node]
+        # H                = 0
+        # H                = self.H[neighboridx].dot(neighborStates)
+        # computing (flip) energy per node
+        # cdef float H = 0
+        # loop declaration
+        # compute hamiltonian
+        # tmp = neighborStates.dot(interaction) / states[node]
+        tmp = states[node] * neighborStates.dot(interaction)
+        # tmp = neighborStates.sum()
+
+        energy     = -tmp - H # empty list sums to zero
+
+        # adding nudges
+        nudge       = self.nudges[node] * states[node]
+
+        energy     = energy - nudge # TODO: checks to not allow for multiple nudges
+        flipEnergy = -energy
+        return energy, flipEnergy
     # @jit
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -159,40 +161,27 @@ class Ising(Model):
         Determines the flip probability
         p = 1/(1 + exp(-beta * delta energy))
         '''
-
-
-        cdef long [:] states           = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
-        cdef long [:] newstates        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
+        states        = self.states.copy() if self.mode == 'sync' else self.states # only copy if sync else alias
         cdef long  N = len(nodesToUpdate)
         cdef long  n
         cdef long node
-        cdef double energy, p
-        # not sure if this helps
-        cdef calcE       = self.energy
-        cdef str magSide = self.magSide
-        cdef double beta = self.beta
-        cdef double nudge
-
-        cdef edgeData    = self.edgeData
-        cdef interaction = self.interaction
-        cdef  H          = self.H
-
+        cdef double energy
+        cdef double flipEnergy
         for n in range(N):
-          node  = nodesToUpdate[n]
-          nudge = self.nudges[node]
-          energy = c_energy(node, states, edgeData[node],\
-                            interaction[node], H, nudge)
+          node = nodesToUpdate[n]
+
+          energy, flipEnergy  = self.energy(node, states)
           # TODO: change this mess
           # # heatbath glauber
           # if self.updateMethod == 'glauber':
+          tmp = -self.beta *  2 * energy
           # tmp = - self.beta * energy * 2
-          if np.isnan(energy):
-              p = 0.5
-          else:
-              p = 1 / ( 1 + exp_approx(-beta *  2 * energy) )
-
-          if rand() / float(INT_MAX) < p: # faster
-                newstates[node] = -states[node]
+          tmp = 0 if np.isnan(tmp) else tmp
+          p = 1 / ( 1 + np.exp(tmp) )
+          # if rand() / float(INT_MAX) < p:
+          # print(p, energy)
+          if np.random.rand() < p:
+            states[node] = -states[node]
 
           # elif self.updateMethod == 'metropolis':
             # MCMC moves
@@ -207,14 +196,12 @@ class Ising(Model):
           #   if rand() / float(INT_MAX)  <= p:
           #     states[node] = -states[node]
         # TODO: ugly
-        mu = np.mean(newstates)
-
-        cdef int idx = 1
-        if mu < 0 and magSide == 'pos':
-            idx = -1
-        elif mu > 0 and magSide == 'neg':
-            idx = -1
-        self.states = np.multiply(newstates, idx)
+        if self.magSide == 'neg':
+          self.states = states  if states.mean() <= 0 else -states
+        elif self.magSide == 'pos':
+          self.states = -states  if states.mean() <= 0 else states
+        else:
+          self.states = states
         return self.states
 
     def computeProb(self):
@@ -224,7 +211,7 @@ class Ising(Model):
 
         probs = np.zeros(self.nNodes)
         for node in self.nodeIDs:
-            en = self.energy(node, self.states[node])
+            en = self.energy(node, self.states[node])[0]
             probs[node] = exp(-self.beta * en)
         return probs / np.nansum(probs)
 
@@ -244,27 +231,17 @@ class Ising(Model):
         :sus:  the magnetic susceptibility
      """
      # start from 1s and check how likely nodes will flip
-     # cdef double[:] H  = np.zeros( len(temps) )   # magnetization
-     # cdef double[:] HH = np.zeros( ( len(temps ))) # susceptibility
+     H  = np.zeros( len(temps) )   # magnetization
+     HH = np.zeros( ( len(temps ))) # susceptibility
 
      func = functools.partial(matchMagnetization, nSamples = n,
                    burninSamples = burninSamples)
-     x = []
-     for t in temps:
-         new   = copy.copy(self)
-         x.append((new, t))
-
-       # results = np.array(p.map(func, x))
-     # cdef results = np.zeros((len(temps), 2))
-     # cdef int i, N = len(x)
-     # with nogil, parallel():
-     #     for i in prange(N):
-     #         with gil:
-     #             results[i, :] = func(x[i])
+     x = [(copy.copy(self), t) for t in temps]
      with mp.Pool(processes = mp.cpu_count()) as p:
-         results = np.asarray(p.map(func, x))
-
-     return np.asarray(results).T
+       results = np.array(p.starmap(func, x))
+       H       = results[:, 0] # magnetization
+       HH      = results[:, 1] # susceptibility
+     return H, HH
 
     # def fit(self, temps, magRange, nSamples,
     #         burninSamples, func,
@@ -296,7 +273,7 @@ class Ising(Model):
         return   c + 1/b * np.log(a / (x - d) - 1)
       H = np.zeros(len(temps))
       self.reset()
-      energy = np.array([[self.energy(node, s) for s in self.agentStates] for node in self.nodeIDs])
+      energy = np.array([[self.energy(node, s)[0] for s in self.agentStates] for node in self.nodeIDs])
       for tidx, t in enumerate(temps):
         self.t = t
         probs   = 1 / (1 + np.exp(self.beta * energy))
@@ -315,63 +292,6 @@ class Ising(Model):
         Sets all nudges to zero
         '''
         self.nudges = np.zeros(self.nudges.shape)
-# @cython.boundscheck(False)
-# cdef np.ndarray c_updateState(int [:] nodesToUpdate,\
-# int [:] states,\
-# double [:] interactions,\
-# int [:] edgeData,\
-# double beta,\
-# double [:] H,\
-# str magSide,\
-# str mode ):
-#     '''
-#     Determines the flip probability
-#     p = 1/(1 + exp(-beta * delta energy))
-#     '''
-#
-#     states = states.copy() if mode == 'sync' else states # only copy if sync else alias
-#     cdef long N = len(nodesToUpdate)
-#     cdef int n, node
-#     cdef double energy
-#     cdef interaction
-#     cdef edgeDatum
-#
-#     for n in range(N):
-#       node        = nodesToUpdate[n]
-#       edgeDatum   = edgeData[node]
-#       interaction = interactions[node]
-#       energy      = c_energy(node, states, edgeDatum, interaction, H)
-#       # TODO: change this mess
-#       # # heatbath glauber
-#       # if self.updateMethod == 'glauber':
-#       tmp = -beta *  2 * energy
-#       # tmp = - self.beta * energy * 2
-#       tmp = 0 if np.isnan(tmp) else tmp
-#       p = 1 / ( 1 + exp(tmp) )
-#       # if rand() / float(INT_MAX) < p:
-#       # print(p, energy)
-#       if rand() / float(INT_MAX)  <= p:
-#         states[node] = -states[node]
-#     return states
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.cdivision(True)
-cdef double c_energy(int node, long[:] states,\
-                      int [:] edgeData,\
-                      double [:] interaction,\
-                      double [:] H, double nudge) nogil:
-
-  cdef double energy = 0
-  cdef long N = len(edgeData)
-  cdef int i
-  for i in range(N):
-  # for i in range(N):
-    energy-= states[node] * states[edgeData[i]] * interaction[i] \
-             + H[edgeData[i]] * states[edgeData[i]]
-  energy += nudge
-  return energy
-
-
 
 def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):
     '''
@@ -383,21 +303,18 @@ def fitTemperature(temperature, graph, nSamples, step, fitModel = Ising):
                                     step = step)[:2] # only keep the node probs
 
 
-cpdef matchMagnetization(modelt, nSamples, burninSamples):
+def matchMagnetization(model, t, nSamples, burninSamples):
   '''
   compute in parallel the magnetization
   '''
-  model, t = modelt
-  model.t = t
-  model.states.fill(-1) # rest to ones; only interested in how mag is kept
+  model.t      = t # update temperature
+  model.states = -np.ones(model.nNodes, dtype = model.states.dtype) # rest to ones; only interested in how mag is kept
   # self.reset()
   model.burnin(burninSamples)
-  res = np.asarray(model.simulate(nSamples))
-
-  H   = abs(res.mean())
-  HH  = ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
-  out = np.array([H, HH])
-  return out
+  res = model.simulate(nSamples)
+  H  = abs(res.mean())                                # abs magnetization
+  HH =  ((res**2).mean() - res.mean()**2) * model.beta # susceptibility
+  return H, HH
 
 
 

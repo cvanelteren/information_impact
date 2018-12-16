@@ -1,10 +1,8 @@
 # cython: infer_types=True
-# distutils: language=c
 import numpy as np
 cimport numpy as np
 import networkx as nx, tqdm, information, functools
 import cython
-from cython.parallel cimport prange, parallel
 # TODO: maybe add reversemapping [rmap] [done]
 # TODO: insert the zero step in the simulate [done]
 # TODO: make J weight to make model more general[done]
@@ -14,13 +12,6 @@ from cython.parallel cimport prange, parallel
 # TODO: add sync, async and single update methods [done]
 DTYPE = np.int
 ctypedef np.int DTYPE_T
-# from libcpp.map cimport map
-# from libcpp.string cimport string
-# from libcpp.vector cimport vector
-# from cython.operator cimport dereference, preincrement
-from libc.stdlib cimport rand
-cdef extern from "limits.h":
-    int INT_MAX
 class Model:
     def __init__(self, graph, agentStates, mode = 'async', verbose = False, nudgeMode = 'constant'):
         '''
@@ -61,8 +52,7 @@ class Model:
 
 
         # use graph nodes as nodeID for lattice you get tuples for instance
-        cdef dict mapping  = {node: nodeID for nodeID, node in enumerate(graph.nodes())} # hashmap
-        cdef dict rmapping = {value : key for key, value in mapping.items()} # TODO: deprecated
+        mapping = {node: nodeID for nodeID, node in enumerate(graph.nodes())} # hashmap
         if type(graph) is nx.Graph:
             connecting = graph.neighbors
         elif type(graph) is nx.DiGraph:
@@ -70,12 +60,12 @@ class Model:
         else:
             raise TypeError('Graph type not understood')
 
-        cdef int nNodes  = graph.number_of_nodes()
+        nNodes  = graph.number_of_nodes()
         cdef np.ndarray states     = np.zeros(nNodes)     # store state, H
 #        edgeData   = zeros(nNodes, dtype = object)  # contains neighbors and weights [variable length]
-        cdef dict _edgeData   = {}
-        cdef dict _interaction= {}
-        cdef nudges     = np.zeros(nNodes, dtype = float)  # contains the nudge on a node [node x nudges]
+        edgeData   = {}
+        interaction= {}
+        cdef np.ndarray nudges     = np.zeros(nNodes, dtype = object)  # contains the nudge on a node [node x nudges]
 
         # iterate over the dict, we need to keep track of the mapping
         for node, nodeID in mapping.items():
@@ -89,15 +79,12 @@ class Model:
                 else:
                     J = graph[neighbor][node]['weight']
                 neighborData[idx, :] = mapping[neighbor], J
-            _edgeData[nodeID]    = np.int32(neighborData[:, 0])
-            _interaction[nodeID] = neighborData[:, 1]
-        # cdef map[long, vector[long]] edgeData       = _edgeData
-        # cdef map[long, vector[double]] interaction  = _interaction
-        edgeData    = _edgeData
-        interaction = _interaction
+            edgeData[nodeID]    = np.int32(neighborData[:, 0])
+            interaction[nodeID] = neighborData[:, 1]
 
          # set class data
-        cdef np.ndarray nodeIDs  = np.array(list(mapping.values()), dtype = int)
+        cdef np.ndarray nodeIDs  = np.array(list(mapping.values()))
+        rmapping = {value : key for key, value in mapping.items()} # TODO: deprecated
 
         # standard model properties
         # TODO: make some of this private [partly done]
@@ -114,12 +101,12 @@ class Model:
         self.nStates        = len(agentStates)
         self._mode          = mode
         self.nudgeMode      = nudgeMode
-        # self.sampleNodes    = dict(\
-        #                         single = functools.partial(np.random.choice, size = 1, ),\
-        #                         async  = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
-        #                         sync   = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
-        #                         serial = np.sort\
-        #                         )
+        self.sampleNodes    = dict(\
+                                single = functools.partial(np.random.choice, size = 1),\
+                                async  = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
+                                sync   = functools.partial(np.random.choice, size = self.nNodes, replace = False),\
+                                serial = np.sort\
+                                )
     # deprecated as it decreases performance, this functionality should be added
     # to a function that loops through all possible states
 #    @property
@@ -137,14 +124,6 @@ class Model:
 #        else:
 #            raise TypeError('type is not numpy array')
     @property
-    def pulse(self): return self.nudges
-
-    @pulse.setter
-    def pulse(self, pulse):
-        self.nudges[:] = 0
-        for node, value in pulse.items():
-            self.nudges[self.mapping[node]] = value
-    @property
     def mode(self):   return self._mode
 
     @mode.setter
@@ -161,30 +140,6 @@ class Model:
     def updateState(self):
         '''This method is required defaulting to zero'''
         assert False, 'model should implement this function'
-
-    @cython.wraparound(False)
-    @cython.boundscheck(False)
-    @cython.nonecheck(False)
-    def sampleNodes(self, long nSamples):
-        """
-            Python accessible function to sample nodes
-        """
-        cdef:
-            # initialization
-            nodeIDs             = self.nodeIDs
-            long length       = self.nNodes # length of target array
-            updateType        = self.mode
-
-        cdef int sampleSize
-        if updateType == 'single':
-            sampleSize = 1
-        elif updateType == 'serial':
-            return nodeIDs
-        else:
-            sampleSize = length
-        print
-        return c_sample(nodeIDs, length,  nSamples, sampleSize)
-
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -211,18 +166,25 @@ class Model:
                             )
         # this was first done inside update; pre-definition seems faster
         # haven't explicitly tested the generator variant, but sense will reduce memory loads
-        cdef long[:, :] nodesToUpdate = self.sampleNodes(nSamples * step + 1)
-        # nodesToUpdate = \
-        # (self.sampleNodes[self.mode](self.nodeIDs) for _ in range(nSamples * step + 1)) # convert to generator
+        nodesToUpdate = \
+        (self.sampleNodes[self.mode](self.nodeIDs) for _ in range(nSamples * step + 1)) # convert to generator
         # nodesToUpdate = np.array([self.sampleNodes[self.mode](self.nodeIDs) for i in range(nSamples * step + 1)])
         # init storage vector
-        simulationResults         = np.zeros( (nSamples + 1, self.nNodes), dtype = self.statesDtype) # TODO: this should be a generator as well
+        simulationResults         = np.zeros( (nSamples + 1, self.nNodes), dtype = self.states.dtype) # TODO: this should be a generator as well
+
+        # cdef long [:] state = self.states
+        # cdef long [:, ::1] sr = simulationResults
+        # cdef int n         = int(self.nNodes)
+
+        # for i in range(n):
+          # sr[0, i] = state[i]
+
         simulationResults[0, :]   = self.states # always store current state
         sampleCounter, stepCounter= 1, 1 # zero step is already done?
         if verbose : pbar = tqdm.tqdm(total = nSamples) # init progressbar
-        copyNudge = self.nudges.copy() # make deep copy  #TODO: think this will cause slowdowns for very large networks
         while sampleCounter <= nSamples:
             if pulse: # run pulse; remove nudges after sim step
+                copyNudge = self.nudges.copy() # make deep copy  #TODO: think this will cause slowdowns for very large networks
                 for node, nudge in pulse.items():
                     if type(node) is tuple:
                         for i in node:
@@ -236,8 +198,7 @@ class Model:
                         else:
                           self.nudges[self.mapping[node]] = nudge
 
-            # self.updateState(next(nodesToUpdate))
-            self.updateState(nodesToUpdate[stepCounter])
+            self.updateState(next(nodesToUpdate))
             # self.updateState(nodesToUpdate.__next__()) # update generator
             # twice swap cuz otherway was annoying
             if pulse:
@@ -256,37 +217,3 @@ class Model:
         # out of while
         else:
             return simulationResults
-
-
-@cython.wraparound(False)
-@cython.boundscheck(False)
-@cython.nonecheck(False)
-@cython.cdivision(True)
-cdef long[:, ::1] c_sample(long[::1] nodeIDs, long length, long nSamples,\
-                      long sampleSize,\
-                      ):
-    """
-    Shuffles nodeID only when the current sample is larger
-    than the shuffled array
-    """
-    cdef long [:, ::1] samples = np.ndarray((nSamples, sampleSize), long)
-    cdef:
-        long sample
-        long start
-        long i, j, k
-        long samplei
-    with nogil:
-        for samplei in range(nSamples):
-            start = (samplei * sampleSize) % length
-            if start + sampleSize >= length:
-                # np.random.shuffle(nodeIDs)
-                for i in range(length):
-                    j = <long> (i + rand() / (INT_MAX / (length- i) + 1))
-                    k = nodeIDs[j]
-                    nodeIDs[j] = nodeIDs[i]
-                    nodeIDs[i] = k
-
-            for j in range(sampleSize):
-                samples[samplei, j] = nodeIDs[start + j]
-                # samples[samplei] = nodeIDs[start : start + sampleSize]
-    return samples

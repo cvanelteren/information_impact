@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2018.10.4)  13 NOV 2018 07:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018/Arch Linux) (preloaded format=pdflatex 2018.10.4)  4 OCT 2018 22:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -887,11 +887,6 @@ Package microtype Info: Loading generic protrusion settings for font family
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/pplx/m/sc/12'.
 (microtype)             Ignoring protrusion settings for this character.
-LaTeX Font Info:    Font shape `T1/pplx/bx/n' in size <10> not available
-(Font)              Font shape `T1/pplx/b/n' tried instead on input line 87.
-
-Underfull \vbox (badness 1983) has occurred while \output is active []
-
  [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
 
@@ -903,15 +898,21 @@ Underfull \hbox (badness 7012) in paragraph at lines 111--112
 []\T1/pplx/m/n/10 (+20) At its core the method con-sists of
  []
 
-[2] [3]
 
-LaTeX Warning: Reference `app:dpi' on page 4 undefined on input line 138.
+Underfull \vbox (badness 3148) has occurred while \output is active []
+
+ [2]
+LaTeX Font Info:    Font shape `T1/pplx/bx/n' in size <10> not available
+(Font)              Font shape `T1/pplx/b/n' tried instead on input line 138.
 
 
-LaTeX Warning: Reference `app:dpi' on page 4 undefined on input line 153.
+LaTeX Warning: Reference `app:dpi' on page 3 undefined on input line 138.
 
-[4]
-<figures/psycho_network.png, id=146, 70.08862pt x 65.25165pt>
+
+LaTeX Warning: Reference `app:dpi' on page 3 undefined on input line 153.
+
+[3]
+<figures/psycho_network.png, id=142, 70.08862pt x 65.25165pt>
 File: figures/psycho_network.png Graphic file (type png)
 <use figures/psycho_network.png>
 Package pdftex.def Info: figures/psycho_network.png  used on input line 214.
@@ -922,10 +923,15 @@ LaTeX Font Info:    Font shape `T1/pplx/bx/n' in size <9> not available
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
+[4]
 
 LaTeX Warning: Reference `eq:mi' on page 5 undefined on input line 235.
 
-<figures/magnetization-temp.png, id=152, 462.528pt x 346.896pt>
+
+Underfull \vbox (badness 1097) has occurred while \output is active []
+
+ [5 <./figures/psycho_network.png>]
+<figures/magnetization-temp.png, id=164, 462.528pt x 346.896pt>
 File: figures/magnetization-temp.png Graphic file (type png)
 <use figures/magnetization-temp.png>
 Package pdftex.def Info: figures/magnetization-temp.png  used on input line 242
@@ -934,7 +940,6 @@ Package pdftex.def Info: figures/magnetization-temp.png  used on input line 242
 Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/pplx/m/sc/10'.
 (microtype)             Ignoring protrusion settings for this character.
-[5]
 LaTeX Font Info:    Try loading font information for T1+cmtt on input line 254.
 
  (/usr/share/texmf-dist/tex/latex/base/t1cmtt.fd
@@ -961,12 +966,13 @@ Underfull \hbox (badness 3250) in paragraph at lines 255--255
 tt/m/n/10 10 . 1017 /
  []
 
-[6 <./figures/psycho_network.png>] [7 <./figures/magnetization-temp.png>]
+[6]
 Underfull \hbox (badness 2393) in paragraph at lines 255--255
 []\T1/pplx/m/n/10 (+20) Cover, T. M. & Thomas, J. A. \T1/pplx/m/it/10 (+20) El-
 e-
  []
 
+[7 <./figures/magnetization-temp.png>]
 
 LaTeX Warning: Reference `fig:code_overview' on page 8 undefined on input line 
 266.
@@ -989,13 +995,13 @@ Package logreq Info: Writing requests to 'paper.run.xml'.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 274.
  ) 
 Here is how much of TeX's memory you used:
- 18628 strings out of 492642
- 304866 string characters out of 6135566
- 799257 words of memory out of 5000000
+ 18620 strings out of 492642
+ 304788 string characters out of 6135566
+ 797081 words of memory out of 5000000
  21828 multiletter control sequences out of 15000+600000
- 68598 words of font info for 357 fonts, out of 8000000 for 9000
+ 68178 words of font info for 351 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,10n,56p,1881b,1655s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 43i,10n,56p,1881b,1654s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/share/t
 exmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texmf-dist/fonts/type1/public
 /amsfonts/cm/cmmi10.pfb></usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/c
@@ -1006,10 +1012,10 @@ c/fpl/fplrc8a.pfb></usr/share/texmf-dist/fonts/type1/public/cm-super/sftt1000.p
 fb></usr/share/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/share/texmf
 -dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texmf-dist/fonts/type1/ur
 w/palatino/uplri8a.pfb>
-Output written on paper.pdf (8 pages, 287567 bytes).
+Output written on paper.pdf (8 pages, 285826 bytes).
 PDF statistics:
- 256 PDF objects out of 1000 (max. 8388607)
- 229 compressed objects within 3 object streams
+ 257 PDF objects out of 1000 (max. 8388607)
+ 230 compressed objects within 3 object streams
  55 named destinations out of 1000 (max. 500000)
  52339 words of extra memory for PDF output out of 61914 (max. 10000000)
 

@@ -79,7 +79,7 @@ class Model:
                 else:
                     J = graph[neighbor][node]['weight']
                 neighborData[idx, :] = mapping[neighbor], J
-            edgeData[nodeID]    = neighborData[:, 0]
+            edgeData[nodeID]    = np.int32(neighborData[:, 0])
             interaction[nodeID] = neighborData[:, 1]
 
          # set class data
@@ -169,8 +169,7 @@ class Model:
         # (self.sampleNodes[self.mode](self.nodeIDs) for _ in range(nSamples * step + 1)) # convert to generator
         nodesToUpdate = np.array([self.sampleNodes[self.mode](self.nodeIDs) for i in range(nSamples * step + 1)], dtype = long, order = 'F')
         # init storage vector
-        simulationResults         = np.zeros( \
-        (nSamples + 1, self.nNodes), dtype = self.statesDtype, order = 'C') # TODO: this should be a generator as well
+        simulationResults         = np.zeros( (nSamples + 1, self.nNodes), dtype = long, order = 'C') # TODO: this should be a generator as well
 
         # cdef long [:] state = self.states
         # cdef long [:, ::1] sr = simulationResults

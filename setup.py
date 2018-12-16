@@ -3,25 +3,19 @@ from Cython.Build import cythonize
 import numpy
 import os
 
-exts = []
-nums = numpy.get_include()
 for file in os.listdir(os.getcwd()):
     if file.endswith('.pyx'):
-        name = file.split('.')[0]
-        #  + '/numpy'
-        ex = Extension(name, sources = [file], \
-                       include_dirs =[nums],\
-                       extra_compile_args = ['-fopenmp', '-O3', '-march=native'],\
-                       extra_link_args = ['-fopenmp'],\
-        )
-        exts.append(ex)
 
-setup(\
-ext_modules = cythonize(exts,\
-            annotate = True,\
-            language_level = 3,\
-            )\
-)
+        f = numpy.get_include() + '/numpy'
+        setup(\
+        ext_modules = cythonize(\
+                    file, annotate = True,
+                    )\
+                    , \
+        include_dirs =[numpy.get_include()]\
+        )
+
+
 # ext_modules = [
 #  Extension('cy', ['cy.pyx'], extra_compile_args=['-fopenmp'], extra_link_args = ['-fopenmp'])
 #
