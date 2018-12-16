@@ -206,7 +206,7 @@ cpdef dict monteCarlo(\
         models_.push_back(PyObjectHolder(<PyObject *> tmp))
 
     print('starting runs')
-    if nThreads is -1:
+    if nThreads == -1:
         nThreads = mp.cpu_count()
     pbar = tqdm(total = states) # init  progbar
     for state in prange(states, nogil = True, schedule = 'static', num_threads = nThreads):

@@ -4680,7 +4680,7 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
  *         models_.push_back(PyObjectHolder(<PyObject *> tmp))
  * 
  *     print('starting runs')             # <<<<<<<<<<<<<<
- *     if nThreads is -1:
+ *     if nThreads == -1:
  *         nThreads = mp.cpu_count()
  */
   __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 208, __pyx_L1_error)
@@ -4690,7 +4690,7 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
   /* "infcy.pyx":209
  * 
  *     print('starting runs')
- *     if nThreads is -1:             # <<<<<<<<<<<<<<
+ *     if nThreads == -1:             # <<<<<<<<<<<<<<
  *         nThreads = mp.cpu_count()
  *     pbar = tqdm(total = states) # init  progbar
  */
@@ -4699,7 +4699,7 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
 
     /* "infcy.pyx":210
  *     print('starting runs')
- *     if nThreads is -1:
+ *     if nThreads == -1:
  *         nThreads = mp.cpu_count()             # <<<<<<<<<<<<<<
  *     pbar = tqdm(total = states) # init  progbar
  *     for state in prange(states, nogil = True, schedule = 'static', num_threads = nThreads):
@@ -4731,14 +4731,14 @@ static PyObject *__pyx_f_5infcy_monteCarlo(struct __pyx_obj_6models_Model *__pyx
     /* "infcy.pyx":209
  * 
  *     print('starting runs')
- *     if nThreads is -1:             # <<<<<<<<<<<<<<
+ *     if nThreads == -1:             # <<<<<<<<<<<<<<
  *         nThreads = mp.cpu_count()
  *     pbar = tqdm(total = states) # init  progbar
  */
   }
 
   /* "infcy.pyx":211
- *     if nThreads is -1:
+ *     if nThreads == -1:
  *         nThreads = mp.cpu_count()
  *     pbar = tqdm(total = states) # init  progbar             # <<<<<<<<<<<<<<
  *     for state in prange(states, nogil = True, schedule = 'static', num_threads = nThreads):
@@ -24286,7 +24286,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         models_.push_back(PyObjectHolder(<PyObject *> tmp))
  * 
  *     print('starting runs')             # <<<<<<<<<<<<<<
- *     if nThreads is -1:
+ *     if nThreads == -1:
  *         nThreads = mp.cpu_count()
  */
   __pyx_tuple__4 = PyTuple_Pack(1, __pyx_kp_u_starting_runs); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 208, __pyx_L1_error)
