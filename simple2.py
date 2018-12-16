@@ -14,7 +14,7 @@ import IO, os, plotting as plotz, stats, re
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
-extractThis      = IO.newest(dataPath)[-3]
+extractThis      = IO.newest(dataPath)[-1]
 #extractThis      = '1539187363.9923286'    # th.is is 100
 #extractThis      = '1540135977.9857328'
 extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}" 
