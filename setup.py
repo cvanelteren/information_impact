@@ -1,9 +1,14 @@
 # from distutils.core import setup, Extension
 from setuptools import setup
 from setuptools.extension import Extension
-from Cython.Build import cythonize
-from Cython.Distutils import build_ext
-import numpy, os, multiprocessing as mp
+try:
+    from Cython.Build import cythonize
+    from Cython.Distutils import build_ext
+    import numpy, os, multiprocessing as mp
+except:
+    raise ModuleNotFoundError("Requirement(s) not present, please see setup.py")
+
+
 # MODULE INFORMATION
 __module__              = "it"
 __author__              = "Casper van Elteren"
@@ -25,15 +30,10 @@ for (root, dirs, files) in os.walk(baseDir):
     for file in files:
         fileName = f'{root}/{file}'
         if file.endswith('.pyx'):
-            name = file.split('.')[0]
-            #  + '/numpy'
+            # some cython shenanigans
             extPath  = fileName.replace(baseDir, '') # make relative
             extName  = extPath.split('.')[0].replace(os.path.sep, '.') # remove extension
             sources  = [extPath]
-            # extName = name
-            # sources = [file]
-            # print(extName, sources)
-
             ex = Extension(extName, \
                            sources            = sources, \
                            include_dirs       = [nums, '.'],\
@@ -53,25 +53,25 @@ for (root, dirs, files) in os.walk(baseDir):
             exts.append(ex)
 
 # compile
-setup(\
-    name            = __name__,\
-    author          = __author__,\
-    author_email    = __email__,\
-    python_requires = __python__requires__,\
-    zip_safe        = False,\
-    # cmdclass        = dict(build_ext = build_ext),\
-    # packages    = ["Models", "Utils", "Toolbox"],\
-    # cmdclass    = dict(build_ext = "build_ext"),\
+with open('requirements.txt', 'r') as install_reqs:
+    setup(\
+        name            = __name__,\
+        author          = __author__,\
+        author_email    = __email__,\
+        python_requires = __python__requires__,\
+        zip_safe        = False,\
+        install_requires= install_reqs,\
+        ext_modules = cythonize(\
+                exts,\
+                annotate            = True,\
+                language_level      = 3,\
+                compiler_directives = dict(\
+                                        fast_gil       = True,\
+                                        # binding      = True,\
+                                        # embedsignature = True,\
+                                        ),\
+                # source must be pickable
+                nthreads            = mp.cpu_count(),\
+                ),\
     # gdb_debug =True,
-    ext_modules = cythonize(\
-            exts,\
-            annotate            = True,\
-            language_level      = 3,\
-            compiler_directives = dict(\
-                                    fast_gil       = True,\
-                                    # binding      = True,\
-                                    # embedsignature = True,\
-                            ),\
-            nthreads = mp.cpu_count(),\ # source must be pickable
-            )\
-)
+    )

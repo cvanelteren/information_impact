@@ -5,9 +5,7 @@ of different modules that can be used independently up to a point.
 
 For installing the package, please install the requirement file
 
-`conda install --file requirements.txt`
-or
-`pip install -r requirements.txt`
+`python setup.py build_ext --inplace`
 
 ## Overview
 The main division can be found as follows:
