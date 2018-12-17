@@ -1,3 +1,10 @@
+# TODOs
+- Update setup.py [done]
+- General code cleaning and commenting [partial]
+- Update manual
+
+
+
 # Mind scribbles
 - Sampler is currently using rand from stdlib. This is bad.
 However the Mersenne twisters require the lockdown of the GIL
@@ -10,6 +17,8 @@ c arrays instead of memviews. I did try it with cpp vectors but it was (for some
 
 
 # Notes on threading
+UPDATE: threading currently works, but notes below may still be useful for future me
+
 For some reasons using prange has some problems with it. First,  it requires
 separate models to be accessed independently. Although this should be possible
 and I attempted to do this on rewrite-vectors branch, it produces erroneous results. Performing everything single thread/core is the fastest currently.
