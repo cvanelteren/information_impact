@@ -3,7 +3,3 @@ __pycache__/*
 __pycache__/
 __pycache__*
 Data/
-*.c
-*.so
-*.pickle
-*.html
