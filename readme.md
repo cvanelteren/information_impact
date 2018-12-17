@@ -3,10 +3,10 @@
 The idea is to design loosely connected modules. The package consists
 of different modules that can be used independently up to a point.
 
-For installing the package, please install the requirement file
+To install the package run:
 
 `python setup.py build_ext --inplace`
-
+TODO: update this
 ## Overview
 The main division can be found as follows:
 - Modeling
