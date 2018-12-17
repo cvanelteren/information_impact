@@ -3,8 +3,7 @@ from setuptools import setup
 from setuptools.extension import Extension
 from Cython.Build import cythonize
 from Cython.Distutils import build_ext
-import numpy, os
-
+import numpy, os, multiprocessing as mp
 # MODULE INFORMATION
 __module__              = "it"
 __author__              = "Casper van Elteren"
@@ -29,7 +28,7 @@ for (root, dirs, files) in os.walk(baseDir):
             name = file.split('.')[0]
             #  + '/numpy'
             extPath  = fileName.replace(baseDir, '') # make relative
-            extName  = extPath.split('.')[0].replace(os.path.sep, '.') #
+            extName  = extPath.split('.')[0].replace(os.path.sep, '.') # remove extension
             sources  = [extPath]
             # extName = name
             # sources = [file]
@@ -54,7 +53,6 @@ for (root, dirs, files) in os.walk(baseDir):
             exts.append(ex)
 
 # compile
-
 setup(\
     name            = __name__,\
     author          = __author__,\
@@ -73,6 +71,7 @@ setup(\
                                     fast_gil       = True,\
                                     # binding      = True,\
                                     # embedsignature = True,\
-                            )
+                            ),\
+            nthreads = mp.cpu_count(),\ # source must be pickable
             )\
 )
