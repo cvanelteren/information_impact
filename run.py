@@ -7,10 +7,10 @@ Created on Mon Jun 11 09:06:57 2018
 @author: casper
 """
 
-import fastIsing
-import infcy
+from Models import fastIsing
+from Toolbox import infcy
 import IO
-import networkx as nx, itertools, plotting as plotz, RBN, scipy,\
+import networkx as nx, itertools, plotting as plotz, scipy,\
         os, pickle, IO, h5py, sys, multiprocessing as mp, json,\
         datetime, sys
 import time

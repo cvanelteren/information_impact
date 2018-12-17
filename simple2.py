@@ -9,8 +9,8 @@ from numpy import *
 from scipy import optimize, integrate
 from matplotlib.pyplot import *
 from time import sleep
-
-import IO, os, plotting as plotz, stats, re
+from Utils import IO, plotting as plotz, stats
+import os, re
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
@@ -26,7 +26,7 @@ thetas  = logspace(log10(.9), log10(finfo(float).eps), 100)
 #thetas  = array([.5, .1, .01, .001])
 temp    = list(data.keys())[0]
 
-from fastIsing import Ising
+from Models.fastIsing import Ising
 model   = Ising(data[temp]['{}'][0].graph)
 
 # %% Extract data
