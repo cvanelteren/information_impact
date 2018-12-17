@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# cython: infer_types=True
 # distutils: language=c++
 # -*- coding: utf-8 -*-
 # __author__ = 'Casper van Elteren'
@@ -7,7 +8,8 @@ Created on Tue Feb  6 09:36:17 2018
 
 @author: Casper van Elteren
 """
-# cython: infer_types=True
+# from Models.models cimport Model
+from models cimport Model
 import numpy  as np
 
 from scipy.stats import linregress
@@ -32,10 +34,6 @@ from libc.stdio cimport printf
 cdef extern from "vfastexp.h":
     double exp_approx "EXP" (double) nogil
 
-
-from models cimport Model
-
-# @cython.final
 cdef class Ising(Model):
     # def __cinit__(self, *args, **kwargs):
     #     print('cinit fastIsing')

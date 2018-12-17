@@ -7,23 +7,19 @@ Created on Mon Jun 11 09:06:57 2018
 @author: casper
 """
 
-import fastIsing, networkx as nx, itertools, plotting as plotz, RBN
-from sklearn.gaussian_process import GaussianProcessRegressor as gp
-import infcy, information, scipy
+import fastIsing
+import infcy
+import IO
+import networkx as nx, itertools, plotting as plotz, RBN, scipy,\
+        os, pickle, IO, h5py, sys, multiprocessing as mp, json,\
+        datetime, sys
+import time
 from matplotlib.pyplot import *
 from numpy import *
 from tqdm import tqdm
 from functools import partial
-from multiprocessing import Pool
 from scipy import sparse
-import os, pickle, IO, h5py, sys
-import IO, multiprocessing as mp, json
-import datetime
-from artNet import Net
-from time import time
-import sys
 close('all')
-np.random.seed() # set seed
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         real = sys.argv[1]
@@ -59,14 +55,14 @@ if __name__ == '__main__':
         graphs.append(graph)
     else:
         graphs = [nx.path_graph(3)]
-        # graphs = [nx.barabasi_albert_graph(10, 2)]
+        graphs = [nx.barabasi_albert_graph(10, 2)]
 
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
 #    graphs = [nx.path_graph(3)]
 
     for graph in graphs:
-        now = time()
+        now = time.time()
         targetDirectory = f'{os.getcwd()}/Data/{now}'
         os.mkdir(targetDirectory)
         settings = dict(
@@ -136,13 +132,13 @@ if __name__ == '__main__':
 
 
         for t in temperatures:
-            print(f'{time()} Setting {t}')
+            print(f'{time.time()} Setting {t}')
             model.t = t
             for i in range(numIter):
                 model.reset()
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
-                print(f'{time()} Getting snapshots')
+                print(f'{time.time()} Getting snapshots')
                 pulse        = {}
                 model.nudges = pulse
                 snapshots    = infcy.getSnapShots(model, nSamples, \
@@ -151,7 +147,7 @@ if __name__ == '__main__':
 
 
 
-                print(f'{time()}')
+                print(f'{time.time()}')
                 conditional = infcy.monteCarlo(\
                                                model  = model, snapshots = snapshots,\
                                                deltas = deltas, repeats  = repeats,\
@@ -161,11 +157,11 @@ if __name__ == '__main__':
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
                  # deltas = deltas, repeats = repeats, pulse = pulse, updateType= 'source')
 
-                print(f'{time()} Computing MI')
+                print(f'{time.time()} Computing MI')
                 px, mi = infcy.mutualInformation(\
                 conditional, deltas, snapshots, model)
                 # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
-                fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                fileName = f'{targetDirectory}/{time.time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr = IO.SimulationResult(\
                                          mi         = mi,\
                                         conditional = conditional,\
@@ -180,10 +176,10 @@ if __name__ == '__main__':
                     conditional = infcy.monteCarlo(model = model, snapshots = snapshots,\
                                             deltas = deltas, repeats = repeats,\
                                             )
-                    print(f'{time()} Computing MI')
+                    print(f'{time.time()} Computing MI')
                     px, mi = infcy.mutualInformation(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                    fileName = f'{targetDirectory}/{time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                    fileName = f'{targetDirectory}/{time.time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                     sr = IO.SimulationResult(\
                                              mi         = mi,\
                                             conditional = conditional,\

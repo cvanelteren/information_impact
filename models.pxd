@@ -18,8 +18,6 @@ cdef struct Connection:
     vector[int] neighbors
     vector[double] weights
 
-
-
 cdef class Model:
     cdef:
         # public

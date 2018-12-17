@@ -1,5 +1,6 @@
 # cython: infer_types=True
 # distutils: language=c++
+
 import numpy as np
 cimport numpy as np
 import networkx as nx, functools, time
@@ -8,20 +9,6 @@ import copy
 
 cimport cython
 from cython.parallel cimport parallel, prange
-# TODO: maybe add reversemapping [rmap] [done]
-# TODO: insert the zero step in the simulate [done]
-# TODO: make J weight to make model more general[done]
-# TODO: the codes needs to written such that it is model independent; which it currently is\
-#however the model does need to have a specific set of constraints [done]
-#one of the current constraints is that it needs a base for the agent states
-# TODO: add sync, async and single update methods [done]
-DTYPE = np.int
-ctypedef np.int DTYPE_T
-# from libcpp.map cimport map as cmap
-# from libcpp.string cimport string
-# from libcpp.vector cimport vector
-# from libc.stdlib cimport rand
-
 from cython.operator cimport dereference, preincrement
 # from libc.stdlib cimport rand
 from libc.string cimport strcmp

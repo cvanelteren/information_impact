@@ -1,18 +1,21 @@
 # cython: infer_types=True
 # distutils: language=c++
 # __author__ = 'Casper van Elteren'
+
+# MODELS
+# from Models.models cimport Model
+from models cimport Model
+
 import numpy as np
 cimport numpy as np
 cimport cython
 import time
 from cython.parallel cimport parallel, prange, threadid
 import multiprocessing as mp
-from concurrent.futures import ThreadPoolExecutor
 import copy
 from cpython.ref cimport PyObject
-# MODELS
-from models cimport Model
-from fastIsing cimport Ising
+
+
 
 # progressbar
 from tqdm import tqdm   #progress bar
