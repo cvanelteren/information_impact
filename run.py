@@ -10,6 +10,7 @@ Created on Mon Jun 11 09:06:57 2018
 from Models import fastIsing
 from Toolbox import infcy
 from Utils import IO, plotting as plotz
+from Utils.IO import SimulationResult
 import networkx as nx, itertools, scipy,\
         os, pickle, h5py, sys, multiprocessing as mp, json,\
         datetime, sys
@@ -38,8 +39,9 @@ if __name__ == '__main__':
     updateType    = 'single'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
+    graphs = []
     if real:
-        graphs = [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+#        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
         dataDir = 'Psycho' # relative path careful
         df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
         h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
@@ -54,9 +56,9 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-        graphs = [nx.path_graph(3)]
-        graphs = [nx.barabasi_albert_graph(10, 2)]
-
+        graphs += [nx.path_graph(3)]
+#        graphs += [nx.barabasi_albert_graph(10, 2)]
+        
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
 #    graphs = [nx.path_graph(3)]
@@ -162,13 +164,13 @@ if __name__ == '__main__':
                 conditional, deltas, snapshots, model)
                 # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
                 fileName = f'{targetDirectory}/{time.time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                sr = IO.SimulationResult(\
+                sr = SimulationResult(\
                                          mi         = mi,\
                                         conditional = conditional,\
                                         graph       = model.graph,\
                                         px          = px, snapshots = snapshots)
                 IO.savePickle(fileName, sr)
-
+                # nudge all nodes
                 pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
                     pulse        = {n : p}
@@ -180,7 +182,7 @@ if __name__ == '__main__':
                     px, mi = infcy.mutualInformation(conditional, deltas, snapshots, model)
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                     fileName = f'{targetDirectory}/{time.time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                    sr = IO.SimulationResult(\
+                    sr = SimulationResult(\
                                              mi         = mi,\
                                             conditional = conditional,\
                                             graph       = model.graph,\

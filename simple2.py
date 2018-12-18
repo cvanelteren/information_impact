@@ -9,7 +9,7 @@ from numpy import *
 from scipy import optimize, integrate
 from matplotlib.pyplot import *
 from time import sleep
-from Utils import IO, plotting as plotz, stats
+from Utils import plotting as plotz, stats, IO
 import os, re
 close('all')
 style.use('seaborn-poster')

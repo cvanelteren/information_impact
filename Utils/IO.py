@@ -10,6 +10,9 @@ from numpy import *
 from matplotlib.pyplot import *
 from dataclasses import dataclass
 import pickle, pandas, os, re, json, datetime
+import networkx as nx
+
+print(__package__)
 def extractData(dataDir, keys = None):
     """
     Provides a dictionary of the results
@@ -65,6 +68,8 @@ def oldFormatConversion(dataDir, file, tmp):
     savePickle(dataDir + f'/{file}', tmp)
 
 
+
+
 def newest(path):
     """
     Returns sorted files by time
@@ -73,12 +78,33 @@ def newest(path):
     paths = [os.path.join(path, basename) for basename in files]
     return sorted(paths, key=os.path.getctime)
 
+# forced rename after module structure
+import io
+class RenameUnpickler(pickle.Unpickler):
+    # overwrite defaults
+    def find_class(self, module, name):
+        renamed_module = module
+        # replace the name with module struct
+        if module == "IO":
+            renamed_module = "Utils.IO"
+        # load it 
+        return super(RenameUnpickler, self).find_class(renamed_module, name)
+
+def renamed_load(file_obj):
+    return RenameUnpickler(file_obj).load()
+
+
+def renamed_loads(pickled_bytes):
+    file_obj = io.BytesIO(pickled_bytes)
+    return renamed_load(file_obj)
+
 def loadPickle(fileName):
+    import sys
     with open(fileName, 'rb') as f:
-        return pickle.load(f)
+        return renamed_load(f)
 
 def savePickle(fileName, objects):
-    #TODO: warning; appearantly pickle <=3 cannot handle files
+    #TODO: warning; apparantly pickle <=3 cannot handle files
     # larger than 4 gb.
     if not fileName.endswith('.pickle'):
         fileName += '.pickle'
@@ -97,6 +123,7 @@ def readSettings(targetDirectory, dataType = '.pickle'):
             return json.load(f)
 
     # TODO: uggly, also lacks all the entries
+    # attempt to load from a file
     except FileNotFoundError:
         # use re to extract settings
         settings = {}
