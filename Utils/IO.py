@@ -12,7 +12,6 @@ from dataclasses import dataclass
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
 
-print(__package__)
 def extractData(dataDir, keys = None):
     """
     Provides a dictionary of the results

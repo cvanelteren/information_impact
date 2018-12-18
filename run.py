@@ -26,20 +26,20 @@ if __name__ == '__main__':
         real = sys.argv[1]
     else:
         real = 0
-    print(real)
     repeats       = int(1e4) if real else 10_000
     deltas        = 50       if real else 50
-    step          = 1000
-    nSamples      = int(1e4) if real else 10000
+    step          = 10000
+    nSamples      = int(1e5) if real else 10000
     burninSamples = 100000
     pulseSize     = 1
 
     numIter       = int(1e1) if real else 5
-    magSide       = 'neg'
+    magSide       = 'pos'
     updateType    = 'single'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
+
     if real:
 #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
         dataDir = 'Psycho' # relative path careful
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     else:
         graphs += [nx.path_graph(3)]
 #        graphs += [nx.barabasi_albert_graph(10, 2)]
-        
+
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
 #    graphs = [nx.path_graph(3)]
@@ -137,7 +137,6 @@ if __name__ == '__main__':
             print(f'{time.time()} Setting {t}')
             model.t = t
             for i in range(numIter):
-                model.reset()
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
                 print(f'{time.time()} Getting snapshots')

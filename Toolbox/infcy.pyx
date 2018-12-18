@@ -68,7 +68,7 @@ cdef extern from *:
         PyObject *ptr
         PyObjectHolder(PyObject *o) nogil
 
-# print gil stuff; no mp used currenlty so ....useless
+# print gil stuff; no mp used currently so ....useless
 def checkDistribution():
     '''Warning statement'''
     from platform import platform
@@ -134,6 +134,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         int idx
         double past    = timer()
     pbar = tqdm(total = nSamples)
+    model.reset() # start from random
     for i in range(N):
         if i % step == 0:
             idx             = encodeState(model._states)
