@@ -124,12 +124,11 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     """
     Use single Markov chain to extract snapshots from the model
     """
-    # start sampling
     cdef:
         unordered_map[int, double] snapshots
         int i
         int N          = nSamples * step
-        long[:, ::1] r = model.sampleNodes(N )
+        long[:, ::1] r = model.sampleNodes(N)
         double Z       = <double> nSamples
         int idx
         double past    = timer()
@@ -140,6 +139,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
             idx             = encodeState(model._states)
             snapshots[idx] += 1 / Z
             pbar.update(1)
+        # model._updateState(r[i])
         model._updateState(r[i])
     pbar.close()
     print(f'Found {len(snapshots)} states')

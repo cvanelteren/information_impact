@@ -28,13 +28,13 @@ if __name__ == '__main__':
         real = 0
     repeats       = int(1e4) if real else 10_000
     deltas        = 50       if real else 50
-    step          = 10000
-    nSamples      = int(1e5) if real else 10000
+    step          = 100
+    nSamples      = int(1e4) if real else 10000
     burninSamples = 100000
     pulseSize     = 1
 
     numIter       = int(1e1) if real else 5
-    magSide       = 'pos'
+    magSide       = 'neg'
     updateType    = 'single'
     CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
@@ -47,9 +47,9 @@ if __name__ == '__main__':
         h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
     #
         graph   = nx.from_pandas_adjacency(df)
-        # for i, j in graph.edges():
-        #     graph[i][j]['weight'] = 1
-        # #
+        for i, j in graph.edges():
+            graph[i][j]['weight'] *= 10
+        #
         attr = {}
         for node, row in h.iterrows():
             attr[node] = dict(H = row['externalField'], nudges = 0)
@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
         for t in temperatures:
             print(f'{time.time()} Setting {t}')
-            model.t = t
+            model.t = t # update beta
             for i in range(numIter):
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]

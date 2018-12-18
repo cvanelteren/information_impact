@@ -903,22 +903,21 @@ struct __pyx_opt_args_7Toolbox_5infcy_getSnapShots {
 </pre><pre class="cython line score-0">&#xA0;<span class="">124</span>:     <span class="sd">&quot;&quot;&quot;</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">125</span>: <span class="sd">    Use single Markov chain to extract snapshots from the model</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">126</span>: <span class="sd">    &quot;&quot;&quot;</span></pre>
-<pre class="cython line score-0">&#xA0;<span class="">127</span>:     <span class="c"># start sampling</span></pre>
-<pre class="cython line score-0">&#xA0;<span class="">128</span>:     <span class="k">cdef</span><span class="p">:</span></pre>
-<pre class="cython line score-0">&#xA0;<span class="">129</span>:         <span class="n">unordered_map</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">double</span><span class="p">]</span> <span class="n">snapshots</span></pre>
-<pre class="cython line score-0">&#xA0;<span class="">130</span>:         <span class="nb">int</span> <span class="n">i</span></pre>
-<pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">131</span>:         <span class="nb">int</span> <span class="n">N</span>          <span class="o">=</span> <span class="n">nSamples</span> <span class="o">*</span> <span class="n">step</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">127</span>:     <span class="k">cdef</span><span class="p">:</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">128</span>:         <span class="n">unordered_map</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">double</span><span class="p">]</span> <span class="n">snapshots</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">129</span>:         <span class="nb">int</span> <span class="n">i</span></pre>
+<pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">130</span>:         <span class="nb">int</span> <span class="n">N</span>          <span class="o">=</span> <span class="n">nSamples</span> <span class="o">*</span> <span class="n">step</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_N = (__pyx_v_nSamples * __pyx_v_step);
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">132</span>:         <span class="nb">long</span><span class="p">[:,</span> <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">r</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sampleNodes</span><span class="p">(</span><span class="n">N</span> <span class="p">)</span></pre>
-<pre class='cython code score-0 '>  __pyx_t_1 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model-&gt;__pyx_vtab)-&gt;sampleNodes(__pyx_v_model, __pyx_v_N);<span class='error_goto'> if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 132, __pyx_L1_error)</span>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">131</span>:         <span class="nb">long</span><span class="p">[:,</span> <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">r</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sampleNodes</span><span class="p">(</span><span class="n">N</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_1 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model-&gt;__pyx_vtab)-&gt;sampleNodes(__pyx_v_model, __pyx_v_N);<span class='error_goto'> if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 131, __pyx_L1_error)</span>
   __pyx_v_r = __pyx_t_1;
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">133</span>:         <span class="n">double</span> <span class="n">Z</span>       <span class="o">=</span> <span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;</span> <span class="n">nSamples</span></pre>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">132</span>:         <span class="n">double</span> <span class="n">Z</span>       <span class="o">=</span> <span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;</span> <span class="n">nSamples</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_Z = ((double)__pyx_v_nSamples);
-</pre><pre class="cython line score-0">&#xA0;<span class="">134</span>:         <span class="nb">int</span> <span class="n">idx</span></pre>
-<pre class="cython line score-29" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">135</span>:         <span class="n">double</span> <span class="n">past</span>    <span class="o">=</span> <span class="n">timer</span><span class="p">()</span></pre>
-<pre class='cython code score-29 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_3, __pyx_n_s_timer);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)</span>
+</pre><pre class="cython line score-0">&#xA0;<span class="">133</span>:         <span class="nb">int</span> <span class="n">idx</span></pre>
+<pre class="cython line score-29" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">134</span>:         <span class="n">double</span> <span class="n">past</span>    <span class="o">=</span> <span class="n">timer</span><span class="p">()</span></pre>
+<pre class='cython code score-29 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_3, __pyx_n_s_timer);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS &amp;&amp; unlikely(<span class='py_c_api'>PyMethod_Check</span>(__pyx_t_3))) {
@@ -932,46 +931,46 @@ struct __pyx_opt_args_7Toolbox_5infcy_getSnapShots {
   }
   __pyx_t_2 = (__pyx_t_4) ? <span class='pyx_c_api'>__Pyx_PyObject_CallOneArg</span>(__pyx_t_3, __pyx_t_4) : <span class='pyx_c_api'>__Pyx_PyObject_CallNoArg</span>(__pyx_t_3);
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_2)) <span class='error_goto'>__PYX_ERR(0, 135, __pyx_L1_error)</span>
+  if (unlikely(!__pyx_t_2)) <span class='error_goto'>__PYX_ERR(0, 134, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_5 = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(0, 135, __pyx_L1_error)</span>
+  __pyx_t_5 = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) <span class='error_goto'>__PYX_ERR(0, 134, __pyx_L1_error)</span>
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_past = __pyx_t_5;
-</pre><pre class="cython line score-16" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">136</span>:     <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span> <span class="o">=</span> <span class="n">nSamples</span><span class="p">)</span></pre>
-<pre class='cython code score-16 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_2, __pyx_n_s_tqdm);<span class='error_goto'> if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 136, __pyx_L1_error)</span>
+</pre><pre class="cython line score-16" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">135</span>:     <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span> <span class="o">=</span> <span class="n">nSamples</span><span class="p">)</span></pre>
+<pre class='cython code score-16 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_2, __pyx_n_s_tqdm);<span class='error_goto'> if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
-  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyDict_NewPresized</span>(1);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)</span>
+  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyDict_NewPresized</span>(1);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
-  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_nSamples);<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 136, __pyx_L1_error)</span>
+  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_nSamples);<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_4);
-  if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_t_3, __pyx_n_s_total, __pyx_t_4) &lt; 0) <span class='error_goto'>__PYX_ERR(0, 136, __pyx_L1_error)</span>
+  if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_t_3, __pyx_n_s_total, __pyx_t_4) &lt; 0) <span class='error_goto'>__PYX_ERR(0, 135, __pyx_L1_error)</span>
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyObject_Call</span>(__pyx_t_2, __pyx_empty_tuple, __pyx_t_3);<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 136, __pyx_L1_error)</span>
+  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyObject_Call</span>(__pyx_t_2, __pyx_empty_tuple, __pyx_t_3);<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_4);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_pbar = __pyx_t_4;
   __pyx_t_4 = 0;
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">137</span>:     <span class="n">model</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span> <span class="c"># start from random</span></pre>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">136</span>:     <span class="n">model</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span> <span class="c"># start from random</span></pre>
 <pre class='cython code score-0 '>  ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model-&gt;__pyx_vtab)-&gt;reset(__pyx_v_model, 0);
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">138</span>:     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span></pre>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">137</span>:     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span></pre>
 <pre class='cython code score-0 '>  __pyx_t_6 = __pyx_v_N;
   __pyx_t_7 = __pyx_t_6;
   for (__pyx_t_8 = 0; __pyx_t_8 &lt; __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">139</span>:         <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">step</span> <span class="o">==</span> <span class="mf">0</span><span class="p">:</span></pre>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">138</span>:         <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">step</span> <span class="o">==</span> <span class="mf">0</span><span class="p">:</span></pre>
 <pre class='cython code score-0 '>    __pyx_t_9 = (((__pyx_v_i % __pyx_v_step) == 0) != 0);
     if (__pyx_t_9) {
 /* … */
     }
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">140</span>:             <span class="n">idx</span>             <span class="o">=</span> <span class="n">encodeState</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">_states</span><span class="p">)</span></pre>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">139</span>:             <span class="n">idx</span>             <span class="o">=</span> <span class="n">encodeState</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">_states</span><span class="p">)</span></pre>
 <pre class='cython code score-0 '>      __pyx_v_idx = __pyx_f_7Toolbox_5infcy_encodeState(__pyx_v_model-&gt;_states);
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">141</span>:             <span class="n">snapshots</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1</span> <span class="o">/</span> <span class="n">Z</span></pre>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">140</span>:             <span class="n">snapshots</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">1</span> <span class="o">/</span> <span class="n">Z</span></pre>
 <pre class='cython code score-0 '>      __pyx_t_10 = __pyx_v_idx;
       (__pyx_v_snapshots[__pyx_t_10]) = ((__pyx_v_snapshots[__pyx_t_10]) + (1.0 / __pyx_v_Z));
-</pre><pre class="cython line score-17" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">142</span>:             <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span></pre>
-<pre class='cython code score-17 '>      __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_v_pbar, __pyx_n_s_update);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)</span>
+</pre><pre class="cython line score-17" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">141</span>:             <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mf">1</span><span class="p">)</span></pre>
+<pre class='cython code score-17 '>      __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_v_pbar, __pyx_n_s_update);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)</span>
       <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
       __pyx_t_2 = NULL;
       if (CYTHON_UNPACK_METHODS &amp;&amp; likely(<span class='py_c_api'>PyMethod_Check</span>(__pyx_t_3))) {
@@ -985,11 +984,12 @@ struct __pyx_opt_args_7Toolbox_5infcy_getSnapShots {
       }
       __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_int_1) : <span class='pyx_c_api'>__Pyx_PyObject_CallOneArg</span>(__pyx_t_3, __pyx_int_1);
       <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_4)) <span class='error_goto'>__PYX_ERR(0, 142, __pyx_L1_error)</span>
+      if (unlikely(!__pyx_t_4)) <span class='error_goto'>__PYX_ERR(0, 141, __pyx_L1_error)</span>
       <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_4);
       <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_3); __pyx_t_3 = 0;
       <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_4); __pyx_t_4 = 0;
-</pre><pre class="cython line score-5" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">143</span>:         <span class="n">model</span><span class="o">.</span><span class="n">_updateState</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">142</span>:         <span class="c"># model._updateState(r[i])</span></pre>
+<pre class="cython line score-5" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">143</span>:         <span class="n">model</span><span class="o">.</span><span class="n">_updateState</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></pre>
 <pre class='cython code score-5 '>    __pyx_t_11.data = __pyx_v_r.data;
     __pyx_t_11.memview = __pyx_v_r.memview;
     __PYX_INC_MEMVIEW(&amp;__pyx_t_11, 0);

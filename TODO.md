@@ -2,7 +2,8 @@
 - Update setup.py [done]
 - General code cleaning and commenting [partial]
 - Update manual
-
+- Move sampleNodes inside to reduce load on the memory. This prolly
+requires to rewrite some work to lose the np dependency
 
 
 # Mind scribbles

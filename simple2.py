@@ -97,7 +97,7 @@ repeats  = settings['repeat']
 from scipy import ndimage
 zd = dd;
 #zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
-#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
+#zd = ndimage.filters.gaussian_filter1d(zd, 3, axis = 0)
 zd[zd < finfo(float).eps] = 0 # remove everything below machine error
 
 # scale data 0-1 along each sample (nodes x delta)

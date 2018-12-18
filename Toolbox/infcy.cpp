@@ -3516,44 +3516,44 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
     }
   }
 
-  /* "Toolbox/infcy.pyx":131
+  /* "Toolbox/infcy.pyx":130
  *         unordered_map[int, double] snapshots
  *         int i
  *         int N          = nSamples * step             # <<<<<<<<<<<<<<
- *         long[:, ::1] r = model.sampleNodes(N )
+ *         long[:, ::1] r = model.sampleNodes(N)
  *         double Z       = <double> nSamples
  */
   __pyx_v_N = (__pyx_v_nSamples * __pyx_v_step);
 
-  /* "Toolbox/infcy.pyx":132
+  /* "Toolbox/infcy.pyx":131
  *         int i
  *         int N          = nSamples * step
- *         long[:, ::1] r = model.sampleNodes(N )             # <<<<<<<<<<<<<<
+ *         long[:, ::1] r = model.sampleNodes(N)             # <<<<<<<<<<<<<<
  *         double Z       = <double> nSamples
  *         int idx
  */
-  __pyx_t_1 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model->__pyx_vtab)->sampleNodes(__pyx_v_model, __pyx_v_N); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 132, __pyx_L1_error)
+  __pyx_t_1 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model->__pyx_vtab)->sampleNodes(__pyx_v_model, __pyx_v_N); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 131, __pyx_L1_error)
   __pyx_v_r = __pyx_t_1;
   __pyx_t_1.memview = NULL;
   __pyx_t_1.data = NULL;
 
-  /* "Toolbox/infcy.pyx":133
+  /* "Toolbox/infcy.pyx":132
  *         int N          = nSamples * step
- *         long[:, ::1] r = model.sampleNodes(N )
+ *         long[:, ::1] r = model.sampleNodes(N)
  *         double Z       = <double> nSamples             # <<<<<<<<<<<<<<
  *         int idx
  *         double past    = timer()
  */
   __pyx_v_Z = ((double)__pyx_v_nSamples);
 
-  /* "Toolbox/infcy.pyx":135
+  /* "Toolbox/infcy.pyx":134
  *         double Z       = <double> nSamples
  *         int idx
  *         double past    = timer()             # <<<<<<<<<<<<<<
  *     pbar = tqdm(total = nSamples)
  *     model.reset() # start from random
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_timer); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_timer); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
@@ -3567,36 +3567,36 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
   }
   __pyx_t_2 = (__pyx_t_4) ? __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_t_4) : __Pyx_PyObject_CallNoArg(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L1_error)
+  __pyx_t_5 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_5 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 134, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_past = __pyx_t_5;
 
-  /* "Toolbox/infcy.pyx":136
+  /* "Toolbox/infcy.pyx":135
  *         int idx
  *         double past    = timer()
  *     pbar = tqdm(total = nSamples)             # <<<<<<<<<<<<<<
  *     model.reset() # start from random
  *     for i in range(N):
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_tqdm); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_tqdm); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_nSamples); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_nSamples); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_total, __pyx_t_4) < 0) __PYX_ERR(0, 136, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_total, __pyx_t_4) < 0) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 136, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_empty_tuple, __pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_v_pbar = __pyx_t_4;
   __pyx_t_4 = 0;
 
-  /* "Toolbox/infcy.pyx":137
+  /* "Toolbox/infcy.pyx":136
  *         double past    = timer()
  *     pbar = tqdm(total = nSamples)
  *     model.reset() # start from random             # <<<<<<<<<<<<<<
@@ -3605,7 +3605,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
  */
   ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model->__pyx_vtab)->reset(__pyx_v_model, 0);
 
-  /* "Toolbox/infcy.pyx":138
+  /* "Toolbox/infcy.pyx":137
  *     pbar = tqdm(total = nSamples)
  *     model.reset() # start from random
  *     for i in range(N):             # <<<<<<<<<<<<<<
@@ -3617,7 +3617,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
   for (__pyx_t_8 = 0; __pyx_t_8 < __pyx_t_7; __pyx_t_8+=1) {
     __pyx_v_i = __pyx_t_8;
 
-    /* "Toolbox/infcy.pyx":139
+    /* "Toolbox/infcy.pyx":138
  *     model.reset() # start from random
  *     for i in range(N):
  *         if i % step == 0:             # <<<<<<<<<<<<<<
@@ -3627,7 +3627,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
     __pyx_t_9 = (((__pyx_v_i % __pyx_v_step) == 0) != 0);
     if (__pyx_t_9) {
 
-      /* "Toolbox/infcy.pyx":140
+      /* "Toolbox/infcy.pyx":139
  *     for i in range(N):
  *         if i % step == 0:
  *             idx             = encodeState(model._states)             # <<<<<<<<<<<<<<
@@ -3636,24 +3636,24 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
  */
       __pyx_v_idx = __pyx_f_7Toolbox_5infcy_encodeState(__pyx_v_model->_states);
 
-      /* "Toolbox/infcy.pyx":141
+      /* "Toolbox/infcy.pyx":140
  *         if i % step == 0:
  *             idx             = encodeState(model._states)
  *             snapshots[idx] += 1 / Z             # <<<<<<<<<<<<<<
  *             pbar.update(1)
- *         model._updateState(r[i])
+ *         # model._updateState(r[i])
  */
       __pyx_t_10 = __pyx_v_idx;
       (__pyx_v_snapshots[__pyx_t_10]) = ((__pyx_v_snapshots[__pyx_t_10]) + (1.0 / __pyx_v_Z));
 
-      /* "Toolbox/infcy.pyx":142
+      /* "Toolbox/infcy.pyx":141
  *             idx             = encodeState(model._states)
  *             snapshots[idx] += 1 / Z
  *             pbar.update(1)             # <<<<<<<<<<<<<<
+ *         # model._updateState(r[i])
  *         model._updateState(r[i])
- *     pbar.close()
  */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_pbar, __pyx_n_s_update); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_pbar, __pyx_n_s_update); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __pyx_t_2 = NULL;
       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
@@ -3667,12 +3667,12 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
       }
       __pyx_t_4 = (__pyx_t_2) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_2, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_int_1);
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 142, __pyx_L1_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 141, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "Toolbox/infcy.pyx":139
+      /* "Toolbox/infcy.pyx":138
  *     model.reset() # start from random
  *     for i in range(N):
  *         if i % step == 0:             # <<<<<<<<<<<<<<
@@ -3682,8 +3682,8 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
     }
 
     /* "Toolbox/infcy.pyx":143
- *             snapshots[idx] += 1 / Z
  *             pbar.update(1)
+ *         # model._updateState(r[i])
  *         model._updateState(r[i])             # <<<<<<<<<<<<<<
  *     pbar.close()
  *     print(f'Found {len(snapshots)} states')
@@ -3718,7 +3718,7 @@ __pyx_t_12 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model->__
   }
 
   /* "Toolbox/infcy.pyx":144
- *             pbar.update(1)
+ *         # model._updateState(r[i])
  *         model._updateState(r[i])
  *     pbar.close()             # <<<<<<<<<<<<<<
  *     print(f'Found {len(snapshots)} states')
