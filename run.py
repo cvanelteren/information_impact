@@ -9,9 +9,9 @@ Created on Mon Jun 11 09:06:57 2018
 
 from Models import fastIsing
 from Toolbox import infcy
-import IO
-import networkx as nx, itertools, plotting as plotz, scipy,\
-        os, pickle, IO, h5py, sys, multiprocessing as mp, json,\
+from Utils import IO, plotting as plotz
+import networkx as nx, itertools, scipy,\
+        os, pickle, h5py, sys, multiprocessing as mp, json,\
         datetime, sys
 import time
 from matplotlib.pyplot import *
