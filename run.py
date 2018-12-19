@@ -26,20 +26,20 @@ if __name__ == '__main__':
         real = sys.argv[1]
     else:
         real = 0
-    repeats       = int(1e4) if real else 10_000
-    deltas        = 50       if real else 50
+    repeats       = int(1e4)
+    deltas        = 8
     step          = 100
-    nSamples      = int(1e4) if real else 10000
+    nSamples      = int(1e5)
     burninSamples = 100000
-    pulseSize     = 1
+    pulseSize     = .5
 
-    numIter       = int(1e1) if real else 5
+    numIter       = 5 if real else 5
     magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
-
+#    real = 1
     if real:
 #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
         dataDir = 'Psycho' # relative path careful
@@ -47,8 +47,8 @@ if __name__ == '__main__':
         h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
     #
         graph   = nx.from_pandas_adjacency(df)
-        for i, j in graph.edges():
-            graph[i][j]['weight'] *= 10
+#        for i, j in graph.edges():
+#            graph[i][j]['weight'] *= 10
         #
         attr = {}
         for node, row in h.iterrows():
@@ -56,8 +56,8 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-        graphs += [nx.path_graph(3)]
-#        graphs += [nx.barabasi_albert_graph(10, 2)]
+#        graphs += [nx.path_graph(3)]
+        graphs += [nx.krackhardt_kite_graph()]
 
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
@@ -85,7 +85,8 @@ if __name__ == '__main__':
                              updateType  = updateType,\
                              magSide     = magSide)
         model = fastIsing.Ising(**modelSettings)
-
+#        print(model.mapping.items())
+#        assert 0
 
     #    f = 'nSamples=10000_k=10_deltas=5_modesource_t=10_n=65.h5'
     #    fileName = f'Data/{f}'
@@ -169,6 +170,16 @@ if __name__ == '__main__':
                                         graph       = model.graph,\
                                         px          = px, snapshots = snapshots)
                 IO.savePickle(fileName, sr)
+                pulses = {}
+                # for node in model.graph.nodes():
+                #     pulseSize = model.graph.nodes[node].get('H', 0)
+                #     c = 0
+                #     for neighbor in model.graph.neighbors(node):
+                #         pulseSize += model.graph[node][neighbor].get('weight', 1)
+                #         c += 1
+                #     pulses[node] =  pulseSize / c
+                #     print(node, pulses[node])
+
                 # nudge all nodes
                 pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():

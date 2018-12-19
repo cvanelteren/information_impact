@@ -24,8 +24,9 @@ data   = IO.extractData(extractThis)
 # thetas = [10**-i for i in range(1, 20)]
 thetas  = logspace(log10(.9), log10(finfo(float).eps), 100)
 #thetas  = array([.5, .1, .01, .001])
-temp    = list(data.keys())[0]
-
+temps    = list(data.keys())
+temp     = temps[0]
+print(temps)
 from Models.fastIsing import Ising
 model   = Ising(data[temp]['{}'][0].graph)
 
@@ -69,7 +70,8 @@ for condition, samples in data[temp].items():
             control = data[temp]['{}'][idx].px
             px      = sample.px
 #            impact = stats.hellingerDistance(px, control).mean(-1)
-            impact = nanmean(stats.KL(control, sample.px), axis = -1)
+            tmp = stats.KL(control, sample.px)
+            impact = nanmean(tmp, axis = -1)
 #            print(impact)
             redIm = impact[deltas // 2  + 1 : ][None, :].T
 #            print(impact)
@@ -77,17 +79,19 @@ for condition, samples in data[temp].items():
             jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                 for key in model.mapping\
                 for j in re.findall(str(key), re.sub(':(.*?)\}', '', condition))]
+#            print(model.rmapping[jdx[0]], tmp[deltas//2, jdx])
             dd[idx, jdx, ...,  1] = redIm.squeeze().T
 #dd [dd < finfo(float).eps ] = 0
 # %% extract root from samples
             
 # fit functions
-double = lambda x, a, b, c, d, e, f: a + b * exp(-c*x) + d * exp(- e * (x-f))   
+double = lambda x, a, b, c, d, e, f: a + b * exp(-c*(x)) + d * exp(- e * (x-f))   
 single = lambda x, a, b, c : a + b * exp(-c * x)
 single_= lambda x, b, c : b * exp(-c * x)
+special= lambda x, a, b, c, d: a  + b * exp(- (x)**c - d)
 func        = double
-p0          = ones((func.__code__.co_argcount - 1));# p0[0] = 0
-fitParam    = dict(maxfev = int(1e5), bounds = (0, inf), p0 = p0)
+p0          = ones((func.__code__.co_argcount - 1)); # p0[0] = 0
+fitParam    = dict(maxfev = int(1e6), bounds = (0, inf), p0 = p0)
 
 settings = IO.readSettings(extractThis)
 repeats  = settings['repeat']
@@ -96,72 +100,103 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
-#zd = ndimage.filters.gaussian_filter1d(zd, 3, axis = 0)
-zd[zd < finfo(float).eps] = 0 # remove everything below machine error
+#zd = ndimage.filters.gaussian_filter1d(zd, .5, axis = -2)
+zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
+zd[zd < finfo(zd.dtype).eps] = 0 # remove everything below machine error
 
 # scale data 0-1 along each sample (nodes x delta)
-#zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
-#
-#MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
-#MIN = MIN[:, newaxis, :]
-#MAX = MAX[:, newaxis, :]
-#zd = (zd - MIN) / (MAX - MIN)
-#zd = zd.reshape(dd.shape)
+rescale = True
+rescale = False
+if rescale:
+    zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
+    MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
+    MIN = MIN[:, newaxis, :]
+    MAX = MAX[:, newaxis, :]
+    zd = (zd - MIN) / (MAX - MIN)
+    zd = zd.reshape(dd.shape)
 
 # show means with spread
 fig, ax = subplots(1, 2)
 mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
-mainax.set_title(temp + '\n\n')
-x = arange(deltas // 2)
-sidx = 1 #.96
+mainax.set_title(f'{temp}\n\n')
+mainax.set_xlabel('Time[step]', labelpad = 40)
+x  = arange(deltas // 2)
+xx = linspace(0, deltas // 2, 1000)
+sidx = 1.96
 labels = 'MI IMPACT'.split()
 
 from matplotlib.ticker import FormatStrFormatter
 mins, maxs = zd.reshape(-1, COND).min(0), zd.reshape(-1, COND).max(0)
 
 mins_, maxs_ = zd.min(0), zd.max(0)
-for tmp in zip(ax, zd.mean(0).T, zd.std(0).T, labels, mins, maxs, mins_.T, maxs_.T):
-    axi, zdi, zdstd, label, minner, maxer, min_, max_ = tmp
-    for node, idx in model.mapping.items():
-        a = min_[:, idx]
-        b = max_[:, idx]
-#        a = zdi[:, idx]  + sidx * zdstd[:, idx]
-#        b = zdi[:, idx]  - sidx * zdstd[:, idx]
-        axi.plot(x, zdi[:, idx], linestyle = '--', \
-                 markeredgecolor = 'black', label = node,\
-                 color = colors[idx])
-        axi.fill_between(x, a, b, color = colors[idx], alpha  = .4)
-#        axi.yaxis.set_major_formatter(FormatStrFormatter('%1.0e'))
+means, stds  = zd.mean(0), zd.std(0, ddof = 1)
+
+for cidx in range(COND):
+    # compute mean fit
+    meanCoeffs, meanErrors = plotz.fit(means[..., cidx].T, func, params = fitParam)
+    for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
+        # get min max * some std
+        a = means[idx, :, cidx] - sidx * stds [idx, :, cidx] # mins_[idx, :, cidx] #
+        b = means[idx, :, cidx] + sidx * stds [idx, :, cidx] # maxs_[idx, :, cidx]
+#        a = means[idx, :, cidx] - mins_[idx, :, cidx]
+#        a = means[idx, :, cidx] + maxs_[idx, :, cidx] 
+        # plot the raw data 
+        ax[cidx].errorbar(x, means[idx, :, cidx], fmt = '.',\
+          yerr = sidx * stds[idx, :, cidx], markersize = 20, \
+          label = node,\
+          color = colors[idx])
+        # plot mean fit
+        ax[cidx].plot(xx, func(xx, *meanCoeffs[idx]),\
+          color = colors[idx], alpha = 1, \
+          markeredgecolor = 'black')
         
-#    axi.set(yticks = (minner, maxer))
-    axi.ticklabel_format(axis = 'y', style = 'sci', scilimits = (0, 4))
-    axi.set_ylabel(label, labelpad = -30)
-axi.legend()
+        # fill the standard deviation from mean
+#        ax[cidx].fill_between(x, a, b, color = colors[idx], alpha  = .4)
+#        ax[cidx].yaxis.set_major_formatter(FormatStrFormatter('%1.0e'))
+        
+    ax[cidx].set(yticks = (0, maxs_[..., cidx].max()))
+    ax[cidx].ticklabel_format(axis = 'y', style = 'sci', scilimits = (0, 2))
+    ax[cidx].set_title(labels[cidx])
+#    ax[cidx].set(xscale = 'log', yscale = 'log'
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+ax[-1].legend(\
+  title = 'Node', title_fontsize = 20, loc = 'upper left', \
+  bbox_to_anchor = (1.05, 1))
+fig.show()
 # %% root based on data
-p0             = ones((func.__code__.co_argcount - 1)); #p0[0] = 0
-fitParam['p0'] = p0
-aucs       = zeros((\
-                        NSAMPLES, COND,\
-                        NODES), dtype = float32)
+aucs       = zeros((NSAMPLES, COND, NODES))
 
 from scipy import interpolate
 from time import sleep
 
 COEFFS = zeros((COND, NSAMPLES, NODES, p0.size))
-x = arange(deltas // 2 + 1)
+x = arange(deltas // 2)
 
-newx = linspace(0, deltas // 2 + 1, 100)
-
+#newx = linspace(0, deltas // 2 + 1, 100)
+#for cidx in range(COND):
+#    for nodei in range(model.nNodes):
+#        c, error = optimize.curve_fit(func, x, \
+#                                      means[nodei, :, cidx], \
+#                                      sigma = stds[nodei, :, cidx], **fitParam)
+#        
+#        tmp = integrate.quad(func, 0, inf, args = tuple(c), full_output = 1)
+#        auc = tmp[0]
+#        print(model.rmapping[nodei], auc)
+#lim = inf
+lim = deltas//2
 for samplei, sample in enumerate(zd):
     for condi, s in enumerate(sample.T):
         coeffs, errors = plotz.fit(s, func, params = fitParam)
         COEFFS[condi, samplei, ...] = coeffs
         for nodei, c in enumerate(coeffs):
             tmpF = lambda x: func(x, *c) 
-            auc, er =  integrate.quad(func, \
-                                      0, inf, args = tuple(c))
+            auc,er =  integrate.quad(func, 0, lim, args = tuple(c))
+#            if len(info) > 3:
+#                auc = 0
+#            else:
+#            auc = info[0]
+#            auc = auc if auc > 0 else 0
             aucs[samplei, condi, nodei] = auc
                 
           
@@ -169,12 +204,14 @@ for samplei, sample in enumerate(zd):
 # %% show idt auc vs impact auc
 fig, ax = subplots()
 
-for idx, (c, i) in enumerate(zip( colors, aucs.T)):
+for idx, node in sorted(model.rmapping.items(), key = lambda x : x[0]):
+    c = colors[idx]
+    i = aucs[..., idx].T
     ax.scatter(*i, color = c, label = model.rmapping[idx])
     ax.scatter(*median(i, 1), marker = 's', color = c, edgecolors = 'k')
     ax.scatter(*mean(i, 1), marker = '^', color = c, edgecolors = 'k')
-ax.legend(loc = 'upper right', bbox_to_anchor = (1.15, 1))
-ax.set(yscale = 'symlog')
+ax.legend(title = 'Node', loc = 'upper right', bbox_to_anchor = (1.15, 1))
+ax.set(yscale = 'log')
  # %% compute concistency
  
 bins = arange(-.5, model.nNodes + .5)
@@ -209,6 +246,20 @@ mainax.set_xlabel(r'$\theta$', labelpad = 30)
 
 
 # %%
-
-
+d = data[temp]['{}'][0].px.mean(0)
+t = float(temp.split('=')[1])
+sig = lambda x : 1 / ( 1 + exp(- 2 * x / t))
+for node in range(model.nNodes):
+    p = d[node, 0]
+    l = model.rmapping[node]
+    e = model.graph.nodes[l].get('H', 0)
+    a = exp(e / t)
+    b = exp(-e / t)
+    print(l, p, tanh(e / t))
+    for neighbor in model.graph.neighbors(l):
+        j = model.mapping[neighbor]
+        w = model.graph[l][neighbor]['weight']
+        
+        e += d[j, 0] * d[node,0] *w  + d[j, 1] * d[node , 1] * w 
+#    print(l, e, sig(e), p)
 # %%
