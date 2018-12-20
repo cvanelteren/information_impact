@@ -83,7 +83,7 @@ checkDistribution() # print it only once
 @cython.nonecheck(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cdef int encodeState(long[::1] state) nogil:
+cpdef int encodeState(long[::1] state) nogil:
     """Maps state to decimal number"""
     cdef:
         int binNum = 1
@@ -101,7 +101,7 @@ cdef int encodeState(long[::1] state) nogil:
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef vector[long] decodeState(int dec, int N) nogil:
+cpdef vector[long] decodeState(int dec, int N) nogil:
     """Decodes decimal number to state"""
     cdef:
         int i = 0
@@ -175,10 +175,11 @@ cpdef dict monteCarlo(\
         double Z              = <double> repeats
         double[::1] copyNudge = model.nudges.copy()
         bint reset            = True
-    # loop stuff
-    # extract startstates
-        long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in snapshots])
-        int states     = s.shape[0]
+        # loop stuff
+        # extract startstates
+        # list comprehension is slower than true loops cython
+        long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in tqdm(snapshots)])
+        int states     = len(snapshots)
 
         # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
         # loop parameters

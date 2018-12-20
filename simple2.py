@@ -101,7 +101,7 @@ repeats  = settings['repeat']
 from scipy import ndimage
 zd = dd;
 #zd = ndimage.filters.gaussian_filter1d(zd, .5, axis = -2)
-zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
+#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
 zd[zd < finfo(zd.dtype).eps] = 0 # remove everything below machine error
 
 # scale data 0-1 along each sample (nodes x delta)
@@ -137,8 +137,8 @@ for cidx in range(COND):
     meanCoeffs, meanErrors = plotz.fit(means[..., cidx].T, func, params = fitParam)
     for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
         # get min max * some std
-        a = means[idx, :, cidx] - sidx * stds [idx, :, cidx] # mins_[idx, :, cidx] #
-        b = means[idx, :, cidx] + sidx * stds [idx, :, cidx] # maxs_[idx, :, cidx]
+#        a = means[idx, :, cidx] - sidx * stds [idx, :, cidx] # mins_[idx, :, cidx] #
+#        b = means[idx, :, cidx] + sidx * stds [idx, :, cidx] # maxs_[idx, :, cidx]
 #        a = means[idx, :, cidx] - mins_[idx, :, cidx]
 #        a = means[idx, :, cidx] + maxs_[idx, :, cidx] 
         # plot the raw data 
@@ -148,7 +148,7 @@ for cidx in range(COND):
           color = colors[idx])
         # plot mean fit
         ax[cidx].plot(xx, func(xx, *meanCoeffs[idx]),\
-          color = colors[idx], alpha = 1, \
+          color = colors[idx], alpha = .5, \
           markeredgecolor = 'black')
         
         # fill the standard deviation from mean
@@ -174,15 +174,18 @@ COEFFS = zeros((COND, NSAMPLES, NODES, p0.size))
 x = arange(deltas // 2)
 
 #newx = linspace(0, deltas // 2 + 1, 100)
-#for cidx in range(COND):
-#    for nodei in range(model.nNodes):
+
+#for nodei in range(model.nNodes):
+#    print(model.rmapping[nodei], end = ' ')
+#    for cidx in range(COND):
 #        c, error = optimize.curve_fit(func, x, \
 #                                      means[nodei, :, cidx], \
-#                                      sigma = stds[nodei, :, cidx], **fitParam)
+#                                      **fitParam)
 #        
-#        tmp = integrate.quad(func, 0, inf, args = tuple(c), full_output = 1)
+#        tmp = integrate.quad(func, 0, deltas // 2, args = tuple(c), full_output = 1)
 #        auc = tmp[0]
-#        print(model.rmapping[nodei], auc)
+#        print(auc, end = '\t')
+#    print()
 #lim = inf
 lim = deltas//2
 for samplei, sample in enumerate(zd):
@@ -236,6 +239,11 @@ for axi, t in zip(ax, tmp):
 colorbar(h, ax = axi, label = 'frequency')
 mainax.set_xlabel(r'$\theta$', labelpad = 30)   
 # %%
+fig, ax = subplots(1, COND)
+for cidx in range(COND):
+    ax[cidx].imshow(ranking[:, cidx, :].T)
+    
+# %%
 #fig, ax = subplots(2)
 #for axi, d in zip(ax, maxim.T):
 #    h = axi.imshow(\
@@ -246,20 +254,21 @@ mainax.set_xlabel(r'$\theta$', labelpad = 30)
 
 
 # %%
-d = data[temp]['{}'][0].px.mean(0)
+from Toolbox import infcy
+snaps = data[temp]['{}'][0].snapshots
+ens = {}
 t = float(temp.split('=')[1])
-sig = lambda x : 1 / ( 1 + exp(- 2 * x / t))
-for node in range(model.nNodes):
-    p = d[node, 0]
-    l = model.rmapping[node]
-    e = model.graph.nodes[l].get('H', 0)
-    a = exp(e / t)
-    b = exp(-e / t)
-    print(l, p, tanh(e / t))
-    for neighbor in model.graph.neighbors(l):
-        j = model.mapping[neighbor]
-        w = model.graph[l][neighbor]['weight']
-        
-        e += d[j, 0] * d[node,0] *w  + d[j, 1] * d[node , 1] * w 
+for k, v in snaps.items():
+    state = infcy.decodeState(k, model.nNodes)
+    for i in range(model.nNodes):
+        nodei = model.rmapping[i]
+        e = 0
+        c = 0
+        for nodej in model.graph.neighbors(nodei):
+            j = model.mapping[nodej]
+            e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
+        ens[nodei] = ens.get(nodei, 0) + e * v + state[i] * model.graph.nodes[nodei].get('H', 0)
 #    print(l, e, sig(e), p)
 # %%
+for k, v in ens.items():
+    print(k, v * .1)

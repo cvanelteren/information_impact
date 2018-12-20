@@ -29,14 +29,14 @@ if __name__ == '__main__':
     repeats       = int(1e4)
     deltas        = 8
     step          = 100
-    nSamples      = int(1e5)
-    burninSamples = 100000
-    pulseSize     = .5
+    nSamples      = int(1e4)
+    burninSamples = 100_000
+    pulseSize     = -.2
 
     numIter       = 5 if real else 5
     magSide       = 'neg'
-    updateType    = 'single'
-    CHECK         = [.8] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = 'async'
+    CHECK         = [.9] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -155,6 +155,7 @@ if __name__ == '__main__':
                                                deltas = deltas, repeats  = repeats,\
                                                )
 
+
                 # px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
                 # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
                  # deltas = deltas, repeats = repeats, pulse = pulse, updateType= 'source')
@@ -170,18 +171,25 @@ if __name__ == '__main__':
                                         graph       = model.graph,\
                                         px          = px, snapshots = snapshots)
                 IO.savePickle(fileName, sr)
-                pulses = {}
-                # for node in model.graph.nodes():
-                #     pulseSize = model.graph.nodes[node].get('H', 0)
-                #     c = 0
-                #     for neighbor in model.graph.neighbors(node):
-                #         pulseSize += model.graph[node][neighbor].get('weight', 1)
-                #         c += 1
-                #     pulses[node] =  pulseSize / c
-                #     print(node, pulses[node])
 
-                # nudge all nodes
-                pulses = {node : pulseSize for node in model.graph.nodes()}
+                # estimate average energy
+                pulses = {}
+                for k, v in snapshots.items():
+                    state = infcy.decodeState(k, model.nNodes)
+                    for i in range(model.nNodes):
+                        nodei = model.rmapping[i]
+                        e = 0
+                        for nodej in model.graph.neighbors(nodei):
+                            j = model.mapping[nodej]
+                            e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
+                        pulses[nodei] = pulses.get(nodei, 0) + e * v + state[i] * model.graph.nodes[nodei].get('H', 0)
+                for k in pulses:
+                    pulses[k] *= pulseSize
+#
+#
+#
+#                # nudge all nodes
+                # pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
                     pulse        = {n : p}
                     model.nudges = pulse
