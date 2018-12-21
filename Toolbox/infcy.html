@@ -1714,7 +1714,7 @@ struct __pyx_opt_args_7Toolbox_5infcy_monteCarlo {
 </pre><pre class="cython line score-0">&#xA0;<span class="">189</span>:         <span class="c"># unordered_map[int, double *] conditional</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">190</span>:         <span class="nb">long</span><span class="p">[::</span><span class="mf">1</span><span class="p">]</span> <span class="n">startState</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">191</span>:         <span class="nb">int</span> <span class="n">jdx</span></pre>
-<pre class="cython line score-40" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">192</span>:         <span class="n">double</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">out</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">states</span> <span class="p">,</span> <span class="p">(</span><span class="n">deltas</span> <span class="o">+</span> <span class="mf">1</span><span class="p">),</span> <span class="n">model</span><span class="o">.</span><span class="n">_nNodes</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nStates</span><span class="p">))</span></pre>
+<pre class="cython line score-40" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">192</span>:         <span class="n">double</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">out</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">states</span> <span class="p">,</span> <span class="p">(</span><span class="n">deltas</span><span class="p">),</span> <span class="n">model</span><span class="o">.</span><span class="n">_nNodes</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nStates</span><span class="p">))</span></pre>
 <pre class='cython code score-40 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_1, __pyx_n_s_np);<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_1, __pyx_n_s_zeros);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
@@ -1722,7 +1722,7 @@ struct __pyx_opt_args_7Toolbox_5infcy_monteCarlo {
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_states);<span class='error_goto'> if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
-  __pyx_t_7 = <span class='pyx_c_api'>__Pyx_PyInt_From_long</span>((__pyx_v_deltas + 1));<span class='error_goto'> if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
+  __pyx_t_7 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_deltas);<span class='error_goto'> if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_7);
   __pyx_t_6 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_model-&gt;_nNodes);<span class='error_goto'> if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 192, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_6);
@@ -1763,8 +1763,8 @@ struct __pyx_opt_args_7Toolbox_5infcy_monteCarlo {
   __pyx_v_out = __pyx_t_15;
   __pyx_t_15.memview = NULL;
   __pyx_t_15.data = NULL;
-</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">193</span>:         <span class="nb">long</span><span class="p">[</span>  <span class="p">:,</span>       <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">r</span>       <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sampleNodes</span><span class="p">(</span> <span class="n">states</span> <span class="o">*</span> <span class="p">(</span><span class="n">deltas</span> <span class="o">+</span> <span class="mf">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">repeats</span><span class="p">)</span></pre>
-<pre class='cython code score-0 '>  __pyx_t_12 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model-&gt;__pyx_vtab)-&gt;sampleNodes(__pyx_v_model, ((__pyx_v_states * (__pyx_v_deltas + 1)) * __pyx_v_repeats));<span class='error_goto'> if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 193, __pyx_L1_error)</span>
+</pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">193</span>:         <span class="nb">long</span><span class="p">[</span>  <span class="p">:,</span>       <span class="p">::</span><span class="mf">1</span><span class="p">]</span> <span class="n">r</span>       <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sampleNodes</span><span class="p">(</span> <span class="n">states</span> <span class="o">*</span> <span class="p">(</span><span class="n">deltas</span><span class="p">)</span> <span class="o">*</span> <span class="n">repeats</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_12 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model-&gt;__pyx_vtab)-&gt;sampleNodes(__pyx_v_model, ((__pyx_v_states * __pyx_v_deltas) * __pyx_v_repeats));<span class='error_goto'> if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 193, __pyx_L1_error)</span>
   __pyx_v_r = __pyx_t_12;
   __pyx_t_12.memview = NULL;
   __pyx_t_12.data = NULL;
@@ -2082,16 +2082,16 @@ struct __pyx_opt_args_7Toolbox_5infcy_monteCarlo {
 <pre class="cython line score-0">&#xA0;<span class="">233</span>:             <span class="c">#     model._nudges[node] = copyNudge[node]</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">234</span>:             <span class="c"># reset simulation</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">235</span>:             <span class="c"># sample for N times</span></pre>
-<pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">236</span>:             <span class="k">for</span> <span class="n">delta</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">deltas</span> <span class="o">+</span> <span class="mf">1</span><span class="p">):</span></pre>
-<pre class='cython code score-0 '>                              __pyx_t_34 = (__pyx_v_deltas + 1);
-                              __pyx_t_35 = __pyx_t_34;
-                              for (__pyx_t_25 = 0; __pyx_t_25 &lt; __pyx_t_35; __pyx_t_25+=1) {
-                                __pyx_v_delta = __pyx_t_25;
+<pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">236</span>:             <span class="k">for</span> <span class="n">delta</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">deltas</span> <span class="p">):</span></pre>
+<pre class='cython code score-0 '>                              __pyx_t_25 = __pyx_v_deltas;
+                              __pyx_t_26 = __pyx_t_25;
+                              for (__pyx_t_27 = 0; __pyx_t_27 &lt; __pyx_t_26; __pyx_t_27+=1) {
+                                __pyx_v_delta = __pyx_t_27;
 </pre><pre class="cython line score-0">&#xA0;<span class="">237</span>:                 <span class="c"># bin data</span></pre>
 <pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">238</span>:                 <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nNodes</span><span class="p">):</span></pre>
-<pre class='cython code score-0 '>                                __pyx_t_26 = __pyx_v_nNodes;
-                                __pyx_t_27 = __pyx_t_26;
-                                for (__pyx_t_36 = 0; __pyx_t_36 &lt; __pyx_t_27; __pyx_t_36+=1) {
+<pre class='cython code score-0 '>                                __pyx_t_34 = __pyx_v_nNodes;
+                                __pyx_t_35 = __pyx_t_34;
+                                for (__pyx_t_36 = 0; __pyx_t_36 &lt; __pyx_t_35; __pyx_t_36+=1) {
                                   __pyx_v_node = __pyx_t_36;
 </pre><pre class="cython line score-0" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">239</span>:                     <span class="n">out</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">idxer</span><span class="p">[(&lt;</span><span class="kt">Model</span><span class="p">&gt;</span><span class="n">models_</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">ptr</span><span class="p">)</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">node</span><span class="p">]]]</span> <span class="o">+=</span> <span class="mf">1</span> <span class="o">/</span> <span class="n">Z</span></pre>
 <pre class='cython code score-0 '>                                  __pyx_t_30 = (__pyx_v_models_[__pyx_v_state]).ptr;
@@ -2592,13 +2592,13 @@ static PyObject *__pyx_pf_7Toolbox_5infcy_10mutualInformation(CYTHON_UNUSED PyOb
 <pre class="cython line score-0">&#xA0;<span class="">292</span>:     <span class="sd">&#39;&#39;&#39;</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">293</span>: <span class="sd">    Returns the node distribution and the mutual information decay</span></pre>
 <pre class="cython line score-0">&#xA0;<span class="">294</span>: <span class="sd">    &#39;&#39;&#39;</span></pre>
-<pre class="cython line score-36" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">295</span>:     <span class="k">cdef</span>  <span class="kt">np</span>.<span class="kt">ndarray</span> <span class="nf">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">deltas</span> <span class="o">+</span> <span class="mf">1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nNodes</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nStates</span><span class="p">))</span></pre>
+<pre class="cython line score-36" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">295</span>:     <span class="k">cdef</span>  <span class="kt">np</span>.<span class="kt">ndarray</span> <span class="nf">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">deltas</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nNodes</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nStates</span><span class="p">))</span></pre>
 <pre class='cython code score-36 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_2, __pyx_n_s_np);<span class='error_goto'> if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
   __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_2, __pyx_n_s_zeros);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 295, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = <span class='pyx_c_api'>__Pyx_PyInt_From_long</span>((__pyx_v_deltas + 1));<span class='error_goto'> if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)</span>
+  __pyx_t_2 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_deltas);<span class='error_goto'> if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
   __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_model-&gt;_nNodes);<span class='error_goto'> if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_4);
@@ -2634,13 +2634,13 @@ static PyObject *__pyx_pf_7Toolbox_5infcy_10mutualInformation(CYTHON_UNUSED PyOb
   if (!(likely(((__pyx_t_1) == Py_None) || likely(<span class='pyx_c_api'>__Pyx_TypeTest</span>(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) <span class='error_goto'>__PYX_ERR(0, 295, __pyx_L1_error)</span>
   __pyx_v_px = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
-</pre><pre class="cython line score-33" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">296</span>:     <span class="k">cdef</span>  <span class="kt">np</span>.<span class="kt">ndarray</span> <span class="nf">H</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">deltas</span> <span class="o">+</span> <span class="mf">1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nNodes</span><span class="p">))</span></pre>
+</pre><pre class="cython line score-33" onclick="(function(s){s.display=s.display==='block'?'none':'block'})(this.nextElementSibling.style)">+<span class="">296</span>:     <span class="k">cdef</span>  <span class="kt">np</span>.<span class="kt">ndarray</span> <span class="nf">H</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">deltas</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">_nNodes</span><span class="p">))</span></pre>
 <pre class='cython code score-33 '>  <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_t_3, __pyx_n_s_np);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 296, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
   __pyx_t_6 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_3, __pyx_n_s_zeros);<span class='error_goto'> if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 296, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_6);
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyInt_From_long</span>((__pyx_v_deltas + 1));<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 296, __pyx_L1_error)</span>
+  __pyx_t_3 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_deltas);<span class='error_goto'> if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 296, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_3);
   __pyx_t_5 = <span class='pyx_c_api'>__Pyx_PyInt_From_int</span>(__pyx_v_model-&gt;_nNodes);<span class='error_goto'> if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 296, __pyx_L1_error)</span>
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_5);

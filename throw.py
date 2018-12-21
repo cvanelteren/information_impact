@@ -3,11 +3,11 @@ faulthandler.enable()
 import networkx as nx
 from numpy import *
 from matplotlib.pyplot import *
-import plotting as plotz, copy
+import Utils.plotting as plotz, copy
 
 style.use('seaborn-poster')
 dataDir = 'Psycho' # relative path careful
-import IO
+from Utils import IO
 df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
  #
@@ -23,28 +23,22 @@ for node, row in h.iterrows():
 
 nx.set_node_attributes(graph, attr)
 #graph  = nx.path_graph(3)
-graph = nx.barabasi_albert_graph(10, 2)
+graph = nx.barabasi_albert_graph(3, 2)
 
 # graph = nx.path_graph(10)
-import fastIsing
+from Models import fastIsing
 #graph = nx.path_graph(20)
 s = time.process_time()
 fig, ax = subplots()
 nx.draw(graph, with_labels = 1)
 m = fastIsing.Ising(graph, temperature = 1)
-import copy
 
-c = copy.deepcopy(m)
-c.states = 2
-
-print(id(c.states) == id(m.states))
-#assert id(c.states) != id(m.states)
 from time import time
 m.updateType = 'single'
 
 m.magSide    = 'pos'
 ###m.reset()
-import infcy
+from Toolbox import infcy
 
 temps = linspace(0, 10, 100)
 mags, sus = m.matchMagnetization(temps, 1000, 0)

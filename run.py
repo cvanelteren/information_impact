@@ -27,15 +27,14 @@ if __name__ == '__main__':
     else:
         real = 0
     repeats       = int(1e4)
-    deltas        = 8
+    deltas        = 20
     step          = 100
     nSamples      = int(1e4)
     burninSamples = 100_000
-    pulseSize     = -.2
-
+    pulseSize     = .5
     numIter       = 5 if real else 5
     magSide       = 'neg'
-    updateType    = 'async'
+    updateType    = 'single'
     CHECK         = [.9] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
@@ -56,7 +55,7 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-#        graphs += [nx.path_graph(3)]
+#       graphs += [nx.path_graph(3)]
         graphs += [nx.krackhardt_kite_graph()]
 
 
@@ -169,27 +168,28 @@ if __name__ == '__main__':
                                          mi         = mi,\
                                         conditional = conditional,\
                                         graph       = model.graph,\
-                                        px          = px, snapshots = snapshots)
+                                        px          = px,\
+                                        snapshots   = snapshots)
                 IO.savePickle(fileName, sr)
 
                 # estimate average energy
-                pulses = {}
-                for k, v in snapshots.items():
-                    state = infcy.decodeState(k, model.nNodes)
-                    for i in range(model.nNodes):
-                        nodei = model.rmapping[i]
-                        e = 0
-                        for nodej in model.graph.neighbors(nodei):
-                            j = model.mapping[nodej]
-                            e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
-                        pulses[nodei] = pulses.get(nodei, 0) + e * v + state[i] * model.graph.nodes[nodei].get('H', 0)
-                for k in pulses:
-                    pulses[k] *= pulseSize
-#
+                # pulses = {}
+                # for k, v in snapshots.items():
+                #     state = infcy.decodeState(k, model.nNodes)
+                #     for i in range(model.nNodes):
+                #         nodei = model.rmapping[i]
+                #         e = 0
+                #         for nodej in model.graph.neighbors(nodei):
+                #             j = model.mapping[nodej]
+                #             e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
+                #         pulses[nodei] = pulses.get(nodei, 0)  - e * v - state[i] * model.H[i]
+                # for k in pulses:
+                #     pulses[k] *= pulseSize
+
 #
 #
 #                # nudge all nodes
-                # pulses = {node : pulseSize for node in model.graph.nodes()}
+                pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
                     pulse        = {n : p}
                     model.nudges = pulse
@@ -201,8 +201,9 @@ if __name__ == '__main__':
                     # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                     fileName = f'{targetDirectory}/{time.time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                     sr = SimulationResult(\
-                                             mi         = mi,\
+                                            mi          = mi,\
                                             conditional = conditional,\
                                             graph       = model.graph,\
-                                            px          = px, snapshots = snapshots)
+                                            px          = px,\
+                                            snapshots   = snapshots)
                     IO.savePickle(fileName, sr)

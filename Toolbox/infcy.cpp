@@ -4225,8 +4225,8 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
   Py_ssize_t __pyx_t_31;
   Py_ssize_t __pyx_t_32;
   Py_ssize_t __pyx_t_33;
-  long __pyx_t_34;
-  long __pyx_t_35;
+  int __pyx_t_34;
+  int __pyx_t_35;
   int __pyx_t_36;
   Py_ssize_t __pyx_t_37;
   Py_ssize_t __pyx_t_38;
@@ -4508,8 +4508,8 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
   /* "Toolbox/infcy.pyx":192
  *         long[::1] startState
  *         int jdx
- *         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))             # <<<<<<<<<<<<<<
- *         long[  :,       ::1] r       = model.sampleNodes( states * (deltas + 1) * repeats)
+ *         double[:, :, :, ::1] out     = np.zeros((states , (deltas), model._nNodes, model._nStates))             # <<<<<<<<<<<<<<
+ *         long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)
  *         # list m = []
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
@@ -4519,7 +4519,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_states); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_7 = __Pyx_PyInt_From_long((__pyx_v_deltas + 1)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 192, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_deltas); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_model->_nNodes); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
@@ -4563,12 +4563,12 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
 
   /* "Toolbox/infcy.pyx":193
  *         int jdx
- *         double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
- *         long[  :,       ::1] r       = model.sampleNodes( states * (deltas + 1) * repeats)             # <<<<<<<<<<<<<<
+ *         double[:, :, :, ::1] out     = np.zeros((states , (deltas), model._nNodes, model._nStates))
+ *         long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)             # <<<<<<<<<<<<<<
  *         # list m = []
  * 
  */
-  __pyx_t_12 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model->__pyx_vtab)->sampleNodes(__pyx_v_model, ((__pyx_v_states * (__pyx_v_deltas + 1)) * __pyx_v_repeats)); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 193, __pyx_L1_error)
+  __pyx_t_12 = ((struct __pyx_vtabstruct_6Models_6models_Model *)__pyx_v_model->__pyx_vtab)->sampleNodes(__pyx_v_model, ((__pyx_v_states * __pyx_v_deltas) * __pyx_v_repeats)); if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 193, __pyx_L1_error)
   __pyx_v_r = __pyx_t_12;
   __pyx_t_12.memview = NULL;
   __pyx_t_12.data = NULL;
@@ -4983,25 +4983,25 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
                               /* "Toolbox/infcy.pyx":236
  *             # reset simulation
  *             # sample for N times
- *             for delta in range(deltas + 1):             # <<<<<<<<<<<<<<
+ *             for delta in range(deltas ):             # <<<<<<<<<<<<<<
  *                 # bin data
  *                 for node in range(nNodes):
  */
-                              __pyx_t_34 = (__pyx_v_deltas + 1);
-                              __pyx_t_35 = __pyx_t_34;
-                              for (__pyx_t_25 = 0; __pyx_t_25 < __pyx_t_35; __pyx_t_25+=1) {
-                                __pyx_v_delta = __pyx_t_25;
+                              __pyx_t_25 = __pyx_v_deltas;
+                              __pyx_t_26 = __pyx_t_25;
+                              for (__pyx_t_27 = 0; __pyx_t_27 < __pyx_t_26; __pyx_t_27+=1) {
+                                __pyx_v_delta = __pyx_t_27;
 
                                 /* "Toolbox/infcy.pyx":238
- *             for delta in range(deltas + 1):
+ *             for delta in range(deltas ):
  *                 # bin data
  *                 for node in range(nNodes):             # <<<<<<<<<<<<<<
  *                     out[state, delta, node, idxer[(<Model>models_[state].ptr)._states[node]]] += 1 / Z
  *                     # for statei in range(nStates):
  */
-                                __pyx_t_26 = __pyx_v_nNodes;
-                                __pyx_t_27 = __pyx_t_26;
-                                for (__pyx_t_36 = 0; __pyx_t_36 < __pyx_t_27; __pyx_t_36+=1) {
+                                __pyx_t_34 = __pyx_v_nNodes;
+                                __pyx_t_35 = __pyx_t_34;
+                                for (__pyx_t_36 = 0; __pyx_t_36 < __pyx_t_35; __pyx_t_36+=1) {
                                   __pyx_v_node = __pyx_t_36;
 
                                   /* "Toolbox/infcy.pyx":239
@@ -5667,8 +5667,8 @@ static PyObject *__pyx_f_7Toolbox_5infcy_mutualInformation(PyObject *__pyx_v_con
   /* "Toolbox/infcy.pyx":295
  *     Returns the node distribution and the mutual information decay
  *     '''
- *     cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))             # <<<<<<<<<<<<<<
- *     cdef  np.ndarray H  = np.zeros((deltas + 1, model._nNodes))
+ *     cdef  np.ndarray px = np.zeros((deltas, model._nNodes, model._nStates))             # <<<<<<<<<<<<<<
+ *     cdef  np.ndarray H  = np.zeros((deltas, model._nNodes))
  *     for key, p in conditional.items():
  */
   __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
@@ -5676,7 +5676,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_mutualInformation(PyObject *__pyx_v_con
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 295, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_From_long((__pyx_v_deltas + 1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_deltas); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 295, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_model->_nNodes); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -5715,8 +5715,8 @@ static PyObject *__pyx_f_7Toolbox_5infcy_mutualInformation(PyObject *__pyx_v_con
 
   /* "Toolbox/infcy.pyx":296
  *     '''
- *     cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
- *     cdef  np.ndarray H  = np.zeros((deltas + 1, model._nNodes))             # <<<<<<<<<<<<<<
+ *     cdef  np.ndarray px = np.zeros((deltas, model._nNodes, model._nStates))
+ *     cdef  np.ndarray H  = np.zeros((deltas, model._nNodes))             # <<<<<<<<<<<<<<
  *     for key, p in conditional.items():
  *         # p    = np.asarray(p)
  */
@@ -5725,7 +5725,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_mutualInformation(PyObject *__pyx_v_con
   __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_zeros); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_From_long((__pyx_v_deltas + 1)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_deltas); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_model->_nNodes); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 296, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
@@ -5758,8 +5758,8 @@ static PyObject *__pyx_f_7Toolbox_5infcy_mutualInformation(PyObject *__pyx_v_con
   __pyx_t_1 = 0;
 
   /* "Toolbox/infcy.pyx":297
- *     cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
- *     cdef  np.ndarray H  = np.zeros((deltas + 1, model._nNodes))
+ *     cdef  np.ndarray px = np.zeros((deltas, model._nNodes, model._nStates))
+ *     cdef  np.ndarray H  = np.zeros((deltas, model._nNodes))
  *     for key, p in conditional.items():             # <<<<<<<<<<<<<<
  *         # p    = np.asarray(p)
  *         H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]

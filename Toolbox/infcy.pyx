@@ -189,8 +189,8 @@ cpdef dict monteCarlo(\
         # unordered_map[int, double *] conditional
         long[::1] startState
         int jdx
-        double[:, :, :, ::1] out     = np.zeros((states , (deltas + 1), model._nNodes, model._nStates))
-        long[  :,       ::1] r       = model.sampleNodes( states * (deltas + 1) * repeats)
+        double[:, :, :, ::1] out     = np.zeros((states , (deltas), model._nNodes, model._nStates))
+        long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)
         # list m = []
 
         int nNodes = model._nNodes, nStates = model._nStates
@@ -233,7 +233,7 @@ cpdef dict monteCarlo(\
             #     model._nudges[node] = copyNudge[node]
             # reset simulation
             # sample for N times
-            for delta in range(deltas + 1):
+            for delta in range(deltas ):
                 # bin data
                 for node in range(nNodes):
                     out[state, delta, node, idxer[(<Model>models_[state].ptr)._states[node]]] += 1 / Z
@@ -292,8 +292,8 @@ cpdef mutualInformation(dict conditional, int deltas, \
     '''
     Returns the node distribution and the mutual information decay
     '''
-    cdef  np.ndarray px = np.zeros((deltas + 1, model._nNodes, model._nStates))
-    cdef  np.ndarray H  = np.zeros((deltas + 1, model._nNodes))
+    cdef  np.ndarray px = np.zeros((deltas, model._nNodes, model._nStates))
+    cdef  np.ndarray H  = np.zeros((deltas, model._nNodes))
     for key, p in conditional.items():
         # p    = np.asarray(p)
         H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]

@@ -69,11 +69,11 @@ for condition, samples in data[temp].items():
         else:
             control = data[temp]['{}'][idx].px
             px      = sample.px
-#            impact = stats.hellingerDistance(px, control).mean(-1)
-            tmp = stats.KL(control, sample.px)
-            impact = nanmean(tmp, axis = -1)
+#            impact = stats.hellingerDistance(px, control)
+            impact  = stats.KL(control, sample.px)
+#            impact = nanmean(tmp, axis = -1)
 #            print(impact)
-            redIm = impact[deltas // 2  + 1 : ][None, :].T
+            redIm = impact[deltas // 2  + 1 : ].mean(-1)[None, :].T
 #            print(impact)
             # TODO: check if this works with tuples (not sure)
             jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
@@ -82,6 +82,8 @@ for condition, samples in data[temp].items():
 #            print(model.rmapping[jdx[0]], tmp[deltas//2, jdx])
             dd[idx, jdx, ...,  1] = redIm.squeeze().T
 #dd [dd < finfo(float).eps ] = 0
+print(impact)
+print(dd[...,-1])
 # %% extract root from samples
             
 # fit functions
@@ -100,8 +102,8 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, .5, axis = -2)
-#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
+#zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, .1, axis = 0)
 zd[zd < finfo(zd.dtype).eps] = 0 # remove everything below machine error
 
 # scale data 0-1 along each sample (nodes x delta)
@@ -123,14 +125,14 @@ mainax.set_title(f'{temp}\n\n')
 mainax.set_xlabel('Time[step]', labelpad = 40)
 x  = arange(deltas // 2)
 xx = linspace(0, deltas // 2, 1000)
-sidx = 1.96
+sidx = 1 # .96
 labels = 'MI IMPACT'.split()
 
 from matplotlib.ticker import FormatStrFormatter
 mins, maxs = zd.reshape(-1, COND).min(0), zd.reshape(-1, COND).max(0)
 
 mins_, maxs_ = zd.min(0), zd.max(0)
-means, stds  = zd.mean(0), zd.std(0, ddof = 1)
+means, stds  = zd.mean(0), zd.std(0, ddof = 0)
 
 for cidx in range(COND):
     # compute mean fit
@@ -256,11 +258,18 @@ for cidx in range(COND):
 # %%
 from Toolbox import infcy
 snaps = data[temp]['{}'][0].snapshots
+
+#print(data[temp]['{}'][0].px - data[temp]['{0: inf}'][0].px)
 ens = {}
 t = float(temp.split('=')[1])
+
+sig = lambda x: 1 / (1 + exp(-2 * x / t))
+px = zeros(model.nNodes)
 for k, v in snaps.items():
     state = infcy.decodeState(k, model.nNodes)
     for i in range(model.nNodes):
+        if state[i] == -1:
+            px[i] += v
         nodei = model.rmapping[i]
         e = 0
         c = 0
@@ -269,6 +278,5 @@ for k, v in snaps.items():
             e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
         ens[nodei] = ens.get(nodei, 0) + e * v + state[i] * model.graph.nodes[nodei].get('H', 0)
 #    print(l, e, sig(e), p)
-# %%
 for k, v in ens.items():
-    print(k, v * .1)
+    print(k, sig(-v), 1 - sig(-v))
