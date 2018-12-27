@@ -108,13 +108,13 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, 1.5, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
 
 
 # scale data 0-1 along each sample (nodes x delta)
 rescale = True
-rescale = False
+#rescale = False
 if rescale:
     zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
     MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
@@ -122,7 +122,9 @@ if rescale:
     MAX = MAX[:, newaxis, :]
     zd = (zd - MIN) / (MAX - MIN)
     zd = zd.reshape(dd.shape)
-zd[zd < finfo(zd.dtype).eps] = 0 # remove everything below machine error
+thresh = 1e-4
+zd[zd <= thresh] = 0
+#zd[zd <= finfo(zd.dtype).eps] = 0 # remove everything below machine error
 # show means with spread
 fig, ax = subplots(1, 2)
 mainax  = fig.add_subplot(111, frameon = 0)
@@ -177,8 +179,8 @@ COEFFS = zeros((COND, NSAMPLES, NODES, p0.size))
 x = arange(indices)
 
 #lim = inf
-lim = deltas//2
-lim = inf
+lim = deltas // 2
+#lim = inf
 for samplei, sample in enumerate(zd):
     for condi, s in enumerate(sample.T):
         coeffs, errors = plotz.fit(s, func, params = fitParam)
@@ -189,7 +191,6 @@ for samplei, sample in enumerate(zd):
             aucs[samplei, condi, nodei] = auc
 # %% show idt auc vs impact auc
 fig, ax = subplots()
-
 for idx, node in sorted(model.rmapping.items(), key = lambda x : x[0]):
     c = colors[idx]
     i = aucs[..., idx].T

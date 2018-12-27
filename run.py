@@ -27,12 +27,12 @@ if __name__ == '__main__':
     else:
         real = 0
     repeats       = int(1e4)
-    deltas        = 50
+    deltas        = 80
     step          = 100
     nSamples      = int(1e3)
     burninSamples = 100_000
     pulseSizes    = [.1, inf]
-    numIter       = 2
+    numIter       = 5
     magSide       = 'neg'
     updateType    = 'single'
     CHECK         = [.9] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
@@ -114,8 +114,8 @@ if __name__ == '__main__':
             # run the simulation per temperature
             temperatures = array([])
             f_root = lambda x,  c: func(x, *a) - c
-            magRange *= max(mag)
-            for m in magRange:
+            magnetizations = max(mag) * magRange
+            for m in magnetizations:
                 r = scipy.optimize.root(f_root, 0, args = (m), method = 'linearmixing')#, method = 'linearmixing')
                 rot = r.x if r.x > 0 else 0
                 temperatures = hstack((temperatures, rot))
@@ -133,10 +133,10 @@ if __name__ == '__main__':
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
 
 
-        for t in temperatures:
+        for t, mag in zip(temperatures, magRange):
             print(f'{time.time()} Setting {t}')
             model.t = t # update beta
-            tempDir = f'{targetDirectory}/{t : .2f}'
+            tempDir = f'{targetDirectory}/{mag}'
             if not os.path.exists(tempDir):
                 print('making directory')
                 os.mkdir(tempDir)
@@ -156,9 +156,9 @@ if __name__ == '__main__':
                 conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
                 print(f'{time.time()} Computing MI')
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                if not os.path.exists(f'{tempDir}/0'):
-                    os.mkdir(f'{tempDir}/0')
-                fileName = f'{tempDir}/0/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
+                if not os.path.exists(f'{tempDir}/control/'):
+                    os.mkdir(f'{tempDir}/control')
+                fileName = f'{tempDir}/control/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
                 sr       = SimulationResult(\
                                         mi          = mi,\
                                         conditional = conditional,\
