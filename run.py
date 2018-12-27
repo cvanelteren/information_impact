@@ -27,11 +27,11 @@ if __name__ == '__main__':
     else:
         real = 0
     repeats       = int(1e4)
-    deltas        = 20
+    deltas        = 100
     step          = 100
-    nSamples      = int(1e4)
+    nSamples      = int(1e3)
     burninSamples = 100_000
-    pulseSize     = .5
+    pulseSize     = -.5
     numIter       = 5 if real else 5
     magSide       = 'neg'
     updateType    = 'single'
@@ -55,8 +55,8 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-#       graphs += [nx.path_graph(3)]
-        graphs += [nx.krackhardt_kite_graph()]
+       # graphs += [nx.path_graph(3)]
+       graphs += [nx.krackhardt_kite_graph()]
 
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
@@ -173,23 +173,23 @@ if __name__ == '__main__':
                 IO.savePickle(fileName, sr)
 
                 # estimate average energy
-                # pulses = {}
-                # for k, v in snapshots.items():
-                #     state = infcy.decodeState(k, model.nNodes)
-                #     for i in range(model.nNodes):
-                #         nodei = model.rmapping[i]
-                #         e = 0
-                #         for nodej in model.graph.neighbors(nodei):
-                #             j = model.mapping[nodej]
-                #             e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
-                #         pulses[nodei] = pulses.get(nodei, 0)  - e * v - state[i] * model.H[i]
-                # for k in pulses:
-                #     pulses[k] *= pulseSize
+                pulses = {}
+                for k, v in snapshots.items():
+                    state = infcy.decodeState(k, model.nNodes)
+                    for i in range(model.nNodes):
+                        nodei = model.rmapping[i]
+                        e = 0
+                        for nodej in model.graph.neighbors(nodei):
+                            j = model.mapping[nodej]
+                            e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
+                        pulses[nodei] = pulses.get(nodei, 0)  - e * v - state[i] * model.H[i]
+                for k in pulses:
+                    pulses[k] *= pulseSize
 
 #
 #
 #                # nudge all nodes
-                pulses = {node : pulseSize for node in model.graph.nodes()}
+                # pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
                     pulse        = {n : p}
                     model.nudges = pulse
