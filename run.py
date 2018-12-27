@@ -26,16 +26,16 @@ if __name__ == '__main__':
         real = sys.argv[1]
     else:
         real = 0
-    repeats       = int(1e4)
+    repeats       = int(5e4)
     deltas        = 100
     step          = 100
     nSamples      = int(1e3)
     burninSamples = 100_000
-    pulseSize     = -.5
-    numIter       = 5 if real else 5
+    pulseSize     = .15
+    numIter       = 1
     magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [.9] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -173,23 +173,23 @@ if __name__ == '__main__':
                 IO.savePickle(fileName, sr)
 
                 # estimate average energy
-                pulses = {}
-                for k, v in snapshots.items():
-                    state = infcy.decodeState(k, model.nNodes)
-                    for i in range(model.nNodes):
-                        nodei = model.rmapping[i]
-                        e = 0
-                        for nodej in model.graph.neighbors(nodei):
-                            j = model.mapping[nodej]
-                            e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
-                        pulses[nodei] = pulses.get(nodei, 0)  - e * v - state[i] * model.H[i]
-                for k in pulses:
-                    pulses[k] *= pulseSize
+                pulses = {node : pulseSize for node in model.graph.nodes()}
+                # pulses = {}
+                # for k, v in snapshots.items():
+                #     state = infcy.decodeState(k, model.nNodes)
+                #     for i in range(model.nNodes):
+                #         nodei = model.rmapping[i]
+                #         e = 0
+                #         for nodej in model.graph.neighbors(nodei):
+                #             j = model.mapping[nodej]
+                #             e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
+                #         pulses[nodei] = pulses.get(nodei, 0)  + e * v + state[i] * model.H[i]
+                # for k in pulses:
+                #     pulses[k] *= pulseSize
 
 #
 #
 #                # nudge all nodes
-                # pulses = {node : pulseSize for node in model.graph.nodes()}
                 for n, p in pulses.items():
                     pulse        = {n : p}
                     model.nudges = pulse

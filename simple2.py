@@ -47,7 +47,7 @@ rcParams['axes.prop_cycle'] = cycler('color', colors)
 indices = deltas // 2 - 1
 NSAMPLES, NODES, DELTAS, COND = len(controls), model.nNodes, indices, 2
 THETAS = thetas.size
-dd = zeros((NSAMPLES, NODES, DELTAS, COND), dtype = float32)
+dd = zeros((NSAMPLES, NODES, DELTAS, COND))
 for condition, samples in data[temp].items():
     for idx, sample in enumerate(samples):
         if condition == '{}':
@@ -73,8 +73,9 @@ for condition, samples in data[temp].items():
         else:
             control = data[temp]['{}'][idx].px
             px      = sample.px
-            # impact = stats.hellingerDistance(px, control)
-            impact  = stats.KL(control, sample.px)
+            impact  = stats.hellingerDistance(px, control)
+            impact  = stats.KL(control, px)
+#            impact  = stats.KL2(control, px)
 #            impact = nanmean(tmp, axis = -1)
 #            print(impact)
             # don't use +1 as the nudge has no effect at zero
@@ -107,8 +108,8 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-# zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
-zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
+zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
 
 
 # scale data 0-1 along each sample (nodes x delta)
