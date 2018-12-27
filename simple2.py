@@ -27,9 +27,10 @@ thetas  = logspace(log10(.9), log10(finfo(float).eps), 100)
 #thetas  = array([.5, .1, .01, .001])
 temps    = list(data.keys())
 temp     = temps[0]
-print(temps)
+pulseSize= list(data[temp].keys())[1]
+print(temps, pulseSize)
 from Models.fastIsing import Ising
-model   = Ising(data[temp]['{}'][0].graph)
+model   = Ising(data[temp]['control'][0].graph)
 
 fig, ax  = subplots()
 nx.draw(model.graph, with_labels = True, ax = ax)
@@ -38,7 +39,7 @@ fig.show()
 settings = IO.readSettings(extractThis)
 deltas   = settings['deltas']
 repeats  = settings['repeat']
-controls = array([i.mi for i in data[temp]['{}']])
+controls = array([i.mi for i in data[temp]['control']])
 roots    = zeros((len(controls), model.nNodes, len(thetas), 2))
 
 colors = cm.tab20(arange(model.nNodes))
@@ -48,45 +49,44 @@ indices = deltas // 2 - 1
 NSAMPLES, NODES, DELTAS, COND = len(controls), model.nNodes, indices, 2
 THETAS = thetas.size
 dd = zeros((NSAMPLES, NODES, DELTAS, COND))
-for condition, samples in data[temp].items():
-    for idx, sample in enumerate(samples):
-        if condition == '{}':
-            # panzeri-treves correction
-            cpx = sample.conditional
-            N = repeats
 
-            mi = sample.mi
-            rs  = zeros(mi.shape)
-            for key, value in cpx.items():
+for condition, samples in data[temp][pulseSize].items():
+    for idx, sample in enumerate(samples):
+        control = data[temp]['control'][idx]
+        # panzeri-treves correction
+        cpx = control.conditional
+        N   = repeats
+        mi  = control.mi
+        rs  = zeros(mi.shape)
+        for key, value in cpx.items():
 #                xx  = value[0] if isinstance(value, list) else value
-                for zdx, deltaInfo in enumerate(value):
-                    for jdx, nodeInfo in enumerate(deltaInfo):
-                        rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats) - 1
+            for zdx, deltaInfo in enumerate(value):
+                for jdx, nodeInfo in enumerate(deltaInfo):
+                    rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats) - 1
 #                rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
 #                              for j in value])
-            Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
-                         for i in sample.px])
+        Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
+                     for i in sample.px])
 
-            bias = (rs - Rs) / (2 * repeats * log(2))
-            corrected = mi - bias
-            dd[idx, ..., 0] = corrected[:indices, :].T
-        else:
-            control = data[temp]['{}'][idx].px
-            px      = sample.px
-            impact  = stats.hellingerDistance(px, control)
-            impact  = stats.KL(control, px)
+        bias = (rs - Rs) / (2 * repeats * log(2))
+        corrected = mi - bias
+        dd[idx, ..., 0] = corrected[:indices, :].T
+        
+        px      = sample.px
+        impact  = stats.hellingerDistance(control.px, px)
+        impact  = stats.KL(control.px, px)
 #            impact  = stats.KL2(control, px)
 #            impact = nanmean(tmp, axis = -1)
 #            print(impact)
-            # don't use +1 as the nudge has no effect at zero
-            redIm = nanmean(impact[indices + 2:], axis = -1).T
+        # don't use +1 as the nudge has no effect at zero
+        redIm = nanmean(impact[indices + 2:], axis = -1).T
 #            print(impact)
-            # TODO: check if this works with tuples (not sure)
-            jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
-                for key in model.mapping\
-                for j in re.findall(str(key), re.sub(':(.*?)\}', '', condition))]
+        # TODO: check if this works with tuples (not sure)
+        jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
+            for key in model.mapping\
+            for j in re.findall(str(key), re.sub(':(.*?)\}', '', condition))]
 #            print(model.rmapping[jdx[0]], tmp[deltas//2, jdx])
-            dd[idx, jdx, ...,  1] = redIm.squeeze().T
+        dd[idx, jdx, ...,  1] = redIm.squeeze().T
 #dd [dd < finfo(float).eps ] = 0
 #print(impact)
 #print(dd[...,-1])
@@ -108,7 +108,7 @@ repeats  = settings['repeat']
 # %% normalize data
 from scipy import ndimage
 zd = dd;
-zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -2)
+#zd = ndimage.filters.gaussian_filter1d(zd, 1.5, axis = -2)
 #zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = 0)
 
 
@@ -230,7 +230,7 @@ for cidx in range(COND):
 # %%
 
 from Toolbox import infcy
-snaps = data[temp]['{}'][0].snapshots
+snaps = data[temp]['control'][0].snapshots
 
 #print(data[temp]['{}'][0].px - data[temp]['{0: inf}'][0].px)
 # ens = {}

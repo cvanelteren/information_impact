@@ -26,16 +26,16 @@ if __name__ == '__main__':
         real = sys.argv[1]
     else:
         real = 0
-    repeats       = int(5e4)
-    deltas        = 100
+    repeats       = int(1e4)
+    deltas        = 50
     step          = 100
     nSamples      = int(1e3)
     burninSamples = 100_000
-    pulseSize     = .15
-    numIter       = 1
+    pulseSizes    = [.1, inf]
+    numIter       = 2
     magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [.8] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.9] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -72,7 +72,7 @@ if __name__ == '__main__':
             nSamples         = nSamples,
             step             = step,
             burninSamples    = burninSamples,
-            pulseSize        = pulseSize,
+            pulseSizes       = pulseSizes,
             updateMethod     = updateType
                           )
         IO.saveSettings(targetDirectory, settings)
@@ -136,47 +136,57 @@ if __name__ == '__main__':
         for t in temperatures:
             print(f'{time.time()} Setting {t}')
             model.t = t # update beta
+            tempDir = f'{targetDirectory}/{t : .2f}'
+            if not os.path.exists(tempDir):
+                print('making directory')
+                os.mkdir(tempDir)
+
             for i in range(numIter):
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
                 print(f'{time.time()} Getting snapshots')
+                # enforce no external influence
                 pulse        = {}
                 model.nudges = pulse
                 snapshots    = infcy.getSnapShots(model, nSamples, \
                                                burninSamples = burninSamples, \
                                                step          = step)
-
-
-
-                print(f'{time.time()}')
-                conditional = infcy.monteCarlo(\
-                                               model  = model, snapshots = snapshots,\
-                                               deltas = deltas, repeats  = repeats,\
-                                               )
-
-
-                # px, conditional, snapshots, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-4:]
-                # conditional = infcy.monteCarlo(model = model, snapshots = snapshots, conditions = conditions,\
-                 # deltas = deltas, repeats = repeats, pulse = pulse, updateType= 'source')
-
+                # TODO: uggly, against DRY
+                # always perform control
+                conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
                 print(f'{time.time()} Computing MI')
-                px, mi = infcy.mutualInformation(\
-                conditional, deltas, snapshots, model)
-                # mi   = array([infcy.mutualInformation(joint, condition, deltas) for condition in conditions.values()])
-                fileName = f'{targetDirectory}/{time.time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                sr = SimulationResult(\
-                                         mi         = mi,\
+                # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
+                if not os.path.exists(f'{tempDir}/0'):
+                    os.mkdir(f'{tempDir}/0')
+                fileName = f'{tempDir}/0/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
+                sr       = SimulationResult(\
+                                        mi          = mi,\
                                         conditional = conditional,\
                                         graph       = model.graph,\
                                         px          = px,\
                                         snapshots   = snapshots)
                 IO.savePickle(fileName, sr)
+                for pulseSize in pulseSizes:
+                    pulseDir = f'{tempDir}/{pulseSize}'
+                    if not os.path.exists(pulseDir):
+                        os.mkdir(pulseDir)
+                    for n in model.graph.nodes():
+                        pulse        = {n : pulseSize}
+                        model.nudges = pulse
+                        conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
+
+                        print(f'{time.time()} Computing MI')
+                        # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
+                        fileName = f'{pulseDir}/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
+                        sr       = SimulationResult(\
+                                                mi          = mi,\
+                                                conditional = conditional,\
+                                                graph       = model.graph,\
+                                                px          = px,\
+                                                snapshots   = snapshots)
+                        IO.savePickle(fileName, sr)
 
                 # estimate average energy
-                pulses = {node : pulseSize for node in model.graph.nodes()}
-                # pulses = {}
-                # for k, v in snapshots.items():
-                #     state = infcy.decodeState(k, model.nNodes)
                 #     for i in range(model.nNodes):
                 #         nodei = model.rmapping[i]
                 #         e = 0
@@ -186,24 +196,3 @@ if __name__ == '__main__':
                 #         pulses[nodei] = pulses.get(nodei, 0)  + e * v + state[i] * model.H[i]
                 # for k in pulses:
                 #     pulses[k] *= pulseSize
-
-#
-#
-#                # nudge all nodes
-                for n, p in pulses.items():
-                    pulse        = {n : p}
-                    model.nudges = pulse
-                    conditional = infcy.monteCarlo(model = model, snapshots = snapshots,\
-                                            deltas = deltas, repeats = repeats,\
-                                            )
-                    print(f'{time.time()} Computing MI')
-                    px, mi = infcy.mutualInformation(conditional, deltas, snapshots, model)
-                    # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                    fileName = f'{targetDirectory}/{time.time()}_nSamples={nSamples}_k={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
-                    sr = SimulationResult(\
-                                            mi          = mi,\
-                                            conditional = conditional,\
-                                            graph       = model.graph,\
-                                            px          = px,\
-                                            snapshots   = snapshots)
-                    IO.savePickle(fileName, sr)

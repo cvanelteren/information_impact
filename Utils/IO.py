@@ -11,6 +11,7 @@ from matplotlib.pyplot import *
 from dataclasses import dataclass
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
+from collections import defaultdict, OrderedDict
 
 def extractData(dataDir, keys = None):
     """
@@ -21,39 +22,57 @@ def extractData(dataDir, keys = None):
     """
     #TODO :  make aggregate dataclass -> how to deal with multiple samples
     # current work around is bad imo
-    data = {} # storage
+
     # Warning: this only works in python 3.6+ due to how dictionaries retain order
     if not dataDir.endswith('/'):
         dataDir += '/'
-    filesDir = sorted(\
-                     os.listdir(dataDir), \
-                     key = lambda x: os.path.getctime(dataDir + x)\
-                     )
+    # filesDir = sorted(\
+    #                  os.listdir(dataDir), \
+    #                  key = lambda x: os.path.getctime(dataDir + x)\
+    #                  )
+    # find pickles; expensive
+    files = []
+    for root, dir, fileNames in os.walk(dataDir):
+        for fileName in fileNames:
+            if fileName.endswith('.pickle') and 'mags' not in fileName:
+                files.append(f'{root}/{fileName}')
+    files = sorted(files, key = lambda x: \
+                   os.path.getctime(x))
 
-    for file in filesDir:
-        if file.endswith('.pickle') and 'mags' not in file:
-            # look for t=
-            temp   = re.search('t=\d+\.[0-9]+', file).group()
 
-            # deltas = re.search('deltas=\d+', file).group()
-            # deltas = re.search('\d+', deltas).group()
+    """
+    Although dicts are ordered by default from >= py3.6
+    Here I enforce the order as it matters for matching controls
+    """
+    data = OrderedDict()
 
-            # look for pulse
-            pulse     = re.search("\{.*\}", file).group()
-            tmp       = loadPickle(f'{dataDir}/{file}')
-            # ensure backwards compatibility, store new format
-            # should phase out over time
-            if isinstance(tmp, dict):
-                oldFormatConversion(dataDir, file, tmp)
+    for file in files:
+        # look for t=
+        temp = re.search('t=\d+\.[0-9]+', file).group().strip()
 
-            fileDict  = {pulse : [tmp]}
-            # append dict
-            if temp in data.keys():
-                # TODO : workaround, appends samples as a list
-                data[temp].update({pulse : [*data[temp].get(pulse, []), tmp]})
-            else:
-                data[temp] = fileDict
+        # deltas = re.search('deltas=\d+', file).group()
+        # deltas = re.search('\d+', deltas).group()
+
+        # look for pulse
+        pulse = re.search("\{.*\}", file).group()
+        structure = [temp]
+        if pulse == '{}':
+            structure += ['control']
+        else:
+            structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
+        tmp  = loadPickle(file)
+        data = addData(data, tmp, structure)
     return data
+
+def addData(data, toAdd, structure):
+    name = structure[0]
+    if len(structure) == 1:
+        data[name] = data.get(name, []) + [toAdd]
+        return data
+    else:
+        data[name] = addData(data.get(name, defaultdict(dict)), toAdd, structure[1:])
+        return data
+
 
 # TODO: needed?
 def oldFormatConversion(dataDir, file, tmp):
@@ -86,7 +105,7 @@ class RenameUnpickler(pickle.Unpickler):
         # replace the name with module struct
         if module == "IO":
             renamed_module = "Utils.IO"
-        # load it 
+        # load it
         return super(RenameUnpickler, self).find_class(renamed_module, name)
 
 def renamed_load(file_obj):

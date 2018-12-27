@@ -301,7 +301,15 @@ cpdef mutualInformation(dict conditional, int deltas, \
     H += np.nansum(px *  np.log2(px), -1)
     return px, -H
 
-
+cpdef runMC(Model model, dict snapshots, int deltas, int repeats):
+    """ wrapper to perform MC and MI"""
+    cdef:
+        dict conditional = monteCarlo(model = model, snapshots = snapshots,\
+                        deltas = deltas, repeats = repeats,\
+                        )
+        np.ndarray px, mi
+    px, mi = mutualInformation(conditional, deltas, snapshots, model)
+    return conditional, px, mi
     # @cython.boundscheck(False) # compiler directive
     # @cython.wraparound(False) # compiler directive
     # @cython.nonecheck(False)
