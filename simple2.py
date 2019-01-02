@@ -123,8 +123,8 @@ if rescale:
     zd = (zd - MIN) / (MAX - MIN)
     zd = zd.reshape(dd.shape)
 thresh = 1e-4
-zd[zd <= thresh] = 0
-#zd[zd <= finfo(zd.dtype).eps] = 0 # remove everything below machine error
+#zd[zd <= thresh] = 0
+zd[zd <= finfo(zd.dtype).eps] = 0 # remove everything below machine error
 # show means with spread
 fig, ax = subplots(1, 2)
 mainax  = fig.add_subplot(111, frameon = 0)
