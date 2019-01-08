@@ -24,6 +24,7 @@ def extractData(dataDir, keys = None):
     # current work around is bad imo
 
     # Warning: this only works in python 3.6+ due to how dictionaries retain order
+    print("Extracting data...")
     if not dataDir.endswith('/'):
         dataDir += '/'
     # filesDir = sorted(\
@@ -62,6 +63,7 @@ def extractData(dataDir, keys = None):
             structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
         tmp  = loadPickle(file)
         data = addData(data, tmp, structure)
+    print('Done')
     return data
 
 def addData(data, toAdd, structure):

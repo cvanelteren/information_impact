@@ -15,11 +15,11 @@ import os, re, networkx as nx
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
+#dataPath = '/mnt/'
 extractThis      = IO.newest(dataPath)[-1]
 #extractThis      = '1539187363.9923286'    # th.is is 100
 #extractThis      = '1540135977.9857328'
 extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
-
 data   = IO.extractData(extractThis)
 
 # thetas = [10**-i for i in range(1, 20)]
@@ -113,8 +113,8 @@ zd = dd;
 
 
 # scale data 0-1 along each sample (nodes x delta)
-rescale = True
-#rescale = False
+#rescale = True
+rescale = False
 if rescale:
     zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
     MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
@@ -230,28 +230,27 @@ for cidx in range(COND):
 
 # %%
 
-from Toolbox import infcy
-snaps = data[temp]['control'][0].snapshots
 
-#print(data[temp]['{}'][0].px - data[temp]['{0: inf}'][0].px)
-# ens = {}
-# t = float(temp.split('=')[1])
-#
-# sig = lambda x: 1 / (1 + exp(-2 * x / t))
-# px = zeros(model.nNodes)
-# for k, v in snaps.items():
-#     state = infcy.decodeState(k, model.nNodes)
-#     for i in range(model.nNodes):
-#         if state[i] == -1:
-#             px[i] += v
-#         nodei = model.rmapping[i]
-#         e = 0
-#         c = 0
-#         for nodej in model.graph.neighbors(nodei):
-#             j = model.mapping[nodej]
-#             e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
-#         ens[nodei] = ens.get(nodei, 0) + e * v + state[i] * model.graph.nodes[nodei].get('H', 0)
-# #    print(l, e, sig(e), p)
-# for k, v in ens.items():
-#     print(k, sig(-v), 1 - sig(-v))
+
+funcs = dict(degree = nx.degree_centrality, \
+             eigenvector = nx.eigenvector_centrality,\
+             closeness = nx.closeness_centrality,\
+             betweenness = nx.betweenness_centrality,\
+             )
+
+fig, ax = subplots(2,2 )
+infImpact = aucs.mean(0)
+
+for i, (cent, func) in enumerate(funcs.items()):
+    print(idx)
+    centrality = array(list(func(model.graph).values()))
+    tax = ax.ravel()[i]
+    for idx, (impact, c) in enumerate(zip(infImpact, ['r', 'b'])):
+        tax.scatter(impact, centrality, label = f'{idx} {cent})')
+        tax.set(xscale = 'log')
+    tax.set(title = cent)
+
+ax[-1].legend()
+subplots_adjust(vspace = .2)
+#ax.set(xscale = 'log')
 show()
