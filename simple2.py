@@ -12,7 +12,7 @@ from time import sleep
 from Utils import plotting as plotz, stats, IO
 import os, re, networkx as nx
 
-close('all')
+#close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 #dataPath = '/mnt/'
@@ -71,7 +71,7 @@ for condition, samples in data[temp][pulseSize].items():
         bias = (rs - Rs) / (2 * repeats * log(2))
         corrected = mi - bias
         dd[idx, ..., 0] = corrected[:indices, :].T
-        
+
         px      = sample.px
 #        impact  = stats.hellingerDistance(control.px, px)
         impact  = stats.KL(control.px, px)
@@ -222,21 +222,37 @@ mainax  = fig.add_subplot(111, frameon = False,
                           xticks = [], yticks = [])
 for axi, t in zip(ax, tmp):
     h = axi.imshow(t.T, aspect = 'auto', vmin = 0, vmax = 1)
+
 colorbar(h, ax = axi, label = 'frequency')
 mainax.set_xlabel(r'$\theta$', labelpad = 30)
 # %%
-fig, ax = subplots(1, COND)
-for cidx in range(COND):
-    ax[cidx].imshow(ranking[:, cidx, :].T)
+def colorbar(mappable, **kwargs):
+    ax = mappable.axes
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    return fig.colorbar(mappable, cax=cax, **kwargs)
+fig, ax = subplots(1, COND, sharex = 'all', sharey = 'all')
 
+mainax = fig.add_subplot(111, frameon = False)
+mainax.set_title('Consistency of ranking over trials')
+mainax.set(**dict(\
+                  xticks = [],\
+                  yticks = []))
+mainax.set_xlabel('Trial number', labelpad = 10)
+mainax.set_ylabel('Node idx', labelpad = 50)
+subplots_adjust(wspace = .2)
+for cidx in range(COND):
+    h = ax[cidx].imshow(ranking[:, cidx, :].T)
+    cbar = colorbar(h, ax = ax[cidx], anchor = (.5, 0))
+cbar.set_label('Ranking')
 # %%
 
 
-
-funcs = dict(degree = nx.degree_centrality, \
-             eigenvector = nx.eigenvector_centrality,\
-             closeness = nx.closeness_centrality,\
-             betweenness = nx.betweenness_centrality,\
+from functools import partial
+funcs = dict(degree      = nx.degree_centrality, \
+             eigenvector = partial(nx.eigenvector_centrality, weight = 'weight'),\
+             closeness   = nx.closeness_centrality,\
+             betweenness = partial(nx.betweenness_centrality, weight = 'weight'),\
              )
 
 fig, ax = subplots(2,2, sharex = 'all')
@@ -257,20 +273,23 @@ for i, (cent, func) in enumerate(funcs.items()):
     rankings = hstack((rankings, argsort(centrality)[[-1]] * ones((len(ranking), 1))))
     tax = ax.ravel()[i]
     for idx, (impact, c) in enumerate(zip(infImpact, ['r', 'b'])):
-        tax.scatter(impact, centrality, label = f'{idx} {cent})')
-        tax.set(xscale = 'log')
+        tax.scatter(impact, centrality)
+#        tax.set(xscale = 'log')
     tax.set(title = cent)
 
 tax.legend(['Information impact', 'Causal impact'], loc = 'upper left', \
   bbox_to_anchor = (1.01, 1), borderaxespad = 0)
 subplots_adjust(hspace = .8)
 #ax.set(xscale = 'log')
+
+for label in get_figlabels():
+    savefig(f'Figures/{label}')
 show()
 
 # %%
 percentage = percentage = array([i == target for i in rankings.T]).mean(1)
 from scipy import stats
 test = hstack((rankings, target[:, None]))
-#test2 = 
+#test2 =
 res =  stats.kruskal(*percentage)
 print(res)
