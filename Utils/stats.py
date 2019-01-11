@@ -50,3 +50,13 @@ def rankData(x):
     maxim   = maxim.reshape(s[:-1])
     print(f'In {noneFound} trials no max are found')
     return ranking, maxim
+
+def accuracy(rankings, target):
+    """
+    Produces the frequency of correctness for the ranking and the targets
+    Input:
+        :ranking: nSamples x predictors
+        :target: nSamples x 1
+    """
+    return (rankings == target).mean(0)
+    

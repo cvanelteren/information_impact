@@ -73,7 +73,7 @@ for condition, samples in data[temp][pulseSize].items():
         dd[idx, ..., 0] = corrected[:indices, :].T
         
         px      = sample.px
-        impact  = stats.hellingerDistance(control.px, px)
+#        impact  = stats.hellingerDistance(control.px, px)
         impact  = stats.KL(control.px, px)
 #            impact  = stats.KL2(control, px)
 #            impact = nanmean(tmp, axis = -1)
@@ -113,8 +113,8 @@ zd = dd;
 
 
 # scale data 0-1 along each sample (nodes x delta)
-#rescale = True
-rescale = False
+rescale = True
+#rescale = False
 if rescale:
     zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
     MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
@@ -133,7 +133,7 @@ mainax.set_title(f'{temp}\n\n')
 mainax.set_xlabel('Time[step]', labelpad = 40)
 x  = arange(indices)
 xx = linspace(0, indices, 1000)
-sidx = 1 # .96
+sidx = 1.96
 labels = 'MI IMPACT'.split()
 
 from matplotlib.ticker import FormatStrFormatter
@@ -169,7 +169,7 @@ ax[-1].legend(\
   title = 'Node', title_fontsize = 20, loc = 'upper left', \
   bbox_to_anchor = (1.01, 1), borderaxespad = 0)
 fig.show()
-# %% root based on data
+# %% estimate impact
 aucs       = zeros((NSAMPLES, COND, NODES))
 
 from scipy import interpolate
@@ -179,8 +179,9 @@ COEFFS = zeros((COND, NSAMPLES, NODES, p0.size))
 x = arange(indices)
 
 #lim = inf
-lim = deltas // 2
-#lim = inf
+#lim = deltas // 2
+lim = inf
+print('Estimating area under the curve')
 for samplei, sample in enumerate(zd):
     for condi, s in enumerate(sample.T):
         coeffs, errors = plotz.fit(s, func, params = fitParam)
@@ -238,19 +239,38 @@ funcs = dict(degree = nx.degree_centrality, \
              betweenness = nx.betweenness_centrality,\
              )
 
-fig, ax = subplots(2,2 )
+fig, ax = subplots(2,2, sharex = 'all')
+mainax = fig.add_subplot(111, frameon = False, xticks = [], yticks = [])
+mainax.set_xlabel('Information impact', labelpad = 50)
+mainax.set_ylabel('Centrality', labelpad = 50)
 infImpact = aucs.mean(0)
+
+
+# get the test statistic
+ranking.sort()
+target   = ranking[:, 1, -1]
+rankings = ranking[:, 0, [-1]]
 
 for i, (cent, func) in enumerate(funcs.items()):
     print(idx)
     centrality = array(list(func(model.graph).values()))
+    rankings = hstack((rankings, argsort(centrality)[[-1]] * ones((len(ranking), 1))))
     tax = ax.ravel()[i]
     for idx, (impact, c) in enumerate(zip(infImpact, ['r', 'b'])):
         tax.scatter(impact, centrality, label = f'{idx} {cent})')
         tax.set(xscale = 'log')
     tax.set(title = cent)
 
-ax[-1].legend()
-subplots_adjust(vspace = .2)
+tax.legend(['Information impact', 'Causal impact'], loc = 'upper left', \
+  bbox_to_anchor = (1.01, 1), borderaxespad = 0)
+subplots_adjust(hspace = .8)
 #ax.set(xscale = 'log')
 show()
+
+# %%
+percentage = percentage = array([i == target for i in rankings.T]).mean(1)
+from scipy import stats
+test = hstack((rankings, target[:, None]))
+#test2 = 
+res =  stats.kruskal(*percentage)
+print(res)
