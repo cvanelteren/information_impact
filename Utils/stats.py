@@ -12,7 +12,9 @@ def hellingerDistance(p1, p2):
     return np.linalg.norm( p1 - p2, ord = 2, axis = -1) / np.sqrt(2)
 
 def KL(p1, p2):
-    return - np.nansum(p1 * (np.log(p2) - np.log(p1)), axis = -1)
+    kl = - np.nansum(p1 * (np.log(p2) - np.log(p1)), axis = -1)
+    kl[np.isfinite(kl) == False] = 0 # remove x = 0
+    return kl
 
 def KL2(p1, p2):
     from scipy.special import kl_div
