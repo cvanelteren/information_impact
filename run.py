@@ -36,7 +36,7 @@ if __name__ == '__main__':
     numIter       = 20
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.9, .8, .7] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8, .6, .4] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -71,7 +71,7 @@ if __name__ == '__main__':
             burninSamples    = burninSamples,
             pulseSizes       = pulseSizes,
             updateMethod     = updateType,\
-            nNodes           = model.nNodes,
+            nNodes           = graph.number_of_nodes(),
                           )
         IO.saveSettings(targetDirectory, settings)
 
