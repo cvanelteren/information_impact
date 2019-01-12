@@ -27,22 +27,16 @@ if __name__ == '__main__':
     else:
         real = 0
     repeats       = int(1e4)
-    deltas        = 80
+    deltas        = 100
     step          = 100
-    nSamples      = int(1e5)
-    burninSamples = 100_000
+    nSamples      = int(1e4)
+    burninSamples = int(1e4)
     pulseSizes    = [.1, inf]
-<<<<<<< HEAD
-    numIter       = 5
+
+    numIter       = 20
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.7] # [.9, .8, .7]  if real else [.9]  # match magnetiztion at 80 percent of max
-=======
-    numIter       = 10
-    magSide       = ''
-    updateType    = 'single'
-    CHECK         = [.8, .7, .6] # if real else [.9]  # match magnetiztion at 80 percent of max
->>>>>>> 9bdca0701784ab3c327d3b9516fd5d49f80e02e9
+    CHECK         = [.9, .8, .7] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -51,11 +45,7 @@ if __name__ == '__main__':
         dataDir = 'Psycho' # relative path careful
         df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
         h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-    #
         graph   = nx.from_pandas_adjacency(df)
-#        for i, j in graph.edges():
-#            graph[i][j]['weight'] *= 10
-        #
         attr = {}
         for node, row in h.iterrows():
             attr[node] = dict(H = row['externalField'], nudges = 0)
@@ -80,7 +70,8 @@ if __name__ == '__main__':
             step             = step,
             burninSamples    = burninSamples,
             pulseSizes       = pulseSizes,
-            updateMethod     = updateType
+            updateMethod     = updateType,\
+            nNodes           = model.nNodes,
                           )
         IO.saveSettings(targetDirectory, settings)
 
@@ -107,11 +98,9 @@ if __name__ == '__main__':
             magRange = array([CHECK]) if isinstance(CHECK, float) else array(CHECK)
 
             # magRange = array([.9, .2])
-            temps = linspace(0, 10, 100)
-
-#            model.magSide = 'neg'
+            temps = linspace(0, 5, 1000)
             mag, sus = model.matchMagnetization(temps = temps,\
-             n = 10000)
+             n = int(1e4), burninSamples = 0)
 
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
@@ -131,7 +120,7 @@ if __name__ == '__main__':
             xx = linspace(0, max(temps), 1000)
             ax.plot(xx, func(xx, *a))
             ax.scatter(temperatures, func(temperatures, *a), c ='red')
-            ax.scatter(temps, mag, alpha = .2)
+            ax.scatter(temps, mag)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
             savefig(f'{targetDirectory}/temp vs mag.png')
             # show()

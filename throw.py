@@ -21,9 +21,10 @@ attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 
+#graph = nx.path_graph(5)
 nx.set_node_attributes(graph, attr)
 #graph  = nx.path_graph(3)
-graph = nx.barabasi_albert_graph(3, 2)
+#graph = nx.barabasi_albert_graph(3, 2)
 
 # graph = nx.path_graph(10)
 from Models import fastIsing
@@ -36,27 +37,27 @@ m = fastIsing.Ising(graph, temperature = 1)
 from time import time
 m.updateType = 'single'
 
-m.magSide    = 'pos'
+#m.magSide    = 'pos'
 ###m.reset()
 from Toolbox import infcy
 
-temps = linspace(0, 10, 100)
-mags, sus = m.matchMagnetization(temps, 1000, 0)
+temps = linspace(0, 5, 1000)
+mags, sus = m.matchMagnetization(temps, 10000, 0)
 print(m.states)
-#fig, ax = subplots()
-#ax.scatter(temps, mags)
+fig, ax = subplots()
+ax.scatter(temps, mags)
 #fig.canvas.flush_events()
 #
 xx = infcy.getSnapShots(m, 10000, step = 100)
-repeats = 10000
-deltas = 20
-#while True:
-s = time()
-y  = infcy.monteCarlo(m, xx, deltas, repeats)
-print('Elapsed ', time() - s)
-print(m.states)
-px, mi= infcy.mutualInformation(y, deltas, xx, m )
-fig, ax = subplots()
-ax.plot(mi)
+#repeats = 10000
+#deltas = 20
+##while True:
+#s = time()
+#y  = infcy.monteCarlo(m, xx, deltas, repeats)
+#print('Elapsed ', time() - s)
+#print(m.states)
+#px, mi= infcy.mutualInformation(y, deltas, xx, m )
+#fig, ax = subplots()
+#ax.plot(mi)
 show()
 # %%
