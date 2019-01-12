@@ -12,67 +12,92 @@ from dataclasses import dataclass
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
 from collections import defaultdict, OrderedDict
+class DataLoader(OrderedDict):
+    def __init__(self, *args, **kwargs):
+        """
+        Data loader because hdf5 cannot use pyobjects. I am dumb because
+        I want to store the graph with the data, hdf5 is probably better
+        If the end-user doesn't care about this (and faster). Regardless,
+        here is a hdf5 emulator.
 
-def extractData(dataDir, keys = None):
-    """
-    Provides a dictionary of the results
-    The format is :
-    data[temperature][pulse] = SimulationResult // old format is dict
+        The format is :
+        data[temperature][pulse] = SimulationResult // old format is dict
+        """
+        dataDir = args[0] if args else ''
+        super(DataLoader, self).__init__(**kwargs)
+        #TODO :  make aggregate dataclass -> how to deal with multiple samples
+        # current work around is bad imo
+        if dataDir:
+            # Warning: this only works in python 3.6+ due to how dictionaries retain order
+            print("Extracting data...")
+            if not dataDir.endswith('/'):
+                dataDir += '/'
+            # filesDir = sorted(\
+            #                  os.listdir(dataDir), \
+            #                  key = lambda x: os.path.getctime(dataDir + x)\
+            #                  )
+            # find pickles; expensive
+            files = []
+            for root, dir, fileNames in os.walk(dataDir):
+                for fileName in fileNames:
+                    if fileName.endswith('.pickle') and 'mags' not in fileName:
+                        files.append(f'{root}/{fileName}')
+            files = sorted(files, key = lambda x: \
+                           os.path.getctime(x))
 
-    """
-    #TODO :  make aggregate dataclass -> how to deal with multiple samples
-    # current work around is bad imo
 
-    # Warning: this only works in python 3.6+ due to how dictionaries retain order
-    print("Extracting data...")
-    if not dataDir.endswith('/'):
-        dataDir += '/'
-    # filesDir = sorted(\
-    #                  os.listdir(dataDir), \
-    #                  key = lambda x: os.path.getctime(dataDir + x)\
-    #                  )
-    # find pickles; expensive
-    files = []
-    for root, dir, fileNames in os.walk(dataDir):
+            """
+            Although dicts are ordered by default from >= py3.6
+            Here I enforce the order as it matters for matching controls
+            """
+            data = DataLoader()
+
+            for file in files:
+                # look for t=
+                temp = re.search('t=\d+\.[0-9]+', file).group().strip()
+
+                # deltas = re.search('deltas=\d+', file).group()
+                # deltas = re.search('\d+', deltas).group()
+                # look for pulse
+                pulse = re.search("\{.*\}", file).group()
+                structure = [temp]
+                if pulse == '{}':
+                    structure += ['control']
+                else:
+                    structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
+                # tmp  = loadPickle(file)
+                self.update(addData(data, file, structure))
+            print('Done')
+    # def __getitem__(self, key):
+    #     val = OrderedDict.__getitem__(self, key)
+    #     print('>', key, type(val), type(list(val.values())[0]))
+    #     for k, v in val.items():
+    #         print(key, k)
+    #     if isinstance(val, list):
+    #         data = []
+    #         for v in val:
+    #             data.append(loadPickle(v))
+    #         return data
+    #     elif isinstance(val, str):
+    #         print('here')
+    #         return loadPickle(val)
+    #     else:
+    #         return val
+def loadData(fileNames):
+    if isinstance(fileNames, list):
+        data = []
         for fileName in fileNames:
-            if fileName.endswith('.pickle') and 'mags' not in fileName:
-                files.append(f'{root}/{fileName}')
-    files = sorted(files, key = lambda x: \
-                   os.path.getctime(x))
-
-
-    """
-    Although dicts are ordered by default from >= py3.6
-    Here I enforce the order as it matters for matching controls
-    """
-    data = OrderedDict()
-
-    for file in files:
-        # look for t=
-        temp = re.search('t=\d+\.[0-9]+', file).group().strip()
-
-        # deltas = re.search('deltas=\d+', file).group()
-        # deltas = re.search('\d+', deltas).group()
-
-        # look for pulse
-        pulse = re.search("\{.*\}", file).group()
-        structure = [temp]
-        if pulse == '{}':
-            structure += ['control']
-        else:
-            structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
-        tmp  = loadPickle(file)
-        data = addData(data, tmp, structure)
-    print('Done')
+            data.append(loadPickle(fileName))
+    elif isinstance(fileNames, str):
+        data = loadPickle(fileNames)
     return data
-
 def addData(data, toAdd, structure):
     name = structure[0]
     if len(structure) == 1:
         data[name] = data.get(name, []) + [toAdd]
         return data
     else:
-        data[name] = addData(data.get(name, defaultdict(dict)), toAdd, structure[1:])
+        data[name] = addData(data.get(name, OrderedDict()), toAdd, structure[1:])
         return data
 
 
