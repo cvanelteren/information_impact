@@ -31,12 +31,12 @@ if __name__ == '__main__':
     step          = 100
     nSamples      = int(1e4)
     burninSamples = int(1e4)
-    pulseSizes    = [.1, inf]
+    pulseSizes    = [.1, -np.inf]# , .8, .7]
 
     numIter       = 20
-    magSide       = ''
+    magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [.8, .6, .4] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.9, .8, .7] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -52,8 +52,8 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-       # graphs += [nx.path_graph(3)]
-       graphs += [nx.krackhardt_kite_graph()]
+       graphs += [nx.path_graph(5)]
+       # graphs += [nx.krackhardt_kite_graph()]
 
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
@@ -120,7 +120,7 @@ if __name__ == '__main__':
             xx = linspace(0, max(temps), 1000)
             ax.plot(xx, func(xx, *a))
             ax.scatter(temperatures, func(temperatures, *a), c ='red')
-            ax.scatter(temps, mag)
+            ax.scatter(temps, mag, alpha = .2)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
             savefig(f'{targetDirectory}/temp vs mag.png')
             # show()

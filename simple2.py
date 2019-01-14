@@ -87,7 +87,6 @@ for condition, fileNames in data[temp][pulseSize].items():
         sample  = IO.loadData(fileName)
         px      = sample.px
 #        impact  = stats.hellingerDistance(control.px, px)
-#        impact  = stats.KL(control.px, px)
         impact  = stats.KL(control.px, px)
 #            impact = nanmean(tmp, axis = -1)
 #            print(impact)
