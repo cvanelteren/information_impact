@@ -26,12 +26,12 @@ def fit(y, func, x = None,\
         :errors: the standard deviation of the variance of the parameters
     '''
     #TODO; parallize; problem : lambda -> use pathos or multiprocessing?
-    nDelta, nNodes = y.shape
+    nNodes, nDelta = y.shape
     x   = arange(nDelta) if x is None else x # add a
     idt = zeros( (nNodes, 2) ) # store idt, rate [width at maximum height],  area under the curve, and sum squared error (SSE)
     coefficients = zeros( (nNodes, func.__code__.co_argcount - 1) )  # absolute and relatives idt
     errors       = zeros((nNodes))
-    for idx, yi in enumerate(y.T):
+    for idx, yi in enumerate(y):
         coeffs, coeffs_var = scipy.optimize.curve_fit(func, x, yi, **params)
 #        print(coeffs, coeffs_var)
         errors[idx]        = ((func(x, *coeffs) - yi)**2).mean()
@@ -264,12 +264,12 @@ def showGraph(graph, attr = 'weight'):
     r = 2
     pos = nx.circular_layout(graph, scale = 20)
     for n in graph:
-        c=Circle(pos[n], radius=r,alpha=1, facecolor = 'white',\
+        c=Circle(positions[n], radius=r,alpha=1, facecolor = 'white',\
                  edgecolor = 'black', linewidth  = 1, linestyle = 'solid')
         text(*c.center, n, horizontalalignment = 'center', verticalalignment = 'center')
         axes[1].add_patch(c)
         graph.node[n]['patch']=c
-        x,y=pos[n]
+        x,y=positions[n]
 #    pos = nx.circular_layout(graph, scale = .5)
 #    tmp = nx.get_edge_attributes(graph, 'weight')
 #    tmp = {key: abs(value) for key, value in tmp.items()}
@@ -447,27 +447,54 @@ def saveAllFigures(useLabels = False, path = '../Figures'):
         print('saving at {}'.format(saveStr))
         savefig(saveStr)
 
-def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.tab20):
+def addGraphPretty(model, ax, \
+                   positions = None, \
+                   cmap = cm.tab20, **kwargs):
+    
     from matplotlib.patches import FancyArrowPatch, Circle, ConnectionStyle, Wedge
-    r     = .1 # radius for circle
+    r     = .115 # radius for circle
     graph = model.graph
-    pos   = positionFunction(graph)
+    
+    if positions is None:
+        positions = nx.circular_layout(graph)
 # colors  = cm.tab20(arange(model.nNodes))
 # colors  = cm.get_cmap('tab20')(arange(model.nNodes))
     if graph.number_of_nodes() > 20:
         cmap = cm.get_cmap('gist_rainbow')
 
     colors = cmap(arange(model.nNodes))
+    
+    # DEFAULTS
+    circlekwargs = dict(\
+                             radius    = r, \
+                             alpha     = 1, \
+                             edgecolor = 'black', \
+                             linewidth = 1, \
+                             linestyle = 'solid',\
+                             zorder    = 2)
+    for k, v in kwargs.get('circle', {}).items():
+            circlekwargs[k] = v
+        
+    annotatekwargs = dict(\
+                          horizontalalignment = 'center', \
+                          verticalalignment = 'center', \
+                          transform = ax.transAxes, \
+                          fontsize = 12,\
+                          )
+    
+    for k, v in kwargs.get('annotate', {}).items():
+        annotatekwargs[k] = v
+    
     for n in graph:
         # make circle
-        c = Circle(pos[n], radius = r,alpha=1, facecolor = colors[model.mapping[n]],\
-                 edgecolor = 'black', linewidth  = 1, linestyle = 'solid')
+        c = Circle(positions[n], facecolor = colors[model.mapping[n]],\
+                   **circlekwargs)
         # add label
         # print(c.center[:2], pos[n])
         # ax.text(*c.center, n, horizontalalignment = 'center', \
         # verticalalignment = 'center', transform = ax.transAxes)
-        ax.annotate(n, c.center, horizontalalignment = 'center', \
-        verticalalignment = 'center', transform = ax.transAxes)
+        annotatekwargs['fontsize'] = .95 * circlekwargs['radius']
+        ax.annotate(n, c.center, **annotatekwargs)
         # add to ax
         ax.add_patch(c)
         # TODO : remove tis for member assignment
@@ -478,7 +505,16 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
     seen={} # bookkeeping
     from copy import copy
     # arrow style for drawing
-    arstyle = '->' if type(graph) is type(nx.DiGraph()) else '<->'
+    arrowsprops = dict(\
+                   arrowstyle = '-|>' if graph.is_directed() else '<|-|>' ,\
+                   mutation_scale = 15.0,\
+                   lw = 2,\
+                   alpha = 1,\
+                   )
+    
+    edgesScaling = {(u, v): graph[u][v]['weight'] for u, v in graph.edges()}
+    minWeight, maxWeight = min(edgesScaling.values()), max(edgesScaling.values())
+    
     for u, v in graph.edges():
         n1      = graph.node[u]['patch']
         n2      = graph.node[v]['patch']
@@ -487,8 +523,16 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
         if (u,v) in seen:
             rad = seen.get((u,v))
             rad = ( rad + np.sign(rad) *0.1 ) * -1
-        # self-edge
+        
+        # set properties of the edge
         alphaEdge = clip(abs(d), .2, 1)
+        arrowsprops['color'] = 'green' if d > 0 else 'red'
+#        arrowsprops['alpha'] = alphaEdge
+        arrowsprops['lw'] = ((d - minWeight) / (maxWeight - minWeight)) * 5
+        
+        
+        
+        # self-edge is a special case
         if u == v:
             n2 = copy(n1)
             n1 = copy(n1)
@@ -496,7 +540,9 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
 
             rotation  = pi
             corner1   = array([sin(theta), cos(theta)]) * r
-            corner2   = array([sin(theta + rotation), cos(theta + rotation)]) * r + .12 * sign(random.randn()) * r
+            corner2   = array([sin(theta + rotation), cos(theta + rotation)]) *\
+            r + .12 * sign(random.randn()) * r
+            
             n1.center = array(n1.center) + corner1
             n2.center = array(n2.center) + corner2
 
@@ -505,22 +551,13 @@ def addGraphPretty(model, ax, positionFunction = nx.circular_layout, cmap = cm.t
             rad = radians(135) # trial and error
 
             # add edge
-            e = FancyArrowPatch(n2.center, n1.center, connectionstyle = f'arc3,rad={rad}',\
-                                arrowstyle = '-|>',\
-                                mutation_scale = 10.0,
-                                lw = 2,
-                                alpha = alphaEdge,\
-                                color = 'red' if d < 0 else 'green')
-            e.set_arrowstyle(arrowstyle= '-|>', head_length = .1)
+            e = FancyArrowPatch(n2.center, n1.center, **arrowsprops)
+            e.set_arrowstyle(head_length = head_length)
         else:
-            connectionstyle = f'arc3,rad={rad}'
             e  = FancyArrowPatch(n1.center,n2.center, patchA = n1, patchB = n2,\
-                                arrowstyle      = arstyle,
-                                connectionstyle = connectionstyle,
-                                mutation_scale  = 10.0,
-                                lw              = 2,
-                                alpha           = alphaEdge,
-                                color           = 'red' if d < 0 else 'green')
+                                connectionstyle = f'arc3,rad={rad}',
+                                **arrowsprops)
+            
 
         seen[(u,v)]=rad
         ax.add_patch(e)

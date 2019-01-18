@@ -7,4 +7,5 @@ seaborn
 tqdm
 cython
 h5py
-scikit-learn  
+scikit-learn
+scikit-posthocs

@@ -34,18 +34,38 @@ pulseSize= list(data[temp].keys())[1]
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSize}')
 
-
+figDir = '../thesis/figures/'
 # %% Extract data
 
 # Draw graph ; assumes the simulation is over 1 type of graph
 from Models.fastIsing import Ising
 control  = IO.loadData(data[temp]['control'][0]) # TEMP WORKAROUND
 model    = Ising(control.graph)
-fig, ax  = subplots()
-plotz.addGraphPretty(model, ax = ax)
-ax.axis('off')
-fig.show()
 
+# %%
+fig, ax  = subplots(frameon = False)
+positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
+                                         )
+#                                         root = sorted(dict(model.graph.degree()).items())[0][0])
+
+positions = {node : tuple(i * 1.2 for i in pos) for node, pos in positions.items() }
+plotz.addGraphPretty(model, ax, positions, \
+                     layout = dict(scale = 1),\
+                     circle = dict(\
+                                   radius = 15),\
+                     annotate = dict(fontsize = 14),\
+                     )
+ax.axis('equal')
+ax.set(xticks = [], yticks = [])
+fig.show()
+savefig(figDir + 'psychonetwork.eps', format = 'eps', dpi = 1000)
+
+# %%
+def f(**kwargs):
+    for k, v in kwargs.items():
+        print(k,v)
+f(**dict(test = 1))
+# %% 
 settings = IO.readSettings(extractThis)
 deltas   = settings['deltas']
 repeats  = settings['repeat']
@@ -58,50 +78,66 @@ COND     = 2
 THETAS   = thetas.size
 
 # data matrix
-dd       = zeros((NTRIALS, NODES, DELTAS, COND))
+#dd       = zeros((NTRIALS, NODES, DELTAS, COND))
 
 # extract data for all nodes
-for condition, fileNames in data[temp][pulseSize].items():
-    for idx, fileName in enumerate(fileNames):
-        control = IO.loadData(data[temp]['control'][idx])
-        graph   = control.graph
-        # panzeri-treves correction
-        cpx = control.conditional
-        N   = repeats
-        mi  = control.mi
-        rs  = zeros(mi.shape)
-        for key, value in cpx.items():
-#                xx  = value[0] if isinstance(value, list) else value
-            for zdx, deltaInfo in enumerate(value):
-                for jdx, nodeInfo in enumerate(deltaInfo):
-                    rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats) - 1
-#                rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
-#                              for j in value])
-        Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
-                     for i in control.px])
-
-        bias = (rs - Rs) / (2 * repeats * log(2))
-        corrected = mi - bias
-        dd[idx, ..., 0] = corrected[:DELTAS, :].T
-        
-        sample  = IO.loadData(fileName)
-        px      = sample.px
-#        impact  = stats.hellingerDistance(control.px, px)
-        impact  = stats.KL(control.px, px)
-#            impact = nanmean(tmp, axis = -1)
-#            print(impact)
-        # don't use +1 as the nudge has no effect at zero
-        redIm = nanmean(impact[DELTAS + 2:], axis = -1).T
-#            print(impact)
-        # TODO: check if this works with tuples (not sure)
-        jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
-            for key in model.mapping\
-            for j in re.findall(str(key), re.sub(':(.*?)\}', '', condition))]
-#            print(model.rmapping[jdx[0]], tmp[deltas//2, jdx])
-        dd[idx, jdx, ...,  1] = redIm.squeeze().T
-        
-
-
+information_impact = '$\mu_i$'
+causal_impact      = '$\delta_i$'
+from tqdm import tqdm
+loadedData = {}
+if 'results.pickle' in os.listdir():
+    loadedData = IO.loadPickle('results.pickle')['loadedData']
+    NTEMPS, NNUDGE, NTRIALS, NODES, DELTAS = loadedData.shape
+else:
+    NTEMPS = len(data)
+    NNUDGE = len(data[temp])
+    loadedData    = zeros((NTEMPS, NNUDGE, NTRIALS, NODES, DELTAS)) # change to loadedData
+    for tidx, temp in enumerate(data):
+        pulseCounter = 1 # skip control; work around
+        for pulse in data[temp]:
+            if pulse != 'control':
+                for nudgedNode, fileNames in data[temp][pulse].items():
+                    for idx, fileName in enumerate(tqdm(fileNames)):
+                        
+                        # load control; bias correct mi 
+                        control = IO.loadData(data[temp]['control'][idx])
+                        graph   = control.graph
+                        # panzeri-treves correction
+                        cpx = control.conditional
+                        N   = repeats
+                        mi  = control.mi
+                        rs  = zeros(mi.shape)
+                        for key, value in cpx.items():
+                #                xx  = value[0] if isinstance(value, list) else value
+                            for zdx, deltaInfo in enumerate(value):
+                                for jdx, nodeInfo in enumerate(deltaInfo):
+                                    rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats) - 1
+                #                rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
+                #                              for j in value])
+                        Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
+                                     for i in control.px])
+                
+                        bias = (rs - Rs) / (2 * repeats * log(2))
+                        corrected = mi - bias
+                        loadedData[tidx, 0, idx, ...] = corrected[:DELTAS, :].T
+                        
+                        # load nudge
+                        sample  = IO.loadData(fileName)
+                        px      = sample.px
+                #        impact  = stats.hellingerDistance(control.px, px)
+                        impact  = stats.KL(control.px, px)
+                        # don't use +1 as the nudge has no effect at zero
+                        redIm = nanmean(impact[DELTAS + 2:], axis = -1).T
+                        # TODO: check if this works with tuples (not sure)
+                        jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
+                            for key in model.mapping\
+                            for j in re.findall(str(key), re.sub(':(.*?)\}', '', nudgedNode))]
+                        loadedData[tidx, pulseCounter, idx, jdx, :] = redIm.squeeze().T
+                pulseCounter += 1
+    IO.savePickle('results.pickle', dict(loadedData = loadedData,\
+                                         data = data))
+temps = [float(i.split('=')[-1]) for i in data.keys()]
+nudges= list(data[next(iter(data))].keys())
 # define color swaps
 colors = cm.tab20(arange(NODES))
 # swap default colors to one with more range
@@ -109,12 +145,27 @@ rcParams['axes.prop_cycle'] = cycler('color', colors)
 # %% extract root from samples
 
 # fit functions
-double = lambda x, a, b, c, d, e, f: a + b * exp(-c*(x)) + d * exp(- e * (x-f))
-double_= lambda x, b, c, d, e, f: b * exp(-c*(x)) + d * exp(- e * (x-f))
-single = lambda x, a, b, c : a + b * exp(-c * x)
-single_= lambda x, b, c : b * exp(-c * x)
-special= lambda x, a, b, c, d: a  + b * exp(- (x)**c - d)
-func        = double
+#double = lambda x, a, b, c, d, e, f: a + b * exp(-c*(x)) + d * exp(- e * (x-f))
+#double_= lambda x, b, c, d, e, f: b * exp(-c*(x)) + d * exp(- e * (x-f))
+#single = lambda x, a, b, c : a + b * exp(-c * x)
+#single_= lambda x, b, c : b * exp(-c * x)
+#special= lambda x, a, b, c, d: a  + b * exp(- (x)**c - d)
+
+
+import sympy as sy
+from sympy import abc
+from sympy.utilities.lambdify import lambdify
+symbols     = (abc.x, abc.a, \
+               abc.b, abc.c, \
+               abc.d, abc.e,\
+               abc.f)\
+               
+syF         = symbols[1] * sy.exp(- symbols[2] * symbols[0]) +\
+ symbols[3] * sy.exp(- symbols[4] * (symbols[0] - symbols[5]))
+print(syF)
+#syF         = symbols[1] * sy.exp(- symbols[2] * symbols[0])
+func        = lambdify(symbols, syF, 'numpy')
+
 p0          = ones((func.__code__.co_argcount - 1)); # p0[0] = 0
 fitParam    = dict(maxfev = int(1e6), bounds = (0, inf), p0 = p0)
 
@@ -124,56 +175,76 @@ repeats  = settings['repeat']
 
 # %% normalize data
 from scipy import ndimage
-zd = dd;
-#zd = ndimage.filters.gaussian_filter1d(zd, 2, axis = -2)
-#zd = ndimage.filters.gaussian_filter1d(zd, .2, axis = 0)
+zd = zeros(loadedData.shape)
+for temp in range(NTEMPS):
+    for nudge in range(NNUDGE):
+        zdi = loadedData[temp, nudge] 
+        zdi = ndimage.filters.gaussian_filter1d(zdi, 2, axis = -1)
+#        zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -3)
+        
+        # scale data 0-1 along each sample (nodes x delta)
+        rescale = True
+#            rescale = False
+        if rescale:
+            zdi = zdi.reshape(zdi.shape[0], -1) # flatten over trials
+            MIN, MAX = zdi.min(axis = 1), zdi.max(axis = 1)
+            MIN = MIN[:, newaxis]
+            MAX = MAX[:, newaxis]
+            zdi = (zdi - MIN) / (MAX - MIN)
+            zdi = zdi.reshape((NTRIALS, NODES, DELTAS))
+            
+        thresh = 1e-4
+        #zd[zd <= thresh] = 0
+        zdi[zdi <= finfo(zdi.dtype).eps] = 0 # remove everything below machine error
+        # show means with spread
+        zd[temp, nudge] = zdi
+        
+        
 
 
-# scale data 0-1 along each sample (nodes x delta)
-rescale = True
-#rescale = False
-if rescale:
-    zd = zd.reshape(zd.shape[0], -1, zd.shape[-1])
-    MIN, MAX = zd.min(axis = 1), zd.max(axis = 1)
-    MIN = MIN[:, newaxis, :]
-    MAX = MAX[:, newaxis, :]
-    zd = (zd - MIN) / (MAX - MIN)
-    zd = zd.reshape(dd.shape)
-    
-thresh = 1e-4
-#zd[zd <= thresh] = 0
-zd[zd <= finfo(zd.dtype).eps] = 0 # remove everything below machine error
-# show means with spread
-fig, ax = subplots(1, 2)
+# plot means of all nudges and temperatures
+# %%
+fig, ax = subplots(3, 3, sharex = 'all', sharey = 'all')
 mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
-mainax.set_title(f'{temp}\n\n')
+#mainax.set_title(f'\n\n').
 mainax.set_xlabel('Time[step]', labelpad = 40)
+
 x  = arange(DELTAS)
 xx = linspace(0, 1 * DELTAS, 1000)
-sidx = 1.96
-labels = 'MI IMPACT'.split()
+sidx = 2 # 1.96
+labels = '$I(s_i^t ; S^t_0)$\tUnderwhelming\tOverwhelming'.split('\t')
 
 from matplotlib.ticker import FormatStrFormatter
-mins, maxs = zd.reshape(-1, COND).min(0), zd.reshape(-1, COND).max(0)
+means, stds  = zd.mean(-3), zd.std(-3, ddof = 1)
 
-mins_, maxs_ = zd.min(0), zd.max(0)
-means, stds  = zd.mean(0), zd.std(0, ddof = 1)
 
-for cidx in range(COND):
-    # compute mean fit
-    meanCoeffs, meanErrors = plotz.fit(means[..., cidx].T, func, params = fitParam)
-    for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
-        # plot the raw data
-        ax[cidx].errorbar(x, means[idx, :, cidx], fmt = '.',\
-          yerr = sidx * stds[idx, :, cidx], markersize = 20, \
-          label = node,\
-          color = colors[idx])
-        # plot mean fit
-        ax[cidx].plot(xx, func(xx, *meanCoeffs[idx]),\
-          color = colors[idx], alpha = .5, \
-          markeredgecolor = 'black')
-#        ax[cidx].set(yscale = 'log', xscale = 'log')
+for temp in range(NTEMPS):
+    for nudge in range(NNUDGE):
+        tax = ax[temp, nudge]
+        if temp == 0:
+            tax.set_title(labels[nudge])
+        # compute mean fit
+        mus    = means[temp, nudge]
+        sigmas = stds[temp, nudge]
+        meanCoeffs, meanErrors = plotz.fit(mus, func, params = fitParam)
+        for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
+  
+            # plot mean fit
+            tax.plot(xx, func(xx, *meanCoeffs[idx]),\
+                     color = colors[idx],\
+                     alpha = .5, \
+                     markeredgecolor = 'black',\
+                     label =  node)
+            # plot the raw data
+            tax.errorbar(x, mus[idx],\
+                         fmt = '.',\
+                         yerr = sidx * sigmas[idx],\
+                         markersize = 15, \
+                         color = colors[idx],\
+                         label = node) # mpl3 broke legends?
+        
+#            ax[cidx].set(xscale = 'log')
 
         # fill the standard deviation from mean
 #        ax[cidx].fill_between(x, a, b, color = colors[idx], alpha  = .4)
@@ -181,15 +252,33 @@ for cidx in range(COND):
 
 #    ax[cidx].set(yticks = (0, maxs_[..., cidx].max()))
 #    ax[cidx].ticklabel_format(axis = 'y', style = 'sci', scilimits = (0, 2))
-    ax[cidx].set_title(labels[cidx])
-#    ax[cidx].set(xscale = 'log', yscale = 'log'
+
+    tax.text(.75, .9, \
+             f'T={round(temps[temp], 2)}', \
+             fontdict = dict(fontsize = 15),\
+             transform = tax.transAxes,\
+             horizontalalignment = 'right')
+    tax.set(xlim = (-1.5, 30))
+               
+        #    ax[cidx].set(xscale = 'log', yscale = 'log'
+# format plot
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-ax[-1].legend(\
-  title = 'Node', title_fontsize = 20, loc = 'upper left', \
-  bbox_to_anchor = (1.01, 1), borderaxespad = 0)
+mainax.legend(\
+              tax.lines, [i.get_label() for i in tax.lines],\
+              title          = 'Node', \
+              title_fontsize = 15, \
+              loc            = 'upper left', \
+              bbox_to_anchor = (1, 1),\
+              borderaxespad  = 0, \
+              frameon        = False,\
+              )
+
+subplots_adjust(wspace = 0.01, hspace = 0.05, right = .8)
 fig.show()
+fig.savefig(figDir + 'mi_time.eps', format='eps', dpi=1000, pad_inches = 0,\
+        bbox_inches = 'tight')
 # %% estimate impact
-aucs       = zeros((NTRIALS, COND, NODES))
+#aucs       = zeros((NTRIALS, COND, NODES))
 
 from scipy import interpolate
 from time import sleep
@@ -197,35 +286,43 @@ from time import sleep
 COEFFS = zeros((COND, NTRIALS, NODES, p0.size))
 x = arange(DELTAS)
 
-#lim = inf
-lim = DELTAS
+lim = inf
+#lim = DELTAS  // 2
 #lim = np.inf
-print('Estimating area under the curve')
-for samplei, sample in enumerate(zd):
-    for condi, s in enumerate(sample.T):
-        coeffs, errors = plotz.fit(s, func, params = fitParam)
-        COEFFS[condi, samplei, ...] = coeffs
-        for nodei, c in enumerate(coeffs):
-            output =  integrate.quad(func, 0, \
-                                           lim, args = tuple(c), \
-                                           full_output = 1)
-            if len(output) == 3:
-                auc, err, output = output
-            elif len(output) == 4:
-                auc, err, output, message = output
-                print(f'{nodei} {err} {auc}')
-            aucs[samplei, condi, nodei] = auc
-# %% show idt auc vs impact auc
-fig, ax = subplots()
-for idx, node in sorted(model.rmapping.items(), key = lambda x : x[0]):
-    c = colors[idx]
-    i = aucs[..., idx].T
-    ax.scatter(*i, color = c, label = model.rmapping[idx])
-    ax.scatter(*median(i, 1), marker = 's', color = c, edgecolors = 'k')
-    ax.scatter(*mean(i, 1), marker = '^', color = c, edgecolors = 'k')
-ax.legend(title = 'Node', loc = 'upper right', bbox_to_anchor = (1.15, 1))
-#ax.set(yscale = 'symlog')
 
+# uggly mp case
+
+def worker(sample):
+    coeffs, errors = plotz.fit(sample, func, params = fitParam)
+    auc = zeros(len(sample))
+#    print(coeffs.max(), coeffs.min())
+    for nodei, c in enumerate(coeffs):
+        tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
+        F   = lambda x: func(x, *c)
+        tmp, _ = scipy.integrate.quad(F, 0, DELTAS)
+#        tmp = sy.integrals.integrate(tmp, (abc.x, 0, DELTAS))
+        auc[nodei] = tmp
+    return auc
+        
+import multiprocessing as mp
+with mp.Pool(mp.cpu_count()) as p:
+    aucs = array(\
+                p.map(\
+                      worker, tqdm(zd.reshape(-1, NODES, DELTAS))\
+                      )\
+                 )
+    aucs = aucs.reshape(tuple(i for i in loadedData.shape if i != DELTAS))
+
+# %% show idt auc vs impact auc
+fig, ax = subplots(3, 2, sharex = 'all', sharey = 'all')
+subplots_adjust(hspace = 0, wspace = 0)
+for temp in range(NTEMPS):
+    for nudge in range(1, NNUDGE):
+        tax = ax[temp, nudge - 1]
+        for node, idx in model.mapping.items():
+            tax.scatter(*aucs[temp, [0, nudge], :, idx], color = colors[idx])
+#        tax.set(yscale = 'log').
+#rcParams['axes.labelpad'] = 30
  # %% compute concistency
 
 bins = arange(-.5, model.nNodes + .5)
@@ -312,6 +409,7 @@ for label in get_figlabels():
 show()
 
 # %%
+import scikit_posthocs as sp
 percentage = percentage = array([i == target for i in rankings.T]).mean(1)
 
 test = hstack((rankings, target[:, None]))
