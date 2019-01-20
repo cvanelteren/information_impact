@@ -31,10 +31,10 @@ if __name__ == '__main__':
     step          = 100
     nSamples      = int(1e4)
     burninSamples = int(1e4)
-    pulseSizes    = [.1, -np.inf]# , .8, .7]
+    pulseSizes    = [.1] #, -np.inf]# , .8, .7]
 
     numIter       = 20
-    magSide       = 'neg'
+    magSide       = ''
     updateType    = 'single'
     CHECK         = [.9, .8, .7] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10

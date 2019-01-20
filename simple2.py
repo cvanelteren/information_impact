@@ -29,7 +29,7 @@ thetas  = logspace(log10(.9), log10(finfo(float).eps), 100)
 
 temps    = list(data.keys())
 temp     = temps[0]
-pulseSize= list(data[temp].keys())[1]
+pulseSize= list(data[temp].keys())
 
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSize}')
@@ -41,7 +41,20 @@ figDir = '../thesis/figures/'
 from Models.fastIsing import Ising
 control  = IO.loadData(data[temp]['control'][0]) # TEMP WORKAROUND
 model    = Ising(control.graph)
+# %% # show mag vs temperature
+tmp = IO.loadPickle(f'{extractThis}/mags.pickle')
+fig, ax = subplots()
+ax.scatter(tmp['temps'], tmp['mag'], alpha = .2)
+ax.scatter(tmp['temperatures'], tmp['magRange'] * tmp['mag'].max(), \
+           color = 'red', zorder = 2)
 
+func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
+a, b = scipy.optimize.curve_fit(func, tmp['temps'], tmp['mag'].squeeze(), maxfev = 10000)
+x = linspace(min(tmp['temps']), max(tmp['temps']), 1000)
+ax.plot(x, func(x, *a), '--k')
+ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
+rcParams['axes.labelpad'] = 10
+fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
 # %%
 fig, ax  = subplots(frameon = False)
 ax.set(xticks = [], yticks = [])
@@ -128,14 +141,15 @@ else:
                 #        impact  = stats.hellingerDistance(control.px, px)
                         impact  = stats.KL(control.px, px)
                         # don't use +1 as the nudge has no effect at zero
-                        redIm = nanmean(impact[DELTAS + 1:], axis = -1).T
+                        redIm = nanmean(impact[DELTAS:], axis = -1).T
                         # TODO: check if this works with tuples (not sure)
                         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                             for key in model.mapping\
                             for j in re.findall(str(key), re.sub(':(.*?)\}', '', nudgedNode))]
                         loadedData[tidx, pulseCounter, idx, jdx, :] = redIm.squeeze().T
                 pulseCounter += 1
-    IO.savePickle('results.pickle', dict(loadedData = loadedData,\
+    if False:
+        IO.savePickle('results.pickle', dict(loadedData = loadedData,\
                                          data = data))
 temps = [float(i.split('=')[-1]) for i in data.keys()]
 nudges= list(data[next(iter(data))].keys())
@@ -181,11 +195,11 @@ for temp in range(NTEMPS):
     for nudge in range(NNUDGE):
         zdi = loadedData[temp, nudge] 
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 2, axis = -1)
-#        zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -3)
+        zd = ndimage.filters.gaussian_filter1d(zd, .2, axis = -3)
         
         # scale data 0-1 along each sample (nodes x delta)
-        rescale = True
-#        rescale = False
+#        rescale = True.
+        rescale = False
         if rescale:
             zdi = zdi.reshape(zdi.shape[0], -1) # flatten over trials
             MIN, MAX = zdi.min(axis = 1), zdi.max(axis = 1)
