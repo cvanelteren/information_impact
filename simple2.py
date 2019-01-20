@@ -184,8 +184,8 @@ for temp in range(NTEMPS):
 #        zd = ndimage.filters.gaussian_filter1d(zd, 1, axis = -3)
         
         # scale data 0-1 along each sample (nodes x delta)
-#        rescale = True
-        rescale = False
+        rescale = True
+#        rescale = False
         if rescale:
             zdi = zdi.reshape(zdi.shape[0], -1) # flatten over trials
             MIN, MAX = zdi.min(axis = 1), zdi.max(axis = 1)
