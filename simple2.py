@@ -195,11 +195,11 @@ for temp in range(NTEMPS):
     for nudge in range(NNUDGE):
         zdi = loadedData[temp, nudge] 
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 2, axis = -1)
-        zd = ndimage.filters.gaussian_filter1d(zd, .2, axis = -3)
+#        zd = ndimage.filters.gaussian_filter1d(zd, .2, axis = -3)
         
         # scale data 0-1 along each sample (nodes x delta)
-#        rescale = True.
-        rescale = False
+        rescale = True
+#        rescale = False
         if rescale:
             zdi = zdi.reshape(zdi.shape[0], -1) # flatten over trials
             MIN, MAX = zdi.min(axis = 1), zdi.max(axis = 1)
@@ -425,7 +425,7 @@ infImpact = aucs.mean(-2)
 
 # get the test statistic
 from mpl_toolkits.mplot3d import Axes3D
-ranking.sort()
+#ranking.sort()
 
 conditionLabels = 'Underwhelming Overwhelming'.split()
 
@@ -442,7 +442,7 @@ for condition, condLabel in enumerate(conditionLabels):
 #        rankCentrality = zeros((len(centralities)))
         for temp in range(NTEMPS):
             tax = ax[i, temp]
-#            tax.set(yscale = 'log')
+            tax.set(xscale = 'log')
             # scale node according to information impact
             tmp = infImpact[temp, 0]
             tmp = (tmp - tmp.min()) / (tmp.max() - tmp.min())

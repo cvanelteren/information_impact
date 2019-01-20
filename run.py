@@ -29,14 +29,14 @@ if __name__ == '__main__':
     repeats       = int(1e4)
     deltas        = 100
     step          = int(1e4)
-    nSamples      = int(1e4)
+    nSamples      = int(1e3)
     burninSamples = int(1e4)
-    pulseSizes    = [.1] #, -np.inf]# , .8, .7]
+    pulseSizes    = [.1, inf] #, -np.inf]# , .8, .7]
 
-    numIter       = 10
+    nTrials       = 5
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.3] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.9] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -72,6 +72,7 @@ if __name__ == '__main__':
             pulseSizes       = pulseSizes,
             updateMethod     = updateType,\
             nNodes           = graph.number_of_nodes(),
+            nTrials         = nTrials
                           )
         IO.saveSettings(targetDirectory, settings)
 
@@ -137,7 +138,7 @@ if __name__ == '__main__':
                 print('making directory')
                 os.mkdir(tempDir)
 
-            for i in range(numIter):
+            for trial in range(nTrials):
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
                 print(f'{time.time()} Getting snapshots')
