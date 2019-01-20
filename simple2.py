@@ -423,7 +423,7 @@ for condition, condLabel in enumerate(conditionLabels):
     mainax.set_xlabel('Causal impact', labelpad = 50)
     for i, (cent, cent_func) in enumerate(centralities .items()):
         # compute cents
-        centrality = array(list(cent_func(model.graph).values()))
+        centrality = array(list(dict(cent_func(model.graph)).values()))
 #        rankCentrality[i] = argsort(centrality)[-1]
 #        rankCentrality = zeros((len(centralities)))
         for temp in range(NTEMPS):
@@ -482,7 +482,7 @@ for cond in range(1, COND):
     percstds[:, cond - 1] = (drivers[:, 0] == drivers[:, cond]).std(1)
     centApprox = zeros((NTEMPS, len(centralities), COND))
     for cidx, (cent, centF) in enumerate(centralities.items()):
-        centMax  = argmax(array(list(centF(model.graph).values())))
+        centMax  = argmax(array(list(dict(centF(model.graph)).values())))
         print(centMax)
         centMax *= ones(NTRIALS)
         centApprox[:, cidx, cond - 1] = (drivers[:, 1] == centMax).mean(1)
