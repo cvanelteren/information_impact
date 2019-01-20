@@ -1,9 +1,11 @@
 # TODOs
 - Update setup.py [done]
-- General code cleaning and commenting [partial]
+- General code cleaning and commenting [done]
 - Update manual
 - Move sampleNodes inside to reduce load on the memory. This prolly
 requires to rewrite some work to lose the np dependency
+- The rng generation is currently precomputed; this will cause issues for larger graphs;
+ preferable this would occur closer to the source or thread safe manner (see prev point)
 
 
 # Mind scribbles

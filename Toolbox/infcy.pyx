@@ -126,22 +126,45 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     """
     cdef:
         unordered_map[int, double] snapshots
-        int i
+        int i, sample
         int N          = nSamples * step
         long[:, ::1] r = model.sampleNodes(N)
         double Z       = <double> nSamples
         int idx
         double past    = timer()
+        list modelsPy  = []
+        vector[PyObjectHolder] models_
+        cdef int tid, nThreads = mp.cpu_count()
+    # threadsafe model access; can be reduces to n_threads
+    for sample in range(nSamples):
+        tmp = copy.deepcopy(model)
+        tmp.reset()
+        tmp.seed += sample # enforce different seeds
+        modelsPy.append(tmp)
+        models_.push_back(PyObjectHolder(<PyObject *> tmp))
+
+    tid = threadid()
     pbar = tqdm(total = nSamples)
-    model.reset() # start from random
-    for i in range(N):
-        if i % step == 0:
-            idx             = encodeState(model._states)
-            snapshots[idx] += 1 / Z
+    for sample in prange(nSamples, nogil = True, \
+                         schedule = 'static', num_threads = nThreads):
+        # perform n steps
+        for i in range(step):
+            (<Model> models_[sample].ptr)._updateState(r[(i + 1) * (sample + 1)])
+        with gil:
+            idx = encodeState((<Model> models_[sample].ptr)._states)
+            snapshots[idx] += 1/Z
             pbar.update(1)
-        # model._updateState(r[i])
-        model._updateState(r[i])
-    pbar.close()
+
+    # pbar = tqdm(total = nSamples)
+    # model.reset() # start from random
+    # for i in range(N):
+    #     if i % step == 0:
+    #         idx             = encodeState(model._states)
+    #         snapshots[idx] += 1 / Z
+    #         pbar.update(1)
+    #     # model._updateState(r[i])
+    #     model._updateState(r[i])
+    # pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f"Delta = {timer() - past: .2f} sec")
     return snapshots

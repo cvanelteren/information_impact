@@ -56,23 +56,23 @@ ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
 rcParams['axes.labelpad'] = 10
 fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
 # %%
-fig, ax  = subplots(frameon = False)
-ax.set(xticks = [], yticks = [])
-positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
-                                         )
-#                                         root = sorted(dict(model.graph.degree()).items())[0][0])
-
-positions = {node : tuple(i * 1.2 for i in pos) for node, pos in positions.items() }
-plotz.addGraphPretty(model, ax, positions, \
-                     layout = dict(scale = 1),\
-                     circle = dict(\
-                                   radius = 15),\
-                     annotate = dict(fontsize = 14),\
-                     )
-#ax.axis('equal')
-ax.set(xticks = [], yticks = [])
-fig.show()
-savefig(figDir + 'psychonetwork.eps', format = 'eps', dpi = 1000)
+#fig, ax  = subplots(frameon = False)
+#ax.set(xticks = [], yticks = [])
+#positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
+#                                         )
+##                                         root = sorted(dict(model.graph.degree()).items())[0][0])
+#
+#positions = {node : tuple(i * 1.2 for i in pos) for node, pos in positions.items() }
+#plotz.addGraphPretty(model, ax, positions, \
+#                     layout = dict(scale = 1),\
+#                     circle = dict(\
+#                                   radius = 15),\
+#                     annotate = dict(fontsize = 14),\
+#                     )
+##ax.axis('equal')
+#ax.set(xticks = [], yticks = [])
+#fig.show()
+#savefig(figDir + 'psychonetwork.eps', format = 'eps', dpi = 1000)
 
 # %%
 def f(**kwargs):

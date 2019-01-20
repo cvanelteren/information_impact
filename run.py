@@ -28,15 +28,15 @@ if __name__ == '__main__':
         real = 0
     repeats       = int(1e4)
     deltas        = 100
-    step          = 100
+    step          = int(1e4)
     nSamples      = int(1e4)
     burninSamples = int(1e4)
     pulseSizes    = [.1] #, -np.inf]# , .8, .7]
 
-    numIter       = 20
+    numIter       = 10
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.9, .8, .7] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
