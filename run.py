@@ -36,7 +36,7 @@ if __name__ == '__main__':
     numIter       = 10
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.8] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.3] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
