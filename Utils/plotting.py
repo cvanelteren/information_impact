@@ -562,5 +562,5 @@ def addGraphPretty(model, ax, \
         seen[(u,v)]=rad
         ax.add_patch(e)
     ax.autoscale()
-    ax.set_aspect('equal','box')
+    ax.set_aspect('equal')
     return ax

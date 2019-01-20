@@ -30,10 +30,10 @@ def rankData(x):
     It is not the most efficient method used
     '''
     from scipy.stats.mstats import rankdata
-    s        = x.shape
-    ranking  = np.zeros(s)
-    maxim    = np.zeros( s[:-1] )
-    maxim[:] = np.nan
+    s        = x.shape # extract shape
+    ranking  = np.zeros(s) # ranking data
+    maxim    = np.zeros( s[:-1] ) # largest driver node rank
+    maxim[:] = np.nan # assume nans
     
     # reshape (not really productive)
     maxim    = maxim.reshape( -1 )

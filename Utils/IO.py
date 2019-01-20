@@ -84,6 +84,7 @@ class DataLoader(OrderedDict):
     #     else:
     #         return val
 def loadData(fileNames):
+    print(isinstance(fileNames, str), fileNames)
     if isinstance(fileNames, list):
         data = []
         for fileName in fileNames:
@@ -91,6 +92,8 @@ def loadData(fileNames):
     elif isinstance(fileNames, str):
         data = loadPickle(fileNames)
     return data
+
+
 def addData(data, toAdd, structure):
     name = structure[0]
     if len(structure) == 1:
