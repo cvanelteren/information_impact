@@ -30,13 +30,13 @@ if __name__ == '__main__':
     deltas        = 100
     step          = int(1e4)
     nSamples      = int(1e3)
-    burninSamples = int(1e4)
+    burninSamples = 0
     pulseSizes    = [.1, inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 5
+    nTrials       = 20
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.9] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8, .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1

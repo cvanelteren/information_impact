@@ -199,7 +199,7 @@ for temp in range(NTEMPS):
         
         # scale data 0-1 along each sample (nodes x delta)
         rescale = True
-#        rescale = False
+        rescale = False
         if rescale:
             zdi = zdi.reshape(zdi.shape[0], -1) # flatten over trials
             MIN, MAX = zdi.min(axis = 1), zdi.max(axis = 1)
@@ -228,16 +228,19 @@ x = arange(DELTAS)
 
 # uggly mp case
 def worker(sample):
-    coeffs, errors = plotz.fit(sample, func, params = fitParam)
     auc = zeros((len(sample), 2))
-    for nodei, c in enumerate(coeffs):
-    #        tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
-    #        tmp = sy.integrals.integrate(tmp, (abc.x, 0, DELTAS))
-        F   = lambda x: func(x, *c)
-        tmp, _ = scipy.integrate.quad(F, 0, inf)
-
-        auc[nodei, 0] = tmp
-        auc[nodei, 1] = errors[nodei]
+    try:
+        coeffs, errors = plotz.fit(sample, func, params = fitParam)
+        for nodei, c in enumerate(coeffs):
+        #        tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
+        #        tmp = sy.integrals.integrate(tmp, (abc.x, 0, DELTAS))
+            F   = lambda x: func(x, *c)
+            tmp, _ = scipy.integrate.quad(F, 0, inf)
+    
+            auc[nodei, 0] = tmp
+            auc[nodei, 1] = errors[nodei]
+    except:
+        pass
     return auc
         
 import multiprocessing as mp
