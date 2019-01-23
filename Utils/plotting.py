@@ -11,6 +11,12 @@ from .stats import hellingerDistance
 import scipy.optimize, scipy.integrate
 # %%
 
+def colorbar(mappable, **kwargs):
+    """Aligns colorbar with axis height"""
+    ax = mappable.axes
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    return fig.colorbar(mappable, cax=cax, **kwargs)
 
 def fit(y, func, x = None,\
                    params = {}):

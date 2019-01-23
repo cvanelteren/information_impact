@@ -54,8 +54,7 @@ class DataLoader(OrderedDict):
 
             for file in files:
                 # look for t=
-                temp = re.search('t=\d+\.[0-9]+', file).group().strip()
-
+                temp = re.search('t=\d+\.[0-9]+', file).group()
                 # deltas = re.search('deltas=\d+', file).group()
                 # deltas = re.search('\d+', deltas).group()
                 # look for pulse
