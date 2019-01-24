@@ -149,11 +149,10 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     for sample in prange(nSamples, nogil = True, \
                          schedule = 'static', num_threads = nThreads):
         # perform n steps
-        tid = threadid()
         for i in range(step):
-            (<Model> models_[sample].ptr)._updateState(r[(i + 1) * (sample + 1)])
+            (<Model> models_[sample].ptr)._updateState(r[(i + 1) * (sample + 1) - 1])
         with gil:
-            idx = encodeState((<Model> models_[tid].ptr)._states)
+            idx = encodeState((<Model> models_[sample].ptr)._states)
             snapshots[idx] += 1/Z
             pbar.update(1)
     print('done')
