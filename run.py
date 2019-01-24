@@ -33,10 +33,10 @@ if __name__ == '__main__':
     burninSamples = 0
     pulseSizes    = [1, inf] #, inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 10
+    nTrials       = 1
     magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [.9] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8, .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     n = 10
     graphs = []
 #    real = 1
@@ -52,8 +52,10 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-       graphs += [nx.path_graph(5)]
-       # graphs += [nx.krackhardt_kite_graph()]
+       # graphs += [nx.path_graph(5)]
+       graphs += [nx.krackhardt_kite_graph()]
+       n = 10
+       graphs += [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
 
 
     # graphs = [nx.barabasi_albert_graph(10,5)]

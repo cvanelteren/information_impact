@@ -188,8 +188,9 @@ except:
     buffShape = (NNUDGE, NTEMPS, NTRIALS, NODES, DELTAS)
     buff = mp.RawArray('d', int(prod(buffShape)))
 
-    a, b = divmod(len(fileNames), COND * NODES + 1 )
-    c = 1 if b else 0
+    # for intermitten dataviewing only load complete sets otherwise nans
+    a, b = divmod(len(fileNames), COND * NODES + 1 ) # extract full divisors
+    c = 1 if b else 0 # subtract 1 if not full set
     tidx = (COND * NODES + 1) * (a - c)
     print(a, b, c, COND * NODES + 1 )
     print(f'Loading {tidx}')
@@ -244,7 +245,7 @@ for temp in range(NTEMPS):
         zdi = loadedData[nudge, temp]
         # scale data 0-1 along each sample (nodes x delta)
         rescale = True
-#        rescale = False
+        # rescale = False
         # rescale for each trial over min / max
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 1, axis = -1)
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 3, axis = 0)
@@ -262,12 +263,9 @@ for temp in range(NTEMPS):
 #        zdi[zdi < 0]  = 0
         # show means with spread
         # remove the negative small numbers, e.g. -1e-5
+        zdi[isfinite(zdi) == False] = 0 # check this
         zd[nudge, temp] = zdi
-
-
-
-
-
+        
 # %% time plots
 
 # insert dummy axis to offset subplots
@@ -297,7 +295,6 @@ means, stds  = nanmean(zd, -3), nanstd(zd, -3)
 
 for temp in range(NTEMPS):
     for nudge in range(NNUDGE):
-
         idx = nudge if nudge == 0 else nudge + 1
         tax = ax[temp, idx]
         if temp == 0:
@@ -425,27 +422,32 @@ for temp in range(NTEMPS):
 #
         xx, yy = meshgrid(ranges, ranges)
         for node, idx in model.mapping.items():
-            tmp = aucs_raw[[0, nudge], temp, :, idx]
-            clf.fit(tmp.T)
-            Z = clf.mahalanobis(np.c_[xx.ravel(), yy.ravel()])
-            if raw:
-                tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
-                        colors = colors[[idx]],\
-                        levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
-
-            # plot ci vs ii
-            ident = sqrt(clf.mahalanobis(tmp.T))
-#            print(model.rmapping[idx], ident)
-            outliers = where(ident >= thresh)[0]
-            ingroup  = where(ident < thresh)[0]
-            rejections[nudge - 1, temp, idx] = len(outliers) / NTRIALS
-            ingroupmean = tmp[:, ingroup].mean(1)
-            for outlier in outliers:
-                aucs[[0, nudge], temp, outlier, idx]= ingroupmean
+            
+            # value error for zero variance
+            try:
+                tmp = aucs_raw[[0, nudge], temp, :, idx]
+                clf.fit(tmp.T)
+                Z = clf.mahalanobis(np.c_[xx.ravel(), yy.ravel()])
                 if raw:
-                    tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
-                            color = colors[idx], \
-                            alpha = 1, marker = 's')
+                    tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
+                            colors = colors[[idx]],\
+                            levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
+    
+                # plot ci vs ii
+                ident = sqrt(clf.mahalanobis(tmp.T))
+    #            print(model.rmapping[idx], ident)
+                outliers = where(ident >= thresh)[0]
+                ingroup  = where(ident < thresh)[0]
+                rejections[nudge - 1, temp, idx] = len(outliers) / NTRIALS
+                ingroupmean = tmp[:, ingroup].mean(1)
+                for outlier in outliers:
+                    aucs[[0, nudge], temp, outlier, idx]= ingroupmean
+                    if raw:
+                        tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
+                                color = colors[idx], \
+                                alpha = 1, marker = 's')
+            except:
+                continue
 
 #            tax.scatter(*tmp.mean(1), color = 'k', s = 50, zorder = 5)
             alpha = .1 if raw else 1
