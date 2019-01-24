@@ -147,9 +147,10 @@ def worker(fidx):
         data[0, trial, temp]  = corrected[:DELTAS - EXTRA, :].T
     else:
         # load control
+        targetName = fileName.split('_')[-1] # extract relevant part
         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                              for key in model.mapping\
-                             for j in re.findall(str(key), re.sub(':(.*?)\}', '', fileName))]
+                             for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
         jdx = jdx[0]
         useThis = fidx - node
         control = IO.loadData(fileNames[useThis])

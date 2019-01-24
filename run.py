@@ -31,7 +31,7 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [1] #, inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [1, inf] #, inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 10
     magSide       = 'neg'
