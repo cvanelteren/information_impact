@@ -53,9 +53,13 @@ if __name__ == '__main__':
         graphs.append(graph)
     else:
        # graphs += [nx.path_graph(5)]
-       graphs += [nx.krackhardt_kite_graph()]
+       # graphs += [nx.krackhardt_kite_graph()]
        n = 10
-       graphs += [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
+       nn = 10
+       for i in [3, 5, n - 1]:
+           for a in range(nn):
+               graphs.append(nx.barabasi_albert_graph(n, i))
+           # graphs += [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
 
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
@@ -74,8 +78,8 @@ if __name__ == '__main__':
             pulseSizes       = pulseSizes,
             updateMethod     = updateType,\
             nNodes           = graph.number_of_nodes(),
-            nTrials         = nTrials
-                          )
+            nTrials         = nTrials,\
+            )
         IO.saveSettings(targetDirectory, settings)
 
         # graph = nx.barabasi_albert_graph(10, 3)

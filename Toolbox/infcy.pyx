@@ -134,9 +134,10 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         double past    = timer()
         list modelsPy  = []
         vector[PyObjectHolder] models_
+        Model tmp
         cdef int tid, nThreads = mp.cpu_count()
     # threadsafe model access; can be reduces to n_threads
-    for sample in range(nThreads):
+    for sample in range(nSamples):
         tmp = copy.deepcopy(model)
         tmp.reset()
         tmp.seed += sample # enforce different seeds
@@ -150,7 +151,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         # perform n steps
         tid = threadid()
         for i in range(step):
-            (<Model> models_[tid].ptr)._updateState(r[(i + 1) * (sample + 1)])
+            (<Model> models_[sample].ptr)._updateState(r[(i + 1) * (sample + 1)])
         with gil:
             idx = encodeState((<Model> models_[tid].ptr)._states)
             snapshots[idx] += 1/Z
