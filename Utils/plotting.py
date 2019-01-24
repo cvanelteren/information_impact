@@ -38,7 +38,8 @@ def fit(y, func, x = None,\
     coefficients = zeros( (nNodes, func.__code__.co_argcount - 1) )  # absolute and relatives idt
     errors       = zeros((nNodes))
     for idx, yi in enumerate(y):
-        coeffs, coeffs_var = scipy.optimize.curve_fit(func, x, yi, **params)
+        coeffs, coeffs_var = scipy.optimize.curve_fit(func, x, yi, \
+                                                      **params)
 #        print(coeffs, coeffs_var)
         errors[idx]        = ((func(x, *coeffs) - yi)**2).mean()
         coefficients[idx]  = coeffs
@@ -535,8 +536,6 @@ def addGraphPretty(model, ax, \
         arrowsprops['color'] = 'green' if d > 0 else 'red'
 #        arrowsprops['alpha'] = alphaEdge
         arrowsprops['lw'] = ((d - minWeight) / (maxWeight - minWeight)) * 5
-        
-        
         
         # self-edge is a special case
         if u == v:

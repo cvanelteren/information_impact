@@ -53,19 +53,20 @@ class DataLoader(OrderedDict):
             data = DataLoader()
 
             for file in files:
-                # look for t=
-                temp = re.search('t=\d+\.[0-9]+', file).group()
-                # deltas = re.search('deltas=\d+', file).group()
-                # deltas = re.search('\d+', deltas).group()
-                # look for pulse
-                pulse = re.search("\{.*\}", file).group()
-                structure = [temp]
-                if pulse == '{}':
-                    structure += ['control']
-                else:
-                    structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
-                # tmp  = loadPickle(file)
-                self.update(addData(data, file, structure))
+                if 'results' not in file:
+                    # look for t=
+                    temp = re.search('t=\d+\.[0-9]+', file).group()
+                    # deltas = re.search('deltas=\d+', file).group()
+                    # deltas = re.search('\d+', deltas).group()
+                    # look for pulse
+                    pulse = re.search("\{.*\}", file).group()
+                    structure = [temp]
+                    if pulse == '{}':
+                        structure += ['control']
+                    else:
+                        structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
+                    # tmp  = loadPickle(file)
+                    self.update(addData(data, file, structure))
             print('Done')
     # def __getitem__(self, key):
     #     val = OrderedDict.__getitem__(self, key)
