@@ -136,7 +136,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         vector[PyObjectHolder] models_
         cdef int tid, nThreads = mp.cpu_count()
     # threadsafe model access; can be reduces to n_threads
-    for sample in range(nSamples):
+    for sample in range(nThreads):
         tmp = copy.deepcopy(model)
         tmp.reset()
         tmp.seed += sample # enforce different seeds
@@ -148,13 +148,14 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     for sample in prange(nSamples, nogil = True, \
                          schedule = 'static', num_threads = nThreads):
         # perform n steps
+        tid = threadid()
         for i in range(step):
-            (<Model> models_[sample].ptr)._updateState(r[(i + 1) * (sample + 1)])
+            (<Model> models_[tid].ptr)._updateState(r[(i + 1) * (sample + 1)])
         with gil:
-            idx = encodeState((<Model> models_[sample].ptr)._states)
+            idx = encodeState((<Model> models_[tid].ptr)._states)
             snapshots[idx] += 1/Z
             pbar.update(1)
-
+    print('done')
     # pbar = tqdm(total = nSamples)
     # model.reset() # start from random
     # for i in range(N):
@@ -164,7 +165,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     #         pbar.update(1)
     #     # model._updateState(r[i])
     #     model._updateState(r[i])
-    # pbar.close()
+    pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f"Delta = {timer() - past: .2f} sec")
     return snapshots
@@ -305,6 +306,7 @@ cpdef dict monteCarlo(\
     # for nThread in range(n):
     #     Py_XDECREF(models.at(nThread))
     pbar.close()
+    # time.sleep(.1)
     print(f"Delta = {timer() - past: .2f} sec")
     return conditional
 

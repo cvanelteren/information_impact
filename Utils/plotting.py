@@ -535,7 +535,8 @@ def addGraphPretty(model, ax, \
         alphaEdge = clip(abs(d), .2, 1)
         arrowsprops['color'] = 'green' if d > 0 else 'red'
 #        arrowsprops['alpha'] = alphaEdge
-        arrowsprops['lw'] = ((d - minWeight) / (maxWeight - minWeight)) * 5
+        if maxWeight != minWeight:
+            arrowsprops['lw'] = ((maxWeight - d) / (maxWeight - minWeight)) * 5
         
         # self-edge is a special case
         if u == v:

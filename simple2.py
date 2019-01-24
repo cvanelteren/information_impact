@@ -16,9 +16,10 @@ import os, re, networkx as nx, scipy, multiprocessing as mp
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 #dataPath = '/mnt/'
-extractThis      = IO.newest(dataPath)[-2]
-extractThis      = '1548025318.5751357'
+extractThis      = IO.newest(dataPath)[-1]
+#extractThis      = '1548025318.5751357'
 #extractThis      = '1547303564.8185222'
+#extractThis  = '1548338989.260526'
 extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
 data   = IO.DataLoader(extractThis)
 
@@ -42,7 +43,7 @@ NTEMPS   = len(data)
 NNUDGE   = len(data[f't={temp}'])
 NODES    = model.nNodes
 DELTAS, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
-COND     = 2
+COND     = NNUDGE - 1
 
 pulseSizes = list(data[f't={temp}'].keys())
 
@@ -67,26 +68,30 @@ ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
 rcParams['axes.labelpad'] = 10
 fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
 # %%
-fig, ax  = subplots(frameon = False)
-ax.set(xticks = [], yticks = [])
-positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
-                                         )
-#                                         root = sorted(dict(model.graph.degree()).items())[0][0])
-
-positions = {node : tuple(i * 1.2 for i in pos) for node, pos in positions.items() }
-plotz.addGraphPretty(model, ax, positions, \
-                     layout = dict(scale = 1),\
-                     circle = dict(\
-                                   radius = 15),\
-                     annotate = dict(fontsize = 14),\
-                     )
+#fig, ax  = subplots(figsize = (400, 200), frameon = False)
+#ax.set(xticks = [], yticks = [])
+#positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
+#                                         )
+##                                         root = sorted(dict(model.graph.degree()).items())[0][0])
+#
+#positions = {node : tuple(i * 1 for i in pos) for node, pos in positions.items() }
+#p = dict(layout = dict(scale = 1),\
+#         circle = dict(\
+#                     radius = 15),\
+#         annotate = dict(fontsize = 14)
+#         )
+#p = {}
+##plotz.addGraphPretty(model, ax, positions, \
+#                     **p,\
+#                     )
+#nx.draw(model.graph, positions, ax = ax)
 #ax.axis('equal')
 #ax.set(xticks = [], yticks = [])
-ax.axis('off')
-fig.show()
-savefig(figDir + 'psychonetwork.eps', format = 'eps', dpi = 1000)
+#ax.axis('off')
+#fig.show()
+#savefig(figDir + 'psychonetwork.eps', dpi = 1000)
 
-# %% 
+# %%
 
 
 # data matrix
@@ -119,7 +124,7 @@ def worker(fidx):
     data = frombuffer(var_dict.get('X')).reshape(var_dict['xShape'])
     node, temp, trial = unravel_index(fidx, var_dict.get('start'), order = 'F')
     if '{}' in fileName:
-        # load control; bias correct mi 
+        # load control; bias correct mi
         control = IO.loadData(fileName)
         graph   = control.graph
         # panzeri-treves correction
@@ -162,10 +167,10 @@ def worker(fidx):
 fasterData = f'results.pickle'
 try:
     for k, v in IO.loadPickle(fasterData):
-        globals()[k] = v 
-        
+        globals()[k] = v
+
     NNUDGE, NTEMPS, NTRIALS, NODES, DELTAS = loadedData.shape
-    
+
 # start loading individual pickles
 except:
     fileNames = sorted(\
@@ -182,8 +187,14 @@ except:
     buffShape = (NNUDGE, NTEMPS, NTRIALS, NODES, DELTAS)
     buff = mp.RawArray('d', int(prod(buffShape)))
 
-    tmp = range(len(fileNames))
-    with mp.Pool(processes = mp.cpu_count() - 1, initializer = initWorker,\
+    a, b = divmod(len(fileNames), COND * NODES + 1 )
+    c = 1 if b else 0
+    tidx = (COND * NODES + 1) * (a - c)
+    print(a, b, c, COND * NODES + 1 )
+    print(f'Loading {tidx}')
+    tmp = range(tidx)
+    processes = 1
+    with mp.Pool(processes = processes, initializer = initWorker,\
              initargs = (buff, buffShape, expStruct)) as p:
         p.map(worker, tqdm(tmp))
     loadedData = frombuffer(buff, dtype = float64).reshape(*buffShape)
@@ -207,7 +218,7 @@ symbols     = (abc.x, abc.a, \
                abc.b, abc.c, \
                abc.d, abc.e,\
                abc.f)\
-               
+
 #syF         = symbols[1] * sy.exp(- symbols[2] * symbols[0]) +\
 # symbols[3] * sy.exp(- symbols[4] * (symbols[0] - symbols[5]))
 #print(syF)
@@ -229,7 +240,7 @@ from scipy import ndimage
 zd = zeros(loadedData.shape)
 for temp in range(NTEMPS):
     for nudge in range(NNUDGE):
-        zdi = loadedData[nudge, temp] 
+        zdi = loadedData[nudge, temp]
         # scale data 0-1 along each sample (nodes x delta)
         rescale = True
 #        rescale = False
@@ -238,7 +249,7 @@ for temp in range(NTEMPS):
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 3, axis = 0)
         if rescale:
             zdi = zdi.reshape(NTRIALS, -1) # flatten over trials
-            MIN, MAX = zdi.min(axis = 1), zdi.max(axis = 1)
+            MIN, MAX = nanmin(zdi, axis = 1), nanmax(zdi, 1)
             MIN = MIN[:, newaxis]
             MAX = MAX[:, newaxis]
             zdi = (zdi - MIN) / (MAX - MIN)
@@ -250,48 +261,10 @@ for temp in range(NTEMPS):
 #        zdi[zdi < 0]  = 0
         # show means with spread
         # remove the negative small numbers, e.g. -1e-5
-        zd[nudge, temp] = zdi 
-        
-        
+        zd[nudge, temp] = zdi
 
-# %% estimate impact
-#aucs       = zeros((NTRIALS, COND, NODES))
 
-from scipy import interpolate
-from time import sleep
 
-COEFFS = zeros((COND, NTRIALS, NODES, p0.size))
-x = arange(DELTAS)
-
-# uggly mp case
-def worker(sample):
-    auc = zeros((len(sample), 2))
-    coeffs, errors = plotz.fit(sample, func, params = fitParam)
-    for nodei, c in enumerate(coeffs):
-    #        tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
-    #        tmp = sy.integrals.integrate(tmp, (abc.x, 0, DELTAS))
-        F   = lambda x: func(x, *c)
-        tmp, _ = scipy.integrate.quad(F, 0, inf)
-        auc[nodei, 0] = tmp
-        auc[nodei, 1] = errors[nodei]
-    return auc
-        
-import multiprocessing as mp
-with mp.Pool(mp.cpu_count()) as p:
-    aucs_raw = array(\
-                p.map(\
-                      worker, tqdm(zd.reshape(-1, NODES, DELTAS))\
-                      )\
-                 )
-                
-rshape  = tuple(i for i in loadedData.shape if i != DELTAS)
-rshape += (2,) # add error
-tmp          = aucs_raw.reshape(rshape)
-aucs_raw     = tmp[..., 0]
-errors       = tmp[..., 1].mean(-2)
-
-# remove machine error estimates
-aucs_raw[aucs_raw <= finfo(aucs_raw.dtype).eps / 2] = 0
 
 
 # %% time plots
@@ -319,11 +292,11 @@ rcParams['axes.labelpad'] = 80
 ax[1, 2].set_ylabel('KL-divergence', labelpad = 5)
 ax[1, 0].set_ylabel(_ii, labelpad = 5)
 from matplotlib.ticker import FormatStrFormatter
-means, stds  = zd.mean(-3), zd.std(-3, ddof = 1)
+means, stds  = nanmean(zd, -3), nanstd(zd, -3)
 
 for temp in range(NTEMPS):
     for nudge in range(NNUDGE):
-        
+
         idx = nudge if nudge == 0 else nudge + 1
         tax = ax[temp, idx]
         if temp == 0:
@@ -333,7 +306,7 @@ for temp in range(NTEMPS):
         sigmas = stds[nudge, temp]
         meanCoeffs, meanErrors = plotz.fit(mus, func, params = fitParam)
         for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
-  
+
             # plot mean fit
             tax.plot(xx, func(xx, *meanCoeffs[idx]),\
                      color = colors[idx],\
@@ -347,7 +320,7 @@ for temp in range(NTEMPS):
                          markersize = 15, \
                          color = colors[idx],\
                          label = node) # mpl3 broke legends?
-        
+
 #            ax[cidx].set(xscale = 'log')
 
 
@@ -360,7 +333,7 @@ for temp in range(NTEMPS):
              transform = tax.transAxes,\
              horizontalalignment = 'right')
 #    tax.set(xlim = (-1.5, 30))
-               
+
         #    ax[cidx].set(xscale = 'log', yscale = 'log'
 # format plot
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -378,6 +351,46 @@ fig.show()
 fig.savefig(figDir + 'mi_time.eps', format='eps', dpi=1000, pad_inches = 0,\
         bbox_inches = 'tight')
 
+show()
+#sys.exit()
+# %% estimate impact
+#aucs       = zeros((NTRIALS, COND, NODES))
+
+from scipy import interpolate
+from time import sleep
+
+COEFFS = zeros((COND, NTRIALS, NODES, p0.size))
+x = arange(DELTAS)
+
+# uggly mp case
+def worker(sample):
+    auc = zeros((len(sample), 2))
+    coeffs, errors = plotz.fit(sample, func, params = fitParam)
+    for nodei, c in enumerate(coeffs):
+    #        tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
+    #        tmp = sy.integrals.integrate(tmp, (abc.x, 0, DELTAS))
+        F   = lambda x: func(x, *c)
+        tmp, _ = scipy.integrate.quad(F, 0, inf)
+        auc[nodei, 0] = tmp
+        auc[nodei, 1] = errors[nodei]
+    return auc
+
+import multiprocessing as mp
+with mp.Pool(processes) as p:
+    aucs_raw = array(\
+                p.map(\
+                      worker, tqdm(zd.reshape(-1, NODES, DELTAS))\
+                      )\
+                 )
+
+rshape  = tuple(i for i in loadedData.shape if i != DELTAS)
+rshape += (2,) # add error
+tmp          = aucs_raw.reshape(rshape)
+aucs_raw     = tmp[..., 0]
+errors       = tmp[..., 1].mean(-2)
+
+# remove machine error estimates
+aucs_raw[aucs_raw <= finfo(aucs_raw.dtype).eps / 2] = 0
 
 # %% show idt auc vs impact auc and apply correction
 
@@ -395,12 +408,12 @@ mainax = fig.add_subplot(111, frameon = False, \
 out = lof(n_neighbors = NTRIALS)
 
 aucs = aucs_raw.copy()
-thresh = 2
+thresh = 3
 clf = MinCovDet()
 
 labels = 'Underwhelming\tOverwhelming'.split('\t')
 rejections = zeros((COND, NTEMPS, NODES))
-raw = False
+raw = True
 for temp in range(NTEMPS):
     for nudge in range(1, NNUDGE):
         tax = ax[temp, nudge - 1]
@@ -408,7 +421,7 @@ for temp in range(NTEMPS):
         smax = aucs[[0, nudge], temp].ravel().max(0)
         smin = aucs[[0, nudge], temp].ravel().min(0)
         ranges = linspace(-1, smax, 100)
-#        
+#
         xx, yy = meshgrid(ranges, ranges)
         for node, idx in model.mapping.items():
             tmp = aucs_raw[[0, nudge], temp, :, idx]
@@ -418,7 +431,7 @@ for temp in range(NTEMPS):
                 tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
                         colors = colors[[idx]],\
                         levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
-            
+
             # plot ci vs ii
             ident = sqrt(clf.mahalanobis(tmp.T))
 #            print(model.rmapping[idx], ident)
@@ -432,7 +445,7 @@ for temp in range(NTEMPS):
                     tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
                             color = colors[idx], \
                             alpha = 1, marker = 's')
-            
+
 #            tax.scatter(*tmp.mean(1), color = 'k', s = 50, zorder = 5)
             alpha = .1 if raw else 1
             tax.scatter(*aucs[[0, nudge], temp, :, idx], \
@@ -460,8 +473,8 @@ for temp in range(NTEMPS):
              transform = tax.transAxes,\
              horizontalalignment = 'left')
 #        tax.set(yscale = 'log')
-            
-        
+
+
 #        tax.set(yscale = 'log').
 
 out = 'causal_ii_scatter_raw' if raw else 'causal_ii_scatter_corrected'
@@ -484,7 +497,7 @@ from mpl_toolkits.mplot3d import Axes3D
 
 conditionLabels = 'Underwhelming Overwhelming'.split()
 
-    
+
 # plot info
 rcParams['axes.labelpad'] = 20
 for condition, condLabel in enumerate(conditionLabels):
@@ -526,7 +539,7 @@ for condition, condLabel in enumerate(conditionLabels):
                               title = 'Node',\
                               title_fontsize = 15, fontsize = 12)
 
- 
+
     # hack for uniform labels
     for l in leg.legendHandles:
         l._sizes = [150]
@@ -558,7 +571,7 @@ for temp in range(NTEMPS):
     for cond in range(COND):
         percentages[temp, 0, cond] = equal(drivers[0, temp], \
                                    drivers[cond + 1, temp, ]).mean()
-        
+
         estimates[temp, :, 0, :]   = aucs[0, temp]
         targets[temp, :, cond]     = aucs[cond + 1, temp]
         maxestimates[temp, :, 0]   = aucs[0, temp].argmax(-1)
@@ -570,13 +583,13 @@ for temp in range(NTEMPS):
             percentages[temp, ni + 1, cond] =  equal(\
                        centEstimate * ones(NTRIALS), \
                        drivers[cond + 1, temp]).mean()
-            
+
             maxestimates[temp, :, ni + 1] = model.mapping[centLabel] * ones(NTRIALS)
             for k, v in tmp.items():
                 estimates[temp, :, ni + 1, model.mapping[k]] = v * ones((NTRIALS))
 print(percentages)
-# plot max only 
-    
+# plot max only
+
 #fig, ax = subplots(2, sharex = 'all')
 #
 #m = estimates.max(-1)
@@ -599,7 +612,7 @@ mainax = fig.add_subplot(111, frameon = False, \
 subplots_adjust(wspace = 0)
 width = .4
 xloc  = arange(NTEMPS) * 2
-conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]  
+conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]
 condLabels = 'Underwhelming Overwhelming'.split()
 labels = 'max $\mu_i$\tdeg\tclose\tbet\tev'.split('\t')
 
@@ -611,17 +624,17 @@ for cond in range(COND):
             xticklabels = conditions,\
             )
     tax.tick_params(axis = 'x', rotation = 45)
-    
+
     for temp in range(NTEMPS):
         for ni in range(N + 1):
-        
+
             x = equal(maxestimates[temp, :, ni], maxT[temp, :, cond])
             y = x.mean() * 100
             x = xloc[temp]
-            
+
             tmp[temp, ni, cond] =  x.mean()
             tax.bar(x + width * ni, y, width = width,\
-              color = colors[ni])  
+              color = colors[ni])
             if y > 0:
                 tax.text(x + width * ni, y + .5, \
                      int(y),\
@@ -670,11 +683,9 @@ for cond in range(COND):
                 try:
     #                print(i, temp, yi[trainidx].mean())
                     clf.fit(xi[trainidx].reshape(-1, 1), yi[trainidx])
-                    print('trained')
                     pred =  clf.predict(xi[testidx].reshape(-1, 1))
-                    
-                    print(pred)
-                    s = 0 
+
+                    s = 0
                     xxx = linspace(-100, 100)
                     yyy = clf.predict_proba(xxx[:, None])
                     tax = ax[temp, cond]
@@ -683,13 +694,12 @@ for cond in range(COND):
                     if pred == yi[testidx]:
                         s = 1
                     ss[i, temp, cond] += s
-                    
+
                 except Exception as e:
-                    print(yi.mean())
                     ss[i, temp, cond] += yi.mean()
     #                print(i, temp, yi.mean(), e)
     #                ss[i, temp, testidx] = 0
-    #                
+    #
     #                ss[i, temp, testidx] = yi[trainidx].mean()
 
 
@@ -698,41 +708,108 @@ fig, ax = subplots(COND)
 for ci in range(COND):
     tax = ax[ci]
     tax.imshow(ss[..., ci])
+
 # %%
-percentages[percentages == 0] = 0
-contin = scipy.stats.chi2_contingency
-counts = percentages * NTRIALS
-res = contin(counts, correction = True)
-print(res)
+c    = percentages.reshape(-1, COND) * NTRIALS
+ddof = (NTEMPS * N - 1) * (COND - 1)
+
+e = (c.sum(1)  * c.sum(0)[:, None]).T / (c.sum())
+chi =  nansum((c - e)**2 / e)
+#%% appendix box rejection
+fig, ax = subplots(1, COND, sharey = 'all')
+mainax = fig.add_subplot(111, frameon = False,\
+                         xticks = [],\
+                         yticks = [],\
+                         ylabel = 'Rejection rate(%)'\
+                         )
+
+subplots_adjust(wspace = 0)
+x     = arange(NTEMPS) * 3
+
+width = .2
+labels = 'Underwhelming Overwhelming'.split()
+conditions = [f'T={round(i,2)}' for i in temps]
+for cond in range(COND):
+    tax = ax[cond]
+    tax.set_title(labels[cond])
+    tax.set(xticks = x + .5 * width * NODES, \
+            xticklabels = conditions,\
+            )
+    tax.tick_params(axis = 'x', rotation = 45)
+
+    for node in range(NODES):
+        y  = rejections[:, cond, node] * 100
+        tx = x + width * node
+        tax.bar(tx, y, width = width,\
+                color = colors[node], label = model.rmapping[node])
+tax.legend(loc = 'upper left',\
+          bbox_to_anchor = (1, 1),\
+          borderaxespad = 0, \
+          frameon = False)
+fig.savefig(figDir + 'rejection_rate.eps', format = 'eps', dpi = 1000)
+# %% appendix plot: fit error comparison
+fig, ax = subplots()
+errors = errors.reshape(-1, NODES)
+subplots_adjust(hspace = 0)
+width= .07
+locs = arange(0, len(errors))
+
+
+
+for node in range(NODES):
+    ax.bar(locs + width * node, \
+           errors[:, node], color = colors[node],\
+           width = width, label = model.rmapping[node])
+
+conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]
+# set labels per group and center it
+ax.set(yscale = 'log', xticklabels = conditions, \
+       xticks = locs + .5 * NODES * width, ylabel = 'Mean square error')
+ax.tick_params(axis = 'x', rotation = 45)
+ax.legend(loc = 'upper left',\
+          bbox_to_anchor = (1, 1),\
+          borderaxespad = 0, \
+          frameon = False)
+rcParams['axes.labelpad'] = 1
+fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)
 
 
 # %%
-conds = f'II UN OV'.split()
-for i in centralities:
-    conds.append(f'{i}')
-gLabels = []
-for temp in temps:
-    for cond in conds:
-        gLabels.append(f'{round(temp,2)}_{cond}') 
-print(gLabels)
+#percentages[percentages == 0] = 0
+#contin = scipy.stats.chi2_contingency
+#counts = percentages * NTRIALS
+#res = contin(counts, correction = True)
+#print(res)
+
+
+## %%
+#conds = f'II UN OV'.split()
+#for i in centralities:
+#    conds.append(f'{i}')
+#gLabels = []
+#for temp in temps:
+#    for cond in conds:
+#        gLabels.append(f'{round(temp,2)}_{cond}')
+#print(gLabels)
+
 
 # %% statistical tests
-
-methods =  'II DEG CLOS BET EV'.split()
-cis     = 'UN OV'.split()
-levels  = [[], [], []]
-
-import pandas as pd
-for temp in temps:
-    for method in methods:
-        for ci in cis:
-            levels[0].append(f'T={round(temp,2)}')
-            levels[2].append(method)
-            levels[1].append(ci)
-names = 'Temperature Method CI'.split()
-index = pd.MultiIndex.from_tuples(zip(*levels), names = names)
-s = pd.Series(percentages.ravel(), index = index)
-print(s)
+#
+#methods =  'II DEG CLOS BET EV'.split()
+#cis     = 'UN OV'.split()
+#levels  = [[], [], []]
+#
+#import pandas as pd
+#for temp in temps:
+#    for method in methods:
+#        for ci in cis:
+#            levels[0].append(f'T={round(temp,2)}')
+#            levels[2].append(method)
+#            levels[1].append(ci)
+#names = 'Temperature Method CI'.split()
+#index = pd.MultiIndex.from_tuples(zip(*levels), names = names)
+#s = pd.Series(percentages.ravel(), index = index)
+#print(s)
 # %%
 #driver = pd.DataFrame(all_drivers.T, columns = gLabels)
 #print(driver)
@@ -772,60 +849,3 @@ print(s)
 #consistency = array([ [cons(i) for i in j] for j in maxim.T])
 ## plot consistency of the estimator
 #naive = (maxim[...,0] == maxim[...,1])
-#%% appendix box rejection
-fig, ax = subplots(1, COND, sharey = 'all')
-mainax = fig.add_subplot(111, frameon = False,\
-                         xticks = [],\
-                         yticks = [],\
-                         ylabel = 'Rejection rate(%)'\
-                         )
-
-subplots_adjust(wspace = 0)
-x     = arange(NTEMPS) * 3
-    
-width = .2
-labels = 'Underwhelming Overwhelming'.split()
-conditions = [f'T={round(i,2)}' for i in temps]
-for cond in range(COND):
-    tax = ax[cond]
-    tax.set_title(labels[cond])
-    tax.set(xticks = x + .5 * width * NODES, \
-            xticklabels = conditions,\
-            )
-    tax.tick_params(axis = 'x', rotation = 45)
-
-    for node in range(NODES):
-        y  = rejections[:, cond, node] * 100
-        tx = x + width * node
-        tax.bar(tx, y, width = width,\
-                color = colors[node], label = model.rmapping[node])
-tax.legend(loc = 'upper left',\
-          bbox_to_anchor = (1, 1),\
-          borderaxespad = 0, \
-          frameon = False)
-fig.savefig(figDir + 'rejection_rate.eps', format = 'eps', dpi = 1000)
-# %% appendix plot: fit error comparison
-fig, ax = subplots()
-errors = errors.reshape(-1, NODES)
-subplots_adjust(hspace = 0)
-width= .07
-locs = arange(0, len(errors))
-
-
-
-for node in range(NODES):
-    ax.bar(locs + width * node, \
-           errors[:, node], color = colors[node],\
-           width = width, label = model.rmapping[node])
-    
-conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]  
-# set labels per group and center it 
-ax.set(yscale = 'log', xticklabels = conditions, \
-       xticks = locs + .5 * NODES * width, ylabel = 'Mean square error')
-ax.tick_params(axis = 'x', rotation = 45)
-ax.legend(loc = 'upper left',\
-          bbox_to_anchor = (1, 1),\
-          borderaxespad = 0, \
-          frameon = False)
-rcParams['axes.labelpad'] = 1
-fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)

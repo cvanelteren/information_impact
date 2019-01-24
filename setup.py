@@ -28,7 +28,7 @@ baseDir =  os.getcwd() + os.path.sep
 nums = numpy.get_include()
 if not os.path.exists('Data'):
     os.mkdir('Data')
-    
+
 for (root, dirs, files) in os.walk(baseDir):
     for file in files:
         fileName = f'{root}/{file}'
