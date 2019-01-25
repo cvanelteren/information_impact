@@ -84,7 +84,12 @@ checkDistribution() # print it only once
 @cython.cdivision(True)
 @cython.initializedcheck(False)
 cpdef int encodeState(long[::1] state) nogil:
-    """Maps state to decimal number"""
+    """
+    Maps state to decimal number.
+    
+    NOTE this only works for binary,\
+    needs to be extended to include larger than binary case
+    """
     cdef:
         int binNum = 1
         int N = state.shape[0]
@@ -102,7 +107,12 @@ cpdef int encodeState(long[::1] state) nogil:
 @cython.nonecheck(False)
 @cython.cdivision(True)
 cpdef vector[long] decodeState(int dec, int N) nogil:
-    """Decodes decimal number to state"""
+    """
+    Decodes decimal number to state.
+
+    NOTE this only works for binary,\
+    needs to be extended to include larger than binary case
+    """
     cdef:
         int i = 0
         # long[::1] buffer = np.zeros(N, dtype = int) - 1
@@ -122,7 +132,16 @@ cpdef vector[long] decodeState(int dec, int N) nogil:
 cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
                    int burninSamples = int(1e3)):
     """
-    Use single Markov chain to extract snapshots from the model
+    Determines the state distribution of the :model: in parallel. The model is reset
+    to random state and simulated for :step: + :burninSamples: steps after which
+    a single sample is drawn and added to the output :snapshots:
+
+    Input:
+        :model: a model according to :Models.models:
+        :nSamples: number of state samples to draw
+        :step: number of steps between samples
+    Returns:
+        :snapshots: dict containing the idx of the state as keys, and probability as values
     """
     cdef:
         unordered_map[int, double] snapshots
@@ -140,6 +159,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     for sample in range(nSamples):
         tmp = copy.deepcopy(model)
         tmp.reset()
+        tmp.burnin(burninSamples)
         tmp.seed += sample # enforce different seeds
         modelsPy.append(tmp)
         models_.push_back(PyObjectHolder(<PyObject *> tmp))
@@ -183,16 +203,23 @@ cpdef dict monteCarlo(\
                int deltas = 10,  int repeats = 11,
                int nThreads = -1):
     """
-    Monte carlo sampling of the snapshots
-    ISSUES:
-        currently have to enforce the gil in order to not overwrite
-        the model states. Best would be to copy the extensions. However,
-        I dunno how to properly reference them in arrays
+    Monte-Carlo methods for estimating p(s_i^{t+\delta} | S).
+    Input:
+        :model: using the basic framework from Models.models
+        :snapshots: dict with keys containing the state idx and the value containing its probability
+        :deltas: amount of time steps to simulate
+        :repeats:  number of times to repeat the simulation;
+        :nThreads: number of threads to use (default = -1 : all)
+    Returns:
+        :conditional: dict containing the probabilities of nodes of time (number of nodes x deltas)
+        for each state from :snapshots:
     """
     # TODO: solve the memory issues;  currently way too much is ofloaded to the memory
     # one idea would be to have the buffers inside the for loop. However prange is not possible
     # if that is used.
     print('Pre-computing rngs')
+
+    # setup
     cdef:
         float past = timer()
     # pre-declaration
@@ -239,52 +266,25 @@ cpdef dict monteCarlo(\
         nThreads = mp.cpu_count()
     pbar = tqdm(total = states) # init  progbar
     for state in prange(states, nogil = True, schedule = 'static', num_threads = nThreads):
-    # for state in range(states):
-        # with gil:
         for repeat in range(repeats):
-            # reset the buffers to the start state
-            # model._states[:] = s[state]
-            # model._nudges[:] = copyNudge
-            # (<Model>models_[state].ptr)._states = s[state] # this overwrites s ; don't
-            # (<Model>models_[state].ptr)._nudges = copyNudge
             # only copy values
             for node in range(nNodes):
                 # kinda uggly syntax
                 (<Model>models_[state].ptr)._states[node] = s[state][node]
                 (<Model>models_[state].ptr)._nudges[node] = copyNudge[node]
-                # (<Model>models[n])._nudges[node] = copyNudge[node]
-            #     model._states[node] = s[state][node]
-            #     model._nudges[node] = copyNudge[node]
-            # reset simulation
             # sample for N times
             for delta in range(deltas ):
                 # bin data
                 for node in range(nNodes):
                     out[state, delta, node, idxer[(<Model>models_[state].ptr)._states[node]]] += 1 / Z
-                    # for statei in range(nStates):
-                        # if (<Model>models[n])._states[node] == agentStates[statei]:
-                        # if model._states[node] == model.agentStates[statei]:
-                            # out[state, delta, node, statei] += 1 / Z
-                            # break
                 # update
                 jdx  = (delta + 1) * (repeat + 1)  * (state + 1)- 1
-                # (<Model>models[n])._updateState(r[jdx])
-                # model._updateState(model.sampleNodes(1)[0])
                 (<Model>models_[state].ptr)._updateState(r[jdx])
-                # with gil:
-                #     print(np.all((<Model>models_[state].ptr)._states.base == s[state].base))
-                # turn-off the nudges
-                    # check for type of nudge
+
                 if nudgeType == 'pulse' or \
                 nudgeType    == 'constant' and delta >= half:
                     # (<Model>models[n])._nudges[:] =
                     (<Model>models_[state].ptr)._nudges[:] = 0
-                    # for node in range(nNodes):
-                        # model._nudges[node] = 0
-                    # printf('%d %d\n', tid, deltas)
-                    # with gil:
-
-                    # model._nudges[:] = 0
         # TODO: replace this with a concurrent unordered_map
         with gil:
             pbar.update(1)
@@ -301,12 +301,7 @@ cpdef dict monteCarlo(\
     #     _tmp[idx] = buffer.reshape((deltas + 1, nNodes, nStates)).copy()
     #     prec(start)
 
-
-    # # free memory
-    # for nThread in range(n):
-    #     Py_XDECREF(models.at(nThread))
     pbar.close()
-    # time.sleep(.1)
     print(f"Delta = {timer() - past: .2f} sec")
     return conditional
 

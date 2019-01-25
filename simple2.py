@@ -17,7 +17,7 @@ style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 #dataPath = '/mnt/'
 extractThis      = IO.newest(dataPath)[-1]
-#extractThis      = '1548025318.5751357'
+extractThis      = '1548025318.5751357'
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
@@ -195,7 +195,7 @@ except:
     print(a, b, c, COND * NODES + 1 )
     print(f'Loading {tidx}')
     tmp = range(tidx)
-    processes = 1
+    processes = mp.cpu_count()
     with mp.Pool(processes = processes, initializer = initWorker,\
              initargs = (buff, buffShape, expStruct)) as p:
         p.map(worker, tqdm(tmp))
@@ -245,9 +245,10 @@ for temp in range(NTEMPS):
         zdi = loadedData[nudge, temp]
         # scale data 0-1 along each sample (nodes x delta)
         rescale = True
-        # rescale = False
-        # rescale for each trial over min / max
-#        zdi = ndimage.filters.gaussian_filter1d(zdi, 1, axis = -1)
+#        rescale = False
+         
+#        rescale for each trial over min / max
+#        zdi = ndimage.filters.gaussian_filter1d(zdi, 8, axis = -1)
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 3, axis = 0)
         if rescale:
             zdi = zdi.reshape(NTRIALS, -1) # flatten over trials
@@ -265,7 +266,7 @@ for temp in range(NTEMPS):
         # remove the negative small numbers, e.g. -1e-5
         zdi[isfinite(zdi) == False] = 0 # check this
         zd[nudge, temp] = zdi
-        
+    
 # %% time plots
 
 # insert dummy axis to offset subplots
@@ -288,7 +289,7 @@ _ii    = '$I(s_i^t ; S^t_0)$'
 [i.axis('off') for i in ax[:, 1]]
 
 rcParams['axes.labelpad'] = 80
-ax[1, 2].set_ylabel('KL-divergence', labelpad = 5)
+ax[1, 2].set_ylabel("$D_{KL}(P \vert\vert P')", labelpad = 5)
 ax[1, 0].set_ylabel(_ii, labelpad = 5)
 from matplotlib.ticker import FormatStrFormatter
 means, stds  = nanmean(zd, -3), nanstd(zd, -3)
@@ -406,12 +407,12 @@ mainax = fig.add_subplot(111, frameon = False, \
 out = lof(n_neighbors = NTRIALS)
 
 aucs = aucs_raw.copy()
-thresh = 3
+thresh = 2.5
 clf = MinCovDet()
 
 labels = 'Underwhelming\tOverwhelming'.split('\t')
 rejections = zeros((COND, NTEMPS, NODES))
-raw = True
+raw = False
 for temp in range(NTEMPS):
     for nudge in range(1, NNUDGE):
         tax = ax[temp, nudge - 1]
@@ -481,14 +482,16 @@ for temp in range(NTEMPS):
 #        tax.set(yscale = 'log').
 
 out = 'causal_ii_scatter_raw' if raw else 'causal_ii_scatter_corrected'
-savefig(figDir + f'{out}.{"png" if raw else "eps"}', dpi = 1000)
+out += '.png' if raw else '.eps'
+savefig(figDir + out, dpi = 1000)
 
 # %% information impact vs centrality
 from functools import partial
 centralities = dict(deg      = nx.degree, \
              close   = nx.closeness_centrality,\
              bet = partial(nx.betweenness_centrality, weight = 'weight'),\
-              ev = partial(nx.eigenvector_centrality, weight = 'weight'),\
+             ev = partial(nx.eigenvector_centrality, weight = 'weight'),\
+#             cfl = partial(nx.current_flow_betweenness_centrality, weight = 'weight'),
              )
 
 
@@ -620,6 +623,11 @@ condLabels = 'Underwhelming Overwhelming'.split()
 labels = 'max $\mu_i$\tdeg\tclose\tbet\tev'.split('\t')
 
 maxT = argmax(targets,  -1)
+
+lll = 'Information impact\t'
+ii = '\t'.join(i for i in centralities)
+lll += ii
+lll = lll.split('\t')
 for cond in range(COND):
     tax = ax[cond]
     tax.set_title(condLabels[cond])
@@ -637,80 +645,144 @@ for cond in range(COND):
 
             tmp[temp, ni, cond] =  x.mean()
             tax.bar(x + width * ni, y, width = width,\
-              color = colors[ni])
+              color = colors[ni], label = lll[ni])
             if y > 0:
                 tax.text(x + width * ni, y + .5, \
                      int(y),\
                      fontweight = 'bold', \
                      horizontalalignment = 'center')
-
+tax.legend(tax.get_legend_handles_labels()[1][:N + 1], loc = 'upper left' , bbox_to_anchor = (1,1),\
+           borderaxespad = 0)
 fig.savefig(figDir + 'statistics_overview.eps', format = 'eps', dpi = 1000)
 
 # %% cross validation
-from sklearn.model_selection import LeaveOneOut, StratifiedKFold
-from sklearn import svm, metrics, linear_model as lm
+from sklearn.feature_selection import SelectKBest, RFE, RFECV
+from sklearn.svm import SVC
+from sklearn.feature_selection import chi2, mutual_info_classif
+from sklearn.model_selection import StratifiedKFold, LeaveOneOut
 
-#clf = svm.SVC(decision_function_shape = 'ovr', gamma = 'scale')
-#clf = lm.LogisticRegression(\
-#                            solver = 'lbfgs',\
-#                            multi_class = 'multinomial')
-clf = lm.LogisticRegression(C = 1, solver = 'lbfgs')
-from sklearn.model_selection import cross_val_score
 
-y = zeros(NTEMPS * NTRIALS)
-#idx = np.argmax(estimates, -1).reshape(-1, N+1)[...,0] == np.argmax(targets, -1).reshape(-1, COND)[..., 0]
-y = targets.argmax()
-#y[idx] = 1
-y = y.reshape(-1)
-ss = zeros((N+1, NTEMPS, COND))
-from sklearn.model_selection import ShuffleSplit
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import datasets
+from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import SelectFromModel
+from sklearn.metrics import accuracy_score
+features  = estimates.max(-1).reshape(-1, N + 1)
+#features  = maxestimates.reshape(-1, N + 1) + 1
+features  = repeat(features, COND, 0)
 
-cv = ShuffleSplit(n_splits = 3, test_size = 0.2, random_state = 0)
-cv =  LeaveOneOut()
+featTarget = maxT.reshape(-1) + 1 
 
-n_splits = 14
-cv = StratifiedKFold(n_splits = n_splits, shuffle = True)
-fig, ax = subplots(3, 2)
-for cond in range(COND):
-    for i in range(N + 1):
-        for temp in range(NTEMPS):
-            xi = zeros(NTRIALS)
-            for tr in range(NTRIALS):
-                m      = maxestimates[temp, tr, i]
-                xi[tr] = estimates[temp, tr, i, m]
-#            xi = estimates[temp, :, [i], m].T
-            yi = equal(maxT[temp, :, cond], maxestimates[temp, :, i])
-#            print(cond, i, yi.mean())
-    #        ss[i] = cross_val_score(clf, xi, yi, cv = cv).mean()
-            for trainidx, testidx in cv.split(xi, yi):
-                try:
-    #                print(i, temp, yi[trainidx].mean())
-                    clf.fit(xi[trainidx].reshape(-1, 1), yi[trainidx])
-                    pred =  clf.predict(xi[testidx].reshape(-1, 1))
+svc = SVC(kernel = 'linear')
 
-                    s = 0
-                    xxx = linspace(-100, 100)
-                    yyy = clf.predict_proba(xxx[:, None])
-                    tax = ax[temp, cond]
-                    tax.plot(xxx, yyy[:, 1], color = colors[i])
+#featTarget= targets.argmax(-1).reshape(-1, COND)
+
+clf= SelectKBest(chi2, k = 1).fit(\
+                features, featTarget)
+
+rfe = RFE(estimator = svc, n_features_to_select=1 ,step = 1)
+rfe.fit(features, featTarget)
+
+ranking = rfe.ranking_
+
+rfecv = RFECV(estimator = svc, step = 2, cv = LeaveOneOut(),\
+              scoring = 'accuracy')
+rfecv.fit(features, featTarget)
+print(rfecv.n_features_)
+
+fig, ax = subplots()
+x = arange(1, rfecv.grid_scores_.size + 1)
+ax.plot(x, rfecv.grid_scores_)
+print(clf.scores_)
+
+# %%
+clf = RandomForestClassifier(n_estimators=10000, \
+                             random_state=0, n_jobs=-1)
+sfm = SelectFromModel(clf, threshold=0.15)
+xtrain, xtest, ytrain, ytest = train_test_split(features, featTarget, test_size = .1, random_state = 0)
+
+sfm.fit(xtrain, ytrain)
+for i in sfm.get_support(indices = True):
+    print(i)
+clf.fit(xtrain, ytrain)
+pred = clf.predict(xtest)
+print(accuracy_score(ytest, pred))
+
+xtrain_ = sfm.transform(xtrain)
+xtest_  = sfm.transform(xtest)
+
+clf = RandomForestClassifier(n_estimators=10000, \
+                             random_state=0, n_jobs=-1)
+
+clf.fit(xtrain_, ytrain)
+
+pred = clf.predict(xtest_)
+print(accuracy_score(ytest, pred))
+ #%%
+#from sklearn.model_selection import LeaveOneOut, StratifiedKFold
+#from sklearn import svm, metrics, linear_model as lm
 #
-                    if pred == yi[testidx]:
-                        s = 1
-                    ss[i, temp, cond] += s
-
-                except Exception as e:
-                    ss[i, temp, cond] += yi.mean()
-    #                print(i, temp, yi.mean(), e)
-    #                ss[i, temp, testidx] = 0
-    #
-    #                ss[i, temp, testidx] = yi[trainidx].mean()
-
-
-ss = ss / n_splits
-fig, ax = subplots(COND)
-for ci in range(COND):
-    tax = ax[ci]
-    tax.imshow(ss[..., ci])
+##clf = svm.SVC(decision_function_shape = 'ovr', gamma = 'scale')
+##clf = lm.LogisticRegression(\
+##                            solver = 'lbfgs',\
+##                            multi_class = 'multinomial')
+#clf = lm.LogisticRegression(C = 1, solver = 'lbfgs')
+#from sklearn.model_selection import cross_val_score
+#
+#y = zeros(NTEMPS * NTRIALS)
+##idx = np.argmax(estimates, -1).reshape(-1, N+1)[...,0] == np.argmax(targets, -1).reshape(-1, COND)[..., 0]
+#y = targets.argmax()
+##y[idx] = 1
+#y = y.reshape(-1)
+#ss = zeros((N+1, NTEMPS, COND))
+#from sklearn.model_selection import ShuffleSplit
+#
+#cv = ShuffleSplit(n_splits = 3, test_size = 0.2, random_state = 0)
+#cv =  LeaveOneOut()
+#
+#n_splits = 14
+#cv = StratifiedKFold(n_splits = n_splits, shuffle = True)
+#fig, ax = subplots(3, 2)
+#for cond in range(COND):
+#    for i in range(N + 1):
+#        for temp in range(NTEMPS):
+#            xi = zeros(NTRIALS)
+#            for tr in range(NTRIALS):
+#                m      = maxestimates[temp, tr, i]
+#                xi[tr] = estimates[temp, tr, i, m]
+##            xi = estimates[temp, :, [i], m].T
+#            yi = equal(maxT[temp, :, cond], maxestimates[temp, :, i])
+##            print(cond, i, yi.mean())
+#    #        ss[i] = cross_val_score(clf, xi, yi, cv = cv).mean()
+#            for trainidx, testidx in cv.split(xi, yi):
+#                try:
+#    #                print(i, temp, yi[trainidx].mean())
+#                    clf.fit(xi[trainidx].reshape(-1, 1), yi[trainidx])
+#                    pred =  clf.predict(xi[testidx].reshape(-1, 1))
+#
+#                    s = 0
+#                    xxx = linspace(-100, 100)
+#                    yyy = clf.predict_proba(xxx[:, None])
+#                    tax = ax[temp, cond]
+#                    tax.plot(xxx, yyy[:, 1], color = colors[i])
+##
+#                    if pred == yi[testidx]:
+#                        s = 1
+#                    ss[i, temp, cond] += s
+#
+#                except Exception as e:
+#                    ss[i, temp, cond] += yi.mean()
+#    #                print(i, temp, yi.mean(), e)
+#    #                ss[i, temp, testidx] = 0
+#    #
+#    #                ss[i, temp, testidx] = yi[trainidx].mean()
+#
+#
+#ss = ss / n_splits
+#fig, ax = subplots(COND)
+#for ci in range(COND):
+#    tax = ax[ci]
+#    tax.imshow(ss[..., ci])
 
 # %%
 c    = percentages.reshape(-1, COND) * NTRIALS
