@@ -86,7 +86,7 @@ checkDistribution() # print it only once
 cpdef int encodeState(long[::1] state) nogil:
     """
     Maps state to decimal number.
-    
+
     NOTE this only works for binary,\
     needs to be extended to include larger than binary case
     """
@@ -321,12 +321,12 @@ cpdef mutualInformation(dict conditional, int deltas, \
     H += np.nansum(px *  np.log2(px), -1)
     return px, -H
 
-cpdef runMC(Model model, dict snapshots, int deltas, int repeats):
+cpdef runMC(Model model, dict snapshots, int deltas, int repeats, **kwargs):
     """ wrapper to perform MC and MI"""
     cdef:
         dict conditional = monteCarlo(model = model, snapshots = snapshots,\
                         deltas = deltas, repeats = repeats,\
-                        )
+                        **kwargs)
         np.ndarray px, mi
     px, mi = mutualInformation(conditional, deltas, snapshots, model)
     return conditional, px, mi
