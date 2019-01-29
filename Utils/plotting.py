@@ -458,7 +458,7 @@ def addGraphPretty(model, ax, \
         # print(c.center[:2], pos[n])
         # ax.text(*c.center, n, horizontalalignment = 'center', \
         # verticalalignment = 'center', transform = ax.transAxes)
-        print(.95 * circlekwargs['radius'])
+#        print(.95 * circlekwargs['radius'])
         annotatekwargs['fontsize'] = 95 * circlekwargs['radius']
         ax.annotate(n, c.center, **annotatekwargs)
         # add to ax

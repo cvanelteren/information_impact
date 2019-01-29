@@ -59,12 +59,15 @@ figDir = f'../thesis/figures/{extractThis}'
 # %% # show mag vs temperature
 tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
 fig, ax = subplots()
-ax.scatter(tmp['temps'], tmp['mag'], alpha = .2)
-ax.scatter(tmp['temperatures'], tmp['magRange'] * tmp['mag'].max(), \
+# if noisy load fmag otherwise load mag
+mag = tmp.get('fmag', tmp.get('mag'))
+
+ax.scatter(tmp['temps'], mag, alpha = .2)
+ax.scatter(tmp['temperatures'], tmp['magRange'] * mag.max(), \
            color = 'red', zorder = 2)
 
 func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
-a, b = scipy.optimize.curve_fit(func, tmp['temps'], tmp['mag'].squeeze(), maxfev = 10000)
+a, b = scipy.optimize.curve_fit(func, tmp['temps'], mag.squeeze(), maxfev = 10000)
 x = linspace(min(tmp['temps']), max(tmp['temps']), 1000)
 ax.plot(x, func(x, *a), '--k')
 ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
@@ -140,14 +143,14 @@ def worker(fidx):
         data[0, trial, temp]  = mi[:DELTAS - EXTRA, :].T
     # nudged data
     else:
-        
+
         targetName = fileName.split('_')[-1] # extract relevant part
         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                              for key in model.mapping\
                              for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
         jdx = jdx[0]
         useThis = fidx - node
-        
+
         # load matching control
         control = IO.loadData(fileNames[useThis])
          # load nudge
@@ -156,12 +159,12 @@ def worker(fidx):
 #                                        control.conditional,\
 #                                        repeats)
 #        control.px -= bias[..., None]
-#        
+#
 #        bias = stats.panzeriTrevesCorrection(sample.px,
 #                                              sample.conditional,\
 #                                              repeats)
 #        sample.px -= bias[..., None]
-       
+
 #        impact  = stats.hellingerDistance(control.px, px)
         impact  = stats.KL(control.px, sample.px)
         # don't use +1 as the nudge has no effect at zero
@@ -252,7 +255,7 @@ for temp in range(NTEMPS):
         # scale data 0-1 along each sample (nodes x delta)
         rescale = True
 #        rescale = False
-         
+
 #        rescale for each trial over min / max
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 8, axis = -1)
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 3, axis = 0)
@@ -272,7 +275,7 @@ for temp in range(NTEMPS):
         # remove the negative small numbers, e.g. -1e-5
         zdi[isfinite(zdi) == False] = 0 # check this
         zd[nudge, temp] = zdi
-    
+
 # %% time plots
 
 # insert dummy axis to offset subplots
@@ -375,7 +378,7 @@ def worker(sample):
     auc = zeros((len(sample), 2))
     coeffs, errors = plotz.fit(sample, func, params = fitParam)
     for nodei, c in enumerate(coeffs):
-        
+
         tmp = 0
 #        if c[0] < 1e-4:
 #            tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
@@ -445,7 +448,7 @@ for temp in range(NTEMPS):
         xx, yy = meshgrid(ranges, ranges)
 
         for node, idx in model.mapping.items():
-            
+
             # value error for zero variance
             try:
                 tmp = aucs_raw[[0, nudge], temp, :, idx]
@@ -455,7 +458,7 @@ for temp in range(NTEMPS):
                     tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
                             colors = colors[[idx]],\
                             levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
-    
+
                 # plot ci vs ii
                 ident = sqrt(clf.mahalanobis(tmp.T))
     #            print(model.rmapping[idx], ident)
@@ -478,26 +481,26 @@ for temp in range(NTEMPS):
                         color = colors[idx], \
                         label = node, alpha = alpha, \
                         linewidth = 1)
-            
+
 #            tax.scatter(*tmp[:, ident < 0], s = 100, marker = 's')
 #        slope, intercept, r, p, stder = scipy.stats.linregress(\
 #                                       *aucs[[0, nudge], temp].reshape(COND, -1))
-         
+
 #        slope, intercept = scipy.stats.siegelslopes(\
 #                    *aucs[[0, nudge], temp].reshape(COND, -1))
-            
+
         tx, ty = aucs[[0, nudge], temp].reshape(COND, -1).copy()
         ddof = tx.size - 2
 
         ridge.fit(tx[:, None], ty)
-        
+
         p = 2 * ( 1 - scipy.stats.t.cdf(abs(ridge.coef_), ddof) )
-        
+
         smax = aucs[[0, nudge], temp].ravel().max(0)
         smin = aucs[[0, nudge], temp].ravel().min(0)
-        
+
         r = ridge.score(tx[:, None], ty)
-        
+
         f, p = f_regression(tx[:, None], ty)
         r, p  =scipy.stats.kendalltau(tx, ty)
         rsq = r ** 2
@@ -505,7 +508,7 @@ for temp in range(NTEMPS):
 #        print(r, p )
         if p < pval / pcorr:
 #            print(p, )
-            tx = linspace(smin, smax) 
+            tx = linspace(smin, smax)
             ty = ridge.predict(tx[:, None]) * .8
             tax.plot(tx, ty, color = '#a2a2aa', linestyle = '--', alpha = 1)
             tax.text(1, .1, \
@@ -641,8 +644,8 @@ for temp in range(NTEMPS):
             tmp = dict(centF(model.graph))
             centLabel, centVal= sorted(tmp.items(), \
                                        key = lambda x: abs(x[1]))[-1]
-            
-            
+
+
             centEstimate = model.mapping[centLabel]
 #            print(ni + 1, centLabel, centEstimate)
             percentages[temp, ni + 1, cond] =  equal(\
@@ -715,7 +718,7 @@ tax.legend(tax.get_legend_handles_labels()[1][:N + 1], loc = 'upper left' , bbox
            borderaxespad = 0)
 fig.savefig(figDir + 'statistics_overview.eps', format = 'eps', dpi = 1000)
 
-# %% + validation
+# %% classfication with cross validation
 from sklearn.feature_selection import SelectKBest, RFE, RFECV
 from sklearn.svm import SVC
 from sklearn import linear_model
@@ -735,7 +738,7 @@ import pandas as pd
 #                                        solver      = 'lbfgs',\
 #                                        multi_class = 'multinomial',\
 #                                        max_iter = 1000, \
-#        
+#
 
 # get continuous values
 predLabels = ['ii', *centralities.keys()]
@@ -782,7 +785,7 @@ class LogitRegression(linear_model.LinearRegression):
     def predict(self, x):
         y = super().predict(x)
         return 1 / (np.exp(-y) + 1)
-    
+
 bias = zeros((NTEMPS, 1))
 X    = estimates.max(-1).mean(1)
 #X    = hstack((bias, x))
@@ -797,15 +800,28 @@ for i in range(NTEMPS):
 ax.legend()
 clf.fit(X[:, [0]], ps[:, 0])
 ax.scatter(X[:, [0]], clf.predict(X[:, [0]]))
-#%%
+#%% randomforrest
 from sklearn import model_selection
+groups = arange(N + 1)
+cv = model_selection.LeaveOneGroupOut()
+cv.get_n_splits(features, yy[..., 0], groups = groups)
 
-clf = RandomForestClassifier(n_estimators = 100)
-score = model_selection.cross_val_score(clf, \
-                                features, yy[..., 1],\
-                                cv = model_selection.LeaveOneGroupOut(),\
-                                n_jobs = -1)
-print(score)
+ty = yy[..., 0]
+clf = RandomForestClassifier(n_estimators = 100, \
+                             njobs = -1,\
+                             scoring = 'accuracy')
+
+scores = zeros((ty.shape[0]))
+for idx, (train, test) in enumerate(cv.split(ty)):
+    xi, xj = features[train], features[test]
+    yi, yj = ty[test], ty[test]
+    clf.fit(xi, yi)
+    scores[idx] = clf.score(xj, yj)
+
+
+print(score.mean())
+clf.fit(features, ty)
+print(clf.feature_importances_)
 #%%
 fig, ax = subplots()
 
@@ -864,7 +880,7 @@ for n, fc in enumerate(featureClass):
     tax = ax
     for cond, tc in enumerate(y):
         for true, pred in zip(y[tc], featureClass[fc]):
-            xi = mapper[true]  
+            xi = mapper[true]
             yi = mapper[pred]
             c = 0
             if true and pred:
@@ -873,7 +889,7 @@ for n, fc in enumerate(featureClass):
     conf = (conf.ravel() / y.shape[0]).reshape(nn,nn)
     conf[isfinite(conf) == False] = 0
     print(conf)
-    
+
     h = tax.imshow(conf, cmap = cm.plasma,\
                    vmin = 0,\
                    vmax = 1)
@@ -885,7 +901,7 @@ for n, fc in enumerate(featureClass):
         )
     tax.set_xlabel('Predicted', labelpad = 5)
     tax.set(title = tc + '\n')
-        
+
 
 
 # %%
@@ -905,11 +921,11 @@ for n, fc in enumerate(featureClass):
 #for cond in range(COND):
 #    tax = ax[cond]
 #    clf.set_params(C = cs[cmax[cond]])
-#    
+#
 #    clf.fit(scipy.stats.zscore(features[:, [0]]), tar[condLabels[cond]])
 #    pr = clf.predict_proba(dr.reshape(-1, 1))
 #    prr= clf.predict_proba(features[:, 0].reshape(-1, 1))
-#    
+#
 #    if cond == 0:
 #        print(prr)
 #    for kidx, k  in enumerate(clf.classes_):
@@ -918,12 +934,12 @@ for n, fc in enumerate(featureClass):
 #        tax.scatter(features[idx, 0], prr[idx, kidx], \
 #                    color = colors[k], \
 #                    label = model.rmapping[k])
-#        
+#
 #        tax.plot(dr, pr[:, kidx], color = colors[k])
 #    tax.legend(loc = 'upper right', \
 #               title_fontsize = 11, \
 #               ncol = 1)
-#    
+#
 #    tax.set(title = condLabels[cond])
 #subplots_adjust(wspace = 0)
 #fig.savefig(figDir + 'best_estimator.eps')
@@ -953,7 +969,7 @@ for n, fc in enumerate(featureClass):
 #                           sharex = 'col', sharey = 'col', \
 #                           gridspec_kw = gs, \
 #                           figsize = (10, 30))
-#        
+#
 #        mainax = fig.add_subplot(111, xticks = [],\
 #                                 yticks = [],\
 #                                 frameon = False)
@@ -963,8 +979,8 @@ for n, fc in enumerate(featureClass):
 #    #                             frameon = False, \
 #    #                             )
 #        mainax.set_ylabel('Z-scored $\delta_i$', labelpad = 40)
-#      
-#        
+#
+#
 #        subplots_adjust(wspace = 0)
 #        for idx, n in enumerate(nclus):
 #            tax = ax[idx, 1]
@@ -975,7 +991,7 @@ for n, fc in enumerate(featureClass):
 #            ypred = clf.fit_predict(xi)
 #            sil = silhouette_score(xi, ypred)
 #            sils= silhouette_samples(xi, ypred)
-#            
+#
 #            scores_[temp, idx, cond] = sil
 #            tax.set_title(f'N={n}')
 #            low = 2
@@ -983,7 +999,7 @@ for n, fc in enumerate(featureClass):
 #                tmp_s = sils[ypred == ni]
 #                tmp_s.sort()
 #                high = low + tmp_s.size
-#                
+#
 #                color = cm.tab20(ni / n)
 #                color = colors[ni]
 #                tax.fill_betweenx(arange(low, high), \
@@ -997,7 +1013,7 @@ for n, fc in enumerate(featureClass):
 #        ax[-1, 0].set_xlabel('Zscored $\mu_i$', labelpad = 15)
 #        ax[-1, 1].set_xlabel('Sillouette score', labelpad = 15)
 #        fig.savefig(figDir + f'T={round(temps[temp], 2)}_kmeans{cond}.eps')
-#        
+#
 ## %%
 #gs = dict(\
 #          width_ratios = [3, 1, 1])
@@ -1011,17 +1027,17 @@ for n, fc in enumerate(featureClass):
 #for j in range(COND):
 #    for i in range(NTEMPS):
 #        main = subplot2grid(s, (0,j), colspan = 1)
-#        
+#
 #        tax = subplot2grid(s, (1, i))
 #        y = scores_[i, :, j]
 #        x = nclus + i * width
 #        idx = argmax(y)
-#        
+#
 #        main.bar(x, y,  width = width,\
 #               label = round(temps[i], 2), color = colors[i])
 #        main.plot(x[idx], y[idx] + .05, '*',color = colors[i],\
 #                  markersize = 20)
-#        
+#
 ##        clf = cluster.KMeans(nclus[idx])
 ##        clf.fit(xi, yi)
 ##[ax.plot(nclus, s, label = round(l,2)) for s, l in zip(scores_, temps)]
@@ -1069,7 +1085,7 @@ for n, fc in enumerate(featureClass):
 #    ypred = clf.fit_predict(xi)
 #    sil = silhouette_score(xi, ypred)
 #    sils= silhouette_samples(xi, ypred)
-#    
+#
 #    scores_[temp, idx] = sil
 #    tax.set_ylabel(f'N={len(set(clf.labels_))}', rotation = 0)
 #    low = 2
@@ -1077,7 +1093,7 @@ for n, fc in enumerate(featureClass):
 #        tmp_s = sils[ypred == ni]
 #        tmp_s.sort()
 #        high = low + tmp_s.size
-#        
+#
 ##        color = cm.tab20(ni / len(clf.labels_))
 #        color = colors[ni]
 #        tax.fill_betweenx(arange(low, high), \
@@ -1125,7 +1141,7 @@ for n, fc in enumerate(featureClass):
 #        yi = y[train]
 #        clf.fit(xi, yi)
 #        scores[idx] = clf.score(features[test], y[test])
-#        
+#
 #        importances[idx] = clf.feature_importances_
 #    x = arange(NTEMPS)
 #    s = scores.reshape(NTEMPS, NTRIALS) * 100
@@ -1138,7 +1154,7 @@ for n, fc in enumerate(featureClass):
 #        tax.set_ylabel('Prediction accuracy\n(%)')
 #    tax.tick_params(axis = 'x', rotation = 45)
 #    tax.set_title(titles[cond])
-#    
+#
 #    tax = ax[1, cond]
 #    x = arange(1, N + 2, )
 #    tax.errorbar(x, importances.mean(0), importances.std(0), fmt = 'none')
@@ -1213,5 +1229,3 @@ for n, fc in enumerate(featureClass):
 #          frameon = False)
 #rcParams['axes.labelpad'] = 1
 #fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)
-
-

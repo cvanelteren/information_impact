@@ -19,7 +19,7 @@ from matplotlib.pyplot import *
 from numpy import *
 from tqdm import tqdm
 from functools import partial
-from scipy import sparse
+import scipy
 close('all')
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -31,12 +31,12 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [-.1]#, inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [.1]#, inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.2] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 
     tempres       = 100
     graphs = []
@@ -126,12 +126,13 @@ if __name__ == '__main__':
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
             # func = lambda x, a, b, c : a + b*exp(-c * x)
-            a, b = scipy.optimize.curve_fit(func, temps, mag.squeeze(), maxfev = 10000)
+            fmag = scipy.ndimage.gaussian_filter1d(mag, 2)
+            a, b = scipy.optimize.curve_fit(func, temps, fmag.squeeze(), maxfev = 10000)
 
             # run the simulation per temperature
             temperatures = array([])
             f_root = lambda x,  c: func(x, *a) - c
-            magnetizations = max(mag) * magRange
+            magnetizations = max(fmag) * magRange
             for m in magnetizations:
                 r = scipy.optimize.root(f_root, 0, args = (m), method = 'linearmixing')#, method = 'linearmixing')
                 rot = r.x if r.x > 0 else 0
@@ -142,13 +143,17 @@ if __name__ == '__main__':
             ax.plot(xx, func(xx, *a))
             ax.scatter(temperatures, func(temperatures, *a), c ='red')
             ax.scatter(temps, mag, alpha = .2)
+            ax.scatter(temps, fmag, alpha = .2)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
             savefig(f'{targetDirectory}/temp vs mag.png')
             # show()
-            tmp = dict(temps = temps, \
-            temperatures = temperatures, magRange = magRange, mag = mag)
+            tmp = dict(\
+                       temps        = temps, \
+                       temperatures = temperatures, \
+                       magRange     = magRange, \
+                       mag          = mag,\
+                       fmag         = fmag)
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
-
 
         for t, mag in zip(temperatures, magRange):
             print(f'{time.time()} Setting {t}')
