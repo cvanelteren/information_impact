@@ -12,19 +12,21 @@ from time import sleep
 from Utils import plotting as plotz, stats, IO
 import os, re, networkx as nx, scipy, multiprocessing as mp
 
-#close('all')
+close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 #dataPath = '/mnt/'
 extractThis      = IO.newest(dataPath)[-1]
-extractThis      = '1548025318.5751357'
+#extractThis      = '1548025318.5751357' # psycho
+#extractThis      = '1548347769.6300871' # kite neg
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
-extractThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
-data   = IO.DataLoader(extractThis)
+extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
+loadThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
+data   = IO.DataLoader(loadThis)
 
 
-settings = IO.readSettings(extractThis)
+settings = IO.readSettings(loadThis)
 deltas   = settings['deltas']
 repeats  = settings['repeat']
 
@@ -42,19 +44,20 @@ NTRIALS  = len(data[f't={temp}']['control'])
 NTEMPS   = len(data)
 NNUDGE   = len(data[f't={temp}'])
 NODES    = model.nNodes
-DELTAS, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
+
+DELTAS_, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
 COND     = NNUDGE - 1
+DELTAS = DELTAS_ - 1
 
 pulseSizes = list(data[f't={temp}'].keys())
 
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
-figDir = '../thesis/figures/'
-# %% Extract data
+figDir = f'../thesis/figures/{extractThis}'
 
 # %% # show mag vs temperature
-tmp = IO.loadPickle(f'{extractThis}/mags.pickle')
+tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
 fig, ax = subplots()
 ax.scatter(tmp['temps'], tmp['mag'], alpha = .2)
 ax.scatter(tmp['temperatures'], tmp['magRange'] * tmp['mag'].max(), \
@@ -68,28 +71,28 @@ ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
 rcParams['axes.labelpad'] = 10
 fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
 # %%
-#fig, ax  = subplots(figsize = (400, 200), frameon = False)
-#ax.set(xticks = [], yticks = [])
-#positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
-#                                         )
-##                                         root = sorted(dict(model.graph.degree()).items())[0][0])
-#
-#positions = {node : tuple(i * 1 for i in pos) for node, pos in positions.items() }
-#p = dict(layout = dict(scale = 1),\
-#         circle = dict(\
-#                     radius = 15),\
-#         annotate = dict(fontsize = 14)
-#         )
-#p = {}
-##plotz.addGraphPretty(model, ax, positions, \
-#                     **p,\
-#                     )
+fig, ax  = subplots(figsize = (10, 10), frameon = False)
+ax.set(xticks = [], yticks = [])
+positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
+                                         )
+#                                         root = sorted(dict(model.graph.degree()).items())[0][0])
+
+positions = {node : tuple(i * .01 for i in pos) for node, pos in positions.items() }
+p = dict(layout = dict(scale = 1),\
+         circle = dict(\
+                     radius = 10000),\
+         annotate = dict(fontsize = 50000000)
+         )
+p = {}
+plotz.addGraphPretty(model, ax, positions, \
+                     **p,\
+                     )
 #nx.draw(model.graph, positions, ax = ax)
-#ax.axis('equal')
-#ax.set(xticks = [], yticks = [])
-#ax.axis('off')
-#fig.show()
-#savefig(figDir + 'psychonetwork.eps', dpi = 1000)
+ax.axis('equal')
+ax.set(xticks = [], yticks = [])
+ax.axis('off')
+fig.show()
+savefig(figDir + 'network.eps', dpi = 1000)
 
 # %%
 
@@ -123,44 +126,46 @@ def worker(fidx):
     # do control
     data = frombuffer(var_dict.get('X')).reshape(var_dict['xShape'])
     node, temp, trial = unravel_index(fidx, var_dict.get('start'), order = 'F')
+    # control data
     if '{}' in fileName:
         # load control; bias correct mi
         control = IO.loadData(fileName)
         graph   = control.graph
         # panzeri-treves correction
-        cpx = control.conditional
-        N   = repeats
-        mi  = control.mi
-        rs  = zeros(mi.shape)
-        for key, value in cpx.items():
-#                xx  = value[0] if isinstance(value, list) else value
-            for zdx, deltaInfo in enumerate(value):
-                for jdx, nodeInfo in enumerate(deltaInfo):
-                    rs[zdx, jdx] += plotz.pt_bayescount(nodeInfo, repeats) - 1
-#                rs += array([[plotz.pt_bayescount(k, repeats) - 1 for k in j]\
-#                              for j in value])
-        Rs = array([[plotz.pt_bayescount(j, repeats) - 1 for j in i]\
-                     for i in control.px])
-
-        bias = (rs - Rs) / (2 * repeats * log(2))
-        corrected = mi - bias
-        data[0, trial, temp]  = corrected[:DELTAS - EXTRA, :].T
+        mi   = control.mi
+        bias = stats.panzeriTrevesCorrection(control.px,\
+                                             control.conditional, \
+                                             repeats)
+        mi -= bias
+        data[0, trial, temp]  = mi[:DELTAS - EXTRA, :].T
+    # nudged data
     else:
-        # load control
+        
         targetName = fileName.split('_')[-1] # extract relevant part
         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                              for key in model.mapping\
                              for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
         jdx = jdx[0]
         useThis = fidx - node
+        
+        # load matching control
         control = IO.loadData(fileNames[useThis])
-        # load nudge
+         # load nudge
         sample  = IO.loadData(fileName)
-        px      = sample.px
+#        bias    = stats.panzeriTrevesCorrection(control.px,\
+#                                        control.conditional,\
+#                                        repeats)
+#        control.px -= bias[..., None]
+#        
+#        bias = stats.panzeriTrevesCorrection(sample.px,
+#                                              sample.conditional,\
+#                                              repeats)
+#        sample.px -= bias[..., None]
+       
 #        impact  = stats.hellingerDistance(control.px, px)
-        impact  = stats.KL(control.px, px)
+        impact  = stats.KL(control.px, sample.px)
         # don't use +1 as the nudge has no effect at zero
-        redIm = nanmean(impact[DELTAS + EXTRA:], axis = -1).T
+        redIm = nanmean(impact[DELTAS + EXTRA + 2:], axis = -1).T
         # TODO: check if this works with tuples (not sure)
         data[(node - 1) // NODES + 1, trial, temp, jdx,  :] = redIm.squeeze().T
 
@@ -192,7 +197,7 @@ except:
     a, b = divmod(len(fileNames), COND * NODES + 1 ) # extract full divisors
     c = 1 if b else 0 # subtract 1 if not full set
     tidx = (COND * NODES + 1) * (a - c)
-    print(a, b, c, COND * NODES + 1 )
+#    print(a, b, c, COND * NODES + 1 )
     print(f'Loading {tidx}')
     tmp = range(tidx)
     processes = mp.cpu_count()
@@ -221,8 +226,10 @@ symbols     = (abc.x, abc.a, \
                abc.d, abc.e,\
                abc.f)\
 
-#syF         = symbols[1] * sy.exp(- symbols[2] * symbols[0]) +\
-# symbols[3] * sy.exp(- symbols[4] * (symbols[0] - symbols[5]))
+syF         = symbols[1] * sy.exp(- symbols[2] * \
+                     symbols[0]) +\
+                     symbols[3] * sy.exp(- symbols[4] * \
+                            (symbols[0] - symbols[5]))
 #print(syF)
 ##syF         = symbols[1] * sy.exp(- symbols[2] * symbols[0])
 #func        = lambdify(symbols, syF, 'numpy')
@@ -232,9 +239,8 @@ fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, inf), p0 = p0,\
                    jac = 'cs')
 
-settings = IO.readSettings(extractThis)
+settings = IO.readSettings(loadThis)
 repeats  = settings['repeat']
-
 
 # %% normalize data
 
@@ -289,7 +295,7 @@ _ii    = '$I(s_i^t ; S^t_0)$'
 [i.axis('off') for i in ax[:, 1]]
 
 rcParams['axes.labelpad'] = 80
-ax[1, 2].set_ylabel("$D_{KL}(P \vert\vert P')", labelpad = 5)
+ax[1, 2].set_ylabel("$D_{KL}(P || P')$", labelpad = 5)
 ax[1, 0].set_ylabel(_ii, labelpad = 5)
 from matplotlib.ticker import FormatStrFormatter
 means, stds  = nanmean(zd, -3), nanstd(zd, -3)
@@ -335,7 +341,7 @@ for temp in range(NTEMPS):
 
         #    ax[cidx].set(xscale = 'log', yscale = 'log'
 # format plot
-from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 mainax.legend(\
               tax.lines, [i.get_label() for i in tax.lines],\
               title          = 'Node', \
@@ -362,14 +368,22 @@ COEFFS = zeros((COND, NTRIALS, NODES, p0.size))
 x = arange(DELTAS)
 
 # uggly mp case
+LIMIT = DELTAS
+LIMIT = inf
+from sklearn import metrics
 def worker(sample):
     auc = zeros((len(sample), 2))
     coeffs, errors = plotz.fit(sample, func, params = fitParam)
     for nodei, c in enumerate(coeffs):
-    #        tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
-    #        tmp = sy.integrals.integrate(tmp, (abc.x, 0, DELTAS))
-        F   = lambda x: func(x, *c)
-        tmp, _ = scipy.integrate.quad(F, 0, inf)
+        
+        tmp = 0
+#        if c[0] < 1e-4:
+#            tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
+#            tmp = sy.integrals.integrate(tmp, (abc.x, 0, sy.oo),\
+#                                     meijerg = False).evalf()
+        F   = lambda x: func(x, *c) - c[0]
+#        tmp = metrics.auc(F)
+        tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
         auc[nodei, 0] = tmp
         auc[nodei, 1] = errors[nodei]
     return auc
@@ -397,7 +411,7 @@ from sklearn.covariance import EllipticEnvelope
 from sklearn.neighbors import LocalOutlierFactor as lof
 from sklearn.covariance import MinCovDet
 rcParams['axes.labelpad'] = 40
-fig, ax = subplots(3, 2)
+fig, ax = subplots(3, 2, sharex = 'col')
 subplots_adjust(hspace = 0, wspace = .2)
 mainax = fig.add_subplot(111, frameon = False, \
                          xticks = [], yticks = [],\
@@ -407,12 +421,19 @@ mainax = fig.add_subplot(111, frameon = False, \
 out = lof(n_neighbors = NTRIALS)
 
 aucs = aucs_raw.copy()
-thresh = 2.5
+thresh = 3
 clf = MinCovDet()
 
 labels = 'Underwhelming\tOverwhelming'.split('\t')
 rejections = zeros((COND, NTEMPS, NODES))
-raw = False
+showOutliers = True
+showOutliers = False
+pval = .01
+pcorr = (NNUDGE - 1) * NTEMPS
+from sklearn.linear_model import Ridge
+from sklearn.feature_selection import f_regression
+ridge = Ridge()
+
 for temp in range(NTEMPS):
     for nudge in range(1, NNUDGE):
         tax = ax[temp, nudge - 1]
@@ -422,6 +443,7 @@ for temp in range(NTEMPS):
         ranges = linspace(-1, smax, 100)
 #
         xx, yy = meshgrid(ranges, ranges)
+
         for node, idx in model.mapping.items():
             
             # value error for zero variance
@@ -429,7 +451,7 @@ for temp in range(NTEMPS):
                 tmp = aucs_raw[[0, nudge], temp, :, idx]
                 clf.fit(tmp.T)
                 Z = clf.mahalanobis(np.c_[xx.ravel(), yy.ravel()])
-                if raw:
+                if showOutliers:
                     tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
                             colors = colors[[idx]],\
                             levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
@@ -443,7 +465,7 @@ for temp in range(NTEMPS):
                 ingroupmean = tmp[:, ingroup].mean(1)
                 for outlier in outliers:
                     aucs[[0, nudge], temp, outlier, idx]= ingroupmean
-                    if raw:
+                    if showOutliers:
                         tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
                                 color = colors[idx], \
                                 alpha = 1, marker = 's')
@@ -451,15 +473,47 @@ for temp in range(NTEMPS):
                 continue
 
 #            tax.scatter(*tmp.mean(1), color = 'k', s = 50, zorder = 5)
-            alpha = .1 if raw else 1
+            alpha = .1 if showOutliers else 1
             tax.scatter(*aucs[[0, nudge], temp, :, idx], \
                         color = colors[idx], \
                         label = node, alpha = alpha, \
                         linewidth = 1)
+            
 #            tax.scatter(*tmp[:, ident < 0], s = 100, marker = 's')
-        ticks = tax.get_yticks()
-#        tax.set_yticks([ticks[0], ticks[-1]], False)
-#        tax.set_yticklabels([smin.round(), smax.round()])
+#        slope, intercept, r, p, stder = scipy.stats.linregress(\
+#                                       *aucs[[0, nudge], temp].reshape(COND, -1))
+         
+#        slope, intercept = scipy.stats.siegelslopes(\
+#                    *aucs[[0, nudge], temp].reshape(COND, -1))
+            
+        tx, ty = aucs[[0, nudge], temp].reshape(COND, -1).copy()
+        ddof = tx.size - 2
+
+        ridge.fit(tx[:, None], ty)
+        
+        p = 2 * ( 1 - scipy.stats.t.cdf(abs(ridge.coef_), ddof) )
+        
+        smax = aucs[[0, nudge], temp].ravel().max(0)
+        smin = aucs[[0, nudge], temp].ravel().min(0)
+        
+        r = ridge.score(tx[:, None], ty)
+        
+        f, p = f_regression(tx[:, None], ty)
+        r, p  =scipy.stats.kendalltau(tx, ty)
+        rsq = r ** 2
+        # plot regression
+#        print(r, p )
+        if p < pval / pcorr:
+#            print(p, )
+            tx = linspace(smin, smax) 
+            ty = ridge.predict(tx[:, None]) * .8
+            tax.plot(tx, ty, color = '#a2a2aa', linestyle = '--', alpha = 1)
+            tax.text(1, .1, \
+             f'$R^2$={rsq:.1e}\np={p:.1e}', \
+             fontdict  = dict(fontsize = 10),\
+             transform = tax.transAxes,\
+             horizontalalignment = 'right', \
+             verticalalignment   = 'bottom')
         if temp == 0:
             tax.set_title(labels[nudge-1])
             if nudge == NNUDGE - 1:
@@ -481,16 +535,18 @@ for temp in range(NTEMPS):
 
 #        tax.set(yscale = 'log').
 
-out = 'causal_ii_scatter_raw' if raw else 'causal_ii_scatter_corrected'
-out += '.png' if raw else '.eps'
+out = 'causal_ii_scatter_raw' if showOutliers else 'causal_ii_scatter_corrected'
+out += '.png' if showOutliers else '.eps'
 savefig(figDir + out, dpi = 1000)
 
 # %% information impact vs centrality
 from functools import partial
-centralities = dict(deg      = nx.degree, \
-             close   = nx.closeness_centrality,\
-             bet = partial(nx.betweenness_centrality, weight = 'weight'),\
-             ev = partial(nx.eigenvector_centrality, weight = 'weight'),\
+centralities = dict(\
+                    deg_w  = partial(nx.degree, weight = 'weight'), \
+#                    close  = partial(nx.closeness_centrality, distance = 'weight'),\
+                    bet    = partial(nx.betweenness_centrality, weight = 'weight'),\
+                    ev     = partial(nx.eigenvector_centrality, weight = 'weight'),\
+                    ic     = partial(nx.information_centrality, weight = 'weight'),\
 #             cfl = partial(nx.current_flow_betweenness_centrality, weight = 'weight'),
              )
 
@@ -507,7 +563,7 @@ conditionLabels = 'Underwhelming Overwhelming'.split()
 # plot info
 rcParams['axes.labelpad'] = 20
 for condition, condLabel in enumerate(conditionLabels):
-    fig, ax = subplots(4, 3, sharex = 'all', sharey = 'row')
+    fig, ax = subplots(len(centralities), 3, sharex = 'all', sharey = 'row')
     mainax = fig.add_subplot(111, frameon = False, xticks = [], yticks = [])
     mainax.set_xlabel('Causal impact', labelpad = 50)
     for i, (cent, cent_func) in enumerate(centralities .items()):
@@ -581,19 +637,23 @@ for temp in range(NTEMPS):
         estimates[temp, :, 0, :]   = aucs[0, temp]
         targets[temp, :, cond]     = aucs[cond + 1, temp]
         maxestimates[temp, :, 0]   = aucs[0, temp].argmax(-1)
-        for ni, centF in enumerate(centralities.values()):
+        for ni, (cent, centF) in enumerate(centralities.items()):
             tmp = dict(centF(model.graph))
-            centLabel, centVal= sorted(tmp.items(), key = lambda x: abs(x[1]))[-1]
+            centLabel, centVal= sorted(tmp.items(), \
+                                       key = lambda x: abs(x[1]))[-1]
+            
+            
             centEstimate = model.mapping[centLabel]
-            print(ni + 1, centLabel, centEstimate)
+#            print(ni + 1, centLabel, centEstimate)
             percentages[temp, ni + 1, cond] =  equal(\
                        centEstimate * ones(NTRIALS), \
                        drivers[cond + 1, temp]).mean()
-
-            maxestimates[temp, :, ni + 1] = model.mapping[centLabel] * ones(NTRIALS)
+#            print(cent, centVal)
+            maxestimates[temp, :, ni + 1] = model.mapping[centLabel] *\
+            ones(NTRIALS)
             for k, v in tmp.items():
                 estimates[temp, :, ni + 1, model.mapping[k]] = v * ones((NTRIALS))
-print(percentages)
+#print(percentages)
 # plot max only
 
 #fig, ax = subplots(2, sharex = 'all')
@@ -613,7 +673,7 @@ rcParams['axes.labelpad'] = 50
 mainax = fig.add_subplot(111, frameon = False, \
                          xticks = [],\
                          yticks = [],\
-                         ylabel = 'Predicition accuracy')
+                         ylabel = 'Predicition accuracy(%)')
 #mainax.set(ylabel = "Prediction accuracy")
 subplots_adjust(wspace = 0)
 width = .4
@@ -624,8 +684,8 @@ labels = 'max $\mu_i$\tdeg\tclose\tbet\tev'.split('\t')
 
 maxT = argmax(targets,  -1)
 
-lll = 'Information impact\t'
-ii = '\t'.join(i for i in centralities)
+lll = 'max |$\mu_i$|\t'
+ii = '\t'.join(f'max |{i}|' for i in centralities)
 lll += ii
 lll = lll.split('\t')
 for cond in range(COND):
@@ -655,9 +715,10 @@ tax.legend(tax.get_legend_handles_labels()[1][:N + 1], loc = 'upper left' , bbox
            borderaxespad = 0)
 fig.savefig(figDir + 'statistics_overview.eps', format = 'eps', dpi = 1000)
 
-# %% cross validation
+# %% + validation
 from sklearn.feature_selection import SelectKBest, RFE, RFECV
 from sklearn.svm import SVC
+from sklearn import linear_model
 from sklearn.feature_selection import chi2, mutual_info_classif
 from sklearn.model_selection import StratifiedKFold, LeaveOneOut
 
@@ -667,260 +728,490 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectFromModel
 from sklearn.metrics import accuracy_score
-features  = estimates.max(-1).reshape(-1, N + 1)
-#features  = maxestimates.reshape(-1, N + 1) + 1
-features  = repeat(features, COND, 0)
 
-featTarget = maxT.reshape(-1) + 1 
+from sklearn.model_selection import GridSearchCV
+import pandas as pd
+#clf = linear_model.LogisticRegression(\
+#                                        solver      = 'lbfgs',\
+#                                        multi_class = 'multinomial',\
+#                                        max_iter = 1000, \
+#        
 
-svc = SVC(kernel = 'linear')
+# get continuous values
+predLabels = ['ii', *centralities.keys()]
+features     = estimates.max(-1).reshape(-1, N + 1)
+# get their corresponding labels
+featureClass = pd.DataFrame(\
+            estimates.argmax(-1).reshape(-1, N + 1),\
+            columns = predLabels)
 
-#featTarget= targets.argmax(-1).reshape(-1, COND)
 
-clf= SelectKBest(chi2, k = 1).fit(\
-                features, featTarget)
+# get correct labels
+correctLabels = 'un ov'.split()
+correct = targets.argmax(-1).reshape(-1, COND)
+from sklearn.preprocessing import OneHotEncoder
 
-rfe = RFE(estimator = svc, n_features_to_select=1 ,step = 1)
-rfe.fit(features, featTarget)
+import statsmodels.api as sm
 
-ranking = rfe.ranking_
 
-rfecv = RFECV(estimator = svc, step = 2, cv = LeaveOneOut(),\
-              scoring = 'accuracy')
-rfecv.fit(features, featTarget)
-print(rfecv.n_features_)
+y = pd.DataFrame(correct, columns = correctLabels)
+Y = pd.DataFrame()
+bias = ones((NTRIALS * NTEMPS, 1))
 
+yy = zeros((NTEMPS * NTRIALS, N+1, COND))
+for tidx, trueLabel in enumerate(y):
+    for pidx, classPred in enumerate(featureClass):
+        lab    = f'{trueLabel}_{classPred}'
+        x = featureClass[classPred]
+        ty= y[trueLabel] == x
+        yy[:, pidx, tidx] = ty
+        Y[lab] = ty
+
+percentages = yy.reshape(NTEMPS, NTRIALS, N + 1, COND)
+
+percentages = (percentages * (NTRIALS - 1) + .5 ) /(NTRIALS)
+percentages = percentages.mean(1)
+
+class LogitRegression(linear_model.LinearRegression):
+    def fit(self, x, p):
+        p = np.asarray(p)
+        y = log(p) - log(1 - p)
+        y[isfinite(y) == False] = 0
+        return super().fit(x, y)
+
+    def predict(self, x):
+        y = super().predict(x)
+        return 1 / (np.exp(-y) + 1)
+    
+bias = zeros((NTEMPS, 1))
+X    = estimates.max(-1).mean(1)
+#X    = hstack((bias, x))
+ps =percentages[...,0]
+clf = LogitRegression()
+clf.fit(X, ps)
+
+pred = clf.predict(X)
 fig, ax = subplots()
-x = arange(1, rfecv.grid_scores_.size + 1)
-ax.plot(x, rfecv.grid_scores_)
-print(clf.scores_)
+for i in range(NTEMPS):
+    ax.scatter(X[i], pred[i], label = temps[i])
+ax.legend()
+clf.fit(X[:, [0]], ps[:, 0])
+ax.scatter(X[:, [0]], clf.predict(X[:, [0]]))
+#%%
+from sklearn import model_selection
 
-# %%
-clf = RandomForestClassifier(n_estimators=10000, \
-                             random_state=0, n_jobs=-1)
-sfm = SelectFromModel(clf, threshold=0.15)
-xtrain, xtest, ytrain, ytest = train_test_split(features, featTarget, test_size = .1, random_state = 0)
-
-sfm.fit(xtrain, ytrain)
-for i in sfm.get_support(indices = True):
-    print(i)
-clf.fit(xtrain, ytrain)
-pred = clf.predict(xtest)
-print(accuracy_score(ytest, pred))
-
-xtrain_ = sfm.transform(xtrain)
-xtest_  = sfm.transform(xtest)
-
-clf = RandomForestClassifier(n_estimators=10000, \
-                             random_state=0, n_jobs=-1)
-
-clf.fit(xtrain_, ytrain)
-
-pred = clf.predict(xtest_)
-print(accuracy_score(ytest, pred))
- #%%
-#from sklearn.model_selection import LeaveOneOut, StratifiedKFold
-#from sklearn import svm, metrics, linear_model as lm
-#
-##clf = svm.SVC(decision_function_shape = 'ovr', gamma = 'scale')
-##clf = lm.LogisticRegression(\
-##                            solver = 'lbfgs',\
-##                            multi_class = 'multinomial')
-#clf = lm.LogisticRegression(C = 1, solver = 'lbfgs')
-#from sklearn.model_selection import cross_val_score
-#
-#y = zeros(NTEMPS * NTRIALS)
-##idx = np.argmax(estimates, -1).reshape(-1, N+1)[...,0] == np.argmax(targets, -1).reshape(-1, COND)[..., 0]
-#y = targets.argmax()
-##y[idx] = 1
-#y = y.reshape(-1)
-#ss = zeros((N+1, NTEMPS, COND))
-#from sklearn.model_selection import ShuffleSplit
-#
-#cv = ShuffleSplit(n_splits = 3, test_size = 0.2, random_state = 0)
-#cv =  LeaveOneOut()
-#
-#n_splits = 14
-#cv = StratifiedKFold(n_splits = n_splits, shuffle = True)
-#fig, ax = subplots(3, 2)
-#for cond in range(COND):
-#    for i in range(N + 1):
-#        for temp in range(NTEMPS):
-#            xi = zeros(NTRIALS)
-#            for tr in range(NTRIALS):
-#                m      = maxestimates[temp, tr, i]
-#                xi[tr] = estimates[temp, tr, i, m]
-##            xi = estimates[temp, :, [i], m].T
-#            yi = equal(maxT[temp, :, cond], maxestimates[temp, :, i])
-##            print(cond, i, yi.mean())
-#    #        ss[i] = cross_val_score(clf, xi, yi, cv = cv).mean()
-#            for trainidx, testidx in cv.split(xi, yi):
-#                try:
-#    #                print(i, temp, yi[trainidx].mean())
-#                    clf.fit(xi[trainidx].reshape(-1, 1), yi[trainidx])
-#                    pred =  clf.predict(xi[testidx].reshape(-1, 1))
-#
-#                    s = 0
-#                    xxx = linspace(-100, 100)
-#                    yyy = clf.predict_proba(xxx[:, None])
-#                    tax = ax[temp, cond]
-#                    tax.plot(xxx, yyy[:, 1], color = colors[i])
-##
-#                    if pred == yi[testidx]:
-#                        s = 1
-#                    ss[i, temp, cond] += s
-#
-#                except Exception as e:
-#                    ss[i, temp, cond] += yi.mean()
-#    #                print(i, temp, yi.mean(), e)
-#    #                ss[i, temp, testidx] = 0
-#    #
-#    #                ss[i, temp, testidx] = yi[trainidx].mean()
-#
-#
-#ss = ss / n_splits
-#fig, ax = subplots(COND)
-#for ci in range(COND):
-#    tax = ax[ci]
-#    tax.imshow(ss[..., ci])
-
-# %%
-c    = percentages.reshape(-1, COND) * NTRIALS
-ddof = (NTEMPS * N - 1) * (COND - 1)
-
-e = (c.sum(1)  * c.sum(0)[:, None]).T / (c.sum())
-chi =  nansum((c - e)**2 / e)
-#%% appendix box rejection
-fig, ax = subplots(1, COND, sharey = 'all')
-mainax = fig.add_subplot(111, frameon = False,\
-                         xticks = [],\
-                         yticks = [],\
-                         ylabel = 'Rejection rate(%)'\
-                         )
-
-subplots_adjust(wspace = 0)
-x     = arange(NTEMPS) * 3
-
-width = .2
-labels = 'Underwhelming Overwhelming'.split()
-conditions = [f'T={round(i,2)}' for i in temps]
-for cond in range(COND):
-    tax = ax[cond]
-    tax.set_title(labels[cond])
-    tax.set(xticks = x + .5 * width * NODES, \
-            xticklabels = conditions,\
-            )
-    tax.tick_params(axis = 'x', rotation = 45)
-
-    for node in range(NODES):
-        y  = rejections[:, cond, node] * 100
-        tx = x + width * node
-        tax.bar(tx, y, width = width,\
-                color = colors[node], label = model.rmapping[node])
-tax.legend(loc = 'upper left',\
-          bbox_to_anchor = (1, 1),\
-          borderaxespad = 0, \
-          frameon = False)
-fig.savefig(figDir + 'rejection_rate.eps', format = 'eps', dpi = 1000)
-# %% appendix plot: fit error comparison
+clf = RandomForestClassifier(n_estimators = 100)
+score = model_selection.cross_val_score(clf, \
+                                features, yy[..., 1],\
+                                cv = model_selection.LeaveOneGroupOut(),\
+                                n_jobs = -1)
+print(score)
+#%%
 fig, ax = subplots()
-errors = errors.reshape(-1, NODES)
-subplots_adjust(hspace = 0)
-width= .07
-locs = arange(0, len(errors))
 
-
-
-for node in range(NODES):
-    ax.bar(locs + width * node, \
-           errors[:, node], color = colors[node],\
-           width = width, label = model.rmapping[node])
-
-conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]
-# set labels per group and center it
-ax.set(yscale = 'log', xticklabels = conditions, \
-       xticks = locs + .5 * NODES * width, ylabel = 'Mean square error')
+ac = Y.sum(0)[:, None]
+counts = ac @ ac.T
+showThis = sqrt(counts) / Y.shape[0]
+h  = ax.imshow(cov(Y.T))
+plotz.colorbar(h)
+yl = [i for i in Y.columns]
+yr = arange(len(yl))
+ax.set(\
+       xticks = yr,\
+       yticks = yr,\
+       xticklabels = yl, \
+       yticklabels = yl,\
+       title = 'Covariance of correct predictions')
 ax.tick_params(axis = 'x', rotation = 45)
-ax.legend(loc = 'upper left',\
-          bbox_to_anchor = (1, 1),\
-          borderaxespad = 0, \
-          frameon = False)
-rcParams['axes.labelpad'] = 1
-fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)
+fig.savefig(figDir + 'cov_predictions.eps')
+
+fig, ax = subplots()
+
+mainax = fig.add_subplot(121, frameon = 0,\
+                         xticks = [],\
+                         yticks = [])
+mainax.set_xlabel('Underwhelming', labelpad = 100)
+mainax = fig.add_subplot(122, frameon = 0,\
+                         xticks = [],\
+                         yticks = [])
+mainax.set_xlabel('Overwhelming', labelpad = 100)
+x = arange(Y.shape[1])
+ax.bar(x, Y.mean(0))
+ax.set(xticks = yr, xticklabels = yl, ylabel = 'Prediction accuracy(%)')
+ax.tick_params(axis = 'x', rotation = 45)
+#%%
+
+
+
+#from sklearn.ensemble import RandomForestClassifier, \
+#
+
+#subplots_adjust(wspace = 0)
+subplots_adjust(hspace = .5)
+allpredset = set(featureClass.as_matrix().flatten())
+alltrueset = set(y.as_matrix().flatten())
+mapper = {lab : jdx for jdx, lab in enumerate(alltrueset.union(allpredset))}
+fig, ax = subplots(1, 1)
+#mainax  = fig.add_subplot(111,\
+#                              frameon = False,\
+#                              xticks  = [],\
+#                              yticks  = [],\
+#                              ylabel  = f'{fc}\n\n')
+for n, fc in enumerate(featureClass):
+
+    nn = len(mapper)
+    conf = zeros((nn, nn))
+    tax = ax
+    for cond, tc in enumerate(y):
+        for true, pred in zip(y[tc], featureClass[fc]):
+            xi = mapper[true]  
+            yi = mapper[pred]
+            c = 0
+            if true and pred:
+                c = 1
+            conf[xi, yi] += c
+    conf = (conf.ravel() / y.shape[0]).reshape(nn,nn)
+    conf[isfinite(conf) == False] = 0
+    print(conf)
+    
+    h = tax.imshow(conf, cmap = cm.plasma,\
+                   vmin = 0,\
+                   vmax = 1)
+    tax.set(\
+        yticklabels = mapper, \
+        xticklabels = mapper, \
+        xticks      = arange(nn),\
+        yticks      = arange(nn),\
+        )
+    tax.set_xlabel('Predicted', labelpad = 5)
+    tax.set(title = tc + '\n')
+        
 
 
 # %%
-#percentages[percentages == 0] = 0
-#contin = scipy.stats.chi2_contingency
-#counts = percentages * NTRIALS
-#res = contin(counts, correction = True)
-#print(res)
-
+#
+#rcParams['axes.labelpad'] = 40
+#fig, ax = subplots(1, 2, sharey = 'all')
+#mainax = fig.add_subplot(111,\
+#                         xticks = [],\
+#                         yticks = [],\
+#                         frameon = False)
+#mainax.set(ylabel = 'P(C = x | max $\mu_i$)', \
+#           xlabel = 'max $\mu_i$')
+#
+#dmin, dmax = features.min(), features.max()
+#dr = linspace(dmin, dmax, 100)
+#cmax = scores.max(1).argmax(0)
+#for cond in range(COND):
+#    tax = ax[cond]
+#    clf.set_params(C = cs[cmax[cond]])
+#    
+#    clf.fit(scipy.stats.zscore(features[:, [0]]), tar[condLabels[cond]])
+#    pr = clf.predict_proba(dr.reshape(-1, 1))
+#    prr= clf.predict_proba(features[:, 0].reshape(-1, 1))
+#    
+#    if cond == 0:
+#        print(prr)
+#    for kidx, k  in enumerate(clf.classes_):
+#        idx = where(tar[condLabels[cond]] == k)[0]
+#        print(idx.size, k)
+#        tax.scatter(features[idx, 0], prr[idx, kidx], \
+#                    color = colors[k], \
+#                    label = model.rmapping[k])
+#        
+#        tax.plot(dr, pr[:, kidx], color = colors[k])
+#    tax.legend(loc = 'upper right', \
+#               title_fontsize = 11, \
+#               ncol = 1)
+#    
+#    tax.set(title = condLabels[cond])
+#subplots_adjust(wspace = 0)
+#fig.savefig(figDir + 'best_estimator.eps')
 
 ## %%
-#conds = f'II UN OV'.split()
-#for i in centralities:
-#    conds.append(f'{i}')
-#gLabels = []
-#for temp in temps:
-#    for cond in conds:
-#        gLabels.append(f'{round(temp,2)}_{cond}')
-#print(gLabels)
-
-
-# %% statistical tests
+#from sklearn import cluster
+#from sklearn import mixture
 #
-#methods =  'II DEG CLOS BET EV'.split()
-#cis     = 'UN OV'.split()
-#levels  = [[], [], []]
+#nclus = arange(2, model.nNodes - 1)
 #
-#import pandas as pd
-#for temp in temps:
-#    for method in methods:
-#        for ci in cis:
-#            levels[0].append(f'T={round(temp,2)}')
-#            levels[2].append(method)
-#            levels[1].append(ci)
-#names = 'Temperature Method CI'.split()
-#index = pd.MultiIndex.from_tuples(zip(*levels), names = names)
-#s = pd.Series(percentages.ravel(), index = index)
-#print(s)
-# %%
-#driver = pd.DataFrame(all_drivers.T, columns = gLabels)
-#print(driver)
-## kruskal wallis
-#results = vstack((percentage, centApprox.reshape(-1, COND)))
+#tmp = estimates[...,0, :].reshape(-1, 1)
+#y   = moveaxis(targets, -2, -1).reshape(-1, COND)
+#x   = hstack((tmp, y)).reshape(NTEMPS, NTRIALS * NODES, COND + 1)
 #
-#H, p  = scipy.stats.kruskal(*results.T)
-#print(f"H = {H}, p = {p:e}")
-#import scikit_posthocs as sp, pandas as pd
-#indx = array([1, 8, 9, 10, 11])
+#from sklearn.metrics import silhouette_samples, silhouette_score
 #
-##df = pd.DataFrame(tmp, columns = "II Deg Close Betw Ev".split())
-##df = df.melt(var_name = 'groups', value_name = 'values')
-## %% post hoc
-#df = driver.melt(var_name = 'groups')
-#print(df)
-#pc = sp.posthoc_conover(df, group_col = 'groups', val_col = 'value', p_adjust = 'bonferroni')
 #
-#heatmap_args = {'linewidths': 0.25, 'linecolor': '0.5', 'clip_on': False, 'square': True, 'cbar_ax_bbox': [0.80, 0.35, 0.04, 0.3]}
+#gs = dict(\
+#          height_ratios = ones(NODES  - nclus.min()-1),\
+#          width_ratios  = [2, 1])
+#from sklearn.preprocessing import StandardScaler
+#
+#scores_ = zeros((NTEMPS, nclus.size, COND))
+#for temp in range(NTEMPS):
+#    for cond in range(COND):
+#        fig, ax = subplots(NODES  - nclus.min() - 1, 2, \
+#                           sharex = 'col', sharey = 'col', \
+#                           gridspec_kw = gs, \
+#                           figsize = (10, 30))
+#        
+#        mainax = fig.add_subplot(111, xticks = [],\
+#                                 yticks = [],\
+#                                 frameon = False)
+#        mainax.set_title(f'T={temps[temp]}\n')
+#    #    mainax = fig.add_subplot(121, xticks = [],\
+#    #                             yticks = [],\
+#    #                             frameon = False, \
+#    #                             )
+#        mainax.set_ylabel('Z-scored $\delta_i$', labelpad = 40)
+#      
+#        
+#        subplots_adjust(wspace = 0)
+#        for idx, n in enumerate(nclus):
+#            tax = ax[idx, 1]
+#            clf = cluster.KMeans(n)
+#    #        clf = mixture.BayesianGaussianMixture(n, covariance_type = 'full')
+#            xi = x[temp, :, [0, cond + 1]].T
+#            xi = StandardScaler().fit_transform(xi)
+#            ypred = clf.fit_predict(xi)
+#            sil = silhouette_score(xi, ypred)
+#            sils= silhouette_samples(xi, ypred)
+#            
+#            scores_[temp, idx, cond] = sil
+#            tax.set_title(f'N={n}')
+#            low = 2
+#            for ni in range(n):
+#                tmp_s = sils[ypred == ni]
+#                tmp_s.sort()
+#                high = low + tmp_s.size
+#                
+#                color = cm.tab20(ni / n)
+#                color = colors[ni]
+#                tax.fill_betweenx(arange(low, high), \
+#                                  0, tmp_s, color = color,)
+#                low = high + 2
+#    #        tax.set(yscale = 'log')
+#            tax.axvline(sil, color = 'red', linestyle = '--')
+#            tax.set(yticks = [])
+#            tax = ax[idx, 0]
+#            tax.scatter(*xi.T, c = colors[ypred])
+#        ax[-1, 0].set_xlabel('Zscored $\mu_i$', labelpad = 15)
+#        ax[-1, 1].set_xlabel('Sillouette score', labelpad = 15)
+#        fig.savefig(figDir + f'T={round(temps[temp], 2)}_kmeans{cond}.eps')
+#        
+## %%
+#gs = dict(\
+#          width_ratios = [3, 1, 1])
+##fig, ax = subplots(2, NTEMPS, gridspec_kw = gs)
+#
+#fig = figure()
+#width = .3
+#s = (2, NTEMPS)
+#
+#
+#for j in range(COND):
+#    for i in range(NTEMPS):
+#        main = subplot2grid(s, (0,j), colspan = 1)
+#        
+#        tax = subplot2grid(s, (1, i))
+#        y = scores_[i, :, j]
+#        x = nclus + i * width
+#        idx = argmax(y)
+#        
+#        main.bar(x, y,  width = width,\
+#               label = round(temps[i], 2), color = colors[i])
+#        main.plot(x[idx], y[idx] + .05, '*',color = colors[i],\
+#                  markersize = 20)
+#        
+##        clf = cluster.KMeans(nclus[idx])
+##        clf.fit(xi, yi)
+##[ax.plot(nclus, s, label = round(l,2)) for s, l in zip(scores_, temps)]
+#main.legend(title = 'Temperature')
+#main.set(xlabel = 'Number of clusters', \
+#       ylabel = 'Silloute score', \
+#       xticks = nclus + 1/3 * NTEMPS * width,\
+#       xticklabels = nclus)
+#
+## %%DBSCAN
+#from sklearn import cluster
+#
+#
+#nclus = arange(2, model.nNodes - 1)
+#
+#tmp = estimates[...,0, :].reshape(-1, 1)
+#y   = moveaxis(targets, -2, -1).reshape(-1, COND)
+#x   = hstack((tmp, y)).reshape(NTEMPS, NTRIALS * NODES, COND + 1)
+#
+#from sklearn.metrics import silhouette_samples, silhouette_score
+#
+#
+#gs = dict(\
+#          height_ratios = ones(NTEMPS),\
+#          width_ratios  = [2, 1])
+#from sklearn.preprocessing import StandardScaler
+#
+#scores_ = zeros((NTEMPS, nclus.size))
+#fig, ax = subplots(NTEMPS, 2, \
+#                   sharex = 'col', sharey = 'col', \
+#                   gridspec_kw = gs, \
+#                   )
+#subplots_adjust(wspace = 0)
+#for temp in range(NTEMPS):
+#
+#    mainax = fig.add_subplot(111, xticks = [],\
+#                             yticks = [],\
+#                             frameon = False)
+#    mainax.set_title(f'T={temps[temp]}')
+#    tax = ax[temp, 1]
+#    clf = cluster.DBSCAN(eps = .35, min_samples = 20, \
+#                         metric = 'l1')
+#    xi = x[temp, :, [0, 1]].T
+#    xi = StandardScaler().fit_transform(xi)
+#    ypred = clf.fit_predict(xi)
+#    sil = silhouette_score(xi, ypred)
+#    sils= silhouette_samples(xi, ypred)
+#    
+#    scores_[temp, idx] = sil
+#    tax.set_ylabel(f'N={len(set(clf.labels_))}', rotation = 0)
+#    low = 2
+#    for ni in set(clf.labels_):
+#        tmp_s = sils[ypred == ni]
+#        tmp_s.sort()
+#        high = low + tmp_s.size
+#        
+##        color = cm.tab20(ni / len(clf.labels_))
+#        color = colors[ni]
+#        tax.fill_betweenx(arange(low, high), \
+#                          0, tmp_s, color = color,)
+#        low = high + 2
+##        tax.set(yscale = 'log')
+#    tax.axvline(sil, color = 'red', linestyle = '--')
+#    tax.set(yticks = [])
+#    tax = ax[temp, 0]
+#    tax.scatter(*xi.T, c = colors[ypred])
 #fig, ax = subplots()
-#sp.sign_plot(pc , **heatmap_args)
-# %%
-#import scikit_posthocs as sp
-#percentage = percentage = array([i == target for i in rankings.T]).mean(1)
+#ax.plot(nclus, scores_.T)
+## %% visualize data
 #
-#test = hstack((rankings, target[:, None]))
-##test2 =
-#res =  scipy.stats.kruskal(*test.T)
-#print(res)
+#features  = estimates.argmax(-1)
+##features = scipy.stats.zscore(features, axis = 1)
+#
+#features =  features.reshape(-1, N + 1)
+#
+#
+#clf = RandomForestClassifier(n_estimators = 5, max_features = 1)
+#
+#
+#scores = zeros(NTEMPS * NTRIALS)
+#
+#importances = zeros((NTEMPS * NTRIALS, N+1))
+#rcParams['axes.labelpad'] = 10
+#
+#titles = 'Underwhelming Overwhelming'.split()
+#gs = dict(\
+#          height_ratios = [2, 1],\
+##          width_ratios  = [.1, .1],\
+#          )
+#fig, ax = subplots(COND, COND, sharey = 'row', sharex = 'row', \
+#                   gridspec_kw = gs)
+#
+#subplots_adjust(wspace = 0, hspace = .5)
+#
+#
+#for cond in range(COND):
+#    y  = targets.argmax(-1)[..., cond].ravel()
+#    tax = ax[0, cond]
+#    for idx, (train, test) in enumerate(LeaveOneOut().split(features, y)):
+#        xi = features[train]
+#        yi = y[train]
+#        clf.fit(xi, yi)
+#        scores[idx] = clf.score(features[test], y[test])
+#        
+#        importances[idx] = clf.feature_importances_
+#    x = arange(NTEMPS)
+#    s = scores.reshape(NTEMPS, NTRIALS) * 100
+#    tax.errorbar(x, s.mean(1), yerr = s.std(axis = 1) , fmt = 'none', ecolor = 'k')
+#    tax.bar(x, s.mean(1))
+#    tax.set(\
+#       xticks = x,\
+#       xticklabels = [f'T={round(i,2)}' for i in temps])
+#    if cond == 0:
+#        tax.set_ylabel('Prediction accuracy\n(%)')
+#    tax.tick_params(axis = 'x', rotation = 45)
+#    tax.set_title(titles[cond])
+#    
+#    tax = ax[1, cond]
+#    x = arange(1, N + 2, )
+#    tax.errorbar(x, importances.mean(0), importances.std(0), fmt = 'none')
+#    tax.bar(x, importances.mean(0))
+#    tax.set(xticks = x, \
+#            xticklabels = lll, \
+#            )
+#    if cond == 0 :
+#        tax.set_ylabel('Feature\nimportance')
+#    tax.tick_params(axis = 'x', rotation = 45)
+#    tax.set_ylim(0, 1.2)
+#
+#fig.savefig(figDir + 'randomforrest.eps')
+##z = clf.predict(np.c_[xx.ravel(), yy.ravel()])
+##ax.contourf(xx, yy, z.reshape(xx.shape), alpha = .2)
+#
+##clf.score(features, targets)
+##%% appendix box rejection
+#fig, ax = subplots(1, COND, sharey = 'all')
+#mainax = fig.add_subplot(111, frameon = False,\
+#                         xticks = [],\
+#                         yticks = [],\
+#                         ylabel = 'Rejection rate(%)'\
+#                         )
+#rcParams['axes.labelpad'] = 50
+#subplots_adjust(wspace = 0)
+#x     = arange(NTEMPS) * 3
+#
+#width = .2
+#labels = 'Underwhelming Overwhelming'.split()
+#conditions = [f'T={round(i,2)}' for i in temps]
+#for cond in range(COND):
+#    tax = ax[cond]
+#    tax.set_title(labels[cond])
+#    tax.set(xticks = x + .5 * width * NODES, \
+#            xticklabels = conditions,\
+#            )
+#    tax.tick_params(axis = 'x', rotation = 45)
+#
+#    for node in range(NODES):
+#        y  = rejections[cond, :, node] * 100
+#        tx = x + width * node
+#        tax.bar(tx, y, width = width,\
+#                color = colors[node], label = model.rmapping[node])
+#tax.legend(loc = 'upper left',\
+#          bbox_to_anchor = (1, 1),\
+#          borderaxespad = 0, \
+#          frameon = False)
+#fig.savefig(figDir + 'rejection_rate.eps', format = 'eps', dpi = 1000)
+## %% appendix plot: fit error comparison
+#fig, ax = subplots()
+#errors = errors.reshape(-1, NODES)
+#subplots_adjust(hspace = 0)
+#width= .07
+#locs = arange(0, len(errors))
+#
+#
+#
+#for node in range(NODES):
+#    ax.bar(locs + width * node, \
+#           errors[:, node], color = colors[node],\
+#           width = width, label = model.rmapping[node])
+#
+#conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]
+## set labels per group and center it
+#ax.set(yscale = 'log', xticklabels = conditions, \
+#       xticks = locs + .5 * NODES * width, ylabel = 'Mean square error')
+#ax.tick_params(axis = 'x', rotation = 45)
+#ax.legend(loc = 'upper left',\
+#          bbox_to_anchor = (1, 1),\
+#          borderaxespad = 0, \
+#          frameon = False)
+#rcParams['axes.labelpad'] = 1
+#fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)
 
- # %% compute concistency
-#
-#bins = arange(-.5, model.nNodes + .5)
-#cons = lambda x : nanmax(histogram(x, bins , density = True)[0])
-#
-#ranking, maxim = stats.rankData(aucs)
-#consistency = array([ [cons(i) for i in j] for j in maxim.T])
-## plot consistency of the estimator
-#naive = (maxim[...,0] == maxim[...,1])
+

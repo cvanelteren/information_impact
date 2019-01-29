@@ -15,8 +15,6 @@ import multiprocessing as mp
 import copy
 from cpython.ref cimport PyObject
 
-
-
 # progressbar
 from tqdm import tqdm   #progress bar
 
@@ -129,7 +127,7 @@ cpdef vector[long] decodeState(int dec, int N) nogil:
 @cython.nonecheck(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
+cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
                    int burninSamples = int(1e3)):
     """
     Determines the state distribution of the :model: in parallel. The model is reset
@@ -145,9 +143,9 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
     """
     cdef:
         unordered_map[int, double] snapshots
-        int i, sample
-        int N          = nSamples * step
-        long[:, ::1] r = model.sampleNodes(N)
+        int step, sample
+        int N          = nSamples * steps
+        # long[:, ::1] r = model.sampleNodes(N)
         double Z       = <double> nSamples
         int idx
         double past    = timer()
@@ -156,7 +154,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         Model tmp
         cdef int tid, nThreads = mp.cpu_count()
     # threadsafe model access; can be reduces to n_threads
-    for sample in range(nSamples):
+    for sample in range(nThreads):
         tmp = copy.deepcopy(model)
         tmp.reset()
         tmp.burnin(burninSamples)
@@ -164,15 +162,31 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
         modelsPy.append(tmp)
         models_.push_back(PyObjectHolder(<PyObject *> tmp))
 
-    tid = threadid()
+    # init rng buffers
+    cdef int sampleSize = model.nNodes if model.updateType != 'single' else 1
+
+    cdef long[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
+                                           dtype = long)
+    # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
+
     pbar = tqdm(total = nSamples)
     for sample in prange(nSamples, nogil = True, \
                          schedule = 'static', num_threads = nThreads):
+
+        tid = threadid()
+        r[tid] = (<Model> models_[tid].ptr).sampleNodes(steps)
+        # r[sample] = (<Model> models_[sample].ptr).sampleNodes(steps)
         # perform n steps
-        for i in range(step):
-            (<Model> models_[sample].ptr)._updateState(r[(i + 1) * (sample + 1) - 1])
+        for step in range(steps):
+            # (<Model> models_[sample].ptr)._updateState(\
+                                                    # r[(sample + 1) * (step + 1) - 1]
+                                                        # )
+            (<Model> models_[tid].ptr)._updateState(\
+                                                    r[tid, step]
+                                                        )
         with gil:
-            idx = encodeState((<Model> models_[sample].ptr)._states)
+            idx = encodeState((<Model> models_[tid].ptr)._states)
+            # idx = encodeState((<Model> models_[sample].ptr)._states)
             snapshots[idx] += 1/Z
             pbar.update(1)
     print('done')
@@ -192,7 +206,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int step = 1,\
 
 
 
-
+cimport openmp
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
 @cython.nonecheck(False)
@@ -217,8 +231,7 @@ cpdef dict monteCarlo(\
     # TODO: solve the memory issues;  currently way too much is ofloaded to the memory
     # one idea would be to have the buffers inside the for loop. However prange is not possible
     # if that is used.
-    print('Pre-computing rngs')
-
+    print("Decoding..")
     # setup
     cdef:
         float past = timer()
@@ -240,8 +253,8 @@ cpdef dict monteCarlo(\
         # unordered_map[int, double *] conditional
         long[::1] startState
         int jdx
-        double[:, :, :, ::1] out     = np.zeros((states , (deltas), model._nNodes, model._nStates))
-        long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)
+
+        # long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)
         # list m = []
 
         int nNodes = model._nNodes, nStates = model._nStates
@@ -254,41 +267,60 @@ cpdef dict monteCarlo(\
         vector[PyObjectHolder] models_
         Model tmp
 
+    # setup thread count
+    nThreads = mp.cpu_count() if nThreads == -1 else nThreads
+    # setup output storage
+
     # threadsafe model access; can be reduces to n_threads
-    for state in range(states):
+    for state in range(nThreads):
         tmp = copy.deepcopy(model)
         tmp.seed += state # enforce different seeds
         modelsPy.append(tmp)
         models_.push_back(PyObjectHolder(<PyObject *> tmp))
 
-    print('starting runs')
-    if nThreads == -1:
-        nThreads = mp.cpu_count()
-    pbar = tqdm(total = states) # init  progbar
-    for state in prange(states, nogil = True, schedule = 'static', num_threads = nThreads):
-        for repeat in range(repeats):
-            # only copy values
-            for node in range(nNodes):
-                # kinda uggly syntax
-                (<Model>models_[state].ptr)._states[node] = s[state][node]
-                (<Model>models_[state].ptr)._nudges[node] = copyNudge[node]
-            # sample for N times
-            for delta in range(deltas ):
-                # bin data
-                for node in range(nNodes):
-                    out[state, delta, node, idxer[(<Model>models_[state].ptr)._states[node]]] += 1 / Z
-                # update
-                jdx  = (delta + 1) * (repeat + 1)  * (state + 1)- 1
-                (<Model>models_[state].ptr)._updateState(r[jdx])
 
-                if nudgeType == 'pulse' or \
-                nudgeType    == 'constant' and delta >= half:
-                    # (<Model>models[n])._nudges[:] =
-                    (<Model>models_[state].ptr)._nudges[:] = 0
-        # TODO: replace this with a concurrent unordered_map
-        with gil:
-            pbar.update(1)
-            conditional[kdxs[state]] = out.base[state]# [state, 0, 0, 0]
+    cdef int sampleSize = model.nNodes if model.updateType != 'single' else 1
+
+    # pre-define rng matrix
+    # cdef long[:, ::1] r = model.sampleNodes(states * deltas * repeats)
+
+    # bin matrix
+    cdef double[:, :, :, ::1] out = np.zeros((nThreads     , deltas, \
+                                              model._nNodes, model._nStates))
+    cdef long[:, :, ::1] r = np.ndarray((nThreads, deltas * repeats, sampleSize), dtype = long)
+
+
+    pbar = tqdm(total = states) # init  progbar
+    cdef int nTrial = deltas * repeats
+    cdef int tid  # init thread id
+    print('starting runs')
+    with nogil, parallel(num_threads = nThreads):
+        for state in prange(states, schedule = 'static'):
+            tid = threadid()
+            r[tid] = (<Model>models_[tid].ptr).sampleNodes(nTrial)
+            for repeat in range(repeats):
+                # only copy values
+                for node in range(nNodes):
+                    # kinda uggly syntax
+                    (<Model>models_[tid].ptr)._states[node] = s[state][node]
+                    (<Model>models_[tid].ptr)._nudges[node] = copyNudge[node]
+                # sample for N times
+                for delta in range(deltas):
+                    # bin data
+                    for node in range(nNodes):
+                        out[tid, delta, node, idxer[(<Model>models_[tid].ptr)._states[node]]] += 1 / Z
+                    # update
+                    jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
+                    (<Model>models_[tid].ptr)._updateState(r[tid, jdx - 1])
+
+                    if nudgeType == 'pulse' or \
+                    nudgeType    == 'constant' and delta >= half:
+                        # (<Model>models[n])._nudges[:] =
+                        (<Model>models_[tid].ptr)._nudges[:] = 0
+            # TODO: replace this with a concurrent unordered_map
+            with gil:
+                pbar.update(1)
+                conditional[kdxs[state]] = out.base[tid].copy()# [state, 0, 0, 0]
     # cdef unordered_map[int, double *].iterator start = conditional.begin()
     # cdef unordered_map[int, double *].iterator end   = conditional.end()
     # cdef int length = (deltas + 1) * nNodes * nStates
@@ -321,7 +353,7 @@ cpdef mutualInformation(dict conditional, int deltas, \
     H += np.nansum(px *  np.log2(px), -1)
     return px, -H
 
-cpdef runMC(Model model, dict snapshots, int deltas, int repeats, **kwargs):
+cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = {}):
     """ wrapper to perform MC and MI"""
     cdef:
         dict conditional = monteCarlo(model = model, snapshots = snapshots,\

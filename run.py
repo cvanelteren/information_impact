@@ -31,13 +31,14 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [1, inf] #, inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [-.1]#, inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
-    magSide       = 'neg'
+    magSide       = ''
     updateType    = 'single'
-    CHECK         = [.8, .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
-    n = 10
+    CHECK         = [.2] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+
+    tempres       = 100
     graphs = []
 #    real = 1
     if real:
@@ -52,22 +53,35 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-       # graphs += [nx.path_graph(5)]
+       N = 50
+       tmp = logspace(0, log10(N - 1), 10, dtype = int)
+       graphs += [nx.barabasi_albert_graph(N, ni) for ni in tmp]
        # graphs += [nx.krackhardt_kite_graph()]
-       n = 10
-       nn = 10
-       for i in [3, 5, n - 1]:
-           for a in range(nn):
-               graphs.append(nx.barabasi_albert_graph(n, i))
+       graphs = [nx.path_graph(4)]
+       # n = 10
+       # nn = 10
+       # for i in [3, 5, n - 1]:
+           # for a in range(nn):
+               # graphs.append(nx.barabasi_albert_graph(n, i))
            # graphs += [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
 
 
     # graphs = [nx.barabasi_albert_graph(10,5)]
 #    graphs = [nx.path_graph(3)]
 
+    rootDirectory = f'{os.getcwd()}/Data/{time.time()}'  if len(graphs) > 1 else ''
     for graph in graphs:
         now = time.time()
-        targetDirectory = f'{os.getcwd()}/Data/{now}'
+
+        # group graphs together if this is run
+        if rootDirectory == '':
+            targetDirectory = f'{os.getcwd()}/Data/{now}'
+        # group graphs; setup paths
+        else:
+            if not os.path.exists(rootDirectory):
+                os.mkdir(rootDirectory)
+            targetDirectory = rootDirectory + f'/{now}'
+
         os.mkdir(targetDirectory)
         settings = dict(
             repeat           = repeats,
@@ -105,7 +119,7 @@ if __name__ == '__main__':
             magRange = array([CHECK]) if isinstance(CHECK, float) else array(CHECK)
 
             # magRange = array([.9, .2])
-            temps = linspace(0, 15, 500)
+            temps = linspace(0, 15, tempres)
             mag, sus = model.matchMagnetization(temps = temps,\
              n = int(1e4), burninSamples = 0)
 
@@ -153,7 +167,7 @@ if __name__ == '__main__':
                 model.nudges = pulse
                 snapshots    = infcy.getSnapShots(model, nSamples, \
                                                burninSamples = burninSamples, \
-                                               step          = step)
+                                               steps         = step)
                 # TODO: uggly, against DRY
                 # always perform control
                 conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)

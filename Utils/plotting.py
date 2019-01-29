@@ -12,11 +12,15 @@ import scipy.optimize, scipy.integrate
 # %%
 
 def colorbar(mappable, **kwargs):
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
     """Aligns colorbar with axis height"""
     ax = mappable.axes
+    fig = ax.figure
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="5%", pad=0.05)
-    return fig.colorbar(mappable, cax=cax, **kwargs)
+    cbar = fig.colorbar(mappable, cax = cax)
+    return cbar
+#return fig.colorbar(mappable, cax=cax, **kwargs)
 
 def fit(y, func, x = None,\
                    params = {}):
@@ -57,52 +61,6 @@ def extractImpact(data):
 def c():
     close('all')
 
-def pt_bayescount(Pr, Nt):
-    # all credit goes to panzeri-treves
-    """Compute the support for analytic bias correction using the
-    Bayesian approach of Panzeri and Treves (1996)
-
-    :Parameters:
-      Pr : 1D aray
-        Probability vector
-      Nt : int
-        Number of trials
-
-    :Returns:
-      R : int
-        Bayesian estimate of support
-
-    """
-
-    # dimension of space
-    dim = Pr.size
-
-    # non zero probs only
-    PrNZ = Pr[Pr>np.finfo(np.float).eps]
-    Rnaive = PrNZ.size
-
-    R = Rnaive
-    if Rnaive < dim:
-        Rexpected = Rnaive - ((1.0-PrNZ)**Nt).sum()
-        deltaR_prev = dim
-        deltaR = np.abs(Rnaive - Rexpected)
-        xtr = 0.0
-        while (deltaR < deltaR_prev) and ((Rnaive+xtr)<dim):
-            xtr = xtr+1.0
-            Rexpected = 0.0
-            # occupied bins
-            gamma = xtr*(1.0 - ((Nt/(Nt+Rnaive))**(1.0/Nt)))
-            Pbayes = ((1.0-gamma) / (Nt+Rnaive)) * (PrNZ*Nt+1.0)
-            Rexpected = (1.0 - (1.0-Pbayes)**Nt).sum()
-            # non-occupied bins
-            Pbayes = gamma / xtr
-            Rexpected = Rexpected + xtr*(1.0 - (1.0 - Pbayes)**Nt)
-            deltaR_prev = deltaR
-            deltaR = np.abs(Rnaive - Rexpected)
-        Rnaive = Rnaive + xtr - 1.0
-        if deltaR < deltaR_prev:
-            Rnaive += 1.0
-    return Rnaive
 
 def showIDTCENT(idt, model, cent = 'betweenness'):
     from functools import partial
@@ -500,7 +458,8 @@ def addGraphPretty(model, ax, \
         # print(c.center[:2], pos[n])
         # ax.text(*c.center, n, horizontalalignment = 'center', \
         # verticalalignment = 'center', transform = ax.transAxes)
-        annotatekwargs['fontsize'] = .95 * circlekwargs['radius']
+        print(.95 * circlekwargs['radius'])
+        annotatekwargs['fontsize'] = 95 * circlekwargs['radius']
         ax.annotate(n, c.center, **annotatekwargs)
         # add to ax
         ax.add_patch(c)
