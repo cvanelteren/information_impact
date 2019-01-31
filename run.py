@@ -27,16 +27,16 @@ if __name__ == '__main__':
     else:
         real = 0
     repeats       = int(1e4)
-    deltas        = 100
+    deltas        = 20
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [.1]#, inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [1]#, inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 1
+    nTrials       = 10
     magSide       = ''
     updateType    = 'single'
-    CHECK         = [.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.9] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 
     tempres       = 100
     graphs = []
@@ -57,7 +57,7 @@ if __name__ == '__main__':
        tmp = logspace(0, log10(N - 1), 10, dtype = int)
        graphs += [nx.barabasi_albert_graph(N, ni) for ni in tmp]
        # graphs += [nx.krackhardt_kite_graph()]
-       graphs = [nx.path_graph(4)]
+       graphs = [nx.path_graph(10)]
        # n = 10
        # nn = 10
        # for i in [3, 5, n - 1]:

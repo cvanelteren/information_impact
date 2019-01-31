@@ -272,6 +272,7 @@ cpdef dict monteCarlo(\
     # setup output storage
 
     # threadsafe model access; can be reduces to n_threads
+    # for state in range(nThreads):
     for state in range(nThreads):
         tmp = copy.deepcopy(model)
         tmp.seed += state # enforce different seeds
@@ -285,7 +286,7 @@ cpdef dict monteCarlo(\
     # cdef long[:, ::1] r = model.sampleNodes(states * deltas * repeats)
 
     # bin matrix
-    cdef double[:, :, :, ::1] out = np.zeros((states     , deltas, \
+    cdef double[:, :, :, ::1] out = np.zeros((nThreads     , deltas, \
                                               model._nNodes, model._nStates))
     cdef long[:, :, ::1] r = np.ndarray((nThreads, deltas * repeats, sampleSize), dtype = long)
 
@@ -308,7 +309,7 @@ cpdef dict monteCarlo(\
                 for delta in range(deltas):
                     # bin data
                     for node in range(nNodes):
-                        out[state, delta, node, idxer[(<Model>models_[tid].ptr)._states[node]]] += 1 / Z
+                        out[tid, delta, node, idxer[(<Model>models_[tid].ptr)._states[node]]] += 1 / Z
                     # update
                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
                     (<Model>models_[tid].ptr)._updateState(r[tid, jdx - 1])
@@ -320,7 +321,7 @@ cpdef dict monteCarlo(\
             # TODO: replace this with a concurrent unordered_map
             with gil:
                 pbar.update(1)
-                conditional[kdxs[state]] = out.base[state].copy()
+                conditional[kdxs[state]] = out.base[tid].copy()
 
     # some ideas for concurrent dicts
     # cdef unordered_map[int, double *].iterator start = conditional.begin()
