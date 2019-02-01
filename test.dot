@@ -1,0 +1,4 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label="entropy = 0.0\nsamples = 37\nvalue = [[59.0]\n[59.0]\n[59.0]\n[59.0]\n[59.0]]"

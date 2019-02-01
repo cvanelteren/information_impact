@@ -415,11 +415,11 @@ def saveAllFigures(useLabels = False, path = '../Figures'):
 def addGraphPretty(model, ax, \
                    positions = None, \
                    cmap = cm.tab20, **kwargs):
-    
+
     from matplotlib.patches import FancyArrowPatch, Circle, ConnectionStyle, Wedge
     r     = .115 # radius for circle
     graph = model.graph
-    
+
     if positions is None:
         positions = nx.circular_layout(graph)
 # colors  = cm.tab20(arange(model.nNodes))
@@ -428,7 +428,7 @@ def addGraphPretty(model, ax, \
         cmap = cm.get_cmap('gist_rainbow')
 
     colors = cmap(arange(model.nNodes))
-    
+
     # DEFAULTS
     circlekwargs = dict(\
                              radius    = r, \
@@ -439,17 +439,17 @@ def addGraphPretty(model, ax, \
                              zorder    = 2)
     for k, v in kwargs.get('circle', {}).items():
             circlekwargs[k] = v
-        
+
     annotatekwargs = dict(\
                           horizontalalignment = 'center', \
                           verticalalignment = 'center', \
                           transform = ax.transAxes, \
-                          fontsize = 12,\
+                          fontsize = circlekwargs.get('radius', 1),\
                           )
-    
+
     for k, v in kwargs.get('annotate', {}).items():
         annotatekwargs[k] = v
-    
+
     for n in graph:
         # make circle
         c = Circle(positions[n], facecolor = colors[model.mapping[n]],\
@@ -459,7 +459,7 @@ def addGraphPretty(model, ax, \
         # ax.text(*c.center, n, horizontalalignment = 'center', \
         # verticalalignment = 'center', transform = ax.transAxes)
 #        print(.95 * circlekwargs['radius'])
-        annotatekwargs['fontsize'] = 95 * circlekwargs['radius']
+        annotatekwargs['fontsize'] = .95 * circlekwargs['radius']
         ax.annotate(n, c.center, **annotatekwargs)
         # add to ax
         ax.add_patch(c)
@@ -477,10 +477,10 @@ def addGraphPretty(model, ax, \
                    lw = 2,\
                    alpha = 1,\
                    )
-    
+
     edgesScaling = {(u, v): graph[u][v]['weight'] for u, v in graph.edges()}
     minWeight, maxWeight = min(edgesScaling.values()), max(edgesScaling.values())
-    
+
     for u, v in graph.edges():
         n1      = graph.node[u]['patch']
         n2      = graph.node[v]['patch']
@@ -489,14 +489,14 @@ def addGraphPretty(model, ax, \
         if (u,v) in seen:
             rad = seen.get((u,v))
             rad = ( rad + np.sign(rad) *0.1 ) * -1
-        
+
         # set properties of the edge
         alphaEdge = clip(abs(d), .2, 1)
         arrowsprops['color'] = 'green' if d > 0 else 'red'
 #        arrowsprops['alpha'] = alphaEdge
         if maxWeight != minWeight:
             arrowsprops['lw'] = ((maxWeight - d) / (maxWeight - minWeight)) * 5
-        
+
         # self-edge is a special case
         if u == v:
             n2 = copy(n1)
@@ -507,7 +507,7 @@ def addGraphPretty(model, ax, \
             corner1   = array([sin(theta), cos(theta)]) * r
             corner2   = array([sin(theta + rotation), cos(theta + rotation)]) *\
             r + .12 * sign(random.randn()) * r
-            
+
             n1.center = array(n1.center) + corner1
             n2.center = array(n2.center) + corner2
 
@@ -522,7 +522,7 @@ def addGraphPretty(model, ax, \
             e  = FancyArrowPatch(n1.center,n2.center, patchA = n1, patchB = n2,\
                                 connectionstyle = f'arc3,rad={rad}',
                                 **arrowsprops)
-            
+
 
         seen[(u,v)]=rad
         ax.add_patch(e)
