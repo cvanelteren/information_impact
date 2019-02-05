@@ -6,6 +6,8 @@ Created on Thu Oct 18 12:09:36 2018
 @author: casper
 """
 from numpy import *
+from functools import partial
+
 from scipy import optimize, integrate
 from matplotlib.pyplot import *
 from time import sleep
@@ -16,9 +18,14 @@ close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 #dataPath = '/mnt/'
+# convenience
+kite   = '1548347769.6300871'
+psycho = '1548025318.5751357'
+
+
 extractThis      = IO.newest(dataPath)[-1]
-extractThis      = '1548025318.5751357' # psycho
-extractThis      = '1548347769.6300871' # kite neg
+extractThis      = psycho 
+#extractThis      = kite 
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
@@ -73,6 +80,17 @@ ax.plot(x, func(x, *a), '--k')
 ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
 rcParams['axes.labelpad'] = 10
 fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
+# %% plot graph
+
+centralities = dict(\
+                    deg_w  = partial(nx.degree, weight = 'weight'), \
+#                    close  = partial(nx.closeness_centrality, distance = 'weight'),\
+                    bet    = partial(nx.betweenness_centrality, weight = 'weight'),\
+                    ic     = partial(nx.information_centrality, weight = 'weight'),\
+                    ev     = partial(nx.eigenvector_centrality, weight = 'weight'),\
+#             cfl = partial(nx.current_flow_betweenness_centrality, weight = 'weight'),
+             )
+
 # %%
 fig, ax  = subplots(figsize = (10, 10), frameon = False)
 ax.set(xticks = [], yticks = [])
@@ -80,23 +98,54 @@ positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
                                          )
 #                                         root = sorted(dict(model.graph.degree()).items())[0][0])
 
-positions = {node : tuple(i * .01 for i in pos) for node, pos in positions.items() }
+positions = {node : tuple(i * .1 for i in pos) for node, pos in positions.items() }
 p = dict(layout = dict(scale = 1),\
-         circle = dict(\
-                     radius = 10000),\
-         annotate = dict(fontsize = 50000000)
+         annotate = dict(fontweight = 'extra bold'),\
+         cicle = dict(radius = 100),\
          )
-p = {}
-plotz.addGraphPretty(model, ax, positions, \
+#p = {}
+plotz.addGraphPretty(model.graph, ax, positions, \
+                     mapping = model.rmapping,\
                      **p,\
                      )
+
+
 #nx.draw(model.graph, positions, ax = ax)
-ax.axis('equal')
+ax.set_aspect('equal', 'box')
 ax.set(xticks = [], yticks = [])
 ax.axis('off')
 fig.show()
-savefig(figDir + 'network.eps', dpi = 1000)
+savefig(figDir + 'network.eps')
 
+#%%
+ss = dict(\
+          height_ratios = [1, 1], width_ratios = [1, 1])
+centLabels = 'Degree Betweenness Information Eigenvector'.split()
+fig, ax = subplots(2, 2, gridspec_kw = ss)
+
+#plotz.addGraphPretty(model.graph, ax[0, 0], \
+#                     positions, mapping = model.rmapping,
+#                     )
+from matplotlib.patches import Circle              
+for idx, (cent, cf) in enumerate(centralities.items()):
+    c = dict(cf(model.graph))
+    s = array(list(c.values()))
+    s = (s - s.min()) /(s.max() - s.min())
+    tax = ax[:, :].ravel()[idx]
+    tax.axis('off')
+    tax.set_aspect('equal','box')
+    tax.set_title(centLabels[idx])
+    plotz.addGraphPretty(model.graph, tax, positions, \
+                     mapping = model.rmapping,\
+                     **p,\
+                     )
+    for pidx, pp in enumerate(tax.get_children()):
+        if isinstance(pp, Circle):
+            pp.set(radius = s[pidx] * pp.radius * 2.4 )
+#fig.subplots_adjust(hspace = 0, wspace = 0)
+fig.savefig(figDir +  'graph_and_cent.eps')
+        
+#assert 0
 # %%
 
 
@@ -360,7 +409,31 @@ fig.savefig(figDir + 'mi_time.eps', format='eps', dpi=1000, pad_inches = 0,\
         bbox_inches = 'tight')
 
 show()
-#sys.exit()
+
+# %% presentation plot
+rcParams['axes.labelpad'] = 0
+fig, ax = subplots(figsize = (15, 10))
+x  = arange(DELTAS)
+xx = linspace(0, 1 * DELTAS, 1000)
+y  = means[0,0]
+coeffs, errors = plotz.fit(y, func, params = fitParam)
+for node in range(NODES):
+    ax.scatter(x, y[node], label = model.rmapping[node], \
+               color = colors[node])
+    ax.plot(xx, func(xx, *coeffs[node]), color = colors[node])
+    if model.rmapping[node] == 8 or model.rmapping[node] == 5:
+        tmp = lambda x : func(x, *coeffs[node]) - .5 * y[node][0] 
+        yy  =optimize.fsolve(tmp, 0)
+        idx = argmin(abs(x - yy))
+        print(y[node][idx])
+        ax.axvline(yy, 0, y[node][idx], color = colors[node],\
+                   linestyle = '-', zorder = 5)
+ax.axhline(.05, color = 'k', linestyle = 'dashed')
+ax.set_ylabel('$I(s_i^{t_0 + t} ; S^t_0)$', fontsize = 50)
+ax.set_xlabel('$time [t]$', fontsize = 50)
+ax.tick_params(labelsize = 25)
+ax.legend(title = 'Node', title_fontsize = 40, fontsize = 25)
+fig.savefig('/home/casper/projects/thesis/presentation/figures/mi_example.eps')
 # %% estimate impact
 #aucs       = zeros((NTRIALS, COND, NODES))
 
@@ -545,15 +618,7 @@ out += '.png' if showOutliers else '.eps'
 savefig(figDir + out, dpi = 1000)
 
 # %% information impact vs centrality
-from functools import partial
-centralities = dict(\
-                    deg_w  = partial(nx.degree, weight = 'weight'), \
-#                    close  = partial(nx.closeness_centrality, distance = 'weight'),\
-                    bet    = partial(nx.betweenness_centrality, weight = 'weight'),\
-                    ic     = partial(nx.information_centrality, weight = 'weight'),\
-                    ev     = partial(nx.eigenvector_centrality, weight = 'weight'),\
-#             cfl = partial(nx.current_flow_betweenness_centrality, weight = 'weight'),
-             )
+
 
 centLabels = list(centralities.keys())
 infImpact = aucs.mean(-2)
@@ -962,18 +1027,12 @@ shuffscores = zeros(\
 #    clf.n_estimators = n
 #    for j, depth in enumerate(treedepths):
 #        clf.max_depth = depth
-from skopt import forest_minimize, gp_minimize
-from skopt.space import Real, Integer
-from skopt.utils import use_named_args
 
 # The list of hyper-parameters we want to optimize. For each one we define the bounds,
 # the corresponding scikit-learn parameter name, as well as how to sample values
 # from that dimension (`'log-uniform'` for the learning rate)
 NOBS   = NTRIALS * NTEMPS
-space  = [Integer(1, 5, name='max_features'),\
-          Integer(1, N + 1, name='max_features'),\
-          Integer(int(0.2 * NOBS), int(0.9 * NOBS), name='nsamples'),\
-          ]
+
 
 clf = RandomForestClassifier(\
                             n_estimators = 100,\
@@ -1002,15 +1061,68 @@ for cond in range(COND):
             
             s = metrics.accuracy_score(yj, shuffpred)
             shuffscores[k, shuf, cond] = s
-# %%
-
-fig, ax = subplots(1,2)
-x = arange(N + 1) * (1 + width)
+# %% plot score and feature importance
+rcParams['axes.labelpad'] = 5
+fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
+                   figsize = (10,10))
+x = arange(N + 1) * (1 + width) * 2
 width = .5
+mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
+simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
+s    = scores.reshape(NTEMPS, NTRIALS, COND)
+ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
+sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1) 
+t    = arange(NTEMPS)
+
+sc   = shuffscores.reshape(NTEMPS, NTRIALS, N+1, COND).mean(1)
+
+
+d = (scores[:, None] - shuffscores) # / (scores)
+d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
+d = d.mean(1) / s.mean(1)[:, None] * 100
+for temp in range(NTEMPS):
+
+    for cond in range(COND):
+    
+        if temp == 0:
+            ax[0, cond].set_title(condLabels[cond])
+#            ax[0, cond].errorbar(\
+#                          t, ss[:, cond], yerr = sss[:, cond],\
+#                          linestyle = 'none',\
+#                          color = 'k',\
+#                          )
+
+        tax = ax[0, cond]
+        tax.bar(t[temp], ss[temp, cond], width = width, \
+                color = colors[0])
+#        tax.boxplot(s[temp, :, cond], \
+#                )
+        tax = ax[1, cond]
+        tax.bar(x + width * temp, mimF[temp, :, cond],\
+                width = width, label = f'T={round(temps[temp], 2)}')
+        
+        tax = ax[2, cond]
+        tax.bar(x + width * temp, d[temp, ..., cond], \
+                width = width)
+#ax[0, 0].boxplot(s[..., 0].T)
+ax[0,0].set(xticklabels = [f'T={round(temp, 2)}' for temp in temps],\
+            xticks = t, \
+            ylabel = 'Accuracy score')
+
+ax[1,0].set(xticks = x +  width * 3/NTEMPS, \
+            xticklabels = '',\
+            ylabel = 'Feature importance')
+ax[1,1].legend()
+ax[2, 0].set(ylabel = 'delta score(%)',\
+             xticks = x +  width * 3/NTEMPS, \
+             xticklabels = ['$\mu_i$', *centralities.keys()],\
+             )
+fig.subplots_adjust(wspace = 0)
+fig.savefig(figDir + 'classifier_stats.eps')
+# %%
 d = (scores.mean(0) - shuffscores.mean(0)) / (scores.mean(0))
-for idx, s in enumerate(imF.mean(0).T):
-    ax[0].bar(x + idx * width, s, width = width)
-    ax[1].bar(x, d[...,0], width = width)
+#s = (scores - shuffscores) / (
+
 p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5, 'greater')  
 
 O    = imF.sum(0)
@@ -1356,10 +1468,16 @@ def imshow_symlog(ax, my_matrix, vmin, vmax, logthresh=5):
     return img
 X = moveaxis(estimates, 2, -1)
 y = moveaxis(targets, 2, -1).reshape(-1, COND)
-y = pd.DataFrame(y, columns = 'Underwhelming Overwhelming'.split())
+y = scipy.stats.zscore(y, 0)
+#X = scipy.stats.zscore(X, 2)
 X = X.reshape(-1, N + 1)
-#X = X[:, [0]]
 X = scipy.stats.zscore(X, 0)
+X[isfinite(X) == False] = 0
+y = pd.DataFrame(y, columns = 'Underwhelming Overwhelming'.split())
+
+
+#X = X[:, [0]]
+
 # visualize covariance
 fig, ax =  subplots()
 #h = imshow_symlog(ax, abs(corrcoef(array(X)[:, 1:].T)), 0, 1)
@@ -1386,7 +1504,27 @@ with open(f'{extractThis}.linregress.tex', 'w') as f:
     f.write(mr)
     
     
+    
+# % fit the results
+linf = lambda x, beta : beta * x + est.params['intercept']
 
+mins, maxs = X.min(0), X.max(0)
+fig, ax = subplots()
+# skip intercept
+for idx, i in enumerate(X.columns[1:]):
+#    tax = ax[idx]
+    tax = ax
+    x = linspace(mins[i], maxs[i])
+    tax.scatter(X[i], y['Underwhelming'],  alpha = 1, \
+               color = colors[idx], label = i)
+    tax.plot(x, linf(x, est.params[i]), color = colors[idx],\
+            linestyle = 'dashed')
+tax.legend(title = 'x')
+tax.set(xlabel = 'Z-scored x',\
+        ylabel = 'Z-scored $\delta_i$')
+fig.savefig(figDir + 'multiregr.eps')
+
+    
 
 # %% appendix box rejection
 rcParams['axes.labelpad'] = 40

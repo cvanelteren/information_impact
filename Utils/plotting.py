@@ -412,13 +412,14 @@ def saveAllFigures(useLabels = False, path = '../Figures'):
         print('saving at {}'.format(saveStr))
         savefig(saveStr)
 
-def addGraphPretty(model, ax, \
+def addGraphPretty(graph, ax, \
                    positions = None, \
-                   cmap = cm.tab20, **kwargs):
+                   cmap      = cm.tab20, \
+                   mapping   = None,\
+                   **kwargs):
 
     from matplotlib.patches import FancyArrowPatch, Circle, ConnectionStyle, Wedge
-    r     = .115 # radius for circle
-    graph = model.graph
+#    graph = model.graph.
 
     if positions is None:
         positions = nx.circular_layout(graph)
@@ -427,11 +428,15 @@ def addGraphPretty(model, ax, \
     if graph.number_of_nodes() > 20:
         cmap = cm.get_cmap('gist_rainbow')
 
-    colors = cmap(arange(model.nNodes))
+    colors = cmap(arange(graph.number_of_nodes()))
 
+    # default radius
+#    r = np.array(list(positions.values()))
+    # average distance
+#    r = linalg.norm(r[:, None] - r[None, :], axis = 0).mean() * .1
     # DEFAULTS
     circlekwargs = dict(\
-                             radius    = r, \
+                             radius    = 10, \
                              alpha     = 1, \
                              edgecolor = 'black', \
                              linewidth = 1, \
@@ -442,24 +447,32 @@ def addGraphPretty(model, ax, \
 
     annotatekwargs = dict(\
                           horizontalalignment = 'center', \
-                          verticalalignment = 'center', \
-                          transform = ax.transAxes, \
-                          fontsize = circlekwargs.get('radius', 1),\
+                          verticalalignment   = 'center', \
+                          transform           = ax.transAxes, \
+                          fontsize            = circlekwargs.get('radius', 1),\
                           )
 
     for k, v in kwargs.get('annotate', {}).items():
         annotatekwargs[k] = v
 
-    for n in graph:
+
+    # get length of the fontsize
+#    diamax = 6 * circlekwargs['radius']
+    circlekwargs['radius'] = 1.2 * np.array([len(str(n)) for n in graph]).max()
+    for ni, n in enumerate(graph):
         # make circle
-        c = Circle(positions[n], facecolor = colors[model.mapping[n]],\
+        if mapping is not None: # overwrite default if no mapping
+            ni = mapping[ni]
+        color = colors[ni]
+        c = Circle(positions[n], \
+                   facecolor = color,\
                    **circlekwargs)
         # add label
         # print(c.center[:2], pos[n])
         # ax.text(*c.center, n, horizontalalignment = 'center', \
         # verticalalignment = 'center', transform = ax.transAxes)
 #        print(.95 * circlekwargs['radius'])
-        annotatekwargs['fontsize'] = .95 * circlekwargs['radius']
+        annotatekwargs['fontsize'] = 8 #circlekwargs['radius'] * 8  / len(n)
         ax.annotate(n, c.center, **annotatekwargs)
         # add to ax
         ax.add_patch(c)
@@ -502,7 +515,7 @@ def addGraphPretty(model, ax, \
             n2 = copy(n1)
             n1 = copy(n1)
             theta  = random.uniform(0, 2*pi)
-
+            r         = circlekwargs.get('radius')
             rotation  = pi
             corner1   = array([sin(theta), cos(theta)]) * r
             corner2   = array([sin(theta + rotation), cos(theta + rotation)]) *\
@@ -517,7 +530,7 @@ def addGraphPretty(model, ax, \
 
             # add edge
             e = FancyArrowPatch(n2.center, n1.center, **arrowsprops)
-            e.set_arrowstyle(head_length = head_length)
+            # e.set_arrowstyle(head_length = head_length)
         else:
             e  = FancyArrowPatch(n1.center,n2.center, patchA = n1, patchB = n2,\
                                 connectionstyle = f'arc3,rad={rad}',
