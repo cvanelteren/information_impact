@@ -159,7 +159,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
         tmp.reset()
         tmp.burnin(burninSamples)
         tmp.seed += sample # enforce different seeds
-        modelsPy.append(tmp)
+        # modelsPy.append(tmp)
         models_.push_back(PyObjectHolder(<PyObject *> tmp))
 
     # init rng buffers
@@ -168,24 +168,22 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
     cdef long[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
                                            dtype = long)
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
-
+    cdef PyObject *modelptr
     pbar = tqdm(total = nSamples)
     for sample in prange(nSamples, nogil = True, \
                          schedule = 'static', num_threads = nThreads):
 
-        tid = threadid()
-        r[tid] = (<Model> models_[tid].ptr).sampleNodes(steps)
+        tid      = threadid()
+        modelptr = models_[tid].ptr
+        r[tid] = (<Model> modelptr).sampleNodes(steps)
         # r[sample] = (<Model> models_[sample].ptr).sampleNodes(steps)
         # perform n steps
         for step in range(steps):
-            # (<Model> models_[sample].ptr)._updateState(\
-                                                    # r[(sample + 1) * (step + 1) - 1]
-                                                        # )
-            (<Model> models_[tid].ptr)._updateState(\
+            (<Model> modelptr)._updateState(\
                                                     r[tid, step]
                                                         )
         with gil:
-            idx = encodeState((<Model> models_[tid].ptr)._states)
+            idx = encodeState((<Model> modelptr)._states)
             # idx = encodeState((<Model> models_[sample].ptr)._states)
             snapshots[idx] += 1/Z
             pbar.update(1)
@@ -278,7 +276,7 @@ cpdef dict monteCarlo(\
         threadModel = copy.deepcopy(model)
         threadModel.seed += state # enforce different seeds
         # print(threadModel.t)
-        modelsPy.append(threadModel)
+        # modelsPy.append(threadModel)
         models_.push_back(PyObjectHolder(<PyObject *> threadModel))
 
 
@@ -308,6 +306,7 @@ cpdef dict monteCarlo(\
             # However this works?
             modelptr    = models_[tid].ptr
             out[tid]    = 0 # reset buffer
+            # threadModel = *modelptr
             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
             for repeat in range(repeats):
                 # only copy values
