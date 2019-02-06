@@ -6,8 +6,7 @@
 requires to rewrite some work to lose the np dependency
 - [x] The rng generation is currently precomputed; this will cause issues for larger graphs;
  preferable this would occur closer to the source or thread safe manner (see prev point)
-- Find out how to properly wrap unordered_map with vector as keys or use concurrent variants
-
+- Find out how to properly wrap unordered_map with vector as keys or use concurrent variants. This will remove encoding dependency
 
 # Mind scribbles
 - [x] Sampler is currently using rand from stdlib. This is bad.
@@ -21,7 +20,7 @@ c arrays instead of memviews. I did try it with cpp vectors but it was (for some
 
 
 # Notes on threading
-UPDATE: threading currently works, but notes below may still be useful for future me
+- [x] UPDATE: threading currently works, but notes below may still be useful for future me
 For some reasons using prange has some problems with it. First,  it requires
 separate models to be accessed independently. Although this should be possible
 and I attempted to do this on rewrite-vectors branch, it produces erroneous results. Performing everything single thread/core is the fastest currently.

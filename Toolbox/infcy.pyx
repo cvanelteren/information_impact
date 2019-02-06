@@ -299,7 +299,6 @@ cpdef dict monteCarlo(\
     cdef int tid  # init thread id
     print('starting runs')
     with nogil, parallel(num_threads = nThreads):
-
         for state in prange(states, schedule = 'static'):
             tid = threadid()
             # for some reason casting to c-extensions thinks its an PyObject
