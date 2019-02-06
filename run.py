@@ -11,15 +11,20 @@ from Models import fastIsing
 from Toolbox import infcy
 from Utils import IO, plotting as plotz
 from Utils.IO import SimulationResult
-import networkx as nx, itertools, scipy,\
-        os, pickle, h5py, sys, multiprocessing as mp, json,\
-        datetime, sys
-import time
+
 from matplotlib.pyplot import *
 from numpy import *
 from tqdm import tqdm
 from functools import partial
-import scipy
+
+import (networkx as nx, \
+        itertools, scipy,\
+        os,     pickle, \
+        h5py,   sys, \
+        multiprocessing as mp, json,\
+        datetime, sys, \
+        scipy, msgpack, \
+        time)
 close('all')
 if __name__ == '__main__':
     if len(sys.argv) > 1:

@@ -24,13 +24,13 @@ psycho = '1548025318.5751357'
 
 
 extractThis      = IO.newest(dataPath)[-1]
-extractThis      = psycho 
-#extractThis      = kite 
+extractThis      = psycho
+#extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
 loadThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
-data   = IO.DataLoader(loadThis)
+data     = IO.DataLoader(loadThis)
 
 
 settings = IO.readSettings(loadThis)
@@ -126,7 +126,7 @@ fig, ax = subplots(2, 2, gridspec_kw = ss)
 #plotz.addGraphPretty(model.graph, ax[0, 0], \
 #                     positions, mapping = model.rmapping,
 #                     )
-from matplotlib.patches import Circle              
+from matplotlib.patches import Circle
 for idx, (cent, cf) in enumerate(centralities.items()):
     c = dict(cf(model.graph))
     s = array(list(c.values()))
@@ -144,7 +144,7 @@ for idx, (cent, cf) in enumerate(centralities.items()):
             pp.set(radius = s[pidx] * pp.radius * 2.4 )
 #fig.subplots_adjust(hspace = 0, wspace = 0)
 fig.savefig(figDir +  'graph_and_cent.eps')
-        
+
 #assert 0
 # %%
 
@@ -422,7 +422,7 @@ for node in range(NODES):
                color = colors[node])
     ax.plot(xx, func(xx, *coeffs[node]), color = colors[node])
     if model.rmapping[node] == 8 or model.rmapping[node] == 5:
-        tmp = lambda x : func(x, *coeffs[node]) - .5 * y[node][0] 
+        tmp = lambda x : func(x, *coeffs[node]) - .5 * y[node][0]
         yy  =optimize.fsolve(tmp, 0)
         idx = argmin(abs(x - yy))
         print(y[node][idx])
@@ -877,7 +877,7 @@ fig, ax = subplots(3,2,\
                                      projection = '3d'),\
                     figsize = (30, 30),\
                     gridspec_kw = gs)
-                   
+
 markers = array(['P', 'v','*',\
                          's', '*',\
                          'h', 'H',\
@@ -901,22 +901,22 @@ def removeLabels(ax, whichax, targets):
             label.set_visible(False)
 #    tax.set_ticks(locs)
     tax.set_data_interval(min(targets), max(targets))
-    
+
 #        if float(label.get_text()) not in targets:
 #            label.set_visible(False)
 #        if val not in targets: label.set_visible(False)
-    
-    
+
+
 from matplotlib.patches import Patch
 for ni in range(N):
     mark = markers[ni]
     for cond in range(COND):
         for t in range(NTEMPS):
             tax = ax[t, cond]
-            
+
             tax.view_init(elev= 23, azim= 130)
             x, y   = estimates[t, :, [0, ni + 1]]
-            sx = (x - x.min(1)[:, None]) / (x.max(1)[:, None] - x.min(1)[:, None])            
+            sx = (x - x.min(1)[:, None]) / (x.max(1)[:, None] - x.min(1)[:, None])
             sy = (y - nanmin(y,1)[:, None]) / (nanmax(y, 1)[:, None] - nanmin(y,1)[:, None])
             z   = targets[t, :, cond, :]
             z   = (z - z.min(1)[:, None])/ (z.max(1)[:, None] - z.min(1)[:, None])
@@ -926,7 +926,7 @@ for ni in range(N):
                             zs = z[:, node], \
                             color = colors[node],\
                             alpha = 1, s = 200, marker = mark)
-                
+
             # format axes
             samesies = 35
             tax.set_xlabel('$\mu_i$', fontsize = 40, \
@@ -948,8 +948,8 @@ for ni in range(N):
             if t == 0 :
                 tax.set_title(condLabels[cond], y = 1.1, \
                               fontsize = 50)
-            
-[tax.invert_yaxis() for tax in ax.ravel()]        
+
+[tax.invert_yaxis() for tax in ax.ravel()]
 
 # dummy legend
 samesies = 35
@@ -958,7 +958,7 @@ elements = [
               label = model.rmapping[i],\
               marker = 'o',\
               linestyle = '', markersize = samesies) for i in range(NODES)]
-        
+
 mainax = fig.add_subplot(111, \
                          frameon = False,\
                          xticks = [],\
@@ -979,21 +979,21 @@ elements = [
         Line2D([0], [0], color = 'k',\
               label = centLabels[i], marker = markers[i],\
               linestyle = '', markersize = samesies) for i in range(N)]
-        
+
 leg2 = legend(handles = elements, \
                      bbox_to_anchor = (0.75, -0.05),\
                      loc = 'upper left', \
                      borderaxespad = 0, \
                      fontsize = 40, \
                      title = 'Marker',\
-                     title_fontsize = 30, 
+                     title_fontsize = 30,
                      ncol = N // 2,\
                      frameon = False)
 [mainax.add_artist(e) for e in [leg1, leg2]]
 fig.subplots_adjust(hspace = .2, wspace = .2)
 fig.savefig(figDir + '3dscattercent.eps')
 #        [tax.tick_params(axis = i, pad = 40) for i in 'x y z'.split()]
-    
+
 #%% randomforrest
 from sklearn import model_selection
 groups = arange(N + 1)
@@ -1019,7 +1019,7 @@ shuffscores = zeros(\
                     (\
                     features.shape[0],\
                     features.shape[1],\
-                    COND, 
+                    COND,
                     )\
                      )
 
@@ -1046,19 +1046,19 @@ for cond in range(COND):
     for k, (train, test) in enumerate(cv.split(ty)):
         xi, xj = features[train], features[test]
         yi, yj = ty[train], ty[test]
-        
+
         clf.fit(xi, yi)
-        
+
         pr = clf.predict(xj)
         s = metrics.accuracy_score(yj, pr)
         scores[k, cond] = s
         imF[k, :, cond] = clf.feature_importances_
-        
+
         for shuf in range(features.shape[1]):
             tf = features.copy()
             random.shuffle(tf[:, shuf])
             shuffpred = clf.predict(tf[test])
-            
+
             s = metrics.accuracy_score(yj, shuffpred)
             shuffscores[k, shuf, cond] = s
 # %% plot score and feature importance
@@ -1071,7 +1071,7 @@ mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
 simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
 s    = scores.reshape(NTEMPS, NTRIALS, COND)
 ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
-sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1) 
+sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1)
 t    = arange(NTEMPS)
 
 sc   = shuffscores.reshape(NTEMPS, NTRIALS, N+1, COND).mean(1)
@@ -1083,7 +1083,7 @@ d = d.mean(1) / s.mean(1)[:, None] * 100
 for temp in range(NTEMPS):
 
     for cond in range(COND):
-    
+
         if temp == 0:
             ax[0, cond].set_title(condLabels[cond])
 #            ax[0, cond].errorbar(\
@@ -1100,7 +1100,7 @@ for temp in range(NTEMPS):
         tax = ax[1, cond]
         tax.bar(x + width * temp, mimF[temp, :, cond],\
                 width = width, label = f'T={round(temps[temp], 2)}')
-        
+
         tax = ax[2, cond]
         tax.bar(x + width * temp, d[temp, ..., cond], \
                 width = width)
@@ -1123,13 +1123,13 @@ fig.savefig(figDir + 'classifier_stats.eps')
 d = (scores.mean(0) - shuffscores.mean(0)) / (scores.mean(0))
 #s = (scores - shuffscores) / (
 
-p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5, 'greater')  
+p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5, 'greater')
 
 O    = imF.sum(0)
 E    = NOBS * 1 // (N + 1) * ones(O.shape, dtype = int)
 test, pp = scipy.stats.chisquare(O, E, ddof = O.shape[1] - 1, axis = 0)
 
- #%%
+r
 cO = O[0]
 iO = O[1:].mean(0)
 
@@ -1142,7 +1142,7 @@ ptest, postp = scipy.stats.chisquare(OO, EE, axis = 0)
 print(ptest, postp)
 
 # correct for number of tests (n conditions + 1 post)
-pp /= N + 2 
+pp /= N + 2
 postp /= N + 2
 print(pp, postp)
 # %% write results
@@ -1171,7 +1171,7 @@ for cond in range(COND):
                                            *centLabels],\
                                index =  ['mean', 'std'])
     pshuffscore.to_excel(writer, sheet_name = f'shscores{condLabels[cond]}')
-    
+
     pimF = pd.DataFrame(pimFs[..., cond], \
                      columns = ['information impact',\
                                            *centLabels],\
@@ -1180,8 +1180,8 @@ for cond in range(COND):
 writer.save()
 #    pd.MultiIndex(tuples, names = 'observed methodd )
 #for cond in range(COND):
-    
-    
+
+
 # %%
 rcParams['axes.labelpad'] = 5
 
@@ -1361,7 +1361,7 @@ for temp in range(NTEMPS):
         ax[-1, 1].set_xlabel('Silouette score', labelpad = 15)
         fig.savefig(figDir + f'T={round(temps[temp], 2)}_kmeans{cond}.eps')
 # %% optimal kmeans plot
-        
+
 fig, ax = subplots(1,2, sharey = 'all')
 rcParams['axes.labelpad'] = 60
 
@@ -1379,12 +1379,12 @@ for i in range(COND):
 
         tax.plot(nclus, s[t], label = f'{round(temps[t],2)}', \
                  color = colors[t])
-        
+
         m = argmax(s[t])
         maxes[t, i] = m
         tax.axvline(x = nclus[m], color = colors[t], \
                     linestyle = '--')
-        
+
         # show cluster
         xi = x[t, :, [0, i + 1]].T # get correct data
         xi = StandardScaler().fit_transform(xi) # zscore
@@ -1392,7 +1392,7 @@ for i in range(COND):
         ypred = clf.fit_predict(xi).reshape(NTRIALS, NODES)
         xi    =xi.reshape(NTRIALS, NODES, 2)
         ttax  = sax[t, i]
-        
+
         markers = array(['o', 'v', '^',\
                          '<', '>', '8',\
                          's', 'p', '*',\
@@ -1404,18 +1404,18 @@ for i in range(COND):
                 ttax.scatter(*xi[trial, node], color = colors[node],\
                          marker = markers[ypred[trial, node]], \
                          )
-                
+
         # format axes
         if t == 0:
             ttax.set_title(condLabels[i])
-        
+
         if i == 0:
             ttax.text(.25 if i == 0 else .85, .85 , \
              f'T={round(temps[t], 2)}', \
              fontdict = dict(fontsize = 15),\
              transform = ttax.transAxes,\
              horizontalalignment = 'right')
-            
+
     tax.set_title(condLabels[i])
 
 
@@ -1423,7 +1423,7 @@ tax.legend(bbox_to_anchor = (.4, -0.05), borderaxespad = 0, \
                loc = 'upper left', frameon = False,\
                title = 'Temperature', \
                title_fontsize = 15,\
-               ncol = 3)  
+               ncol = 3)
 mainax = fig.add_subplot(111,\
                          frameon = False,\
                          xticks = [],\
@@ -1502,9 +1502,9 @@ print(est.summary())
 import csv
 with open(f'{extractThis}.linregress.tex', 'w') as f:
     f.write(mr)
-    
-    
-    
+
+
+
 # % fit the results
 linf = lambda x, beta : beta * x + est.params['intercept']
 
@@ -1524,7 +1524,7 @@ tax.set(xlabel = 'Z-scored x',\
         ylabel = 'Z-scored $\delta_i$')
 fig.savefig(figDir + 'multiregr.eps')
 
-    
+
 
 # %% appendix box rejection
 rcParams['axes.labelpad'] = 40

@@ -6,6 +6,5 @@ tqdm
 seaborn
 tqdm
 cython
-h5py
 scikit-learn
-scikit-posthocs
+msgpack-python
