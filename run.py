@@ -17,14 +17,14 @@ from numpy import *
 from tqdm import tqdm
 from functools import partial
 
-import (networkx as nx, \
+import networkx as nx, \
         itertools, scipy,\
         os,     pickle, \
         h5py,   sys, \
         multiprocessing as mp, json,\
         datetime, sys, \
         scipy, msgpack, \
-        time)
+        time
 close('all')
 if __name__ == '__main__':
     if len(sys.argv) > 1:
@@ -62,7 +62,7 @@ if __name__ == '__main__':
        tmp = logspace(0, log10(N - 1), 10, dtype = int)
        graphs += [nx.barabasi_albert_graph(N, ni) for ni in tmp]
        # graphs += [nx.krackhardt_kite_graph()]
-       graphs = [nx.path_graph(10)]
+       graphs = [nx.path_graph(3)]
        # n = 10
        # nn = 10
        # for i in [3, 5, n - 1]:

@@ -265,7 +265,8 @@ cpdef dict monteCarlo(\
 
         list modelsPy = []
         vector[PyObjectHolder] models_
-        Model tmp
+        Model threadModel
+        PyObject *modelptr
 
     # setup thread count
     nThreads = mp.cpu_count() if nThreads == -1 else nThreads
@@ -274,10 +275,11 @@ cpdef dict monteCarlo(\
     # threadsafe model access; can be reduces to n_threads
     # for state in range(nThreads):
     for state in range(nThreads):
-        tmp = copy.deepcopy(model)
-        tmp.seed += state # enforce different seeds
-        modelsPy.append(tmp)
-        models_.push_back(PyObjectHolder(<PyObject *> tmp))
+        threadModel = copy.deepcopy(model)
+        threadModel.seed += state # enforce different seeds
+        # print(threadModel.t)
+        modelsPy.append(threadModel)
+        models_.push_back(PyObjectHolder(<PyObject *> threadModel))
 
 
     cdef int sampleSize = model.nNodes if model.updateType != 'single' else 1
@@ -287,41 +289,51 @@ cpdef dict monteCarlo(\
 
     # bin matrix
     # TODO: check the output array; threading cant be performed here; susspicious of overwriting
-    cdef double[:, :, :, ::1] out = np.zeros((states     , deltas, \
+    cdef double[:, :, :, ::1] out = np.zeros((nThreads     , deltas, \
                                               model._nNodes, model._nStates))
-    cdef long[:, :, ::1] r = np.ndarray((nThreads, deltas * repeats, sampleSize), dtype = long)
+    cdef int nTrial = deltas * repeats
+    cdef long[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
+                                         sampleSize), dtype = long)
 
 
     pbar = tqdm(total = states) # init  progbar
-    cdef int nTrial = deltas * repeats
+
     cdef int tid  # init thread id
     print('starting runs')
     with nogil, parallel(num_threads = nThreads):
+
         for state in prange(states, schedule = 'static'):
             tid = threadid()
-            r[tid] = (<Model>models_[tid].ptr).sampleNodes(nTrial)
+            # for some reason casting to c-extensions thinks its an PyObject
+            # However this works?
+            modelptr    = models_[tid].ptr
+            out[tid]    = 0 # reset buffer
+            r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
             for repeat in range(repeats):
                 # only copy values
                 for node in range(nNodes):
                     # kinda uggly syntax
-                    (<Model>models_[tid].ptr)._states[node] = s[state][node]
-                    (<Model>models_[tid].ptr)._nudges[node] = copyNudge[node]
+                    (<Model> modelptr)._states[node] = s[state][node]
+                    (<Model> modelptr)._nudges[node] = copyNudge[node]
                 # sample for N times
                 for delta in range(deltas):
                     # bin data
                     for node in range(nNodes):
-                        out[state, delta, node, idxer[(<Model>models_[tid].ptr)._states[node]]] += 1 / Z
+                        jdx = idxer[(<Model> modelptr)._states[node]]
+                        # tidBuffer[delta, node, jdx] += 1 / Z
+                        out[tid, delta, node, jdx] += 1 / Z
                     # update
                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
-                    (<Model>models_[tid].ptr)._updateState(r[tid, jdx - 1])
+                    (<Model> modelptr)._updateState(r[tid, jdx - 1])
 
                     if nudgeType == 'pulse' or \
                     nudgeType    == 'constant' and delta >= half:
                         # (<Model>models[n])._nudges[:] =
-                        (<Model>models_[tid].ptr)._nudges[:] = 0
+                        (<Model> modelptr)._nudges[:] = 0
             # TODO: replace this with a concurrent unordered_map
             with gil:
                 pbar.update(1)
+                # tid = threadid()
                 conditional[kdxs[state]] = out.base[tid].copy()
 
     # some ideas for concurrent dicts
