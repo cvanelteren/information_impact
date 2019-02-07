@@ -28,5 +28,5 @@ Ideally I would want to utilize all the cores to compute the snapshots repeats
 in parallel.
 
 
-- Found the segfault; writing to the buffer is not threadsafe, even though the keys are unique.
-- If you replace the memviews with ndarrays and slice into them, the speed will be reduces by 300 percent. This is the cause of issues in mp
+- [x] Found the segfault; writing to the buffer is not threadsafe, even though the keys are unique. (wasn't it was a wrongful idx)
+- [x] If you replace the memviews with ndarrays and slice into them, the speed will be reduces by 300 percent. This is the cause of issues in mp

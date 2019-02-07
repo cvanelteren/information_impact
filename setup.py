@@ -66,7 +66,7 @@ with open('requirements.txt', 'r') as install_reqs:
         install_requires= install_reqs,\
         ext_modules = cythonize(\
                 exts,\
-                annotate            = True,\
+                # annotate            = True,\ # set to true for performance html
                 language_level      = 3,\
                 compiler_directives = dict(\
                                         fast_gil       = True,\

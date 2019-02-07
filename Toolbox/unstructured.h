@@ -1,6 +1,6 @@
 #include <boost/functional/hash.hpp>
 #include <unordered_map>
-#include <stdio.h>
+
 
 template <typename Container> // we can make this generic for any container [1]
 struct container_hash {
@@ -9,5 +9,5 @@ struct container_hash {
     }
 };
 
-typedef std::vector<int> intVector; // shorthand for the discrete state; maybe better to use floats
-typedef std::unordered_map<intVector, int, container_hash<intVector>> statemap; // the dict
+typedef std::vector<int> intVector;
+typedef std::unordered_map<intVector, int, container_hash<intVector>> statemap;

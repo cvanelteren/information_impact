@@ -142,12 +142,15 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
         :snapshots: dict containing the idx of the state as keys, and probability as values
     """
     cdef:
-        unordered_map[int, double] snapshots
+        # unordered_map[int, double] snapshots
+        # unordered_map[int, vector[int]] msnapshots
+        dict snapshots = {}
         int step, sample
         int N          = nSamples * steps
         # long[:, ::1] r = model.sampleNodes(N)
         double Z       = <double> nSamples
-        int idx
+        int idx # deprc?
+        unordered_map[int, vector[int]].iterator got
         double past    = timer()
         list modelsPy  = []
         vector[PyObjectHolder] models_
@@ -162,14 +165,18 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
         # modelsPy.append(tmp)
         models_.push_back(PyObjectHolder(<PyObject *> tmp))
 
+
     # init rng buffers
     cdef int sampleSize = model.nNodes if model.updateType != 'single' else 1
 
     cdef long[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
                                            dtype = long)
+    # cdef cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r    = 0
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
     cdef PyObject *modelptr
     pbar = tqdm(total = nSamples)
+    cdef tuple state
+    cdef int counter = 0
     for sample in prange(nSamples, nogil = True, \
                          schedule = 'static', num_threads = nThreads):
 
@@ -183,25 +190,26 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
                                                     r[tid, step]
                                                         )
         with gil:
-            idx = encodeState((<Model> modelptr)._states)
+            # unordered_map
+            # approach 1
+            # idx = encodeState((<Model> modelptr)._states)
             # idx = encodeState((<Model> models_[sample].ptr)._states)
-            snapshots[idx] += 1/Z
+            # snapshots[idx] += 1/Z
+            # approach 2
+            # got = msnapshots.find((<Model> modelptr)._states.base)
+            # if got == msnapshots.end():
+            #     counter += 1 # update hash
+            #     msnapshots[counter] = (<Model> modelptr)._states.base
+            # snapshots[counter] += 1 / Z
+            # dict approach
+            state = tuple((<Model> modelptr)._states.base)
+            snapshots[state] = snapshots.get(state, 0) + 1 / Z
             pbar.update(1)
     print('done')
-    # pbar = tqdm(total = nSamples)
-    # model.reset() # start from random
-    # for i in range(N):
-    #     if i % step == 0:
-    #         idx             = encodeState(model._states)
-    #         snapshots[idx] += 1 / Z
-    #         pbar.update(1)
-    #     # model._updateState(r[i])
-    #     model._updateState(r[i])
     pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f"Delta = {timer() - past: .2f} sec")
     return snapshots
-
 
 
 cimport openmp
@@ -211,7 +219,7 @@ cimport openmp
 @cython.cdivision(True)
 @cython.initializedcheck(False)
 cpdef dict monteCarlo(\
-               Model model, dict snapshots,
+               Model model, dict snapshots,\
                int deltas = 10,  int repeats = 11,
                int nThreads = -1):
     """
@@ -240,13 +248,15 @@ cpdef dict monteCarlo(\
         # loop stuff
         # extract startstates
         # list comprehension is slower than true loops cython
-        long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in tqdm(snapshots)])
-        int states     = len(snapshots)
+        # long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in tqdm(snapshots)])
+        long[:, ::1] s = np.array([i for i in tqdm(snapshots)])
+        # long[:, ::1] s   = np.array([msnapshots[i] for i in tqdm(snapshots)])
+        int states       = len(snapshots)
+        # vector[int] kdxs = list(snapshots.keys()) # extra mapping idx
 
         # CANT do this inline which sucks either assign it below with gill or move this to proper c/c++
         # loop parameters
         int repeat, delta, node, statei, half = deltas // 2, state
-        vector[int] kdxs        = list(snapshots.keys()) # extra mapping idx
         dict conditional = {}
         # unordered_map[int, double *] conditional
         long[::1] startState
@@ -292,7 +302,7 @@ cpdef dict monteCarlo(\
     cdef int nTrial = deltas * repeats
     cdef long[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
                                          sampleSize), dtype = long)
-
+    # cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r = 0
 
     pbar = tqdm(total = states) # init  progbar
 
@@ -332,8 +342,9 @@ cpdef dict monteCarlo(\
             with gil:
                 pbar.update(1)
                 # tid = threadid()
-                conditional[kdxs[state]] = out.base[tid].copy()
-
+                # conditional[tuple(s.base[state])] = out.base[tid].copy()
+                conditional[tuple(s.base[state])] = out.base[tid].copy()
+                # conditional[kdxs[state]] = out.base[tid].copy()
     # some ideas for concurrent dicts
     # cdef unordered_map[int, double *].iterator start = conditional.begin()
     # cdef unordered_map[int, double *].iterator end   = conditional.end()
