@@ -55,6 +55,9 @@ for (root, dirs, files) in os.walk(baseDir):
             )
             exts.append(ex)
 
+with open('requirements.txt', 'r') as f: 
+    requirements =  f.readlines()
+requirements = [i.strip() for i in requirements]    
 # compile
 with open('requirements.txt', 'r') as install_reqs:
     setup(\
@@ -63,7 +66,7 @@ with open('requirements.txt', 'r') as install_reqs:
         author_email    = __email__,\
         python_requires = __python__requires__,\
         zip_safe        = False,\
-        install_requires= install_reqs,\
+        install_requires= requirements,\
         ext_modules = cythonize(\
                 exts,\
                 # annotate            = True,\ # set to true for performance html
