@@ -24,7 +24,7 @@ psycho = '1548025318.5751357'
 
 
 extractThis      = IO.newest(dataPath)[-1]
-#extractThis      = psycho
+extractThis      = psycho
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
@@ -98,14 +98,14 @@ positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
                                          )
 #                                         root = sorted(dict(model.graph.degree()).items())[0][0])
 
-positions = {node : tuple(i * .1 for i in pos) for node, pos in positions.items() }
+positions = {node : tuple(i * 1 for i in pos) for node, pos in positions.items() }
 p = dict(layout = dict(scale = 1),\
          annotate = dict(fontweight = 'extra bold'),\
-         cicle = dict(radius = 100),\
+         cicle = dict(radius = 10),\
          )
 #p = {}
 plotz.addGraphPretty(model.graph, ax, positions, \
-                     mapping = model.rmapping,\
+                     mapping = model.mapping,\
                      **p,\
                      )
 
@@ -116,7 +116,6 @@ ax.set(xticks = [], yticks = [])
 ax.axis('off')
 fig.show()
 savefig(figDir + 'network.eps')
-
 #%%
 ss = dict(\
           height_ratios = [1, 1], width_ratios = [1, 1])
@@ -136,7 +135,7 @@ for idx, (cent, cf) in enumerate(centralities.items()):
     tax.set_aspect('equal','box')
     tax.set_title(centLabels[idx])
     plotz.addGraphPretty(model.graph, tax, positions, \
-                     mapping = model.rmapping,\
+                     mapping = model.mapping,\
                      **p,\
                      )
     for pidx, pp in enumerate(tax.get_children()):
@@ -154,7 +153,7 @@ fig.savefig(figDir +  'graph_and_cent.eps')
 
 # extract data for all nodes
 information_impact = '$\mu_i$'
-causal_impact      = '$\delta_i$'
+causal_impact      = '$\gamma_i$'
 from tqdm import tqdm
 
 
@@ -491,8 +490,8 @@ fig, ax = subplots(3, 2, sharex = 'col')
 subplots_adjust(hspace = 0, wspace = .2)
 mainax = fig.add_subplot(111, frameon = False, \
                          xticks = [], yticks = [],\
-                         xlabel = r'Information impact ($\mu_i$)',\
-                         ylabel = r'Causal impact ($\delta_i$)'\
+                         xlabel = f'Information impact ({information_impact})',\
+                         ylabel = f'Causal impact ({causal_impact})'\
                          )
 out = lof(n_neighbors = NTRIALS)
 
@@ -635,7 +634,7 @@ rcParams['axes.labelpad'] = 20
 for condition, condLabel in enumerate(conditionLabels):
     fig, ax = subplots(len(centralities), 3, sharex = 'all', sharey = 'row')
     mainax = fig.add_subplot(111, frameon = False, xticks = [], yticks = [])
-    mainax.set_xlabel('Causal impact($\delta_i$)', labelpad = 50)
+    mainax.set_xlabel(f'Causal impact({causal_impact})', labelpad = 50)
     for i, (cent, cent_func) in enumerate(centralities .items()):
         # compute cents
         centrality = dict(cent_func(model.graph))
@@ -676,13 +675,13 @@ for condition, condLabel in enumerate(conditionLabels):
     for l in leg.legendHandles:
         l._sizes = [150]
     mainax.set_title(condLabel + '\n\n')
-    fig.canvas.draw()
     #tax.legend(['Information impact', 'Causal impact'], loc = 'upper left', \
     #  bbox_to_anchor = (1.01, 1), borderaxespad = 0)
     subplots_adjust(wspace = .1, hspace = .1)
     #ax.set(xscale = 'log')
-    fig.savefig(figDir + f'causal_cent_ii_{conditionLabels[condition]}.eps', \
-               format = 'eps', dpi = 1000)
+    savestr = figDir + f'causal_cent_ii_{conditionLabels[condition]}.eps'
+    print(f'saving {savestr}')
+    fig.savefig(figDir + f'causal_cent_ii_{conditionLabels[condition]}.eps')
 
 
 
@@ -750,11 +749,11 @@ width = .4
 xloc  = arange(NTEMPS) * 2
 conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]
 condLabels = 'Underwhelming Overwhelming'.split()
-labels = '$\mu_i$\tdeg\tclose\tbet\tev'.split('\t')
+labels = f'{information_impact}\tdeg\tclose\tbet\tev'.split('\t')
 
 maxT = argmax(targets,  -1)
 
-lll = 'max |$\mu_i$|\t'
+lll = f'max |{information_impact}|\t'
 ii = '\t'.join(f'max |{i}|' for i in centralities)
 lll += ii
 lll = lll.split('\t')
@@ -929,11 +928,11 @@ for ni in range(N):
 
             # format axes
             samesies = 35
-            tax.set_xlabel('$\mu_i$', fontsize = 40, \
+            tax.set_xlabel(f'{information_impact}', fontsize = 40, \
                            labelpad = samesies)
             tax.set_ylabel('Centrality',fontsize = 40, \
                            labelpad = samesies)
-            tax.set_zlabel('$\delta_i$', fontsize = 40, \
+            tax.set_zlabel(f'{causal_impact}', fontsize = 40, \
                            labelpad = samesies)
             for axi in 'x y z'.split():
                 removeLabels(tax, axi, [0, 1])
@@ -1129,7 +1128,6 @@ O    = imF.sum(0)
 E    = NOBS * 1 // (N + 1) * ones(O.shape, dtype = int)
 test, pp = scipy.stats.chisquare(O, E, ddof = O.shape[1] - 1, axis = 0)
 
-r
 cO = O[0]
 iO = O[1:].mean(0)
 
@@ -1325,7 +1323,7 @@ for temp in range(NTEMPS):
     #                             yticks = [],\
     #                             frameon = False, \
     #                             )
-        mainax.set_ylabel('Z-scored $\delta_i$', labelpad = 40)
+        mainax.set_ylabel(f'Z-scored {causal_impact}', labelpad = 40)
 
 
         subplots_adjust(wspace = 0)
@@ -1440,8 +1438,8 @@ mainax = sfig.add_subplot(111,\
                          frameon = False,\
                          xticks = [],\
                          yticks = [])
-mainax.set(xlabel = 'Z-scored information impact($\mu_i$)',\
-           ylabel = 'Z-scored Causal impact $\delta_i$')
+mainax.set(xlabel = f'Z-scored information impact {information_impact}',\
+           ylabel = f'Z-scored Causal impact {causal_impact}')
 
 fig.savefig(figDir + 'mean_silscores.eps')
 elements = [\
@@ -1504,24 +1502,73 @@ with open(f'{extractThis}.linregress.tex', 'w') as f:
     f.write(mr)
 
 
-
+# %%
 # % fit the results
+rcParams['axes.labelpad'] = 5
 linf = lambda x, beta : beta * x + est.params['intercept']
-
+bbox_props = dict(fc="white", lw=2)
 mins, maxs = X.min(0), X.max(0)
-fig, ax = subplots()
+fig, ax = subplots(2, 3, sharex = 'all', sharey = 'all')
+
+#fig = figure(2, 3)
+import matplotlib.patheffects as pe
 # skip intercept
+elements = []
 for idx, i in enumerate(X.columns[1:]):
 #    tax = ax[idx]
-    tax = ax
+    tax = ax.ravel()[idx]
+    if idx == N:
+        tax = ax.ravel()[idx + 1]
+        ax.ravel()[idx].axis('off')
+#    row = 0 if idx < 3 else 1
+#    col = idx * 2 if idx < 3 else row
+    
+#    print(row, col)
+#    tax = subplot2grid((2, 6), loc = (row, col), colspan = 2)
     x = linspace(mins[i], maxs[i])
     tax.scatter(X[i], y['Underwhelming'],  alpha = 1, \
                color = colors[idx], label = i)
-    tax.plot(x, linf(x, est.params[i]), color = colors[idx],\
-            linestyle = 'dashed')
-tax.legend(title = 'x')
-tax.set(xlabel = 'Z-scored x',\
-        ylabel = 'Z-scored $\delta_i$')
+    beta = est.params[i]
+    tax.plot(x, linf(x, beta), color = colors[idx],\
+            linestyle = 'dashed', path_effects=[pe.Stroke(linewidth=5, foreground='k')])
+    elements.append(Line2D([0], [0], color = colors[idx], marker = '.', \
+                           linestyle = 'none', label = i))
+    if est.pvalues[i] < .05:
+        tmp = x[x.size // 2]
+        xy  = (tmp, linf(tmp, beta))
+        bbox_props['ec'] = colors[idx]
+        theta = 45 * beta# arcsin(beta)/ (2 * pi)* 180,
+        t = tax.text(*xy, fr"$\beta$={round(beta, 2):.1e}", rotation = theta,\
+                                      fontsize = 20,\
+                                      bbox=bbox_props)
+        tax.text(.9, .9, f"$R^2$ = {est.rsquared: .2f}", horizontalalignment = 'right',\
+         transform = tax.axes.transAxes, fontsize = 20, bbox = dict(\
+                                                                          fc = 'white'))
+        bb = t.get_bbox_patch()
+#        bb.set_boxstyle('rarrow', pad = .5)
+#        tax.annotate(fr"$\beta$={round(beta, 2):e}", xy = xy, \
+#                 xytext = xy, xycoords = 'data', \
+#                 textcoords = 'data', rotation = 45, fontsize =  20)
+        
+        
+mainax = fig.add_subplot(111, frameon = False, \
+                         xticks = [], \
+                         yticks = [], \
+                         )
+mainax.legend(handles = elements, loc = 'upper center', title = 'x', title_fontsize = 15,\
+              bbox_to_anchor = (.5, .3))
+
+
+mainax.set_xlabel('Z-scored x', labelpad = 40)
+mainax.set_ylabel(f'Z-scored {causal_impact}', labelpad = 40)
+fig.subplots_adjust(hspace = 0, wspace = 0)
+
+#tax.legend(title = 'x', title_fontsize = 15)
+
+
+
+#tax.set(xlabel = 'Z-scored x',\
+#        ylabel = f'Z-scored {causal_impact}')
 fig.savefig(figDir + 'multiregr.eps')
 
 

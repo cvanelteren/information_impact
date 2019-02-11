@@ -462,7 +462,7 @@ def addGraphPretty(graph, ax, \
     for ni, n in enumerate(graph):
         # make circle
         if mapping is not None: # overwrite default if no mapping
-            ni = mapping[ni]
+            ni = mapping[n]
         color = colors[ni]
         c = Circle(positions[n], \
                    facecolor = color,\

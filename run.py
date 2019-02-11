@@ -36,12 +36,12 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [1]#, inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [1, inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 10
+    nTrials       = 1
     magSide       = ''
-    updateType    = 'single'
-    CHECK         = [.9] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = 'async'
+    CHECK         = [.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 
     tempres       = 100
     graphs = []
@@ -58,11 +58,11 @@ if __name__ == '__main__':
         nx.set_node_attributes(graph, attr)
         graphs.append(graph)
     else:
-       N = 50
-       tmp = logspace(0, log10(N - 1), 10, dtype = int)
+       N = 100
+       tmp = logspace(0, log10(N - 1), 5, dtype = int)
        graphs += [nx.barabasi_albert_graph(N, ni) for ni in tmp]
        # graphs += [nx.krackhardt_kite_graph()]
-       graphs = [nx.path_graph(3)]
+       # graphs = [nx.path_graph(3)]
        # n = 10
        # nn = 10
        # for i in [3, 5, n - 1]:
