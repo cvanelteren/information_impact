@@ -1333,7 +1333,7 @@ typedef npy_clongdouble __pyx_t_5numpy_clongdouble_t;
 typedef npy_cdouble __pyx_t_5numpy_complex_t;
 struct __pyx_t_6Models_6models_Connection;
 
-/* "Models/models.pxd":17
+/* "Models/models.pxd":19
  *         T operator()(mt19937 gen) # ignore the possibility of using other classes for "gen"
  * 
  * cdef struct Connection:             # <<<<<<<<<<<<<<
@@ -1387,7 +1387,7 @@ struct __pyx_opt_args_7Toolbox_5infcy_runMC {
   PyObject *kwargs;
 };
 
-/* "Models/models.pxd":21
+/* "Models/models.pxd":23
  *     vector[double] weights
  * 
  * cdef class Model:             # <<<<<<<<<<<<<<
@@ -1524,7 +1524,7 @@ struct __pyx_vtabstruct_array {
 static struct __pyx_vtabstruct_array *__pyx_vtabptr_array;
 
 
-/* "Models/models.pxd":21
+/* "Models/models.pxd":23
  *     vector[double] weights
  * 
  * cdef class Model:             # <<<<<<<<<<<<<<
@@ -25911,11 +25911,11 @@ static int __Pyx_modinit_type_import_code(void) {
   __pyx_ptype_5numpy_ufunc = __Pyx_ImportType(__pyx_t_1, "numpy", "ufunc", sizeof(PyUFuncObject), __Pyx_ImportType_CheckSize_Warn);
    if (!__pyx_ptype_5numpy_ufunc) __PYX_ERR(2, 918, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyImport_ImportModule("Models.models"); if (unlikely(!__pyx_t_1)) __PYX_ERR(6, 21, __pyx_L1_error)
+  __pyx_t_1 = PyImport_ImportModule("Models.models"); if (unlikely(!__pyx_t_1)) __PYX_ERR(6, 23, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_ptype_6Models_6models_Model = __Pyx_ImportType(__pyx_t_1, "Models.models", "Model", sizeof(struct __pyx_obj_6Models_6models_Model), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_6Models_6models_Model) __PYX_ERR(6, 21, __pyx_L1_error)
-  __pyx_vtabptr_6Models_6models_Model = (struct __pyx_vtabstruct_6Models_6models_Model*)__Pyx_GetVtable(__pyx_ptype_6Models_6models_Model->tp_dict); if (unlikely(!__pyx_vtabptr_6Models_6models_Model)) __PYX_ERR(6, 21, __pyx_L1_error)
+   if (!__pyx_ptype_6Models_6models_Model) __PYX_ERR(6, 23, __pyx_L1_error)
+  __pyx_vtabptr_6Models_6models_Model = (struct __pyx_vtabstruct_6Models_6models_Model*)__Pyx_GetVtable(__pyx_ptype_6Models_6models_Model->tp_dict); if (unlikely(!__pyx_vtabptr_6Models_6models_Model)) __PYX_ERR(6, 23, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;

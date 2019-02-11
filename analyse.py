@@ -62,7 +62,7 @@ print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
 figDir = f'../thesis/figures/{extractThis}'
-
+assert 0
 # %% # show mag vs temperature
 tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
 fig, ax = subplots()
