@@ -126,9 +126,9 @@ if __name__ == '__main__':
             magRange = array([CHECK]) if isinstance(CHECK, float) else array(CHECK)
 
             # magRange = array([.9, .2])
-            temps = linspace(0, 15, tempres)
+            temps = linspace(0, graph.number_of_nodes()//2, tempres)
             mag, sus = model.matchMagnetization(temps = temps,\
-             n = int(1e4), burninSamples = 0)
+             n = int(1e2), burninSamples = 0)
 
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
