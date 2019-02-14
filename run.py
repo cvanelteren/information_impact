@@ -126,14 +126,14 @@ if __name__ == '__main__':
             magRange = array([CHECK]) if isinstance(CHECK, float) else array(CHECK)
 
             # magRange = array([.9, .2])
-            temps = linspace(0, graph.number_of_nodes()//4, tempres)
+            temps = linspace(0, graph.number_of_nodes()//2, tempres)
             mag, sus = model.matchMagnetization(temps = temps,\
-             n = int(1e1), burninSamples = 0)
+             n = int(1e3), burninSamples = 0)
 
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
             # func = lambda x, a, b, c : a + b*exp(-c * x)
-            fmag = scipy.ndimage.gaussian_filter1d(mag, 2)
+            fmag = scipy.ndimage.gaussian_filter1d(mag, .2)
             a, b = scipy.optimize.curve_fit(func, temps, fmag.squeeze(), maxfev = 10000)
 
             # run the simulation per temperature
