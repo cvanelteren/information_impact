@@ -77,12 +77,12 @@ if __name__ == '__main__':
 #    graphs = [nx.path_graph(3)]
 
     # rootDirectory = f'{os.getcwd()}/Data/{time.time()}'  if len(graphs) > 1 else ''
-    rootDirectory = f'/var/cveltere/{time.time()}' if len(graphs) > 1 else ''
+    rootDirectory = f'/var/scratch/cveltere/{time.time()}' if len(graphs) > 1 else ''
     for graph in graphs:
         now = time.time()
         # group graphs together if this is run
         if rootDirectory == '':
-            targetDirectory = f'var/cveltere/{now}'
+            targetDirectory = f'var/scratch/cveltere/{now}'
         # group graphs; setup paths
         else:
             if not os.path.exists(rootDirectory):
