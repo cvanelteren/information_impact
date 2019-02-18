@@ -30,3 +30,10 @@ in parallel.
 
 - [x] Found the segfault; writing to the buffer is not threadsafe, even though the keys are unique. (wasn't it was a wrongful idx)
 - [x] If you replace the memviews with ndarrays and slice into them, the speed will be reduces by 300 percent. This is the cause of issues in mp
+- Clang++ does not work on LISA; ask system admins
+
+# Notes on slurm
+
+- run a command using the slurm.sh batch script; sbatch slurm.sh
+- check the queue with squeue
+- stop it with scancel
