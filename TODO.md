@@ -37,3 +37,13 @@ in parallel.
 - run a command using the slurm.sh batch script; sbatch slurm.sh
 - check the queue with squeue
 - stop it with scancel
+
+# Causal measures
+Currently we apply a version of KL-divergence. Although commonly used, it only offers 
+an asymmetric distance between probability distributions; in our application the non 
+intervened system is considered to be the 'true' state of the system; nudges can 
+yield a dynamic that is not common in teh system. Therefore, we can justify the use 
+of KL-divergence by means of this measure; however there is also a symmetric variant 
+of KL-divergence named Jenson-Shannon divergence; which is essentially the weighted 
+average of the the KL-divergence both ways, and can be interpreted in terms of 
+entropy. 

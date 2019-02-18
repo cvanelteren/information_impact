@@ -47,6 +47,8 @@ if __name__ == '__main__':
 
     tempres       = 100
     graphs = []
+    rootDirectory = '/var/scratch/cveltere/' # data storage
+    # rootDirectory = f'{os.getcwd()}/Data/'
 #    real = 1
     if real:
 #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
@@ -71,20 +73,12 @@ if __name__ == '__main__':
            # for a in range(nn):
                # graphs.append(nx.barabasi_albert_graph(n, i))
            # graphs += [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
-
-
     # graphs = [nx.barabasi_albert_graph(10,5)]
-#    graphs = [nx.path_graph(3)]
-
-    # rootDirectory = f'{os.getcwd()}/Data/{time.time()}'  if len(graphs) > 1 else ''
-    rootDirectory = f'/var/scratch/cveltere/{time.time()}' if len(graphs) > 1 else ''
+    targetDirectory = rootDirectory + f'{time.time()}' # make default path
     for graph in graphs:
         now = time.time()
-        # group graphs together if this is run
-        if rootDirectory == '':
-            targetDirectory = f'var/scratch/cveltere/{now}'
-        # group graphs; setup paths
-        else:
+        # if multiple graphs are tested; group them together
+        if len(graphs) > 1:
             if not os.path.exists(rootDirectory):
                 os.mkdir(rootDirectory)
             targetDirectory = rootDirectory + f'/{now}'
