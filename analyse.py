@@ -25,7 +25,7 @@ psycho = '1548025318.5751357'
 
 extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
-#extractThis      = kite
+extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
@@ -62,7 +62,6 @@ print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
 figDir = f'../thesis/figures/{extractThis}'
-assert 0
 # %% # show mag vs temperature
 tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
 fig, ax = subplots()
@@ -146,11 +145,6 @@ fig.savefig(figDir +  'graph_and_cent.eps')
 
 #assert 0
 # %%
-
-
-# data matrix
-#dd       = zeros((NTRIALS, NODES, DELTAS, COND))
-
 # extract data for all nodes
 information_impact = '$\mu_i$'
 causal_impact      = '$\gamma_i$'
@@ -1355,8 +1349,8 @@ for temp in range(NTEMPS):
             tax.set(yticks = [])
             tax = ax[idx, 0]
             tax.scatter(*xi.T, c = colors[ypred])
-        ax[-1, 0].set_xlabel('Zscored $\mu_i$', labelpad = 15)
-        ax[-1, 1].set_xlabel('Silouette score', labelpad = 15)
+        ax[-1, 0].set_xlabel('Z-scored $\mu_i$', labelpad = 15)
+        ax[-1, 1].set_xlabel('Silhouette score', labelpad = 15)
         fig.savefig(figDir + f'T={round(temps[temp], 2)}_kmeans{cond}.eps')
 # %% optimal kmeans plot
 
@@ -1417,11 +1411,11 @@ for i in range(COND):
     tax.set_title(condLabels[i])
 
 
-tax.legend(bbox_to_anchor = (.4, -0.05), borderaxespad = 0, \
-               loc = 'upper left', frameon = False,\
-               title = 'Temperature', \
-               title_fontsize = 15,\
-               ncol = 3)
+tax.legend(\
+           loc = 'bottom right', \
+           title = 'Temperature', \
+           title_fontsize = 15,\
+           )
 mainax = fig.add_subplot(111,\
                          frameon = False,\
                          xticks = [],\
@@ -1429,7 +1423,7 @@ mainax = fig.add_subplot(111,\
 
 
 mainax.set(xlabel = 'k clusters', \
-            ylabel = 'sillouette score (s)')
+            ylabel = 'silhouette score (s)')
 
 
 fig.subplots_adjust(wspace = 0)
@@ -1449,6 +1443,7 @@ elements = [\
                    marker = 'o', linestyle = '',\
                    markersize = 15) \
            for i in range(NODES)]
+
 mainax.legend(handles = elements, loc = 'upper left',\
               bbox_to_anchor = (1,1),
               frameon = False, borderaxespad = 0)
