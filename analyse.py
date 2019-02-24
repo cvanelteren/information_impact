@@ -17,20 +17,23 @@ import os, re, networkx as nx, scipy, multiprocessing as mp
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
+
+dataPath = '/run/media/casper/test/'
 #dataPath = '/mnt/'
 # convenience
 kite   = '1548347769.6300871'
 psycho = '1548025318.5751357'
-
+multiple = '/run/media/casper/test/1550482875.0001953'
 
 extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
+extractThis      = multiple
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
-loadThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
-data     = IO.DataLoader(loadThis)
+loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
+data        = IO.DataLoader(loadThis)
 
 
 settings = IO.readSettings(loadThis)
@@ -45,40 +48,11 @@ temp     = temps[0]
 # Draw graph ; assumes the simulation is over 1 type of graph
 from Models.fastIsing import Ising
 
-def getGraph(folderName):
-    """
-    Exctract the graph from the rootfolder
-    and writes the graph if it is not in the folder
-    """
-    folderName = folderName if folderName.endswith('/') else folderName + '/'
-    
-    try:
-        return IO.loadPickle(folderName + "graph.pickle")
-    except:
-         print("Default not found, attempting load from data")
 
-    graph = None
-    for root, dirs, files in os.walk(folderName):
-        for file in files:
-            try: 
-                graph  = IO.loadData(root + '/' + file).graph
-                # write graph
-                print("Graph found! writing to file")
-                IO.savePickle(graph, folderName + 'graph.pickle')
-                return graph
-            except: 
-                continue
-            
-            # not sure why this is needed and the return above does nothing...
-            # I excpet a return under write would work as well but no
-            finally:
-                if graph is not None:
-                    return graph
-graph    = getGraph(loadThis)
-model    = Ising(graph)
-control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
-model    = Ising(control.graph)
-
+graph    = IO.getGraph(loadThis)
+model    = Ising(graph) # TODO: replace this with mappings
+# control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
+# model    = Ising(control.graph)
 NTRIALS  = len(data[f't={temp}']['control'])
 NTEMPS   = len(data)
 NNUDGE   = len(data[f't={temp}'])
@@ -95,22 +69,22 @@ print(f'Listing nudges: {pulseSizes}')
 
 figDir = f'../thesis/figures/{extractThis}'
 # %% # show mag vs temperature
-tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
-fig, ax = subplots()
-# if noisy load fmag otherwise load mag
-mag = tmp.get('fmag', tmp.get('mag'))
-
-ax.scatter(tmp['temps'], mag, alpha = .2)
-ax.scatter(tmp['temperatures'], tmp['magRange'] * mag.max(), \
-           color = 'red', zorder = 2)
-
-func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
-a, b = scipy.optimize.curve_fit(func, tmp['temps'], mag.squeeze(), maxfev = 10000)
-x = linspace(min(tmp['temps']), max(tmp['temps']), 1000)
-ax.plot(x, func(x, *a), '--k')
-ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
-rcParams['axes.labelpad'] = 10
-fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
+#tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
+#fig, ax = subplots()
+## if noisy load fmag otherwise load mag
+#mag = tmp.get('fmag', tmp.get('mag'))
+#
+#ax.scatter(tmp['temps'], mag, alpha = .2)
+#ax.scatter(tmp['temperatures'], tmp['magRange'] * mag.max(), \
+#           color = 'red', zorder = 2)
+#
+#func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
+#a, b = scipy.optimize.curve_fit(func, tmp['temps'], mag.squeeze(), maxfev = 10000)
+#x = linspace(min(tmp['temps']), max(tmp['temps']), 1000)
+#ax.plot(x, func(x, *a), '--k')
+#ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
+#rcParams['axes.labelpad'] = 10
+#fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
 # %% plot graph
 
 centralities = dict(\
@@ -209,7 +183,7 @@ def worker(fidx):
     This function does the actual processing of the correct target values
     used in the analysis below
     """
-    
+
     fileName = fileNames[fidx]
     # do control
     data = frombuffer(var_dict.get('X')).reshape(var_dict['xShape'])
@@ -218,7 +192,6 @@ def worker(fidx):
     if '{}' in fileName:
         # load control; bias correct mi
         control = IO.loadData(fileName)
-        graph   = control.graph
         # panzeri-treves correction
         mi   = control.mi
         bias = stats.panzeriTrevesCorrection(control.px,\
@@ -228,9 +201,7 @@ def worker(fidx):
         data[0, trial, temp]  = mi[:DELTAS - EXTRA, :].T
     # nudged data
     else:
-
         targetName = fileName.split('_')[-1] # extract relevant part
-        
         # get the idx of the node
         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                              for key in model.mapping\
@@ -254,7 +225,6 @@ fasterData = f'results.pickle'
 try:
     for k, v in IO.loadPickle(fasterData):
         globals()[k] = v
-
     NNUDGE, NTEMPS, NTRIALS, NODES, DELTAS = loadedData.shape
 
 # start loading individual pickles
@@ -289,7 +259,6 @@ except:
 #    IO.savePickle(fasterData, dict(\
 #                  loadedData = loadedData, data = data))
     del buff
-assert 0 
 # %% extract root from samples
 
 # fit functions
@@ -1552,7 +1521,7 @@ for idx, i in enumerate(X.columns[1:]):
         ax.ravel()[idx].axis('off')
 #    row = 0 if idx < 3 else 1
 #    col = idx * 2 if idx < 3 else row
-    
+
 #    print(row, col)
 #    tax = subplot2grid((2, 6), loc = (row, col), colspan = 2)
     x = linspace(mins[i], maxs[i])
@@ -1579,8 +1548,8 @@ for idx, i in enumerate(X.columns[1:]):
 #        tax.annotate(fr"$\beta$={round(beta, 2):e}", xy = xy, \
 #                 xytext = xy, xycoords = 'data', \
 #                 textcoords = 'data', rotation = 45, fontsize =  20)
-        
-        
+
+
 mainax = fig.add_subplot(111, frameon = False, \
                          xticks = [], \
                          yticks = [], \

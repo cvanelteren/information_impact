@@ -6,7 +6,6 @@ Created on Mon Feb 11 08:55:35 2019
 @author: casper
 """
 
-<<<<<<< HEAD
 #import networkx as nx
 #import msgpack
 #from numpy import *
@@ -19,36 +18,20 @@ Created on Mon Feb 11 08:55:35 2019
 #
 #m.matchMagnetization(temps)
 
-import numpy as np
-height = np.array(\
-                  [67, 67, 55, 65, 65, 65, 61, 58, 40, 40,\
-                   58, 53, 59, 63, 51, 57, 43, 65, 45, 65,\
-                   61, 58, 47, 58, 65, 74, 64, 28, 61, 46, 39])
-height.sort()
-threshold = 300
-groupings = np.where(np.diff(height.cumsum() // threshold))[0]
-ends      = np.hstack((groupings, height.size))
-starts    = np.roll(ends.copy(), 1) + 1
-starts[0] = 0
+#fig, ax = subplots()
+## dummy data
+#N      = 100
+#buffer = np.zeros((N, 2))
+#p = ax.plot(*buffer.T, marker = '.')[0] # get plot object
+#while True:
+#    for idx in range(N):
+#        buffer[idx, :] = np.random.rand(buffer.shape[1])
+#        p.set_data(*buffer.T)
+#        # recompute data limits
+#        ax.relim()
+#        ax.axes.autoscale_view(True, True, True)
+#        
+#        # update figure; flush events
+#        fig.canvas.draw()
+#        fig.canvas.flush_events()
 
-for start, end in zip(starts, ends):
-    print(f'Grouping: {height[start:end]} sum: {height[start:end].sum()}')
-=======
-import networkx as nx
-import msgpack
-from numpy import *
-from matplotlib.pyplot import *
-from Models.fastIsing import Ising
-
-g = nx.barabasi_albert_graph(20, 10)
-temps = linspace(0, 100, 100)
-
-m = Ising(g)
-
-mags, sus = m.matchMagnetization(temps)
-
-fig, ax = subplots()
-ax.plot(temps, mags, temps, sus)
-fig.show()
-show()
->>>>>>> 1aaecbfd708304f08cf28f2be100ebde5ddf9254

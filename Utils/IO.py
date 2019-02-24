@@ -22,6 +22,9 @@ class DataLoader(OrderedDict):
 
         The format is :
         data[temperature][pulse] = SimulationResult // old format is dict
+        
+        THe object returns an ordered dict with the leafes consisiting of the 
+        filenames belowing to the subdict categories
         """
         dataDir = args[0] if args else ''
         super(DataLoader, self).__init__(**kwargs)
@@ -34,33 +37,25 @@ class DataLoader(OrderedDict):
             print("Extracting data...")
             if not dataDir.endswith('/'):
                 dataDir += '/'
-            # filesDir = sorted(\
-            #                  os.listdir(dataDir), \
-            #                  key = lambda x: os.path.getctime(dataDir + x)\
-            #                  )
-            # find pickles; expensive
             files = []
-            
             # walk root and find all the possible data files
             for root, dir, fileNames in os.walk(dataDir):
                 for fileName in fileNames:
-                    if 'mag' not in fileName:
-                        for extension in allowedExtensions:
-                            if fileName.endswith(extension):
-                                files.append(f'{root}/{fileName}')
-                                break # prevent possible doubles
+                    for extension in allowedExtensions:
+                        if fileName.endswith(extension):
+                            files.append(f'{root}/{fileName}')
+                            break # prevent possible doubles
             files = sorted(files, key = lambda x: \
                            os.path.getctime(x))
-
-
             """
             Although dicts are ordered by default from >= py3.6
             Here I enforce the order as it matters for matching controls
             """
             data = DataLoader()
-
+            # files still contains non-compliant pickle files, e.g. mags.pickle
             for file in files:
-                if 'results' not in file:
+                # filter out non-compliant pickle files                
+                try:
                     # look for t=
                     temp = re.search('t=\d+\.[0-9]+', file).group()
                     # deltas = re.search('deltas=\d+', file).group()
@@ -71,25 +66,42 @@ class DataLoader(OrderedDict):
                     if pulse == '{}':
                         structure += ['control']
                     else:
+                        # there is a bug that there is a white space in my data;
                         structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
                     # tmp  = loadPickle(file)
                     self.update(addData(data, file, structure))
+                # attempt to load with certain properties, if not found gracdefully exit
+                # this is the case for every pickle file other than the ones with props above
+                except AttributeError:
+                    continue 
             print('Done')
-    # def __getitem__(self, key):
-    #     val = OrderedDict.__getitem__(self, key)
-    #     print('>', key, type(val), type(list(val.values())[0]))
-    #     for k, v in val.items():
-    #         print(key, k)
-    #     if isinstance(val, list):
-    #         data = []
-    #         for v in val:
-    #             data.append(loadPickle(v))
-    #         return data
-    #     elif isinstance(val, str):
-    #         print('here')
-    #         return loadPickle(val)
-    #     else:
-    #         return val
+
+def getGraph(folderName):
+    """
+    Exctract the graph from the rootfolder
+    and writes the graph if it is not in the folder
+    """
+    folderName = folderName if folderName.endswith('/') else folderName + '/'
+    print('Looking for graph')
+    try:
+        return loadPickle(folderName + "graph.pickle")
+    except FileNotFoundError:
+        print("Default not found, attempting load from data")
+        graph = None
+        for root, dirs, files in os.walk(folderName):
+            for file in files:
+                try:
+                    graph  = loadData(root + '/' + file).graph
+                    # write graph
+                    print("Graph found! writing to file")
+                    savePickle(folderName + 'graph.pickle', graph)
+                    return graph
+                except:
+                    continue
+    finally:
+        print("No suitable file found :(")
+
+
 def loadData(fileNames):
 #    print(isinstance(fileNames, str), fileNames) # debug
     if isinstance(fileNames, list):
@@ -121,9 +133,6 @@ def oldFormatConversion(dataDir, file, tmp):
         os.mkdir(dataDir + '/old')
     os.rename(dataDir + f'/{file}', f"{dataDir}/old/{file}") # save copy
     savePickle(dataDir + f'/{file}', tmp)
-
-
-
 
 def newest(path):
     """
@@ -173,31 +182,42 @@ def saveSettings(targetDirectory, settings):
         json.dump(settings, f)
 
 def readSettings(targetDirectory, dataType = '.pickle'):
-    try:
-        with open(targetDirectory + '/settings.json') as f:
-            return json.load(f)
-
-    # TODO: uggly, also lacks all the entries
-    # attempt to load from a file
-    except FileNotFoundError:
-        # use re to extract settings
-        settings = {}
-        for file in os.listdir(targetDirectory):
-            if file.endswith(dataType) and 'mags' not in file:
-                file = file.split(dataType)[0].split('_')
-                for f in file:
-                    tmp = f.split('=')
-                    if len(tmp) > 1:
-                        key, value = tmp
-                        if key in 'nSamples k step deltas':
-                            if key == 'k':
-                                key = 'repeats'
-                            settings[key] = value
-            # assumption is that all the files have the same info
-            break
-        saveSettings(targetDirectory, settings)
-        return settings
-
+    """
+    Reads settings from target directory
+    with minor backward compatibility 
+    """
+    for root, subdirs, files in os.walk(targetDirectory):
+        for file in files:
+            print(file)
+            if "settings" in file:
+                with open(os.path.join(root, file), 'r') as f:
+                    return json.load(f)
+    print("Settings not found emulating settings vector")
+    """
+    Backward-compatibility (legacy)
+    when no setting file is present this tries to extract relevant data from the actually
+    data files. 
+    """
+    settings    = {}
+    translation = dict(k = 'repeats') # bad
+    for root, subdirs, files in os.walk(targetDirectory):
+        for file in files:
+            # remove extension and split properties in to variables
+            file = file.split(dataType)[0].split('_')
+            for prop in file:
+                try:
+                    key, value = prop.split('=')  # filters out non-settings
+                    key = translation.get(key, key)
+                    settings[key] = value
+                # either ValueError (not enough to split) or something else
+                except:
+                    continue
+        if settings:
+            return settings
+    # loop completes; if it does it means not file was found
+    else:
+        print(settings)
+        raise FileNotFoundError
 def readCSV(fileName, **kwargs):
     '''
     :fileName: name of the file to be loaded

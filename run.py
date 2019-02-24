@@ -180,7 +180,7 @@ if __name__ == '__main__':
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 if not os.path.exists(f'{tempDir}/control/'):
                     os.mkdir(f'{tempDir}/control')
-                fileName = f'{tempDir}/control/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
+                fileName = f'{tempDir}/control/{time.time()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr       = SimulationResult(\
                                         mi          = mi,\
                                         conditional = conditional,\
@@ -199,7 +199,7 @@ if __name__ == '__main__':
 
                         print(f'{time.time()} Computing MI')
                         # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                        fileName = f'{pulseDir}/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
+                        fileName = f'{pulseDir}/{time.time()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode_{updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                         sr       = SimulationResult(\
                                                 mi          = mi,\
                                                 conditional = conditional,\
