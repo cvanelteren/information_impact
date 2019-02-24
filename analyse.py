@@ -44,6 +44,38 @@ temp     = temps[0]
 
 # Draw graph ; assumes the simulation is over 1 type of graph
 from Models.fastIsing import Ising
+
+def getGraph(folderName):
+    """
+    Exctract the graph from the rootfolder
+    and writes the graph if it is not in the folder
+    """
+    folderName = folderName if folderName.endswith('/') else folderName + '/'
+    
+    try:
+        return IO.loadPickle(folderName + "graph.pickle")
+    except:
+         print("Default not found, attempting load from data")
+
+    graph = None
+    for root, dirs, files in os.walk(folderName):
+        for file in files:
+            try: 
+                graph  = IO.loadData(root + '/' + file).graph
+                # write graph
+                print("Graph found! writing to file")
+                IO.savePickle(graph, folderName + 'graph.pickle')
+                return graph
+            except: 
+                continue
+            
+            # not sure why this is needed and the return above does nothing...
+            # I excpet a return under write would work as well but no
+            finally:
+                if graph is not None:
+                    return graph
+graph    = getGraph(loadThis)
+model    = Ising(graph)
 control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
 model    = Ising(control.graph)
 
@@ -62,7 +94,6 @@ print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
 figDir = f'../thesis/figures/{extractThis}'
-assert 0
 # %% # show mag vs temperature
 tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
 fig, ax = subplots()
@@ -173,6 +204,12 @@ def flattenDict(d):
     return out
 
 def worker(fidx):
+    """
+    Temporary worker to load data files
+    This function does the actual processing of the correct target values
+    used in the analysis below
+    """
+    
     fileName = fileNames[fidx]
     # do control
     data = frombuffer(var_dict.get('X')).reshape(var_dict['xShape'])
@@ -193,27 +230,19 @@ def worker(fidx):
     else:
 
         targetName = fileName.split('_')[-1] # extract relevant part
+        
+        # get the idx of the node
         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                              for key in model.mapping\
                              for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
         jdx = jdx[0]
+        # load the corresponding dataset to the control
         useThis = fidx - node
 
         # load matching control
         control = IO.loadData(fileNames[useThis])
          # load nudge
         sample  = IO.loadData(fileName)
-#        bias    = stats.panzeriTrevesCorrection(control.px,\
-#                                        control.conditional,\
-#                                        repeats)
-#        control.px -= bias[..., None]
-#
-#        bias = stats.panzeriTrevesCorrection(sample.px,
-#                                              sample.conditional,\
-#                                              repeats)
-#        sample.px -= bias[..., None]
-
-#        impact  = stats.hellingerDistance(control.px, px)
         impact  = stats.KL(control.px, sample.px)
         # don't use +1 as the nudge has no effect at zero
         redIm = nanmean(impact[DELTAS + EXTRA + 2:], axis = -1).T
@@ -260,6 +289,7 @@ except:
 #    IO.savePickle(fasterData, dict(\
 #                  loadedData = loadedData, data = data))
     del buff
+assert 0 
 # %% extract root from samples
 
 # fit functions

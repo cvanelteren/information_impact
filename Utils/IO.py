@@ -25,6 +25,8 @@ class DataLoader(OrderedDict):
         """
         dataDir = args[0] if args else ''
         super(DataLoader, self).__init__(**kwargs)
+        
+        allowedExtensions = "pickle h5".split()
         #TODO :  make aggregate dataclass -> how to deal with multiple samples
         # current work around is bad imo
         if dataDir:
@@ -38,10 +40,15 @@ class DataLoader(OrderedDict):
             #                  )
             # find pickles; expensive
             files = []
+            
+            # walk root and find all the possible data files
             for root, dir, fileNames in os.walk(dataDir):
                 for fileName in fileNames:
-                    if fileName.endswith('.pickle') and 'mags' not in fileName:
-                        files.append(f'{root}/{fileName}')
+                    if 'mag' not in fileName:
+                        for extension in allowedExtensions:
+                            if fileName.endswith(extension):
+                                files.append(f'{root}/{fileName}')
+                                break # prevent possible doubles
             files = sorted(files, key = lambda x: \
                            os.path.getctime(x))
 
