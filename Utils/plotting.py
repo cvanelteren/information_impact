@@ -459,6 +459,8 @@ def addGraphPretty(graph, ax, \
     # get length of the fontsize
 #    diamax = 6 * circlekwargs['radius']
     circlekwargs['radius'] = 1.2 * np.array([len(str(n)) for n in graph]).max()
+    
+    nodePatches = {}
     for ni, n in enumerate(graph):
         # make circle
         if mapping is not None: # overwrite default if no mapping
@@ -479,7 +481,7 @@ def addGraphPretty(graph, ax, \
         # TODO : remove tis for member assignment
 
         # bookkeep for adding edge
-        graph.node[n]['patch'] = c
+        nodePatches[n] = c
 
     seen={} # bookkeeping
     from copy import copy
@@ -495,8 +497,8 @@ def addGraphPretty(graph, ax, \
     minWeight, maxWeight = min(edgesScaling.values()), max(edgesScaling.values())
 
     for u, v in graph.edges():
-        n1      = graph.node[u]['patch']
-        n2      = graph.node[v]['patch']
+        n1      = nodePatches[u]
+        n2      = nodePatches[v]
         d       = graph[u][v]['weight']
         rad     = 0.1
         if (u,v) in seen:

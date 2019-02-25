@@ -21,9 +21,9 @@ dataPath = f"{os.getcwd()}/Data/"
 dataPath = '/run/media/casper/test/'
 #dataPath = '/mnt/'
 # convenience
-kite   = '1548347769.6300871'
-psycho = '1548025318.5751357'
-multiple = '/run/media/casper/test/1550482875.0001953'
+kite     = '1548347769.6300871'
+psycho   = '1548025318.5751357'
+multiple = '1550482875.0001953'
 
 extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
@@ -35,10 +35,9 @@ extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else ext
 loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
 data        = IO.DataLoader(loadThis)
 
-
 settings = IO.readSettings(loadThis)
-deltas   = settings['deltas']
-repeats  = settings['repeat']
+deltas   = settings[0]['deltas']
+repeats  = settings[0]['repeat']
 
 
 temps    = [float(i.split('=')[-1]) for i in data.keys()]
@@ -46,16 +45,21 @@ nudges   = list(data[next(iter(data))].keys())
 temp     = temps[0]
 
 # Draw graph ; assumes the simulation is over 1 type of graph
-from Models.fastIsing import Ising
+import importlib
 
+# extract class data
+modelClass       = settings[0].get('model', "Models.fastIsing.Ising")
+modelClass       = modelClass.split('.') # get 
+tmp              =  '.'.join(i for i in modelClass[:-1])
+modelType = getattr(importlib.import_module(tmp), modelClass[-1])
 
-graph    = IO.getGraph(loadThis)
-model    = Ising(graph) # TODO: replace this with mappings
+graph     = settings[0].get('graph', IO.getGraph(loadThis))
+model     = modelType(graph) # TODO: replace this with mappings
 # control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
 # model    = Ising(control.graph)
 NTRIALS  = len(data[f't={temp}']['control'])
 NTEMPS   = len(data)
-NNUDGE   = len(data[f't={temp}'])
+NNUDGE   = len(settings[0].get('pulseSizes', data[f't={temp}']))
 NODES    = model.nNodes
 
 DELTAS_, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
@@ -68,33 +72,46 @@ print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
 figDir = f'../thesis/figures/{extractThis}'
-# %% # show mag vs temperature
-#tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
-#fig, ax = subplots()
-## if noisy load fmag otherwise load mag
-#mag = tmp.get('fmag', tmp.get('mag'))
-#
-#ax.scatter(tmp['temps'], mag, alpha = .2)
-#ax.scatter(tmp['temperatures'], tmp['magRange'] * mag.max(), \
-#           color = 'red', zorder = 2)
-#
-#func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
-#a, b = scipy.optimize.curve_fit(func, tmp['temps'], mag.squeeze(), maxfev = 10000)
-#x = linspace(min(tmp['temps']), max(tmp['temps']), 1000)
-#ax.plot(x, func(x, *a), '--k')
-#ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
-#rcParams['axes.labelpad'] = 10
-#fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
+# %% # show mag vs temperature 
+func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
+for root, subdirs, filenames in os.walk(loadThis):
+    msettings = {}
+    # first load this
+    if any(['settings' in i for i in filenames]):
+        msettings = IO.readSettings(root)
+        if not 'temps' in msettings:
+            msettings = {}
+    # otherwise check legacy
+    if any(['mags' in i for i in filenames]):
+        msettings = IO.loadPickle(os.path.join(root, 'mags.pickle'))
+        
+    if msettings:
+        # fitted
+        fx = msettings.get('fitTemps', msettings.get('temps')) # legacy
+        fy = msettings.get('fmag', msettings['mag'])
+        
+        # matched
+        mx = msettings.get('matchedTemps', msettings.get('temperatures')) # legacy
+        my = msettings.get('magRange')
+        
+        fig, ax  = subplots()
+        ax.scatter(fx, fy, alpha = .2)
+        ax.scatter(mx, my * fy.max(), color = 'red', zorder = 2)
+        a, b = scipy.optimize.curve_fit(func, fx, fy, maxfev = 10000)
+        x = linspace(fx.min(), fx.max(), 1000)
+        ax.plot(x, func(x, *a), '--k')
+        ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
+        rcParams['axes.labelpad'] = 10
+        fig.savefig(figDir + f"-{root.split('/')[-1]}_temp_mag.eps", dpi = 1000)
+assert 0
 # %% plot graph
 
-centralities = dict(\
-                    deg_w  = partial(nx.degree, weight = 'weight'), \
-#                    close  = partial(nx.closeness_centrality, distance = 'weight'),\
-                    bet    = partial(nx.betweenness_centrality, weight = 'weight'),\
-                    ic     = partial(nx.information_centrality, weight = 'weight'),\
-                    ev     = partial(nx.eigenvector_centrality, weight = 'weight'),\
-#             cfl = partial(nx.current_flow_betweenness_centrality, weight = 'weight'),
-             )
+centralities = {
+                    r'$c_i^{deg}$' : partial(nx.degree, weight = 'weight'), \
+                    r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
+                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
+                    r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
+             }
 
 # %%
 fig, ax  = subplots(figsize = (10, 10), frameon = False)
@@ -121,6 +138,8 @@ ax.set(xticks = [], yticks = [])
 ax.axis('off')
 fig.show()
 savefig(figDir + 'network.eps')
+
+assert 0
 #%%
 ss = dict(\
           height_ratios = [1, 1], width_ratios = [1, 1])

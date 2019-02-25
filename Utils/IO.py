@@ -8,7 +8,6 @@ Created on Thu Feb 22 12:05:59 2018
 
 from numpy import *
 from matplotlib.pyplot import *
-from dataclasses import dataclass
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
 from collections import defaultdict, OrderedDict
@@ -22,13 +21,13 @@ class DataLoader(OrderedDict):
 
         The format is :
         data[temperature][pulse] = SimulationResult // old format is dict
-        
-        THe object returns an ordered dict with the leafes consisiting of the 
+
+        THe object returns an ordered dict with the leafes consisiting of the
         filenames belowing to the subdict categories
         """
         dataDir = args[0] if args else ''
         super(DataLoader, self).__init__(**kwargs)
-        
+
         allowedExtensions = "pickle h5".split()
         #TODO :  make aggregate dataclass -> how to deal with multiple samples
         # current work around is bad imo
@@ -54,7 +53,7 @@ class DataLoader(OrderedDict):
             data = DataLoader()
             # files still contains non-compliant pickle files, e.g. mags.pickle
             for file in files:
-                # filter out non-compliant pickle files                
+                # filter out non-compliant pickle files
                 try:
                     # look for t=
                     temp = re.search('t=\d+\.[0-9]+', file).group()
@@ -73,7 +72,7 @@ class DataLoader(OrderedDict):
                 # attempt to load with certain properties, if not found gracdefully exit
                 # this is the case for every pickle file other than the ones with props above
                 except AttributeError:
-                    continue 
+                    continue
             print('Done')
 
 def getGraph(folderName):
@@ -81,36 +80,49 @@ def getGraph(folderName):
     Exctract the graph from the rootfolder
     and writes the graph if it is not in the folder
     """
-    folderName = folderName if folderName.endswith('/') else folderName + '/'
-    print('Looking for graph')
     try:
-        return loadPickle(folderName + "graph.pickle")
+        print(f'Looking for graph in {folderName}')
+        graph = readSettings(folderName)[0].get('graph', None)
+        if graph:
+            print('Graph found in settings')
+            return nx.readwrite.json_graph.node_link_graph(graph)
     except FileNotFoundError:
         print("Default not found, attempting load from data")
-        graph = None
-        for root, dirs, files in os.walk(folderName):
-            for file in files:
+
+    graph = None
+    for root, dirs, files in os.walk(folderName):
+        for file in files:
+            print(file)
+            # settings will always be read first when walked over folders
+            if 'settings' in file:
+                print('reading settings...')
+                settings = readSettings(root)[0]
+                if 'graph' in settings:
+                    print('Graph found in settings')
+                    return nx.readwrite.node_link_graph(settings['graph'])
+            else:
                 try:
-                    graph  = loadData(root + '/' + file).graph
-                    # write graph
-                    print("Graph found! writing to file")
-                    savePickle(folderName + 'graph.pickle', graph)
-                    return graph
-                except:
+                    graph  = loadData(os.path.join(root, file)).graph
+                    if graph:
+                        print("Graph found in data file!")
+                        return graph
+                except AttributeError:
                     continue
-    finally:
-        print("No suitable file found :(")
+    print("No suitable file found :(")
 
 
-def loadData(fileNames):
+def loadData(filename):
+    # TODO: change
+    if filename.endswith('pickle'):
+        return loadPickle(filename)
 #    print(isinstance(fileNames, str), fileNames) # debug
-    if isinstance(fileNames, list):
-        data = []
-        for fileName in fileNames:
-            data.append(loadPickle(fileName))
-    elif isinstance(fileNames, str):
-        data = loadPickle(fileNames)
-    return data
+#    if isinstance(fileNames, list):
+#        data = []
+#        for fileName in fileNames:
+#            data.append(loadPickle(fileName))
+#    elif isinstance(fileNames, str):
+#        data = loadPickle(fileNames)
+#    return data
 
 
 def addData(data, toAdd, structure):
@@ -176,48 +188,7 @@ def savePickle(fileName, objects):
     with open(fileName, 'wb') as f:
         pickle.dump(objects, f, protocol = pickle.HIGHEST_PROTOCOL)
 
-def saveSettings(targetDirectory, settings):
-    print('Saving settings')
-    with open(targetDirectory + '/settings.json', 'w') as f:
-        json.dump(settings, f)
 
-def readSettings(targetDirectory, dataType = '.pickle'):
-    """
-    Reads settings from target directory
-    with minor backward compatibility 
-    """
-    for root, subdirs, files in os.walk(targetDirectory):
-        for file in files:
-            print(file)
-            if "settings" in file:
-                with open(os.path.join(root, file), 'r') as f:
-                    return json.load(f)
-    print("Settings not found emulating settings vector")
-    """
-    Backward-compatibility (legacy)
-    when no setting file is present this tries to extract relevant data from the actually
-    data files. 
-    """
-    settings    = {}
-    translation = dict(k = 'repeats') # bad
-    for root, subdirs, files in os.walk(targetDirectory):
-        for file in files:
-            # remove extension and split properties in to variables
-            file = file.split(dataType)[0].split('_')
-            for prop in file:
-                try:
-                    key, value = prop.split('=')  # filters out non-settings
-                    key = translation.get(key, key)
-                    settings[key] = value
-                # either ValueError (not enough to split) or something else
-                except:
-                    continue
-        if settings:
-            return settings
-    # loop completes; if it does it means not file was found
-    else:
-        print(settings)
-        raise FileNotFoundError
 def readCSV(fileName, **kwargs):
     '''
     :fileName: name of the file to be loaded
@@ -227,8 +198,160 @@ def readCSV(fileName, **kwargs):
 
 
 # TODO: make  this separate file?
+from dataclasses import dataclass, fields, field, _MISSING_TYPE
 @dataclass
-class SimulationResult:
+class Settings:
+    # simulation parameters
+    repeat        : int
+    deltas        : int
+    nSamples      : int
+    step          : int
+    burninSamples : int
+    nNodes        : int
+    nTrials       : int
+    pulseSizes    : list
+
+    # model properties
+    updateMethod  : str
+    # legacy support needed ofr these
+    mapping       : dict 
+    rmapping      : dict      
+
+    graph         : dict  
+    
+    # defaults
+    model         : str   = field(default = 'Models.fastIsing.Ising')
+    _graph        : dict  = field(init = False, repr = False, default_factory = dict)
+    directory     : str = field(init = False)  # "data directory" 
+    def __init__(self, data = None):
+        """
+        Input:
+            :data: either dict or string. If dict it assigns keys as fields. 
+            If string it excpects a root folder which it will search for settings 
+            or emulate them
+        """
+        # assign defaults
+        for field in fields(self):
+            if not any(isinstance(field.default, i) for i in [_MISSING_TYPE, property]):
+                print(f"Setting {field.name}")
+                self.__setattr__(field.name, field.default)
+        # load dict keys
+        if isinstance(data, dict):
+            self.addItems(data)
+            
+        # read json file
+        elif isinstance(data, str):
+            self.directory = data
+            self.read(data)
+            
+            
+    
+    @property
+    def graph(self):
+        return self._graph
+    @graph.setter
+    def graph(self, val):
+        """
+        Attempts to load the graph from a random data file
+        """
+        if isinstance(val, property):
+            for root, subdirs, files in os.walk(self.directory):
+                for file in files:
+                    try:
+                        graph  = loadData(os.path.join(root, file)).graph
+                        if graph:
+                            print("Graph found in data file!")
+                            self._graph = nx.readwrite.json_graph.node_link_data(graph)
+                            return 
+                    except AttributeError:
+                        continue
+            else:
+                raise ValueError("Input graph not recognized")
+        elif isinstance(val, dict):
+            self._graph = val
+        
+        
+            
+            # legacy support needed ofr these
+    def __repr__(self):
+        """
+        Print all settings
+        """
+        banner = '-' * 32
+        top    = f'\n{banner} Simulation Settings {banner}'
+        
+        s = top
+        for k, v in self.__dict__.items():
+            if not k.startswith('_'):
+                s += f'\n{k:<15} = {v}' # basic alignment
+        s += '\n'
+        s += '-' * len(top)
+        return s
+    def addItems(self, data):
+        """
+        Helper function for read; gives warning for unintended items
+        """
+        for field in fields(self):
+            fetched = data.get(field.name, field.default)
+            # ignore missing types and privates
+            if not isinstance(fetched, _MISSING_TYPE) and not field.name.startswith('_'):
+                self.__setattr__(field.name, fetched)
+            else:
+                print(f"WARNING: {field.name.replace('_','')} not found in input")
+
+    def read(self, targetDirectory):
+        """
+        Reads json settings from target directory
+        with minor backward compatibility
+        """
+        print("Reading settings: ", end = '')
+        for root, subdirs, files in os.walk(targetDirectory):
+            for file in files:
+                if "settings" in file:
+                    print("using json")
+                    with open(os.path.join(root, file), 'r') as f:
+                        self.addItems(json.load(f))
+                    return 0 # exit function
+        print("Settings not found emulating settings vector")
+        
+        """
+        Backward-compatibility (legacy)
+        when no setting file is present this tries to extract relevant data 
+        from the actually data files.
+        """
+    
+        translation = dict(k = 'repeats') # bad
+        for root, subdirs, files in os.walk(targetDirectory):
+            for file in files:
+                settings = {}
+                # remove extension and split properties in to variables
+                file = file.split(dataType)[0].split('_')
+                for prop in file:
+                    try:
+                        key, value = prop.split('=')  # filters out non-settings
+                        key = translation.get(key, key)
+                        settings[key] = value
+                    # either ValueError (not enough to split) or something else
+                    except ValueError:
+                        continue
+                # when found exit
+                if settings:
+                    self.addItems(settings)
+                    return 0
+        else:
+            raise FileNotFoundError
+            
+    def save(self, targetDirectory):
+        print('Saving settings')
+        s = {key.replace('_', '') : v for k, v in self.__dict__.items()}
+        with open(os.path.join(targetDirectory, 'settings.json'), 'w') as f:
+            json.dump(\
+                      s, f,\
+                      default = lambda x : float(x), \
+                      indent  = 4) 
+            
+@dataclass
+class SimulationResult(object):
     """
     Standard format of collected data
     """
@@ -241,3 +364,9 @@ class SimulationResult:
     # TODO: add these?
     # temperature : int
     # pulse       : dict
+
+if __name__ == '__main__':
+    dp = '/home/casper/projects/information_impact/Data/'
+    psycho   = '1548025318.5751357'
+    settings = Settings(os.path.join(dataPath, psycho))
+    print(settings)
