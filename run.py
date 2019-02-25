@@ -160,6 +160,7 @@ if __name__ == '__main__':
                         mapping          = model.mapping,\
                         rmapping         = model.rmapping,\
                         model            = model.__class__,\
+                        directory        = targetDirectory,\
                         )
             IO.saveSettings(targetDirectory, settings)
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)

@@ -199,8 +199,12 @@ def readCSV(fileName, **kwargs):
 
 # TODO: make  this separate file?
 from dataclasses import dataclass, fields, field, _MISSING_TYPE
+import importlib
 @dataclass
 class Settings:
+    """
+    Reads json file and converts in a convenient python dataclass
+    """
     # simulation parameters
     repeat        : int
     deltas        : int
@@ -213,16 +217,19 @@ class Settings:
 
     # model properties
     updateMethod  : str
-    # legacy support needed ofr these
-    mapping       : dict 
-    rmapping      : dict      
+    # legacy support needed of these
 
-    graph         : dict  
-    
+
     # defaults
-    model         : str   = field(default = 'Models.fastIsing.Ising')
+    model         : str   = 'Models.fastIsing.Ising'
     _graph        : dict  = field(init = False, repr = False, default_factory = dict)
-    directory     : str = field(init = False)  # "data directory" 
+    _mapping      : dict  = field(init = False, repr = False, default_factory = dict)
+    _rmapping     : dict  = field(init = False, repr = False, default_factory = dict)
+    graph         : dict 
+    rmapping      : dict
+    mapping       : dict 
+    directory     : str   = field(init = False)  # "data directory" 
+
     def __init__(self, data = None):
         """
         Input:
@@ -243,8 +250,6 @@ class Settings:
         elif isinstance(data, str):
             self.directory = data
             self.read(data)
-            
-            
     
     @property
     def graph(self):
@@ -254,6 +259,7 @@ class Settings:
         """
         Attempts to load the graph from a random data file
         """
+        # assume we wan't to load it from a file
         if isinstance(val, property):
             for root, subdirs, files in os.walk(self.directory):
                 for file in files:
@@ -267,12 +273,41 @@ class Settings:
                         continue
             else:
                 raise ValueError("Input graph not recognized")
+        # if present in the data just load it
         elif isinstance(val, dict):
             self._graph = val
-        
-        
             
-            # legacy support needed ofr these
+    def loadModel(self):
+        """
+        assumes self.model is dotted, i.e. Models.[python-file].[model-name]
+        """
+        m = self.model.split('.')
+        mt = '.'.join(i for i in m[:-1]) # remove extension
+        tmp = nx.readwrite.json_graph.node_link_graph(self.graph)
+        return getattr(importlib.import_module(mt), m[-1])(tmp)
+        
+    @property
+    def mapping(self):
+        return self._mapping
+    @mapping.setter
+    def mapping(self, val):
+        print('in mapping', self.graph)
+        if isinstance(val, property):
+            model = self.loadModel()
+            self._mapping  = model.mapping
+        elif isinstance(val, dict):
+            self._mapping = val
+    @property
+    def rmapping(self):
+        return self._rmapping
+    @rmapping.setter
+    def rmapping(self, val):
+        if isinstance(val, property):
+            model = self.loadModel()
+            self._rmapping  = model.rmapping
+        elif isinstance(val, dict):
+            self._rmapping = val
+            
     def __repr__(self):
         """
         Print all settings
@@ -283,7 +318,7 @@ class Settings:
         s = top
         for k, v in self.__dict__.items():
             if not k.startswith('_'):
-                s += f'\n{k:<15} = {v}' # basic alignment
+                s += f'\n{k:<15} = {v}' # basic alignment[magic number]
         s += '\n'
         s += '-' * len(top)
         return s
@@ -341,7 +376,8 @@ class Settings:
         else:
             raise FileNotFoundError
             
-    def save(self, targetDirectory):
+    def save(self, targetDirectory = None):
+        targetDirectory = self.directory if targetDirectory is None else targetDirectory
         print('Saving settings')
         s = {key.replace('_', '') : v for k, v in self.__dict__.items()}
         with open(os.path.join(targetDirectory, 'settings.json'), 'w') as f:
