@@ -56,12 +56,14 @@ class DataLoader(OrderedDict):
                 # filter out non-compliant pickle files
                 try:
                     # look for t=
-                    temp = re.search('t=\d+\.[0-9]+', file).group()
+                    # temp = re.search('t=\d+\.[0-9]+', file).group
+                    temp = file.split('/')[-3] # magnetization
+                    root = file.split('/')[-4]
                     # deltas = re.search('deltas=\d+', file).group()
                     # deltas = re.search('\d+', deltas).group()
                     # look for pulse
                     pulse = re.search("\{.*\}", file).group()
-                    structure = [temp]
+                    structure = [root, temp]
                     if pulse == '{}':
                         structure += ['control']
                     else:
@@ -225,16 +227,16 @@ class Settings:
     _graph        : dict  = field(init = False, repr = False, default_factory = dict)
     _mapping      : dict  = field(init = False, repr = False, default_factory = dict)
     _rmapping     : dict  = field(init = False, repr = False, default_factory = dict)
-    graph         : dict 
+    graph         : dict
     rmapping      : dict
-    mapping       : dict 
-    directory     : str   = field(init = False)  # "data directory" 
+    mapping       : dict
+    directory     : str   = field(init = False)  # "data directory"
 
     def __init__(self, data = None):
         """
         Input:
-            :data: either dict or string. If dict it assigns keys as fields. 
-            If string it excpects a root folder which it will search for settings 
+            :data: either dict or string. If dict it assigns keys as fields.
+            If string it excpects a root folder which it will search for settings
             or emulate them
         """
         # assign defaults
@@ -245,12 +247,12 @@ class Settings:
         # load dict keys
         if isinstance(data, dict):
             self.addItems(data)
-            
+
         # read json file
         elif isinstance(data, str):
             self.directory = data
             self.read(data)
-    
+
     @property
     def graph(self):
         return self._graph
@@ -268,7 +270,7 @@ class Settings:
                         if graph:
                             print("Graph found in data file!")
                             self._graph = nx.readwrite.json_graph.node_link_data(graph)
-                            return 
+                            return
                     except AttributeError:
                         continue
             else:
@@ -276,7 +278,7 @@ class Settings:
         # if present in the data just load it
         elif isinstance(val, dict):
             self._graph = val
-            
+
     def loadModel(self):
         """
         assumes self.model is dotted, i.e. Models.[python-file].[model-name]
@@ -285,13 +287,15 @@ class Settings:
         mt = '.'.join(i for i in m[:-1]) # remove extension
         tmp = nx.readwrite.json_graph.node_link_graph(self.graph)
         return getattr(importlib.import_module(mt), m[-1])(tmp)
-        
+
     @property
     def mapping(self):
         return self._mapping
     @mapping.setter
     def mapping(self, val):
-        print('in mapping', self.graph)
+        """
+        Extracts mapping either from dict or attempts to load the model
+        """
         if isinstance(val, property):
             model = self.loadModel()
             self._mapping  = model.mapping
@@ -302,19 +306,22 @@ class Settings:
         return self._rmapping
     @rmapping.setter
     def rmapping(self, val):
+        """
+        Extracts rmapping either from dict or attempts to load the model
+        """
         if isinstance(val, property):
             model = self.loadModel()
             self._rmapping  = model.rmapping
         elif isinstance(val, dict):
             self._rmapping = val
-            
+
     def __repr__(self):
         """
         Print all settings
         """
         banner = '-' * 32
         top    = f'\n{banner} Simulation Settings {banner}'
-        
+
         s = top
         for k, v in self.__dict__.items():
             if not k.startswith('_'):
@@ -348,13 +355,13 @@ class Settings:
                         self.addItems(json.load(f))
                     return 0 # exit function
         print("Settings not found emulating settings vector")
-        
+
         """
         Backward-compatibility (legacy)
-        when no setting file is present this tries to extract relevant data 
+        when no setting file is present this tries to extract relevant data
         from the actually data files.
         """
-    
+
         translation = dict(k = 'repeats') # bad
         for root, subdirs, files in os.walk(targetDirectory):
             for file in files:
@@ -375,7 +382,7 @@ class Settings:
                     return 0
         else:
             raise FileNotFoundError
-            
+
     def save(self, targetDirectory = None):
         targetDirectory = self.directory if targetDirectory is None else targetDirectory
         print('Saving settings')
@@ -384,8 +391,8 @@ class Settings:
             json.dump(\
                       s, f,\
                       default = lambda x : float(x), \
-                      indent  = 4) 
-            
+                      indent  = 4)
+
 @dataclass
 class SimulationResult(object):
     """

@@ -35,9 +35,9 @@ extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else ext
 loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
 data        = IO.DataLoader(loadThis)
 
-settings = IO.readSettings(loadThis)
-deltas   = settings[0]['deltas']
-repeats  = settings[0]['repeat']
+settings = IO.Settings(loadThis)
+deltas   = settings.deltas
+repeats  = settings.repeat
 
 
 temps    = [float(i.split('=')[-1]) for i in data.keys()]
@@ -45,22 +45,16 @@ nudges   = list(data[next(iter(data))].keys())
 temp     = temps[0]
 
 # Draw graph ; assumes the simulation is over 1 type of graph
-import importlib
 
-# extract class data
-modelClass       = settings[0].get('model', "Models.fastIsing.Ising")
-modelClass       = modelClass.split('.') # get 
-tmp              =  '.'.join(i for i in modelClass[:-1])
-modelType = getattr(importlib.import_module(tmp), modelClass[-1])
 
-graph     = settings[0].get('graph', IO.getGraph(loadThis))
+graph     = settings.get('graph', IO.getGraph(loadThis))
 model     = modelType(graph) # TODO: replace this with mappings
 # control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
 # model    = Ising(control.graph)
 NTRIALS  = len(data[f't={temp}']['control'])
 NTEMPS   = len(data)
-NNUDGE   = len(settings[0].get('pulseSizes', data[f't={temp}']))
-NODES    = model.nNodes
+NNUDGE   = len(settings.pulseSizes)
+NODES    = settings.nNodes
 
 DELTAS_, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
 COND     = NNUDGE - 1
@@ -72,28 +66,23 @@ print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
 figDir = f'../thesis/figures/{extractThis}'
-# %% # show mag vs temperature 
+# %% # show mag vs temperature
 func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
 for root, subdirs, filenames in os.walk(loadThis):
     msettings = {}
-    # first load this
-    if any(['settings' in i for i in filenames]):
-        msettings = IO.readSettings(root)
-        if not 'temps' in msettings:
-            msettings = {}
-    # otherwise check legacy
+
     if any(['mags' in i for i in filenames]):
         msettings = IO.loadPickle(os.path.join(root, 'mags.pickle'))
-        
+
     if msettings:
         # fitted
         fx = msettings.get('fitTemps', msettings.get('temps')) # legacy
         fy = msettings.get('fmag', msettings['mag'])
-        
+
         # matched
         mx = msettings.get('matchedTemps', msettings.get('temperatures')) # legacy
         my = msettings.get('magRange')
-        
+
         fig, ax  = subplots()
         ax.scatter(fx, fy, alpha = .2)
         ax.scatter(mx, my * fy.max(), color = 'red', zorder = 2)
@@ -103,7 +92,6 @@ for root, subdirs, filenames in os.walk(loadThis):
         ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
         rcParams['axes.labelpad'] = 10
         fig.savefig(figDir + f"-{root.split('/')[-1]}_temp_mag.eps", dpi = 1000)
-assert 0
 # %% plot graph
 
 centralities = {
@@ -468,7 +456,6 @@ def worker(sample):
     auc = zeros((len(sample), 2))
     coeffs, errors = plotz.fit(sample, func, params = fitParam)
     for nodei, c in enumerate(coeffs):
-
         tmp = 0
 #        if c[0] < 1e-4:
 #            tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
@@ -513,15 +500,16 @@ mainax = fig.add_subplot(111, frameon = False, \
                          )
 out = lof(n_neighbors = NTRIALS)
 
-aucs = aucs_raw.copy()
+aucs   = aucs_raw.copy()
 thresh = 3
-clf = MinCovDet()
+clf    = MinCovDet()
 
-labels = 'Underwhelming\tOverwhelming'.split('\t')
-rejections = zeros((COND, NTEMPS, NODES))
+labels       = 'Underwhelming\tOverwhelming'.split('\t')
+rejections   = zeros((COND, NTEMPS, NODES))
 showOutliers = True
 showOutliers = False
-pval = .01
+pval         = .01
+
 pcorr = (NNUDGE - 1) * NTEMPS
 from sklearn.linear_model import Ridge
 from sklearn.feature_selection import f_regression
