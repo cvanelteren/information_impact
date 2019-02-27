@@ -18,22 +18,22 @@ close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 
-dataPath = '/run/media/casper/test/'
+# dataPath = '/run/media/casper/test/'
 #dataPath = '/mnt/'
 # convenience
 kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
-multiple = '1550482875.0001953'
+# multiple = '1550482875.0001953'
 
 extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
-extractThis      = multiple
+#extractThis      = multiple
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
 loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
-data        = IO.DataLoader(loadThis)
+data        = IO.DataLoader(loadThis)[extractThis]
 
 settings = IO.Settings(loadThis)
 deltas   = settings.deltas
@@ -47,20 +47,20 @@ temp     = temps[0]
 # Draw graph ; assumes the simulation is over 1 type of graph
 
 
-graph     = settings.get('graph', IO.getGraph(loadThis))
-model     = modelType(graph) # TODO: replace this with mappings
+graph     = nx.readwrite.json_graph.node_link_graph(settings.graph)
+model     = settings.loadModel() # TODO: replace this with mappings
 # control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
 # model    = Ising(control.graph)
-NTRIALS  = len(data[f't={temp}']['control'])
+NTRIALS  = settings.nTrials
 NTEMPS   = len(data)
-NNUDGE   = len(settings.pulseSizes)
+NNUDGE   = len(settings.pulseSizes) + 1
 NODES    = settings.nNodes
 
 DELTAS_, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
 COND     = NNUDGE - 1
-DELTAS = DELTAS_ - 1
+DELTAS   = DELTAS_ - 1
 
-pulseSizes = list(data[f't={temp}'].keys())
+pulseSizes = settings.pulseSizes
 
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
@@ -127,7 +127,6 @@ ax.axis('off')
 fig.show()
 savefig(figDir + 'network.eps')
 
-assert 0
 #%%
 ss = dict(\
           height_ratios = [1, 1], width_ratios = [1, 1])
@@ -190,11 +189,11 @@ def worker(fidx):
     This function does the actual processing of the correct target values
     used in the analysis below
     """
-
     fileName = fileNames[fidx]
     # do control
     data = frombuffer(var_dict.get('X')).reshape(var_dict['xShape'])
     node, temp, trial = unravel_index(fidx, var_dict.get('start'), order = 'F')
+    
     # control data
     if '{}' in fileName:
         # load control; bias correct mi
@@ -205,6 +204,7 @@ def worker(fidx):
                                              control.conditional, \
                                              repeats)
         mi -= bias
+        
         data[0, trial, temp]  = mi[:DELTAS - EXTRA, :].T
     # nudged data
     else:
@@ -213,7 +213,6 @@ def worker(fidx):
         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                              for key in model.mapping\
                              for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
-        jdx = jdx[0]
         # load the corresponding dataset to the control
         useThis = fidx - node
 
@@ -225,7 +224,9 @@ def worker(fidx):
         # don't use +1 as the nudge has no effect at zero
         redIm = nanmean(impact[DELTAS + EXTRA + 2:], axis = -1).T
         # TODO: check if this works with tuples (not sure)
-        data[(node - 1) // NODES + 1, trial, temp, jdx,  :] = redIm.squeeze().T
+       
+        for i in jdx:
+            data[(node - 1) // NODES + 1, trial, temp, i,  :] = redIm.squeeze().T
 
 # look for stored data [faster]
 fasterData = f'results.pickle'
@@ -296,8 +297,7 @@ fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, inf), p0 = p0,\
                    jac = 'cs')
 
-settings = IO.readSettings(loadThis)
-repeats  = settings['repeat']
+repeats  = settings.repeat
 
 # %% normalize data
 

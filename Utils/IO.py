@@ -346,9 +346,10 @@ class Settings:
         Reads json settings from target directory
         with minor backward compatibility
         """
-        print("Reading settings: ", end = '')
+        print(f"Reading settings in {targetDirectory}: ", end = '')
         for root, subdirs, files in os.walk(targetDirectory):
             for file in files:
+                print(file)
                 if "settings" in file:
                     print("using json")
                     with open(os.path.join(root, file), 'r') as f:
