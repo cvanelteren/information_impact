@@ -47,8 +47,8 @@ if __name__ == '__main__':
 
     tempres       = 100
     graphs = []
-    rootDirectory = '/var/scratch/cveltere/' # data storage
-    # rootDirectory = f'{os.getcwd()}/Data/'
+    # rootDirectory = '/var/scratch/cveltere/' # data storage
+    rootDirectory = f'{os.getcwd()}/Data/'
 #    real = 1
     if real:
 #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
