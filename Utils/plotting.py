@@ -498,7 +498,10 @@ def addGraphPretty(graph, ax, \
     edgesScaling = {}
     for u, v in graph.edges():
         edgesScaling[(u, v)] = dict(graph[u][v]).get('weight', 1)
-    minWeight, maxWeight = min(edgesScaling.values()), max(edgesScaling.values())
+    if edgesScaling:
+        minWeight, maxWeight = min(edgesScaling.values()), max(edgesScaling.values())
+    else:
+        minWeight, maxWeight = 0, 1
 
     for u, v in graph.edges():
         n1      = nodePatches[u]
