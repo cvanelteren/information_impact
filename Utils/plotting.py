@@ -131,12 +131,34 @@ def addGraphPretty(graph, ax, \
                    cmap      = cm.tab20, \
                    mapping   = None,\
                    **kwargs):
+    """
+    Adds a pretty graph. Recommended to use only for small graphs, i.e. N<< 100.
+
+    Parameters
+    ----------
+    graph : networkx graph
+    ax : type
+    positions:
+        either a dict containing the position per node or a callable function that
+        return a dict with the coordinates
+    cmap: numpy array or color map
+    mapping : dict containing the mapping from node to label
+    Returns
+    -------
+    matplotlib axis
+
+    """
+
 
     from matplotlib.patches import FancyArrowPatch, Circle, ConnectionStyle, Wedge
 #    graph = model.graph.
-
+    # if default
     if positions is None:
         positions = nx.circular_layout(graph)
+    # check if it is callable
+    elif hasattr(positions, '__call__'):
+        positions = positions(graph)
+
 # colors  = cm.tab20(arange(model.nNodes))
 # colors  = cm.get_cmap('tab20')(arange(model.nNodes))
     from matplotlib import colors
@@ -177,6 +199,9 @@ def addGraphPretty(graph, ax, \
 #    diamax = 6 * circlekwargs['radius']
     circlekwargs['radius'] = 1.2 * np.array([len(str(n)) for n in graph]).max()
 
+    for node, pos in positions.items():
+
+    positions = {i : array(j) * circlekwargs['radius'] * 4 for i,j in positions.items()}
     nodePatches = {}
     for ni, n in enumerate(graph):
         # make circle
@@ -235,24 +260,28 @@ def addGraphPretty(graph, ax, \
 
         # self-edge is a special case
         if u == v:
-            n2 = copy(n1)
-            n1 = copy(n1)
-            theta     = random.uniform(0, 2*pi)
-            r         = circlekwargs.get('radius')
-            rotation  = pi
-            corner1   = array([sin(theta), cos(theta)]) * r
-            corner2   = array([sin(theta + rotation), cos(theta + rotation)]) *\
-            r + .12 * sign(random.randn()) * r
-            ax.annotate(*c.center)
-            n1.center = array(n1.center) + corner1
-            n2.center = array(n2.center) + corner2
+            # n2 = copy(n1)
+            # n1 = copy(n1)
+            # theta     = random.uniform(0, 2*pi)
+            # r         = circlekwargs.get('radius')
+            # rotation  = pi
+            # corner1   = array([sin(theta), cos(theta)]) * r
+            # corner2   = array([sin(theta + rotation), cos(theta + rotation)]) *\
+            # r + .12 * sign(random.randn()) * r
+            # n1.center = array(n1.center) + corner1
+            # n2.center = array(n2.center) + corner2
+            # e = FancyArrowPatch(n2.center, n1.center, **arrowsprops)
 
+            offset = array(n1.center, dtype = float)
+
+            # add * for self-edges
+            offset[0] +=  1.05 * n1.radius
+            ax.annotate('*', offset, fontsize = 30)
 #            n1.center = (n1.center[0] + r, n1.center[1] )
 #            n2.center = (n2.center[0] - r, n2.center[1])
             rad = radians(135) # trial and error
 
             # add edge
-            e = FancyArrowPatch(n2.center, n1.center, **arrowsprops)
             # e.set_arrowstyle(head_length = head_length)
         else:
             e  = FancyArrowPatch(n1.center,n2.center, patchA = n1, patchB = n2,\

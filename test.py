@@ -7,13 +7,19 @@ Created on Mon Feb 11 08:55:35 2019
 """
 
 import networkx as nx
-nx.barabasi_albert_graph
 #import msgpack
 #from numpy import *
 from Models.fastIsing import Ising
-#
-g = nx.path_graph(5)
-m = Ising(g)
+import matplotlib.pyplot as plt
+from Utils import plotting as plotz
+g   = nx.barabasi_albert_graph(100, 2)
+pos = nx.nx_agraph.graphviz_layout(g, 'neato')
+g.add_edge(0,0)
+
+fig, ax = plt.subplots()
+plotz.addGraphPretty(g, ax = ax, positions = pos)
+fig.show()
+
 #temps = linspace(0, 10)
 #
 #m = Ising(g)
