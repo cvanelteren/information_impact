@@ -4,4 +4,6 @@ __pycache__/
 __pycache__*
 Data/*
 *.pickle
+*.tex
+*.xlsx
 Results/*
