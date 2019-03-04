@@ -47,8 +47,8 @@ if __name__ == '__main__':
 
     tempres       = 100
     graphs = []
-    rootDirectory = '/var/scratch/cveltere/' # data storage
-    # rootDirectory = f'{os.getcwd()}/Data/'
+    # rootDirectory = '/var/scratch/cveltere/' # data storage
+    rootDirectory = f'{os.getcwd()}/Data/'
 #    real = 1
     if real:
 #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
@@ -83,18 +83,7 @@ if __name__ == '__main__':
                 os.mkdir(rootDirectory)
             targetDirectory = rootDirectory + f'/{now}'
         os.mkdir(targetDirectory)
-        settings = dict(
-            repeat           = repeats,
-            deltas           = deltas,
-            nSamples         = nSamples,
-            step             = step,
-            burninSamples    = burninSamples,
-            pulseSizes       = pulseSizes,
-            updateMethod     = updateType,\
-            nNodes           = graph.number_of_nodes(),
-            nTrials         = nTrials,\
-            )
-        IO.saveSettings(targetDirectory, settings)
+
 
         # graph = nx.barabasi_albert_graph(10, 3)
         modelSettings = dict(\
@@ -119,43 +108,64 @@ if __name__ == '__main__':
             magRange = array([CHECK]) if isinstance(CHECK, float) else array(CHECK)
 
             # magRange = array([.9, .2])
-            temps = linspace(0, graph.number_of_nodes()//2, tempres)
-            mag, sus = model.matchMagnetization(temps = temps,\
+            fitTemps = linspace(0, graph.number_of_nodes()//2, tempres)
+            mag, sus = model.matchMagnetization(temps = fitTemps,\
              n = int(1e3), burninSamples = 0)
 
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
             # func = lambda x, a, b, c : a + b*exp(-c * x)
             fmag = scipy.ndimage.gaussian_filter1d(mag, .2)
-            a, b = scipy.optimize.curve_fit(func, temps, fmag.squeeze(), maxfev = 10000)
+            a, b = scipy.optimize.curve_fit(func, fitTemps, fmag.squeeze(), maxfev = 10000)
 
             # run the simulation per temperature
-            temperatures = array([])
+            matchedTemps = array([])
             f_root = lambda x,  c: func(x, *a) - c
             magnetizations = max(fmag) * magRange
             for m in magnetizations:
                 r = scipy.optimize.root(f_root, 0, args = (m), method = 'linearmixing')#, method = 'linearmixing')
                 rot = r.x if r.x > 0 else 0
-                temperatures = hstack((temperatures, rot))
+                matchedTemps = hstack((matchedTemps, rot))
 
             fig, ax = subplots()
-            xx = linspace(0, max(temps), 1000)
+            xx = linspace(0, max(fitTemps), 1000)
             ax.plot(xx, func(xx, *a))
-            ax.scatter(temperatures, func(temperatures, *a), c ='red')
-            ax.scatter(temps, mag, alpha = .2)
-            ax.scatter(temps, fmag, alpha = .2)
+            ax.scatter(matchedTemp, func(matchedTemps, *a), c ='red')
+            ax.scatter(fitTemps, mag, alpha = .2)
+            ax.scatter(fitTemps, fmag, alpha = .2)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
             savefig(f'{targetDirectory}/temp vs mag.png')
             # show()
+
+            # TODO: combine these?
             tmp = dict(\
-                       temps        = temps, \
-                       temperatures = temperatures, \
+                       fitTemps     = fitTemps, \
+                       matchedTemps = matchedTemps, \
                        magRange     = magRange, \
                        mag          = mag,\
-                       fmag         = fmag)
+                       fmag         = fmag,\
+                       )
+            settings = dict(
+                        repeat           = repeats,\
+                        deltas           = deltas,\
+                        nSamples         = nSamples,\
+                        step             = step,\
+                        burninSamples    = burninSamples,\
+                        pulseSizes       = pulseSizes,\
+                        updateMethod     = updateType,\
+                        nNodes           = graph.number_of_nodes(),\
+                        nTrials          = nTrials,\
+                        # this is added
+                        graph            = nx.readwrite.json_graph.node_link_data(graph),\
+                        mapping          = model.mapping,\
+                        rmapping         = model.rmapping,\
+                        model            = model.__class__,\
+                        directory        = targetDirectory,\
+                        )
+            IO.saveSettings(targetDirectory, settings)
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
 
-        for t, mag in zip(temperatures, magRange):
+        for t, mag in zip(matchedTemp, magRange):
             print(f'{time.time()} Setting {t}')
             model.t = t # update beta
             tempDir = f'{targetDirectory}/{mag}'
@@ -180,7 +190,7 @@ if __name__ == '__main__':
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 if not os.path.exists(f'{tempDir}/control/'):
                     os.mkdir(f'{tempDir}/control')
-                fileName = f'{tempDir}/control/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
+                fileName = f'{tempDir}/control/{time.time()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr       = SimulationResult(\
                                         mi          = mi,\
                                         conditional = conditional,\
@@ -199,7 +209,7 @@ if __name__ == '__main__':
 
                         print(f'{time.time()} Computing MI')
                         # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                        fileName = f'{pulseDir}/{time.time()}_nSamples ={nSamples}_k ={repeats}_deltas ={deltas}_mode_{updateType}_t={t}_n ={model.nNodes}_pulse ={pulse}.pickle'
+                        fileName = f'{pulseDir}/{time.time()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                         sr       = SimulationResult(\
                                                 mi          = mi,\
                                                 conditional = conditional,\

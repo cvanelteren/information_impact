@@ -12,14 +12,16 @@ def hellingerDistance(p1, p2):
     return np.linalg.norm( p1 - p2, ord = 2, axis = -1) / np.sqrt(2)
 
 def KL(p1, p2):
-    kl = - np.nansum(p1 * (np.log(p2) - np.log(p1)), axis = -1)
+    # p2[p2 == 0] = 1 # circumvent p = 0
+    # p1[p1==0] = 1
+    kl = np.nansum(p1 * (np.log(p1 / p2)), axis = -1)
     kl[np.isfinite(kl) == False] = 0 # remove x = 0
     return kl
 
 def panzeriTrevesCorrection(px, cpx, repeats):
     """
     Panzeri-Treves sampling bias correction
-    Input: 
+    Input:
         :px: ndarray node distribution
         :cpx: dict conditional distribution
         :repeats: constant
@@ -85,6 +87,11 @@ def KL2(p1, p2):
     from scipy.special import kl_div
     return np.nansum(kl_div(p1, p2), axis = -1)
 
+def JS(p1, p2):
+    """
+    Jenson shannon divergence
+    """
+    return KL(p1, p2) / 2 + KL(p2, p1)
 
 
 
@@ -185,7 +192,7 @@ class Beta(GenericLikelihoodModel):
         super(Beta, self).__init__(endog, exog, **kwds)
         self.link = link
         self.link_phi = link_phi
-        
+
         self.Z = Z
         assert len(self.Z) == len(self.endog)
 

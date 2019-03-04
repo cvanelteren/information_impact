@@ -17,25 +17,27 @@ import os, re, networkx as nx, scipy, multiprocessing as mp
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
+
+# dataPath = '/run/media/casper/test/'
 #dataPath = '/mnt/'
 # convenience
-kite   = '1548347769.6300871'
-psycho = '1548025318.5751357'
-
+kite     = '1548347769.6300871'
+psycho   = '1548025318.5751357'
+# multiple = '1550482875.0001953'
 
 extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
-extractThis      = kite
+#extractThis      = multiple
+#extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
-loadThis = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
-data     = IO.DataLoader(loadThis)
+loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
+data        = IO.DataLoader(loadThis)[extractThis]
 
-
-settings = IO.readSettings(loadThis)
-deltas   = settings['deltas']
-repeats  = settings['repeat']
+settings = IO.Settings(loadThis)
+deltas   = settings.deltas
+repeats  = settings.repeat
 
 
 temps    = [float(i.split('=')[-1]) for i in data.keys()]
@@ -43,52 +45,61 @@ nudges   = list(data[next(iter(data))].keys())
 temp     = temps[0]
 
 # Draw graph ; assumes the simulation is over 1 type of graph
-from Models.fastIsing import Ising
-control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
-model    = Ising(control.graph)
 
-NTRIALS  = len(data[f't={temp}']['control'])
+
+graph     = nx.readwrite.json_graph.node_link_graph(settings.graph)
+model     = settings.loadModel() # TODO: replace this with mappings
+# control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
+# model    = Ising(control.graph)
+NTRIALS  = settings.nTrials
 NTEMPS   = len(data)
-NNUDGE   = len(data[f't={temp}'])
-NODES    = model.nNodes
+NNUDGE   = len(settings.pulseSizes) + 1
+NODES    = settings.nNodes
 
 DELTAS_, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
 COND     = NNUDGE - 1
-DELTAS = DELTAS_ - 1
+DELTAS   = DELTAS_ - 1
 
-pulseSizes = list(data[f't={temp}'].keys())
+pulseSizes = settings.pulseSizes
 
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
 figDir = f'../thesis/figures/{extractThis}'
 # %% # show mag vs temperature
-tmp = IO.loadPickle(f'{loadThis}/mags.pickle')
-fig, ax = subplots()
-# if noisy load fmag otherwise load mag
-mag = tmp.get('fmag', tmp.get('mag'))
-
-ax.scatter(tmp['temps'], mag, alpha = .2)
-ax.scatter(tmp['temperatures'], tmp['magRange'] * mag.max(), \
-           color = 'red', zorder = 2)
-
 func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
-a, b = scipy.optimize.curve_fit(func, tmp['temps'], mag.squeeze(), maxfev = 10000)
-x = linspace(min(tmp['temps']), max(tmp['temps']), 1000)
-ax.plot(x, func(x, *a), '--k')
-ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
-rcParams['axes.labelpad'] = 10
-fig.savefig(figDir + 'temp_mag.eps', format = 'eps', dpi = 1000)
+for root, subdirs, filenames in os.walk(loadThis):
+    msettings = {}
+
+    if any(['mags' in i for i in filenames]):
+        msettings = IO.loadPickle(os.path.join(root, 'mags.pickle'))
+
+    if msettings:
+        # fitted
+        fx = msettings.get('fitTemps', msettings.get('temps')) # legacy
+        fy = msettings.get('fmag', msettings['mag'])
+
+        # matched
+        mx = msettings.get('matchedTemps', msettings.get('temperatures')) # legacy
+        my = msettings.get('magRange')
+
+        fig, ax  = subplots()
+        ax.scatter(fx, fy, alpha = .2)
+        ax.scatter(mx, my * fy.max(), color = 'red', zorder = 2)
+        a, b = scipy.optimize.curve_fit(func, fx, fy, maxfev = 10000)
+        x = linspace(fx.min(), fx.max(), 1000)
+        ax.plot(x, func(x, *a), '--k')
+        ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
+        rcParams['axes.labelpad'] = 10
+        fig.savefig(figDir + f"-{root.split('/')[-1]}_temp_mag.eps", dpi = 1000)
 # %% plot graph
 
-centralities = dict(\
-                    deg_w  = partial(nx.degree, weight = 'weight'), \
-#                    close  = partial(nx.closeness_centrality, distance = 'weight'),\
-                    bet    = partial(nx.betweenness_centrality, weight = 'weight'),\
-                    ic     = partial(nx.information_centrality, weight = 'weight'),\
-                    ev     = partial(nx.eigenvector_centrality, weight = 'weight'),\
-#             cfl = partial(nx.current_flow_betweenness_centrality, weight = 'weight'),
-             )
+centralities = {
+                    r'$c_i^{deg}$' : partial(nx.degree, weight = 'weight'), \
+                    r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
+                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
+                    r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
+             }
 
 # %%
 fig, ax  = subplots(figsize = (10, 10), frameon = False)
@@ -115,6 +126,7 @@ ax.set(xticks = [], yticks = [])
 ax.axis('off')
 fig.show()
 savefig(figDir + 'network.eps')
+
 #%%
 ss = dict(\
           height_ratios = [1, 1], width_ratios = [1, 1])
@@ -167,59 +179,55 @@ def flattenDict(d):
     return out
 
 def worker(fidx):
+    """
+    Temporary worker to load data files
+    This function does the actual processing of the correct target values
+    used in the analysis below
+    """
     fileName = fileNames[fidx]
     # do control
     data = frombuffer(var_dict.get('X')).reshape(var_dict['xShape'])
     node, temp, trial = unravel_index(fidx, var_dict.get('start'), order = 'F')
+
     # control data
     if '{}' in fileName:
         # load control; bias correct mi
         control = IO.loadData(fileName)
-        graph   = control.graph
         # panzeri-treves correction
         mi   = control.mi
         bias = stats.panzeriTrevesCorrection(control.px,\
                                              control.conditional, \
                                              repeats)
         mi -= bias
+
         data[0, trial, temp]  = mi[:DELTAS - EXTRA, :].T
     # nudged data
     else:
-
         targetName = fileName.split('_')[-1] # extract relevant part
+        # get the idx of the node
         jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
                              for key in model.mapping\
                              for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
-        jdx = jdx[0]
+        # load the corresponding dataset to the control
         useThis = fidx - node
 
         # load matching control
         control = IO.loadData(fileNames[useThis])
          # load nudge
         sample  = IO.loadData(fileName)
-#        bias    = stats.panzeriTrevesCorrection(control.px,\
-#                                        control.conditional,\
-#                                        repeats)
-#        control.px -= bias[..., None]
-#
-#        bias = stats.panzeriTrevesCorrection(sample.px,
-#                                              sample.conditional,\
-#                                              repeats)
-#        sample.px -= bias[..., None]
-
-#        impact  = stats.hellingerDistance(control.px, px)
         impact  = stats.KL(control.px, sample.px)
         # don't use +1 as the nudge has no effect at zero
         redIm = nanmean(impact[DELTAS + EXTRA + 2:], axis = -1).T
         # TODO: check if this works with tuples (not sure)
-        data[(node - 1) // NODES + 1, trial, temp, jdx,  :] = redIm.squeeze().T
+
+        for i in jdx:
+            data[(node - 1) // NODES + 1, trial, temp, i,  :] = redIm.squeeze().T
 
 # look for stored data [faster]
 fasterData = f'results.pickle'
 try:
     for k, v in IO.loadPickle(fasterData):
         globals()[k] = v
-
     NNUDGE, NTEMPS, NTRIALS, NODES, DELTAS = loadedData.shape
 
 # start loading individual pickles
@@ -284,8 +292,7 @@ fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, inf), p0 = p0,\
                    jac = 'cs')
 
-settings = IO.readSettings(loadThis)
-repeats  = settings['repeat']
+repeats  = settings.repeat
 
 # %% normalize data
 
@@ -444,7 +451,6 @@ def worker(sample):
     auc = zeros((len(sample), 2))
     coeffs, errors = plotz.fit(sample, func, params = fitParam)
     for nodei, c in enumerate(coeffs):
-
         tmp = 0
 #        if c[0] < 1e-4:
 #            tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
@@ -489,15 +495,16 @@ mainax = fig.add_subplot(111, frameon = False, \
                          )
 out = lof(n_neighbors = NTRIALS)
 
-aucs = aucs_raw.copy()
+aucs   = aucs_raw.copy()
 thresh = 3
-clf = MinCovDet()
+clf    = MinCovDet()
 
-labels = 'Underwhelming\tOverwhelming'.split('\t')
-rejections = zeros((COND, NTEMPS, NODES))
+labels       = 'Underwhelming\tOverwhelming'.split('\t')
+rejections   = zeros((COND, NTEMPS, NODES))
 showOutliers = True
 showOutliers = False
-pval = .01
+pval         = .01
+
 pcorr = (NNUDGE - 1) * NTEMPS
 from sklearn.linear_model import Ridge
 from sklearn.feature_selection import f_regression
@@ -1517,7 +1524,7 @@ for idx, i in enumerate(X.columns[1:]):
         ax.ravel()[idx].axis('off')
 #    row = 0 if idx < 3 else 1
 #    col = idx * 2 if idx < 3 else row
-    
+
 #    print(row, col)
 #    tax = subplot2grid((2, 6), loc = (row, col), colspan = 2)
     x = linspace(mins[i], maxs[i])
@@ -1544,8 +1551,8 @@ for idx, i in enumerate(X.columns[1:]):
 #        tax.annotate(fr"$\beta$={round(beta, 2):e}", xy = xy, \
 #                 xytext = xy, xycoords = 'data', \
 #                 textcoords = 'data', rotation = 45, fontsize =  20)
-        
-        
+
+
 mainax = fig.add_subplot(111, frameon = False, \
                          xticks = [], \
                          yticks = [], \

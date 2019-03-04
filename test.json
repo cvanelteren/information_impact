@@ -1,0 +1,1004 @@
+{
+    "directed": false,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 1.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 2.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 3.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 4.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 5.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 6.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 7.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 8.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 9.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 10.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 11.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 12.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 13.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 14.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 15.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 16.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 17.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 18.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 19.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 20.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 21.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 22.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 23.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 24.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 25.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 26.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 27.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 28.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 29.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 30.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 31.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 32.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 33.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 34.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 35.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 36.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 37.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 38.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 39.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 40.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 41.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 42.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 43.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 44.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 45.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 46.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 47.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 48.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 49.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 50.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 51.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 52.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 53.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 54.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 55.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 56.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 57.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 58.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 59.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 60.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 61.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 62.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 63.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 64.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 65.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 66.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 67.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 68.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 69.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 70.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 71.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 72.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 73.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 74.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 75.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 76.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 77.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 78.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 79.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 80.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 81.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 82.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 83.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 84.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 85.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 86.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 87.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 88.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 89.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 90.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 91.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 92.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 93.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 94.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 95.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 96.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 97.0
+        },
+        {
+            "state": 1.0,
+            "nudge": 0.0,
+            "id": 98.0
+        },
+        {
+            "state": -1.0,
+            "nudge": 0.0,
+            "id": 99.0
+        }
+    ],
+    "links": [
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 1.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 2.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 3.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 4.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 5.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 6.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 7.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 8.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 9.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 10.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 11.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 13.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 16.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 22.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 24.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 29.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 33.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 38.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 40.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 42.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 45.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 49.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 50.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 60.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 62.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 65.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 69.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 73.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 76.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 78.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 87.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 88.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 89.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 90.0
+        },
+        {
+            "weight": 1.0,
+            "source": 0,
+            "target": 95.0
+        },
+        {
+            "weight": 1.0,
+            "source": 1.0,
+            "target": 28.0
+        },
+        {
+            "weight": 1.0,
+            "source": 4.0,
+            "target": 19.0
+        },
+        {
+            "weight": 1.0,
+            "source": 4.0,
+            "target": 26.0
+        },
+        {
+            "weight": 1.0,
+            "source": 4.0,
+            "target": 44.0
+        },
+        {
+            "weight": 1.0,
+            "source": 4.0,
+            "target": 63.0
+        },
+        {
+            "weight": 1.0,
+            "source": 4.0,
+            "target": 74.0
+        },
+        {
+            "weight": 1.0,
+            "source": 4.0,
+            "target": 92.0
+        },
+        {
+            "weight": 1.0,
+            "source": 5.0,
+            "target": 12.0
+        },
+        {
+            "weight": 1.0,
+            "source": 5.0,
+            "target": 15.0
+        },
+        {
+            "weight": 1.0,
+            "source": 5.0,
+            "target": 20.0
+        },
+        {
+            "weight": 1.0,
+            "source": 5.0,
+            "target": 21.0
+        },
+        {
+            "weight": 1.0,
+            "source": 5.0,
+            "target": 41.0
+        },
+        {
+            "weight": 1.0,
+            "source": 5.0,
+            "target": 56.0
+        },
+        {
+            "weight": 1.0,
+            "source": 5.0,
+            "target": 59.0
+        },
+        {
+            "weight": 1.0,
+            "source": 6.0,
+            "target": 17.0
+        },
+        {
+            "weight": 1.0,
+            "source": 6.0,
+            "target": 47.0
+        },
+        {
+            "weight": 1.0,
+            "source": 6.0,
+            "target": 57.0
+        },
+        {
+            "weight": 1.0,
+            "source": 6.0,
+            "target": 79.0
+        },
+        {
+            "weight": 1.0,
+            "source": 6.0,
+            "target": 86.0
+        },
+        {
+            "weight": 1.0,
+            "source": 9.0,
+            "target": 53.0
+        },
+        {
+            "weight": 1.0,
+            "source": 9.0,
+            "target": 82.0
+        },
+        {
+            "weight": 1.0,
+            "source": 12.0,
+            "target": 14.0
+        },
+        {
+            "weight": 1.0,
+            "source": 12.0,
+            "target": 36.0
+        },
+        {
+            "weight": 1.0,
+            "source": 12.0,
+            "target": 72.0
+        },
+        {
+            "weight": 1.0,
+            "source": 12.0,
+            "target": 75.0
+        },
+        {
+            "weight": 1.0,
+            "source": 12.0,
+            "target": 96.0
+        },
+        {
+            "weight": 1.0,
+            "source": 14.0,
+            "target": 37.0
+        },
+        {
+            "weight": 1.0,
+            "source": 15.0,
+            "target": 18.0
+        },
+        {
+            "weight": 1.0,
+            "source": 16.0,
+            "target": 39.0
+        },
+        {
+            "weight": 1.0,
+            "source": 16.0,
+            "target": 81.0
+        },
+        {
+            "weight": 1.0,
+            "source": 20.0,
+            "target": 23.0
+        },
+        {
+            "weight": 1.0,
+            "source": 20.0,
+            "target": 25.0
+        },
+        {
+            "weight": 1.0,
+            "source": 21.0,
+            "target": 27.0
+        },
+        {
+            "weight": 1.0,
+            "source": 25.0,
+            "target": 30.0
+        },
+        {
+            "weight": 1.0,
+            "source": 25.0,
+            "target": 71.0
+        },
+        {
+            "weight": 1.0,
+            "source": 26.0,
+            "target": 32.0
+        },
+        {
+            "weight": 1.0,
+            "source": 27.0,
+            "target": 35.0
+        },
+        {
+            "weight": 1.0,
+            "source": 27.0,
+            "target": 46.0
+        },
+        {
+            "weight": 1.0,
+            "source": 27.0,
+            "target": 66.0
+        },
+        {
+            "weight": 1.0,
+            "source": 28.0,
+            "target": 52.0
+        },
+        {
+            "weight": 1.0,
+            "source": 29.0,
+            "target": 34.0
+        },
+        {
+            "weight": 1.0,
+            "source": 30.0,
+            "target": 31.0
+        },
+        {
+            "weight": 1.0,
+            "source": 30.0,
+            "target": 51.0
+        },
+        {
+            "weight": 1.0,
+            "source": 30.0,
+            "target": 54.0
+        },
+        {
+            "weight": 1.0,
+            "source": 30.0,
+            "target": 55.0
+        },
+        {
+            "weight": 1.0,
+            "source": 30.0,
+            "target": 61.0
+        },
+        {
+            "weight": 1.0,
+            "source": 30.0,
+            "target": 67.0
+        },
+        {
+            "weight": 1.0,
+            "source": 33.0,
+            "target": 43.0
+        },
+        {
+            "weight": 1.0,
+            "source": 34.0,
+            "target": 58.0
+        },
+        {
+            "weight": 1.0,
+            "source": 36.0,
+            "target": 64.0
+        },
+        {
+            "weight": 1.0,
+            "source": 36.0,
+            "target": 98.0
+        },
+        {
+            "weight": 1.0,
+            "source": 42.0,
+            "target": 84.0
+        },
+        {
+            "weight": 1.0,
+            "source": 47.0,
+            "target": 48.0
+        },
+        {
+            "weight": 1.0,
+            "source": 47.0,
+            "target": 91.0
+        },
+        {
+            "weight": 1.0,
+            "source": 48.0,
+            "target": 83.0
+        },
+        {
+            "weight": 1.0,
+            "source": 51.0,
+            "target": 68.0
+        },
+        {
+            "weight": 1.0,
+            "source": 51.0,
+            "target": 70.0
+        },
+        {
+            "weight": 1.0,
+            "source": 51.0,
+            "target": 85.0
+        },
+        {
+            "weight": 1.0,
+            "source": 68.0,
+            "target": 77.0
+        },
+        {
+            "weight": 1.0,
+            "source": 68.0,
+            "target": 97.0
+        },
+        {
+            "weight": 1.0,
+            "source": 74.0,
+            "target": 80.0
+        },
+        {
+            "weight": 1.0,
+            "source": 74.0,
+            "target": 99.0
+        },
+        {
+            "weight": 1.0,
+            "source": 82.0,
+            "target": 93.0
+        },
+        {
+            "weight": 1.0,
+            "source": 86.0,
+            "target": 94.0
+        }
+    ]
+}

@@ -425,10 +425,13 @@ def addGraphPretty(graph, ax, \
         positions = nx.circular_layout(graph)
 # colors  = cm.tab20(arange(model.nNodes))
 # colors  = cm.get_cmap('tab20')(arange(model.nNodes))
-    if graph.number_of_nodes() > 20:
-        cmap = cm.get_cmap('gist_rainbow')
-
-    colors = cmap(arange(graph.number_of_nodes()))
+    from matplotlib import colors
+    if isinstance(cmap, colors.Colormap):
+        colors = cmap(arange(graph.number_of_nodes()))
+    elif isinstance(cmap, ndarray):
+        colors = cmap
+    else:
+        raise ValueError('Input not recognized')
 
     # default radius
 #    r = np.array(list(positions.values()))
@@ -459,6 +462,8 @@ def addGraphPretty(graph, ax, \
     # get length of the fontsize
 #    diamax = 6 * circlekwargs['radius']
     circlekwargs['radius'] = 1.2 * np.array([len(str(n)) for n in graph]).max()
+
+    nodePatches = {}
     for ni, n in enumerate(graph):
         # make circle
         if mapping is not None: # overwrite default if no mapping
@@ -479,7 +484,7 @@ def addGraphPretty(graph, ax, \
         # TODO : remove tis for member assignment
 
         # bookkeep for adding edge
-        graph.node[n]['patch'] = c
+        nodePatches[n] = c
 
     seen={} # bookkeeping
     from copy import copy
@@ -490,14 +495,18 @@ def addGraphPretty(graph, ax, \
                    lw = 2,\
                    alpha = 1,\
                    )
-
-    edgesScaling = {(u, v): graph[u][v]['weight'] for u, v in graph.edges()}
-    minWeight, maxWeight = min(edgesScaling.values()), max(edgesScaling.values())
+    edgesScaling = {}
+    for u, v in graph.edges():
+        edgesScaling[(u, v)] = dict(graph[u][v]).get('weight', 1)
+    if edgesScaling:
+        minWeight, maxWeight = min(edgesScaling.values()), max(edgesScaling.values())
+    else:
+        minWeight, maxWeight = 0, 1
 
     for u, v in graph.edges():
-        n1      = graph.node[u]['patch']
-        n2      = graph.node[v]['patch']
-        d       = graph[u][v]['weight']
+        n1      = nodePatches[u]
+        n2      = nodePatches[v]
+        d       = dict(graph[u][v]).get('weight', 1)
         rad     = 0.1
         if (u,v) in seen:
             rad = seen.get((u,v))
