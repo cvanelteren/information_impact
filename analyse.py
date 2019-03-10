@@ -102,16 +102,18 @@ centralities = {
              }
 
 # %%
+colors = cm.tab20(arange(NODES))
 fig, ax  = subplots(figsize = (10, 10), frameon = False)
 ax.set(xticks = [], yticks = [])
 positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
-                                         )
+                                         root = 'happy')
+#positions = nx.shell_layout(graph)
+#positions = nx.nx_pydot.pydot_layout(graph, prog = '')
 #                                         root = sorted(dict(model.graph.degree()).items())[0][0])
 
-positions = {node : tuple(i * 1 for i in pos) for node, pos in positions.items() }
-p = dict(layout = dict(scale = 1),\
-         annotate = dict(fontweight = 'extra bold'),\
-         cicle = dict(radius = 10),\
+p = dict(
+         layout   = dict(annotate = True), \
+         annotate = dict(fontsize  = 1.3),\
          )
 #p = {}
 plotz.addGraphPretty(model.graph, ax, positions, \
@@ -128,34 +130,38 @@ fig.show()
 savefig(figDir + 'network.eps')
 
 #%%
-ss = dict(\
-          height_ratios = [1, 1], width_ratios = [1, 1])
 centLabels = 'Degree Betweenness Information Eigenvector'.split()
-fig, ax = subplots(2, 2, gridspec_kw = ss)
+idx = 20
 
-#plotz.addGraphPretty(model.graph, ax[0, 0], \
-#                     positions, mapping = model.rmapping,
-#                     )
+p['annotate']['fontsize'] = 1.9
+fig, ax = subplots(2, 2, figsize = (idx, idx))
 from matplotlib.patches import Circle
+fig.subplots_adjust(hspace = 0.07, wspace = 0, left = 0, right = 1)
 for idx, (cent, cf) in enumerate(centralities.items()):
     c = dict(cf(model.graph))
     s = array(list(c.values()))
-    s = (s - s.min()) /(s.max() - s.min())
+    s = (s - s.min()) /(s.max() - s.min()) 
     tax = ax[:, :].ravel()[idx]
     tax.axis('off')
     tax.set_aspect('equal','box')
-    tax.set_title(centLabels[idx])
+    tax.set_title(centLabels[idx], fontsize = 40)
     plotz.addGraphPretty(model.graph, tax, positions, \
                      mapping = model.mapping,\
                      **p,\
                      )
-    for pidx, pp in enumerate(tax.get_children()):
-        if isinstance(pp, Circle):
-            pp.set(radius = s[pidx] * pp.radius * 2.4 )
-#fig.subplots_adjust(hspace = 0, wspace = 0)
-fig.savefig(figDir +  'graph_and_cent.eps')
-
-#assert 0
+    for artist in tax.get_children():
+        if isinstance(artist, Circle):
+            pidx = model.mapping[artist.get_label()]
+            tmp  = (s[pidx]) * artist.radius 
+            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
+            artist.set(facecolor = 'none')
+#            artist.set(alpha = s[pidx])
+#mainax = fig.add_subplot(111, xticks = [], yticks = [], frameon = False)
+#mainax.legend(handles = [Line2D([0],[0], color = colors[idx], marker = 'o', linestyle = 'none',\
+#                                label = node) for idx, node in enumerate(graph)], \
+#             bbox_to_anchor = (1, 1), loc = 'upper left', borderaxespad = 0)
+fig.show()
+fig.savefig(figDir +  'graph_and_cent.eps', bbox_inches = 'tight', pad_inches = 0, dpi = 10000)
 # %%
 # extract data for all nodes
 information_impact = '$\mu_i$'
@@ -164,7 +170,7 @@ from tqdm import tqdm
 
 
 # define color swaps
-colors = cm.tab20(arange(NODES))
+
 # swap default colors to one with more range
 rcParams['axes.prop_cycle'] = cycler('color', colors)
 
@@ -209,15 +215,17 @@ def worker(fidx):
                              for key in model.mapping\
                              for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
         # load the corresponding dataset to the control
-        useThis = fidx - node
-
+        controlidx = fidx - node
+        assert '{}' in fileNames[controlidx]
+        assert model.rmapping[jdx[0]] in fileName
+        print( model.rmapping[jdx[0]],fileName.split('=')[-1].split('.')[0])
         # load matching control
-        control = IO.loadData(fileNames[useThis])
+        control = IO.loadData(fileNames[controlidx])
          # load nudge
         sample  = IO.loadData(fileName)
         impact  = stats.KL(control.px, sample.px)
         # don't use +1 as the nudge has no effect at zero
-        redIm = nanmean(impact[DELTAS + EXTRA + 2:], axis = -1).T
+        redIm = nansum(impact[DELTAS + EXTRA + 2:], axis = -1).T
         # TODO: check if this works with tuples (not sure)
 
         for i in jdx:
@@ -234,7 +242,7 @@ try:
 except:
     fileNames = sorted(\
                        [j for i in flattenDict(data) for j in i],\
-                       key = lambda x: x.split('/')[-1].split('_')[0],\
+                       key = lambda x: os.path.getctime(x),\
                        )
 #    fileNames = [j for i in flattenDict(data) for j in i]
     var_dict = {}
@@ -331,7 +339,7 @@ for temp in range(NTEMPS):
 gs = dict(\
           height_ratios = [1, 1, 1], width_ratios = [1, .15, 1, 1],\
           )
-fig, ax = subplots(3, 4, sharex = 'col', sharey = 'row', gridspec_kw = gs)
+fig, ax = subplots(3, 4, sharex = 'all', sharey = 'row', gridspec_kw = gs)
 mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
 
@@ -347,7 +355,7 @@ _ii    = '$I(s_i^t ; S^t_0)$'
 [i.axis('off') for i in ax[:, 1]]
 
 rcParams['axes.labelpad'] = 80
-ax[1, 2].set_ylabel("$D_{KL}(P || P')$", labelpad = 5)
+ax[1, 2].set_ylabel("$D_{KL}(P' || P)$", labelpad = 5)
 ax[1, 0].set_ylabel(_ii, labelpad = 5)
 from matplotlib.ticker import FormatStrFormatter
 means, stds  = nanmean(zd, -3), nanstd(zd, -3)
@@ -361,22 +369,32 @@ for temp in range(NTEMPS):
         # compute mean fit
         mus    = means[nudge, temp]
         sigmas = stds[nudge, temp]
+        
+        
         meanCoeffs, meanErrors = plotz.fit(mus, func, params = fitParam)
+        
+        tmpauc = [scipy.integrate.quad(lambda x: func(x, *c) - c[0], 0, deltas // 2)[0] for c in meanCoeffs]
+        leader = np.argmax(tmpauc)
+        print(np.argsort(tmpauc))
         for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
-
             # plot mean fit
-            tax.plot(xx, func(xx, *meanCoeffs[idx]),\
-                     color = colors[idx],\
-                     alpha = 1, \
-                     markeredgecolor = 'black',\
-                     label =  node)
+            # tax.plot(xx, func(xx, *meanCoeffs[idx]),\
+            #          color = colors[idx],\
+            #          alpha = 1, \
+            #          markeredgecolor = 'black',\
+            #          label =  node)
             # plot the raw data
+            zorder = 1 if idx != leader else 5
+            # alpha  = .1 if zorder != 5 else 0
+            # tax.fill_between(x, mus[idx] - sidx * sigmas[idx], mus[idx] + sidx * sigmas[idx],\
+                              # color = (1 - alpha) * colors[idx],zorder = zorder)
             tax.errorbar(x, mus[idx],\
-                         fmt = '.',\
-                         yerr = sidx * sigmas[idx],\
-                         markersize = 15, \
-                         color = colors[idx],\
-                         label = node) # mpl3 broke legends?
+                          fmt = '-' if zorder == 5 else ':',\
+                          yerr = sidx * sigmas[idx],\
+                          capthick = 500,\
+                          markersize = 15, \
+                          color = colors[idx],\
+                          label = node) # mpl3 broke legends?
 
 #            ax[cidx].set(xscale = 'log')
 
@@ -391,11 +409,11 @@ for temp in range(NTEMPS):
              horizontalalignment = 'right')
 #    tax.set(xlim = (-1.5, 30))
 
-        #    ax[cidx].set(xscale = 'log', yscale = 'log'
 # format plot
-
+h = [Line2D([0], [0], marker = 'o', linestyle = 'none',\
+            color = colors[idx], label = model.rmapping[idx]) for idx in range(model.nNodes)]
 mainax.legend(\
-              tax.lines, [i.get_label() for i in tax.lines],\
+              handles        = h,\
               title          = 'Node', \
               title_fontsize = 15, \
               loc            = 'upper left', \
@@ -405,7 +423,7 @@ mainax.legend(\
               )
 subplots_adjust(hspace = 0, wspace = 0)
 fig.show()
-fig.savefig(figDir + 'mi_time.eps', format='eps', dpi=1000, pad_inches = 0,\
+fig.savefig(figDir + 'mi_time.eps', dpi=1000, pad_inches = 0,\
         bbox_inches = 'tight')
 
 show()
@@ -496,7 +514,7 @@ mainax = fig.add_subplot(111, frameon = False, \
 out = lof(n_neighbors = NTRIALS)
 
 aucs   = aucs_raw.copy()
-thresh = 3
+thresh = 2.5
 clf    = MinCovDet()
 
 labels       = 'Underwhelming\tOverwhelming'.split('\t')
@@ -685,7 +703,7 @@ for condition, condLabel in enumerate(conditionLabels):
     fig.savefig(figDir + f'causal_cent_ii_{conditionLabels[condition]}.eps')
 
 
-
+assert False
 # %% driver node estimates
 
 drivers = aucs.argmax(-1)

@@ -20,7 +20,7 @@ centralities = {
                     r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
                     r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
                     r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
-             }
+            }
 
 figDir = '../thesis/figures/'
 information_impact = '$\mu_i$'
@@ -306,7 +306,7 @@ for key, vals in loadedData.items():
                 stax.scatter(*tmpraw[:, inliers], color = colors[n])
                 stax.scatter(*tmpraw[:, outliers], color = colors[n], marker = 's')
                 
-                auc[[0, i + 1], j, :, n] = tmp # update correction
+                auc[[0, column + 1], row, :, n] = tmp # update correction
 
     # make general legend
     elements = [plt.Line2D([0], [0], marker = 'o', linestyle = 'none', color = colors[i], label = j) \

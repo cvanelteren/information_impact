@@ -131,32 +131,29 @@ def addGraphPretty(graph, ax, \
                    cmap      = cm.tab20, \
                    mapping   = None,\
                    **kwargs):
-    """
-    Adds a pretty graph. Recommended to use only for small graphs, i.e. N<< 100.
+    """Short summary.
 
-    Parameters
-    ----------
-    graph : networkx graph
-    ax : type
-    positions:
-        either a dict containing the position per node or a callable function that
-        return a dict with the coordinates
-    cmap: numpy array or color map
-    mapping : dict containing the mapping from node to label
-    Returns
-    -------
-    matplotlib axis
+    :param graph: Description of parameter `graph`.
+    :param ax: Description of parameter `ax`.
+    :param : Description of parameter ``. Defaults to None.
+    :param : Description of parameter ``. Defaults to cm.tab20.
+    :param : Description of parameter ``. Defaults to None.
+    :param : Description of parameter ``.
+    :return: Description of returned object.
 
     """
+
 
 
     from matplotlib.patches import FancyArrowPatch, Circle, ConnectionStyle, Wedge
 #    graph = model.graph.
     # if default
     if positions is None:
+        print('Using circular_layout')
         positions = nx.circular_layout(graph)
     # check if it is callable
     elif hasattr(positions, '__call__'):
+        print('User provided position function')
         positions = positions(graph)
 
 # colors  = cm.tab20(arange(model.nNodes))
@@ -174,34 +171,42 @@ def addGraphPretty(graph, ax, \
     # average distance
 #    r = linalg.norm(r[:, None] - r[None, :], axis = 0).mean() * .1
     # DEFAULTS
+    #
+    # get min distance between nodes; use that as baseline for circle size
+    layout = kwargs.get('layout', {})
+    s      = layout.get('scale', None)
+    if s:
+        positions = {i : array(j) * s for i, j in positions.items()}
+    from scipy.spatial.distance import pdist, squareform
+    tmp = array(list(positions.values()), dtype = float)
+    s   = pdist(tmp).min() * .40 # magic numbers galore!
     circlekwargs = dict(\
-                             radius    = 10, \
+                             radius    = s, \
                              alpha     = 1, \
-                             edgecolor = 'black', \
+                             edgecolor = 'none', \
                              linewidth = 1, \
                              linestyle = 'solid',\
                              zorder    = 2)
     for k, v in kwargs.get('circle', {}).items():
             circlekwargs[k] = v
+    # get length of the fontsize
+    #    diamax = 6 * circlekwargs['radius']
 
+
+    # default text stuff
     annotatekwargs = dict(\
                           horizontalalignment = 'center', \
                           verticalalignment   = 'center', \
                           transform           = ax.transAxes, \
-                          fontsize            = circlekwargs.get('radius', 1),\
                           )
-
     for k, v in kwargs.get('annotate', {}).items():
         annotatekwargs[k] = v
-
-
-    # get length of the fontsize
-#    diamax = 6 * circlekwargs['radius']
-    circlekwargs['radius'] = 1.2 * np.array([len(str(n)) for n in graph]).max()
-
-    for node, pos in positions.items():
-
-    positions = {i : array(j) * circlekwargs['radius'] * 4 for i,j in positions.items()}
+    # clip at minimum string length
+    tmp   = np.array([len(str(n)) for n in graph]).max()
+    maxFS = tmp
+    print(maxFS)
+    annotatekwargs['fontsize'] =  circlekwargs.get('radius') * annotatekwargs.get('fontsize', 1)
+    # positions   = {i : array(j) * circlekwargs['radius'] * 4 for i,j in positions.items()}
     nodePatches = {}
     for ni, n in enumerate(graph):
         # make circle
@@ -210,14 +215,18 @@ def addGraphPretty(graph, ax, \
         color = colors[ni]
         c = Circle(positions[n], \
                    facecolor = color,\
-                   **circlekwargs)
+                   label = n,\
+                   **circlekwargs, \
+                   )
         # add label
         # print(c.center[:2], pos[n])
         # ax.text(*c.center, n, horizontalalignment = 'center', \
         # verticalalignment = 'center', transform = ax.transAxes)
 #        print(.95 * circlekwargs['radius'])
-        annotatekwargs['fontsize'] = 8 #circlekwargs['radius'] * 8  / len(n)
-        ax.annotate(n, c.center, **annotatekwargs)
+        # annotatekwargs['fontsize'] = 8 #circlekwargs['radius'] * 8  / len(n)
+        if layout.get('annotate', False):
+            # bbox_props = dict(boxstyle="circle", fc = 'none', ec = colors[ni], lw = 1)
+            ax.annotate(n, c.center, **annotatekwargs)
         # add to ax
         ax.add_patch(c)
         # TODO : remove tis for member assignment
@@ -247,6 +256,8 @@ def addGraphPretty(graph, ax, \
         n2      = nodePatches[v]
         d       = dict(graph[u][v]).get('weight', 1)
         rad     = 0.1
+
+        # no clue why i did this
         if (u,v) in seen:
             rad = seen.get((u,v))
             rad = ( rad + np.sign(rad) *0.1 ) * -1
@@ -256,8 +267,7 @@ def addGraphPretty(graph, ax, \
         arrowsprops['color'] = 'green' if d > 0 else 'red'
 #        arrowsprops['alpha'] = alphaEdge
         if maxWeight != minWeight:
-            arrowsprops['lw'] = ((maxWeight - d) / (maxWeight - minWeight)) * 5
-
+            arrowsprops['lw'] = np.clip(((maxWeight - d) / (maxWeight - minWeight)) * 2.5, .1, None) # magic numbers galore!
         # self-edge is a special case
         if u == v:
             # n2 = copy(n1)
