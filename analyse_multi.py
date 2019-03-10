@@ -84,7 +84,8 @@ class Worker:
         used in the analysis below
         """
 
-        fileName = self.filenames[fidx]
+        fileName  = self.filenames[fidx]
+        fileNames = self.filenames
         setting = self.setting
         # do control
         data = np.frombuffer(self.buff).reshape(self.buffshape)
@@ -103,36 +104,40 @@ class Worker:
         if '{}' in fileName:
             # load control; bias correct mi
             control = IO.loadData(fileName)
-            dir     = fileName.split('/')[-4]
             # panzeri-treves correction
             mi   = control.mi
             bias = stats.panzeriTrevesCorrection(control.px,\
                                                  control.conditional, \
                                                  setting.repeat)
             mi -= bias
+    
             data[0, trial, temp]  = mi[:self.deltas, :].T
         # nudged data
         else:
-            targetName = fileName.split('_')[-1] # extract relevant part
+            targetName = fileName.split('=')[-1].strip('.pickle') # extract relevant part
+            # extract pulse and only get left part
+            targetName = re.sub('{|}', '', targetName).split(':')[0]
             # get the idx of the node
-            jdx = [setting.mapping[int(j)] if j.isdigit() else setting.mapping[j]\
-                                 for key in setting.mapping\
-                                 for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
-
+            nodeNames = []
+            for name, idx in setting.mapping.items():
+                if name in targetName:
+                    nodeNames.append(idx)
+                    # print(idx, name, targetName)
+                    
             # load the corresponding dataset to the control
-            useThis = fidx - node
+            controlidx = fidx - node
+            assert '{}' in fileNames[controlidx]
             # load matching control
-            control = IO.loadData(self.filenames[useThis])
+            control = IO.loadData(fileNames[controlidx])
              # load nudge
             sample  = IO.loadData(fileName)
-            impact  = stats.KL(control.px, sample.px)
+            # impact  = stats.KL(control.px, sample.px)
+            impact = stats.KL(sample.px, control.px)
             # don't use +1 as the nudge has no effect at zero
-            redIm = np.nanmean(impact[-self.deltas:], axis = -1).T
+            redIm = np.nansum(impact[-self.deltas:], axis = -1).T
             # TODO: check if this works with tuples (not sure)
-            condition = (node - 1) // setting.nNodes + 1
-            # assign the nudged conditions to the proper bins
-            for ii in jdx:
-                data[condition, trial, temp, ii] = redIm.squeeze().T
+            for name in nodeNames:
+                data[(node - 1) // setting.nNodes + 1, trial, temp, name,  :] = redIm.squeeze().T
         self.pbar.update(1)
 # %% load data
 # functionize this; part of IO?
@@ -142,7 +147,7 @@ for key in data:
     processes = mp.cpu_count()
     worker = Worker(data[key], setting)
     from multiprocessing.pool import ThreadPool
-
+    
     with ThreadPool(processes = processes) as p:
         p.map(worker, worker.idx)
     loadedData[key] = np.frombuffer(worker.buff, dtype = np.float64).reshape(*worker.buffshape)
@@ -157,7 +162,7 @@ from matplotlib.patches import Circle
 # plot pretty graphs with centralities
 for k, v in loadedData.items():
     fig, ax = plt.subplots()
-    ax.plot(v[0,0].mean(0).T)
+    ax.plot(v[1, 0].mean(0).T)
 
     fig, ax  = plt.subplots(len(centralities) // 2, 2)
     graph    = nx.readwrite.json_graph.node_link_graph(settings[k].graph)
@@ -340,4 +345,20 @@ for key, vals in loadedData.items():
     aucs[key] = auc # update data
 # %%
 
-                
+for i in zd:
+    for j in i:
+        fig, ax = plt.subplots()
+        for c, k in zip(colors, j.mean(0)):
+            ax.plot(k, color = c)
+# %%
+
+for l in nx.generate_multiline_adjlist(graph):
+    tmp = []
+    w = l.split()
+    try:
+        for i in w:
+            print(i)
+            tmp.append(literal_eval(i))
+    except:
+        tmp.append(w)
+    print(tmp)

@@ -13,7 +13,7 @@ from matplotlib.pyplot import *
 from time import sleep
 from Utils import plotting as plotz, stats, IO
 import os, re, networkx as nx, scipy, multiprocessing as mp
-
+warnings.filterwarnings('ignore')
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
@@ -209,27 +209,31 @@ def worker(fidx):
         data[0, trial, temp]  = mi[:DELTAS - EXTRA, :].T
     # nudged data
     else:
-        targetName = fileName.split('_')[-1] # extract relevant part
+        targetName = fileName.split('=')[-1].strip('.pickle') # extract relevant part
+        # extract pulse and only get left part
+        targetName = re.sub('{|}', '', targetName).split(':')[0]
         # get the idx of the node
-        jdx = [model.mapping[int(j)] if j.isdigit() else model.mapping[j]\
-                             for key in model.mapping\
-                             for j in re.findall(str(key), re.sub(':(.*?)\}', '', targetName))]
+        
+        nodeNames = []
+        for name, idx in model.mapping.items():
+            if name in targetName:
+                nodeNames.append(idx)
+                print(idx, name, targetName)
+                
         # load the corresponding dataset to the control
         controlidx = fidx - node
         assert '{}' in fileNames[controlidx]
-        assert model.rmapping[jdx[0]] in fileName
-        print( model.rmapping[jdx[0]],fileName.split('=')[-1].split('.')[0])
         # load matching control
         control = IO.loadData(fileNames[controlidx])
          # load nudge
         sample  = IO.loadData(fileName)
-        impact  = stats.KL(control.px, sample.px)
+        # impact  = stats.KL(control.px, sample.px)
+        impact = stats.KL(sample.px, control.px)
         # don't use +1 as the nudge has no effect at zero
         redIm = nansum(impact[DELTAS + EXTRA + 2:], axis = -1).T
         # TODO: check if this works with tuples (not sure)
-
-        for i in jdx:
-            data[(node - 1) // NODES + 1, trial, temp, i,  :] = redIm.squeeze().T
+        for name in nodeNames:
+            data[(node - 1) // NODES + 1, trial, temp, name,  :] = redIm.squeeze().T
 
 # look for stored data [faster]
 fasterData = f'results.pickle'
@@ -242,7 +246,7 @@ try:
 except:
     fileNames = sorted(\
                        [j for i in flattenDict(data) for j in i],\
-                       key = lambda x: os.path.getctime(x),\
+                       key = lambda x: os.path.getmtime(x),\
                        )
 #    fileNames = [j for i in flattenDict(data) for j in i]
     var_dict = {}
@@ -263,7 +267,7 @@ except:
     tmp = range(tidx)
     processes = mp.cpu_count()
     with mp.Pool(processes = processes, initializer = initWorker,\
-             initargs = (buff, buffShape, expStruct)) as p:
+              initargs = (buff, buffShape, expStruct)) as p:
         p.map(worker, tqdm(tmp))
     loadedData = frombuffer(buff, dtype = float64).reshape(*buffShape)
     # store for later
@@ -373,7 +377,7 @@ for temp in range(NTEMPS):
         
         meanCoeffs, meanErrors = plotz.fit(mus, func, params = fitParam)
         
-        tmpauc = [scipy.integrate.quad(lambda x: func(x, *c) - c[0], 0, deltas // 2)[0] for c in meanCoeffs]
+        tmpauc = [scipy.integrate.quad(lambda x: func(x, *c), 0, np.inf)[0] for c in meanCoeffs]
         leader = np.argmax(tmpauc)
         print(np.argsort(tmpauc))
         for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
@@ -388,13 +392,14 @@ for temp in range(NTEMPS):
             # alpha  = .1 if zorder != 5 else 0
             # tax.fill_between(x, mus[idx] - sidx * sigmas[idx], mus[idx] + sidx * sigmas[idx],\
                               # color = (1 - alpha) * colors[idx],zorder = zorder)
-            tax.errorbar(x, mus[idx],\
-                          fmt = '-' if zorder == 5 else ':',\
-                          yerr = sidx * sigmas[idx],\
-                          capthick = 500,\
-                          markersize = 15, \
-                          color = colors[idx],\
-                          label = node) # mpl3 broke legends?
+            if zorder == 5:
+                tax.errorbar(x, mus[idx],\
+                              fmt = '-' if zorder == 5 else ':',\
+                              yerr = sidx * sigmas[idx],\
+                              capthick = 500,\
+                              markersize = 15, \
+                              color = colors[idx],\
+                              label = node) # mpl3 broke legends?
 
 #            ax[cidx].set(xscale = 'log')
 
@@ -408,10 +413,12 @@ for temp in range(NTEMPS):
              transform = tax.transAxes,\
              horizontalalignment = 'right')
 #    tax.set(xlim = (-1.5, 30))
+    # if temp  == 0 and nudge == 0 :
+        # print('HERHERHERH')
 
 # format plot
 h = [Line2D([0], [0], marker = 'o', linestyle = 'none',\
-            color = colors[idx], label = model.rmapping[idx]) for idx in range(model.nNodes)]
+            color = colors[idx], label = node) for idx, node in model.rmapping.items()]
 mainax.legend(\
               handles        = h,\
               title          = 'Node', \
@@ -427,6 +434,7 @@ fig.savefig(figDir + 'mi_time.eps', dpi=1000, pad_inches = 0,\
         bbox_inches = 'tight')
 
 show()
+assert 0
 
 # %% presentation plot
 rcParams['axes.labelpad'] = 0
@@ -703,7 +711,7 @@ for condition, condLabel in enumerate(conditionLabels):
     fig.savefig(figDir + f'causal_cent_ii_{conditionLabels[condition]}.eps')
 
 
-assert False
+# assert False
 # %% driver node estimates
 
 drivers = aucs.argmax(-1)
