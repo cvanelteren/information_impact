@@ -268,8 +268,9 @@ class Settings:
                     try:
                         graph  = loadData(os.path.join(root, file)).graph
                         if graph:
+                            graph.__version__ = 1.0 # assume legacy data
                             print("Graph found in data file!")
-                            self._graph = nx.readwrite.json_graph.node_link_data(graph)
+                            self._graph = graph
                             return
                     except AttributeError:
                         continue
@@ -285,8 +286,8 @@ class Settings:
         """
         m = self.model.split('.')
         mt = '.'.join(i for i in m[:-1]) # remove extension
-        tmp = nx.readwrite.json_graph.node_link_graph(self.graph)
-        return getattr(importlib.import_module(mt), m[-1])(tmp)
+        print(getattr(self.graph, '__version__', 1))
+        return getattr(importlib.import_module(mt), m[-1])(self.graph)
 
     @property
     def mapping(self):
@@ -297,7 +298,7 @@ class Settings:
         Extracts mapping either from dict or attempts to load the model
         """
         if isinstance(val, property):
-            model = self.loadModel()
+            model          = self.loadModel()
             self._mapping  = model.mapping
         elif isinstance(val, dict):
             self._mapping = val
@@ -310,25 +311,15 @@ class Settings:
         Extracts rmapping either from dict or attempts to load the model
         """
         if isinstance(val, property):
+            # implicitly works due to how the vars are loaded
+            # mapping is loaded first and thus only needs constructor
+            # self._rmapping = {j: i for i, j in self.mapping.items()}
             model = self.loadModel()
             self._rmapping  = model.rmapping
         elif isinstance(val, dict):
             self._rmapping = val
 
-    def __repr__(self):
-        """
-        Print all settings
-        """
-        banner = '-' * 32
-        top    = f'\n{banner} Simulation Settings {banner}'
 
-        s = top
-        for k, v in self.__dict__.items():
-            if not k.startswith('_'):
-                s += f'\n{k:<15} = {v}' # basic alignment[magic number]
-        s += '\n'
-        s += '-' * len(top)
-        return s
     def addItems(self, data):
         """
         Helper function for read; gives warning for unintended items
@@ -393,6 +384,20 @@ class Settings:
                       s, f,\
                       default = lambda x : float(x), \
                       indent  = 4)
+    def __repr__(self):
+        """
+        Print all settings
+        """
+        banner = '-' * 32
+        top    = f'\n{banner} Simulation Settings {banner}'
+
+        s = top
+        for k, v in self.__dict__.items():
+            if not k.startswith('_'):
+                s += f'\n{k:<15} = {v}' # basic alignment[magic number]
+        s += '\n'
+        s += '-' * len(top)
+        return s
 
 @dataclass
 class SimulationResult(object):

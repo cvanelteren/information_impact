@@ -50,64 +50,6 @@ def fit(y, func, x = None,\
 
     return coefficients, errors
 
-def extractImpact(data):
-    """
-    Assumes the input is a dict with keys the impact condition,
-    attempts to extract the impacts
-    """
-    return {key : array([hellingerDistance(i.px, data['{}'].px) for i in val]) for key, val in data.items() if key != '{}'}
-
-
-def c():
-    close('all')
-
-
-
-
-# %%
-def showImpact(model, results, showBoth = 'without'):
-    # TODO: do we need to include the node being nudged or not? -> only works if only 1 is nudged
-    # TODO: clean this up
-    '''
-    Shows the impact of the node.
-    Impact is defined as the sum squared difference on the node probability compared to control
-    [see below]
-    NOTE this assumes results has a first index 'control'
-    '''
-    assert len(results) > 2, 'Did you nudge the data?'
-
-    control = results['control']['node']
-    impacts = {}
-    x       = arange(len(results) - 1) # for plotting  as well as indexing in 'with' case
-    for resultCondition, values in results.items():
-        if resultCondition != 'control':
-            # look for the correct index, disregarding the index if we only want to see the effect of nudging the node
-            if type(resultCondition) is int or type(resultCondition) is str:
-                idx = [\
-                       idx for name, idx in model.mapping.items() if idx != resultCondition\
-                       ] if showBoth == 'without' else model.nodeIDs
-            elif type(resultCondition) is tuple:
-                idx = [\
-                       idx for name, idx in model.mapping.items() if idx not in resultCondition\
-                       ] if showBoth == 'without' else model.nodeIDs
-            print(idx)
-            nudgeNodeProbability = values['node']
-            # compute hellinger distance only for the subset (else all nodes are used)
-            impacts[resultCondition] = hellingerDistance(\
-                   control[idx], nudgeNodeProbability[idx]).mean() # without mean it is node x delta x node state
-    # PLOTTING
-    fig, ax = subplots()
-    # formatting
-    formatting = dict(xlabel = 'nudge on', ylabel = 'impact (hellinger distance)', \
-                      title = 'Impact on node distribution', xticks = x, \
-                      xticklabels = list(impacts.keys()))
-
-    ax.bar(x = x, height = list(impacts.values()), align = 'center')
-    setp(ax, **formatting)
-    return impacts
-
-
-
 def c():
     close('all')
 
@@ -142,9 +84,6 @@ def addGraphPretty(graph, ax, \
     :return: Description of returned object.
 
     """
-
-
-
     from matplotlib.patches import FancyArrowPatch, Circle, ConnectionStyle, Wedge
 #    graph = model.graph.
     # if default
@@ -173,7 +112,7 @@ def addGraphPretty(graph, ax, \
     # DEFAULTS
     #
     # get min distance between nodes; use that as baseline for circle size
-    layout = kwargs.get('layout', {})
+    layout = kwargs.get('layout', dict(annotate = True))
     s      = layout.get('scale', None)
     if s:
         positions = {i : array(j) * s for i, j in positions.items()}
@@ -204,7 +143,6 @@ def addGraphPretty(graph, ax, \
     # clip at minimum string length
     tmp   = np.array([len(str(n)) for n in graph]).max()
     maxFS = tmp
-    print(maxFS)
     annotatekwargs['fontsize'] =  circlekwargs.get('radius') * annotatekwargs.get('fontsize', 1)
     # positions   = {i : array(j) * circlekwargs['radius'] * 4 for i,j in positions.items()}
     nodePatches = {}
@@ -234,7 +172,7 @@ def addGraphPretty(graph, ax, \
         # bookkeep for adding edge
         nodePatches[n] = c
 
-    seen={} # bookkeeping
+    seen = {} # bookkeeping
     from copy import copy
     # arrow style for drawing
     arrowsprops = dict(\

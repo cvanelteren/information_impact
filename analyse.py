@@ -47,7 +47,7 @@ temp     = temps[0]
 # Draw graph ; assumes the simulation is over 1 type of graph
 
 
-graph     = nx.readwrite.json_graph.node_link_graph(settings.graph)
+graph     = settings.graph
 model     = settings.loadModel() # TODO: replace this with mappings
 # control  = IO.loadData(data[f't={temp}']['control'][0]) # TEMP WORKAROUND
 # model    = Ising(control.graph)
@@ -204,9 +204,9 @@ def worker(fidx):
         bias = stats.panzeriTrevesCorrection(control.px,\
                                              control.conditional, \
                                              repeats)
-        mi -= bias
+        # mi -= bias
 
-        data[0, trial, temp]  = mi[:DELTAS - EXTRA, :].T
+        data[0, trial, temp]  = mi[:DELTAS, :].T
     # nudged data
     else:
         targetName = fileName.split('=')[-1].strip('.pickle') # extract relevant part
@@ -218,8 +218,9 @@ def worker(fidx):
         for name, idx in model.mapping.items():
             if name in targetName:
                 nodeNames.append(idx)
-                print(idx, name, targetName)
                 
+        # assert model.rmapping[nodeNames[0]] in targetName, f'node not matched {targetName} model.rmapping[nodeNames[0]]'
+        # print(targetName, model.mapping[nodeNames[0]], mp.current_process())
         # load the corresponding dataset to the control
         controlidx = fidx - node
         assert '{}' in fileNames[controlidx]
@@ -230,10 +231,10 @@ def worker(fidx):
         # impact  = stats.KL(control.px, sample.px)
         impact = stats.KL(sample.px, control.px)
         # don't use +1 as the nudge has no effect at zero
-        redIm = nansum(impact[DELTAS + EXTRA + 2:], axis = -1).T
+        redIm = nansum(impact[-DELTAS:], axis = -1).T
         # TODO: check if this works with tuples (not sure)
         for name in nodeNames:
-            data[(node - 1) // NODES + 1, trial, temp, name,  :] = redIm.squeeze().T
+            data[(node - 1) // model.nNodes + 1, trial, temp, name,  :] = redIm.squeeze().T
 
 # look for stored data [faster]
 fasterData = f'results.pickle'
