@@ -286,7 +286,6 @@ class Settings:
         """
         m = self.model.split('.')
         mt = '.'.join(i for i in m[:-1]) # remove extension
-        print(getattr(self.graph, '__version__', 1))
         return getattr(importlib.import_module(mt), m[-1])(self.graph)
 
     @property

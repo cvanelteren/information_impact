@@ -151,7 +151,9 @@ for idx, (cent, cf) in enumerate(centralities.items()):
                      )
     for artist in tax.get_children():
         if isinstance(artist, Circle):
-            pidx = model.mapping[artist.get_label()]
+            lab = artist.get_label()
+            lab = int(lab) if lab.isdigit() else lab
+            pidx = model.mapping[lab]
             tmp  = (s[pidx]) * artist.radius 
             tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
             artist.set(facecolor = 'none')
@@ -216,7 +218,7 @@ def worker(fidx):
         
         nodeNames = []
         for name, idx in model.mapping.items():
-            if name in targetName:
+            if str(name) in targetName:
                 nodeNames.append(idx)
                 
         # assert model.rmapping[nodeNames[0]] in targetName, f'node not matched {targetName} model.rmapping[nodeNames[0]]'
@@ -349,19 +351,19 @@ mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
 
 #mainax.set_title(f'\n\n').
-mainax.set_xlabel('Time[step]', labelpad = 40)
+mainax.set_xlabel('Time (t)', fontsize = 22, labelpad = 40)
 
 x  = arange(DELTAS)
 xx = linspace(0, 1 * DELTAS, 1000)
 sidx = 2 # 1.96
 labels = 'Control\tUnderwhelming\tOverwhelming'.split('\t')
-_ii    = '$I(s_i^t ; S^t_0)$'
+_ii    = '$I(s_i^{t+t_0} ; S^t_0)$'
 
 [i.axis('off') for i in ax[:, 1]]
 
 rcParams['axes.labelpad'] = 80
-ax[1, 2].set_ylabel("$D_{KL}(P' || P)$", labelpad = 5)
-ax[1, 0].set_ylabel(_ii, labelpad = 5)
+ax[1, 2].set_ylabel("$D_{KL}(P' || P)$", fontsize = 22, labelpad = 5)
+ax[1, 0].set_ylabel(_ii, fontsize = 22, labelpad = 5)
 from matplotlib.ticker import FormatStrFormatter
 means, stds  = nanmean(zd, -3), nanstd(zd, -3)
 
@@ -393,14 +395,14 @@ for temp in range(NTEMPS):
             # alpha  = .1 if zorder != 5 else 0
             # tax.fill_between(x, mus[idx] - sidx * sigmas[idx], mus[idx] + sidx * sigmas[idx],\
                               # color = (1 - alpha) * colors[idx],zorder = zorder)
-            if zorder == 5:
-                tax.errorbar(x, mus[idx],\
-                              fmt = '-' if zorder == 5 else ':',\
+            tax.errorbar(x, mus[idx],\
+                              fmt = '-',\
                               yerr = sidx * sigmas[idx],\
                               capthick = 500,\
                               markersize = 15, \
                               color = colors[idx],\
-                              label = node) # mpl3 broke legends?
+                              label = node, \
+                              alpha = 0.25 if zorder == 1 else 1) # mpl3 broke legends?
 
 #            ax[cidx].set(xscale = 'log')
 
@@ -409,7 +411,7 @@ for temp in range(NTEMPS):
                          scilimits = (0, 4))
 
     tax.text(.95, .9, \
-             f'T={round(temps[temp], 2)}', \
+             f'$M_r$ = {round(temps[temp], 2)}', \
              fontdict = dict(fontsize = 15),\
              transform = tax.transAxes,\
              horizontalalignment = 'right')
@@ -431,12 +433,10 @@ mainax.legend(\
               )
 subplots_adjust(hspace = 0, wspace = 0)
 fig.show()
-fig.savefig(figDir + 'mi_time.eps', dpi=1000, pad_inches = 0,\
+fig.savefig(figDir + 'mi_time.png', dpi=1000, pad_inches = 0,\
         bbox_inches = 'tight')
 
 show()
-assert 0
-
 # %% presentation plot
 rcParams['axes.labelpad'] = 0
 fig, ax = subplots(figsize = (15, 10))
@@ -581,7 +581,10 @@ for temp in range(NTEMPS):
                         color = colors[idx], \
                         label = node, alpha = alpha, \
                         linewidth = 1)
-
+            xx, yy = aucs[[0, nudge], temp].reshape(2, -1).min(1), aucs[[0, nudge], temp].reshape(2, -1).max(1)
+            
+            # tt = np.linspace(xx.min(), yy.min())
+            # tax.plot(tt, tt, '--k')
 #            tax.scatter(*tmp[:, ident < 0], s = 100, marker = 's')
 #        slope, intercept, r, p, stder = scipy.stats.linregress(\
 #                                       *aucs[[0, nudge], temp].reshape(COND, -1))
@@ -631,7 +634,7 @@ for temp in range(NTEMPS):
                     l._facecolors[:, -1] = 1
         if nudge == 1:
              tax.text(.05, .9, \
-             f'T={round(temps[temp], 2)}', \
+             f'$M_r$ = {round(temps[temp], 2)}', \
              fontdict = dict(fontsize = 15),\
              transform = tax.transAxes,\
              horizontalalignment = 'left')
@@ -690,7 +693,7 @@ for condition, condLabel in enumerate(conditionLabels):
                      horizontalalignment = 'center')
             # every row set label
             if i == 0:
-                tax.set_title(f'T={round(temps[temp], 2)}')
+                tax.set_title(f'$M_r$ = {round(temps[temp], 2)}')
                 if temp == NTEMPS - 1:
                     leg = tax.legend(loc = 'upper left', \
                               bbox_to_anchor = (1.0, 1),\
@@ -775,7 +778,7 @@ mainax = fig.add_subplot(111, frameon = False, \
 subplots_adjust(wspace = 0)
 width = .4
 xloc  = arange(NTEMPS) * 2
-conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]
+conditions = [f'$M_r$ = {round(x, 2)}\n{y}' for x in temps for y in nudges]
 condLabels = 'Underwhelming Overwhelming'.split()
 labels = f'{information_impact}\tdeg\tclose\tbet\tev'.split('\t')
 
@@ -968,7 +971,7 @@ for ni in range(N):
             # hack the lmits
             if cond == 0:
                 tax.text(1, 0, 1,\
-                     f'T={round(temps[t], 2)}', \
+                     f'$M_r$ = {round(temps[t], 2)}', \
                      fontdict = dict(fontsize = 40),\
                      transform = tax.transAxes,\
                      horizontalalignment = 'right', zorder = 5)
@@ -1091,7 +1094,7 @@ for cond in range(COND):
 # %% plot score and feature importance
 rcParams['axes.labelpad'] = 5
 fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
-                   figsize = (10,10))
+                   figsize = (10,15))
 x = arange(N + 1) * (1 + width) * 2
 width = .5
 mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
@@ -1108,44 +1111,112 @@ d = (scores[:, None] - shuffscores) # / (scores)
 d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
 d = d.mean(1) / s.mean(1)[:, None] * 100
 for temp in range(NTEMPS):
-
     for cond in range(COND):
-
         if temp == 0:
-            ax[0, cond].set_title(condLabels[cond])
-#            ax[0, cond].errorbar(\
-#                          t, ss[:, cond], yerr = sss[:, cond],\
-#                          linestyle = 'none',\
-#                          color = 'k',\
-#                          )
-
+            ax[0, cond].set_title(condLabels[cond], fontsize = 30)
+            
         tax = ax[0, cond]
+        if temp == 0:
+            tax.axhline(.5, color = 'black', linestyle = 'dashed')
+        
+            
+        
         tax.bar(t[temp], ss[temp, cond], width = width, \
                 color = colors[0])
+        
 #        tax.boxplot(s[temp, :, cond], \
 #                )
         tax = ax[1, cond]
         tax.bar(x + width * temp, mimF[temp, :, cond],\
-                width = width, label = f'T={round(temps[temp], 2)}')
+                width = width, label = f'M_r ={round(temps[temp], 2)}')
+        tax.axhline(1/5, color = 'black', linestyle = 'dashed')
 
         tax = ax[2, cond]
         tax.bar(x + width * temp, d[temp, ..., cond], \
                 width = width)
 #ax[0, 0].boxplot(s[..., 0].T)
-ax[0,0].set(xticklabels = [f'T={round(temp, 2)}' for temp in temps],\
+ax[0,0].set(xticklabels = [f'$M_r$ = {round(temp, 2)}' for temp in temps],\
             xticks = t, \
-            ylabel = 'Accuracy score')
+            )
+ax[0, 0].set_ylabel('Accuracy score', fontsize = 25)
 
+height = 1.05
+ax[0, 0].plot(t, height * ones(t.size) + .025, '-k')
+ax[0, 0].text(t[1],  height + .015, '*', fontsize = 20)
+ax[0, 0].set(ylim = (0, 1.3))
+
+ax[0, 1].plot(t, height * ones(t.size) + .025, '-k')
+ax[0, 1].text(t[1],  height + .015, '*', fontsize = 20)
+ax[0, 1].set(ylim = (0, 1.3))
+
+ax[1, 0].plot(x, height * ones(x.size) + .025, '-k')
+ax[1, 0].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
+ax[1, 0].set(ylim = (0, 1.3))
+
+ax[1, 1].plot(x, height * ones(x.size) + .025, '-k')
+ax[1, 1].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
+ax[1, 1].set(ylim = (0, 1.3))
+
+#ax[2, 0].plot(x, 100 * ones(x.size) + .025, '-k')
+#ax[2, 0].text(x[x.size // 2],  100 + .015, '*', fontsize = 20)
+#ax[2, 0].set(ylim = (0, 115))
+
+centralities = {
+                    r'$c_i^{deg}$' : partial(nx.degree, weight = 'weight'), \
+                    r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
+                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
+                    r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
+             }
 ax[1,0].set(xticks = x +  width * 3/NTEMPS, \
             xticklabels = '',\
-            ylabel = 'Feature importance')
+            )
+ax[1, 0].set_ylabel('Feature importance', fontsize = 25)
 ax[1,1].legend()
-ax[2, 0].set(ylabel = 'delta score(%)',\
+
+ax[2, 0].set_ylabel('delta score(%)', fontsize = 25)
+ax[2, 0].set(
              xticks = x +  width * 3/NTEMPS, \
-             xticklabels = ['$\mu_i$', *centralities.keys()],\
+             xticklabels = ['$\mu_{max}$', *(i.replace('_i', '_{max}') for i in centralities.keys())],\
              )
+ax[2,0].tick_params('x', labelsize = 25, rotation = 45)
+ax[2,1].tick_params('x', labelsize = 25, rotation = 45)
 fig.subplots_adjust(wspace = 0)
 fig.savefig(figDir + 'classifier_stats.eps')
+
+# %%
+from matplotlib import gridspec
+fig = figure()
+
+gs1 = gridspec.GridSpec(1,1)
+gs1.update(left = 0.05, right = 0.48, wspace = 0.05)
+left = fig.add_subplot(gs1[0]) # ((2,3), (0,0), colspan = 1, rowspan = 2, fig = fig)
+
+gs2 = gridspec.GridSpec(3, 2)
+gs2.update(left = .55, right = .98, hspace = 0, wspace = 0)
+for idx, (i, j, tmp) in enumerate(zip(d.mean(0), mimF.mean(0), list(gs2)[1:])):
+    ax = fig.add_subplot(tmp)
+    # if ax.set(yticklabels = [], xticklabels = [])
+    ax.scatter(i,j)
+# left.set_title('Prediction accuracy')
+# left.bar([0,1], ss.mean(0))
+   
+# left.set_ylabel('Accuracy score')
+# left.set(xticks = [0, 1], xticklabels = conditionLabels)
+# left.axhline(.5, color = 'red', linestyle = 'dashed', label = 'random choice')
+# [left.annotate('*', (i, j + .005), fontsize = 20) for i, j in zip([0, 1], ss.mean(0))]
+
+# xr = arange(len(labels))
+# left.legend(loc = 'upper left')
+
+# labels = ['$\mu_i$', *centLabels]
+# for idx, label in enumerate(labels):
+#     r, c  = unravel_index(idx, (2,2))
+#     gs = gridspec.GridSpec
+#     ax = subplot2grid((2, 3), (r, c + 1), fig = fig)
+    # ax.scatter(d.mean(0)[idx], mimF.mean(0)[idx])
+# right.set(xlabel = '$\delta$ score(%)', ylabel = 'Feature importance')
+# [right.bar(xr + width * idx, i, width = width) for idx, i in enumerate(mimF.mean(0).T)]
+
 # %%
 d = (scores.mean(0) - shuffscores.mean(0)) / (scores.mean(0))
 #s = (scores - shuffscores) / (
@@ -1346,7 +1417,7 @@ for temp in range(NTEMPS):
         mainax = fig.add_subplot(111, xticks = [],\
                                  yticks = [],\
                                  frameon = False)
-        mainax.set_title(f'T={temps[temp]}\n')
+        mainax.set_title(f'$M_r$ = {temps[temp]}\n')
     #    mainax = fig.add_subplot(121, xticks = [],\
     #                             yticks = [],\
     #                             frameon = False, \
@@ -1385,7 +1456,7 @@ for temp in range(NTEMPS):
             tax.scatter(*xi.T, c = colors[ypred])
         ax[-1, 0].set_xlabel('Z-scored $\mu_i$', labelpad = 15)
         ax[-1, 1].set_xlabel('Silhouette score', labelpad = 15)
-        fig.savefig(figDir + f'T={round(temps[temp], 2)}_kmeans{cond}.eps')
+        fig.savefig(figDir + f'$M_r$ = {round(temps[temp], 2)}_kmeans{cond}.eps')
 # %% optimal kmeans plot
 
 fig, ax = subplots(1,2, sharey = 'all')
@@ -1437,7 +1508,7 @@ for i in range(COND):
 
         if i == 0:
             ttax.text(.25 if i == 0 else .85, .85 , \
-             f'T={round(temps[t], 2)}', \
+             f'$M_r$ = {round(temps[t], 2)}', \
              fontdict = dict(fontsize = 15),\
              transform = ttax.transAxes,\
              horizontalalignment = 'right')
@@ -1616,7 +1687,7 @@ x     = arange(NTEMPS) * 3
 
 width = .2
 labels = 'Underwhelming Overwhelming'.split()
-conditions = [f'T={round(i,2)}' for i in temps]
+conditions = [f'$M_r$ = {round(i,2)}' for i in temps]
 for cond in range(COND):
     tax = ax[cond]
     tax.set_title(labels[cond])
@@ -1647,7 +1718,7 @@ for node in range(NODES):
            errors[:, node], color = colors[node],\
            width = width, label = model.rmapping[node])
 
-conditions = [f'T={round(x, 2)}\n{y}' for x in temps for y in nudges]
+conditions = [f'$M_r$ = {round(x, 2)}\n{y}' for x in temps for y in nudges]
 # set labels per group and center it
 ax.set(yscale = 'log', xticklabels = conditions, \
        xticks = locs + .5 * NODES * width, ylabel = 'Mean square error')
@@ -1658,3 +1729,34 @@ ax.legend(loc = 'upper left',\
           frameon = False)
 rcParams['axes.labelpad'] = 1
 fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)
+
+
+# %%
+from scipy import spatial
+a = np.argsort(aucs)[..., -2:]
+b = []
+dis = np.zeros(a.shape[:-1])
+for i, j in  enumerate(a):
+    for k, l in enumerate(j):
+        for m, n in enumerate(l):
+            x, y  = aucs[i, k, m, n]
+            dis[i,k,m] = np.sqrt((x - y) **2)
+fig, ax = subplots()
+l = ['Control', *condLabels]
+for idx, (i, j) in enumerate(zip(dis.mean(-1), dis.std(-1))):
+    ax.errorbar(np.arange(NTEMPS), i, j, alpha = .5, label = l[idx], zorder = 5 - idx)
+ax.set_xlabel('Magnetization fraction ($M_r$)', fontsize = 25, labelpad = 4)
+ax.set_ylabel('Distance ($\sqrt{( first - second )^2}$)', fontsize = 25, labelpad = 4)
+ax.set(xticks = np.arange(NTEMPS), xticklabels = temps)
+ax.legend(fontsize = 25)
+fig.savefig(figDir + 'distance.png')
+# h = ax.imshow(dis.mean(-1))
+# plotz.colorbar(h)
+            
+# %%
+import scipy
+t = np.arange(0, 20, 0.1)
+d = np.exp(-5)*np.power(5, t)/scipy.misc.factorial(t)
+fig, ax = subplots()
+ax.plot(t, d)
+ax.set(ylabel = 'Dynamic impact', xlabel = 'Degree')
