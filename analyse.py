@@ -27,8 +27,7 @@ psycho   = '1548025318.5751357'
 
 extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
-#extractThis      = multiple
-#extractThis      = kite
+extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
@@ -346,7 +345,7 @@ for temp in range(NTEMPS):
 gs = dict(\
           height_ratios = [1, 1, 1], width_ratios = [1, .15, 1, 1],\
           )
-fig, ax = subplots(3, 4, sharex = 'all', sharey = 'row', gridspec_kw = gs)
+fig, ax = subplots(3, 4, sharey = 'all', sharex = 'all',  gridspec_kw = gs)
 mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
 
@@ -356,7 +355,7 @@ mainax.set_xlabel('Time (t)', fontsize = 22, labelpad = 40)
 x  = arange(DELTAS)
 xx = linspace(0, 1 * DELTAS, 1000)
 sidx = 2 # 1.96
-labels = 'Control\tUnderwhelming\tOverwhelming'.split('\t')
+labels = 'Unperturbed\tUnderwhelming\tOverwhelming'.split('\t')
 _ii    = '$I(s_i^{t+t_0} ; S^t_0)$'
 
 [i.axis('off') for i in ax[:, 1]]
@@ -382,7 +381,7 @@ for temp in range(NTEMPS):
         
         tmpauc = [scipy.integrate.quad(lambda x: func(x, *c), 0, np.inf)[0] for c in meanCoeffs]
         leader = np.argmax(tmpauc)
-        print(np.argsort(tmpauc))
+#        print(np.argsort(tmpauc))
         for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
             # plot mean fit
             # tax.plot(xx, func(xx, *meanCoeffs[idx]),\
@@ -402,9 +401,15 @@ for temp in range(NTEMPS):
                               markersize = 15, \
                               color = colors[idx],\
                               label = node, \
-                              alpha = 0.25 if zorder == 1 else 1) # mpl3 broke legends?
+                              alpha = 1 if zorder == 1 else 1) # mpl3 broke legends?
+            if idx == leader:
+                xx, yy = (deltas // 2  * .90, .8)
+                arti = Line2D([xx], [yy], marker = 'o', color = colors[idx],\
+                       )
+                tax.add_artist(arti)
+#                tax.annotate('Driver-node', (*x,*y), horizontalalignment = 'right')
 
-#            ax[cidx].set(xscale = 'log')
+           
 
 
         tax.ticklabel_format(axis = 'y', style = 'sci',\
@@ -432,11 +437,12 @@ mainax.legend(\
               frameon        = False,\
               )
 subplots_adjust(hspace = 0, wspace = 0)
+
 fig.show()
 fig.savefig(figDir + 'mi_time.png', dpi=1000, pad_inches = 0,\
         bbox_inches = 'tight')
 
-show()
+assert 0 
 # %% presentation plot
 rcParams['axes.labelpad'] = 0
 fig, ax = subplots(figsize = (15, 10))
@@ -665,7 +671,7 @@ rcParams['axes.labelpad'] = 20
 for condition, condLabel in enumerate(conditionLabels):
     fig, ax = subplots(len(centralities), 3, sharex = 'all', sharey = 'row')
     mainax = fig.add_subplot(111, frameon = False, xticks = [], yticks = [])
-    mainax.set_xlabel(f'Causal impact({causal_impact})', labelpad = 50)
+    mainax.set_xlabel(f'Causal impact ({causal_impact})', labelpad = 50)
     for i, (cent, cent_func) in enumerate(centralities .items()):
         # compute cents
         centrality = dict(cent_func(model.graph))
@@ -959,15 +965,15 @@ for ni in range(N):
 
             # format axes
             samesies = 35
-            tax.set_xlabel(f'{information_impact}', fontsize = 40, \
+            tax.set_xlabel(f'Information impact', fontsize = 40, \
                            labelpad = samesies)
             tax.set_ylabel('Centrality',fontsize = 40, \
                            labelpad = samesies)
-            tax.set_zlabel(f'{causal_impact}', fontsize = 40, \
+            tax.set_zlabel(f'Causal impact', fontsize = 40, \
                            labelpad = samesies)
-            for axi in 'x y z'.split():
-                removeLabels(tax, axi, [0, 1])
-                tax.tick_params(axi, pad = 10, labelsize = 25)
+#            for axi in 'x y z'.split():
+#                removeLabels(tax, axi, [0, 1])
+#                tax.tick_params(axi, pad = 10, labelsize = 25)
             # hack the lmits
             if cond == 0:
                 tax.text(1, 0, 1,\
@@ -1605,7 +1611,7 @@ with open(f'{extractThis}.linregress.tex', 'w') as f:
 # %%
 # % fit the results
 rcParams['axes.labelpad'] = 5
-linf = lambda x, beta : beta * x + est.params['intercept']
+linf = lambda x, beta, c : beta * x + c
 bbox_props = dict(fc="white", lw=2)
 mins, maxs = X.min(0), X.max(0)
 fig, ax = subplots(2, 3, sharex = 'all', sharey = 'all')
@@ -1629,13 +1635,19 @@ for idx, i in enumerate(X.columns[1:]):
     tax.scatter(X[i], y['Underwhelming'],  alpha = 1, \
                color = colors[idx], label = i)
     beta = est.params[i]
-    tax.plot(x, linf(x, beta), color = colors[idx],\
+    
+    ex, ey = est.bse['intercept'], est.bse[i]
+    tax.plot(x, linf(x, beta, est.params['intercept']), color = colors[idx],\
             linestyle = 'dashed', path_effects=[pe.Stroke(linewidth=5, foreground='k')])
+    
+    tax.fill_between(x, linf(x, beta + 2 * ex, est.params['intercept'] + 2 * ex), \
+                     linf(x, beta - 2 * ex, est.params['intercept'] - 2 * ex),\
+                     color = 'k', alpha = 0.5)
     elements.append(Line2D([0], [0], color = colors[idx], marker = '.', \
-                           linestyle = 'none', label = i))
+                           linestyle = 'none', label = i, markersize = 40))
     if est.pvalues[i] < .05:
         tmp = x[x.size // 2]
-        xy  = (tmp, linf(tmp, beta))
+        xy  = (tmp, linf(tmp, beta, est.params['intercept']))
         bbox_props['ec'] = colors[idx]
         theta = 45 * beta# arcsin(beta)/ (2 * pi)* 180,
         t = tax.text(*xy, fr"$\beta$={round(beta, 2):.1e}", rotation = theta,\
@@ -1655,12 +1667,13 @@ mainax = fig.add_subplot(111, frameon = False, \
                          xticks = [], \
                          yticks = [], \
                          )
-mainax.legend(handles = elements, loc = 'upper center', title = 'x', title_fontsize = 15,\
-              bbox_to_anchor = (.5, .3))
+ax[1, 1].legend(handles = elements, loc = 'lower center', title = 'x', title_fontsize = 35,\
+              bbox_to_anchor = (.5, -.1), fontsize = 23, frameon = False, \
+              handletextpad = 0)
 
 
-mainax.set_xlabel('Z-scored x', labelpad = 40)
-mainax.set_ylabel(f'Z-scored {causal_impact}', labelpad = 40)
+mainax.set_xlabel('Z-scored x', labelpad = 40, fontsize = 30)
+mainax.set_ylabel(f'Z-scored {causal_impact}', labelpad = 40, fontsize = 30)
 fig.subplots_adjust(hspace = 0, wspace = 0)
 
 #tax.legend(title = 'x', title_fontsize = 15)
@@ -1671,7 +1684,7 @@ fig.subplots_adjust(hspace = 0, wspace = 0)
 #        ylabel = f'Z-scored {causal_impact}')
 fig.savefig(figDir + 'multiregr.eps')
 
-
+assert 0
 
 # %% appendix box rejection
 rcParams['axes.labelpad'] = 40

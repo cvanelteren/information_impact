@@ -162,7 +162,7 @@ def addGraphPretty(graph, ax, \
         # verticalalignment = 'center', transform = ax.transAxes)
 #        print(.95 * circlekwargs['radius'])
         # annotatekwargs['fontsize'] = 8 #circlekwargs['radius'] * 8  / len(n)
-        if layout.get('annotate', True):
+        if annotatekwargs.get('annotate', True):
             # bbox_props = dict(boxstyle="circle", fc = 'none', ec = colors[ni], lw = 1)
             ax.annotate(n, c.center, **annotatekwargs)
         # add to ax
@@ -224,7 +224,8 @@ def addGraphPretty(graph, ax, \
 
             # add * for self-edges
             offset[0] +=  1.05 * n1.radius
-            ax.annotate('*', offset, fontsize = 30)
+            if annotatekwargs.get('selfEdges', True):
+                ax.annotate('*', offset, fontsize = 30)
 #            n1.center = (n1.center[0] + r, n1.center[1] )
 #            n2.center = (n2.center[0] - r, n2.center[1])
             rad = radians(135) # trial and error
