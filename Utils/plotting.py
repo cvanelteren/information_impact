@@ -112,7 +112,7 @@ def addGraphPretty(graph, ax, \
     # DEFAULTS
     #
     # get min distance between nodes; use that as baseline for circle size
-    layout = kwargs.get('layout', dict(annotate = True))
+    layout = kwargs.get('layout', {})
     s      = layout.get('scale', None)
     if s:
         positions = {i : array(j) * s for i, j in positions.items()}
@@ -164,7 +164,7 @@ def addGraphPretty(graph, ax, \
         # annotatekwargs['fontsize'] = 8 #circlekwargs['radius'] * 8  / len(n)
         if annotatekwargs.get('annotate', True):
             # bbox_props = dict(boxstyle="circle", fc = 'none', ec = colors[ni], lw = 1)
-            ax.annotate(n, c.center, **annotatekwargs)
+            ax.annotate(n, c.center, **{k: v for k, v in annotatekwargs.items() if k != 'annotate'})
         # add to ax
         ax.add_patch(c)
         # TODO : remove tis for member assignment

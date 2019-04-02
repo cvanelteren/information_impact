@@ -64,7 +64,7 @@ pulseSizes = settings.pulseSizes
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
-figDir = f'../thesis/figures/{extractThis}'
+figDir = f'../thesis/presentation/figures/{extractThis}'
 # %% # show mag vs temperature
 func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
 for root, subdirs, filenames in os.walk(loadThis):
@@ -82,15 +82,17 @@ for root, subdirs, filenames in os.walk(loadThis):
         mx = msettings.get('matchedTemps', msettings.get('temperatures')) # legacy
         my = msettings.get('magRange')
 
-        fig, ax  = subplots()
+        fig, ax  = subplots(figsize = (10, 12))
         ax.scatter(fx, fy, alpha = .2)
         ax.scatter(mx, my * fy.max(), color = 'red', zorder = 2)
         a, b = scipy.optimize.curve_fit(func, fx, fy, maxfev = 10000)
         x = linspace(fx.min(), fx.max(), 1000)
         ax.plot(x, func(x, *a), '--k')
-        ax.set(xlabel = 'Temperature (T)', ylabel = '|<M>|')
+        ax.set_xlabel('Temperature (T)', fontsize =30)
+        ax.set_ylabel('|<M>|',  fontsize = 30)
         rcParams['axes.labelpad'] = 10
-        fig.savefig(figDir + f"-{root.split('/')[-1]}_temp_mag.eps", dpi = 1000)
+        fig.savefig(figDir + f"temp_mag.png", bbox_inches = 'tight', pad_inches = 0)
+#assert 0
 # %% plot graph
 
 centralities = {
@@ -110,14 +112,13 @@ positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
 #positions = nx.nx_pydot.pydot_layout(graph, prog = '')
 #                                         root = sorted(dict(model.graph.degree()).items())[0][0])
 
-p = dict(
-         layout   = dict(annotate = True), \
-         annotate = dict(fontsize  = 1.3),\
+props = dict(
+         annotate = dict(fontsize  = 1.3, annotate = True),\
          )
 #p = {}
-plotz.addGraphPretty(model.graph, ax, positions, \
-                     mapping = model.mapping,\
-                     **p,\
+plotz.addGraphPretty(model.graph, ax = ax, positions = positions, \
+                     mapping = model.mapping,
+                     **props,\
                      )
 
 
@@ -126,27 +127,30 @@ ax.set_aspect('equal', 'box')
 ax.set(xticks = [], yticks = [])
 ax.axis('off')
 fig.show()
-savefig(figDir + 'network.eps')
+savefig(figDir + 'network.png',\
+        bbox_inches = 'tight', pad_inches = 0, transparent = True)
+
+
 
 #%%
 centLabels = 'Degree Betweenness Information Eigenvector'.split()
-idx = 20
+idx = 22
 
-p['annotate']['fontsize'] = 1.9
+props['annotate']['fontsize'] = 1.9
 fig, ax = subplots(2, 2, figsize = (idx, idx))
 from matplotlib.patches import Circle
-fig.subplots_adjust(hspace = 0.07, wspace = 0, left = 0, right = 1)
+#fig.subplots_adjust(hspace = 0.07, wspace = 0, left = 0, right = 1)
 for idx, (cent, cf) in enumerate(centralities.items()):
     c = dict(cf(model.graph))
     s = array(list(c.values()))
     s = (s - s.min()) /(s.max() - s.min()) 
     tax = ax[:, :].ravel()[idx]
     tax.axis('off')
-    tax.set_aspect('equal','box')
-    tax.set_title(centLabels[idx], fontsize = 40)
+#    tax.set_aspect('equal','box')
+    tax.set_title(centLabels[idx], fontsize = 40, color = 'white')
     plotz.addGraphPretty(model.graph, tax, positions, \
                      mapping = model.mapping,\
-                     **p,\
+                     **props,\
                      )
     for artist in tax.get_children():
         if isinstance(artist, Circle):
@@ -156,13 +160,44 @@ for idx, (cent, cf) in enumerate(centralities.items()):
             tmp  = (s[pidx]) * artist.radius 
             tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
             artist.set(facecolor = 'none')
+    
 #            artist.set(alpha = s[pidx])
 #mainax = fig.add_subplot(111, xticks = [], yticks = [], frameon = False)
 #mainax.legend(handles = [Line2D([0],[0], color = colors[idx], marker = 'o', linestyle = 'none',\
 #                                label = node) for idx, node in enumerate(graph)], \
 #             bbox_to_anchor = (1, 1), loc = 'upper left', borderaxespad = 0)
-fig.show()
-fig.savefig(figDir +  'graph_and_cent.eps', bbox_inches = 'tight', pad_inches = 0, dpi = 10000)
+#for item in [fig, ax]:
+#    item.set_visisble(False)
+fig.subplots_adjust(hspace = 0, wspace = 0)
+fig.savefig(figDir +  'graph_and_cent.png', \
+            bbox_inches = 'tight', pad_inches = 0, transparent = True)
+fig. show()
+#assert 0
+# %%
+fig, ax = subplots(1, 2)
+props['annotate']['annotate'] = False
+for idx, tax in enumerate(ax):
+    cf = centralities.values()[idx]
+    c = dict(cf(model.graph))
+    s = array(list(c.values()))
+    s = (s - s.min()) /(s.max() - s.min()) 
+    tax = ax[:, :].ravel()[idx]
+    plotz.addGraphPretty(graph, ax = tax, positions = positions, \
+                         mapping = model.mapping,\
+                         **props)
+    for artist in tax.get_children():
+        if isinstance(artist, Circle):
+            lab = artist.get_label()
+            lab = int(lab) if lab.isdigit() else lab
+            pidx = model.mapping[lab]
+            tmp  = (s[pidx]) * artist.radius 
+            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
+            artist.set(facecolor = 'none')
+    tax.axis('off')
+fig.subplots_adjust(wspace = 0, hspace = 0)
+fig.savefig(figDir + 'cent_simple.png',pad_inches = 0,\
+        bbox_inches = 'tight')
+assert 0
 # %%
 # extract data for all nodes
 information_impact = '$\mu_i$'
@@ -356,7 +391,7 @@ x  = arange(DELTAS)
 xx = linspace(0, 1 * DELTAS, 1000)
 sidx = 2 # 1.96
 labels = 'Unperturbed\tUnderwhelming\tOverwhelming'.split('\t')
-_ii    = '$I(s_i^{t+t_0} ; S^t_0)$'
+_ii    = '$I(s_i^{t_0 + t} : S^{t_0})$'
 
 [i.axis('off') for i in ax[:, 1]]
 
@@ -433,16 +468,17 @@ mainax.legend(\
               title_fontsize = 15, \
               loc            = 'upper left', \
               bbox_to_anchor = (1, 1),\
-              borderaxespad  = 0, \
+              borderaxespad  = -.1,\
+              handletextpad = -.01,\
               frameon        = False,\
               )
 subplots_adjust(hspace = 0, wspace = 0)
 
 fig.show()
-fig.savefig(figDir + 'mi_time.png', dpi=1000, pad_inches = 0,\
+fig.savefig(figDir + 'mi_time.eps', pad_inches = 0,\
         bbox_inches = 'tight')
 
-assert 0 
+#assert 0 
 # %% presentation plot
 rcParams['axes.labelpad'] = 0
 fig, ax = subplots(figsize = (15, 10))
@@ -535,7 +571,7 @@ clf    = MinCovDet()
 labels       = 'Underwhelming\tOverwhelming'.split('\t')
 rejections   = zeros((COND, NTEMPS, NODES))
 showOutliers = True
-showOutliers = False
+#showOutliers = False
 pval         = .01
 
 pcorr = (NNUDGE - 1) * NTEMPS
@@ -556,30 +592,33 @@ for temp in range(NTEMPS):
         for node, idx in model.mapping.items():
 
             # value error for zero variance
-            try:
-                tmp = aucs_raw[[0, nudge], temp, :, idx]
-                clf.fit(tmp.T)
-                Z = clf.mahalanobis(np.c_[xx.ravel(), yy.ravel()])
-                if showOutliers:
-                    tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
-                            colors = colors[[idx]],\
-                            levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
+#            try:
+            tmp = aucs_raw[[0, nudge], temp, :, idx]
+            clf.fit(tmp.T)
+            Z = clf.mahalanobis(np.c_[xx.ravel(), yy.ravel()])
+            
+            
+            if showOutliers:
+                print('plotting outline')
+                tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
+                        colors = colors[[idx]],\
+                        levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
 
-                # plot ci vs ii
-                ident = sqrt(clf.mahalanobis(tmp.T))
-    #            print(model.rmapping[idx], ident)
-                outliers = where(ident >= thresh)[0]
-                ingroup  = where(ident < thresh)[0]
-                rejections[nudge - 1, temp, idx] = len(outliers) / NTRIALS
-                ingroupmean = tmp[:, ingroup].mean(1)
-                for outlier in outliers:
-                    aucs[[0, nudge], temp, outlier, idx]= ingroupmean
-                    if showOutliers:
-                        tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
-                                color = colors[idx], \
-                                alpha = 1, marker = 's')
-            except:
-                continue
+            # plot ci vs ii
+            ident = sqrt(clf.mahalanobis(tmp.T))
+#            print(model.rmapping[idx], ident)
+            outliers = where(ident >= thresh)[0]
+            ingroup  = where(ident < thresh)[0]
+            rejections[nudge - 1, temp, idx] = len(outliers) / NTRIALS
+            ingroupmean = tmp[:, ingroup].mean(1)
+            for outlier in outliers:
+                aucs[[0, nudge], temp, outlier, idx]= ingroupmean
+                if showOutliers:
+                    tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
+                            color = colors[idx], \
+                            alpha = 1, marker = 's')
+#            except:
+#                pass.
 
 #            tax.scatter(*tmp.mean(1), color = 'k', s = 50, zorder = 5)
             alpha = .1 if showOutliers else 1
@@ -587,7 +626,7 @@ for temp in range(NTEMPS):
                         color = colors[idx], \
                         label = node, alpha = alpha, \
                         linewidth = 1)
-            xx, yy = aucs[[0, nudge], temp].reshape(2, -1).min(1), aucs[[0, nudge], temp].reshape(2, -1).max(1)
+#            xx, yy = aucs[[0, nudge], temp].reshape(2, -1).min(1), aucs[[0, nudge], temp].reshape(2, -1).max(1)
             
             # tt = np.linspace(xx.min(), yy.min())
             # tax.plot(tt, tt, '--k')
@@ -633,7 +672,8 @@ for temp in range(NTEMPS):
             if nudge == NNUDGE - 1:
                 leg = tax.legend(loc = 'upper left', bbox_to_anchor = (1, 1),\
                            frameon = False, title = 'Node',
-                           borderaxespad = 0,\
+                           borderaxespad = -.1,\
+                           handletextpad = 0,\
                            title_fontsize = 15)
                 # force alpha
                 for l in leg.legendHandles:
@@ -652,7 +692,6 @@ for temp in range(NTEMPS):
 out = 'causal_ii_scatter_raw' if showOutliers else 'causal_ii_scatter_corrected'
 out += '.png' if showOutliers else '.eps'
 savefig(figDir + out, dpi = 1000)
-
 # %% information impact vs centrality
 
 
@@ -665,7 +704,8 @@ from mpl_toolkits.mplot3d import Axes3D
 
 conditionLabels = 'Underwhelming Overwhelming'.split()
 
-
+#centralities['$c_i^{deg}$'] = nx.degree_centrality
+centralities['$c_i^{deg}$'] = partial(nx.degree, weight = 'weight')
 # plot info
 rcParams['axes.labelpad'] = 20
 for condition, condLabel in enumerate(conditionLabels):
@@ -1134,16 +1174,19 @@ for temp in range(NTEMPS):
 #                )
         tax = ax[1, cond]
         tax.bar(x + width * temp, mimF[temp, :, cond],\
-                width = width, label = f'M_r ={round(temps[temp], 2)}')
+                width = width, label = f'$M_r$ ={round(temps[temp], 2)}')
         tax.axhline(1/5, color = 'black', linestyle = 'dashed')
 
         tax = ax[2, cond]
         tax.bar(x + width * temp, d[temp, ..., cond], \
                 width = width)
 #ax[0, 0].boxplot(s[..., 0].T)
-ax[0,0].set(xticklabels = [f'$M_r$ = {round(temp, 2)}' for temp in temps],\
+ax[0,0].set(xticklabels = temps,\
             xticks = t, \
-            )
+           )
+
+tmpax = fig.add_subplot(311, frameon = 0, xticks = [], yticks = [])
+tmpax.set_xlabel('$M_r$', fontsize = 20, labelpad = 25)
 ax[0, 0].set_ylabel('Accuracy score', fontsize = 25)
 
 height = 1.05
@@ -1176,19 +1219,57 @@ centralities = {
 ax[1,0].set(xticks = x +  width * 3/NTEMPS, \
             xticklabels = '',\
             )
+
 ax[1, 0].set_ylabel('Feature importance', fontsize = 25)
-ax[1,1].legend()
+ax[1,1].legend(fontsize = 25)
 
 ax[2, 0].set_ylabel('delta score(%)', fontsize = 25)
 ax[2, 0].set(
              xticks = x +  width * 3/NTEMPS, \
              xticklabels = ['$\mu_{max}$', *(i.replace('_i', '_{max}') for i in centralities.keys())],\
              )
-ax[2,0].tick_params('x', labelsize = 25, rotation = 45)
-ax[2,1].tick_params('x', labelsize = 25, rotation = 45)
+idx = 35
+ax[2,0].tick_params('x', labelsize = idx, rotation = 60)
+ax[2,1].tick_params('x', labelsize = idx, rotation = 60)
 fig.subplots_adjust(wspace = 0)
 fig.savefig(figDir + 'classifier_stats.eps')
 
+# %% rnf classifier simplified
+fig, ax = subplots()
+
+tmp = np.arange(COND)
+
+ax.bar(tmp, scores.mean(0), width = .5)
+ax.axhline(.5, linestyle = 'dashed', color = 'k')
+ax.set_ylabel('Prediction accuracy')
+
+ax.set_xticks(tmp)
+ax.set_xticklabels('Underwhelming Overwhelming'.split())
+ax.annotate('*', xy = (0, 1.1), fontsize = 50)
+ax.annotate('*', xy = (1, 1.1), fontsize = 50)
+ax.set_ylim(0, 1.3)
+
+
+
+fig.savefig(figDir + 'accuracy_single.png')
+fig, ax = subplots()
+tmp = np.arange(5) - .25
+for i in range(COND):
+    j = labels[i]
+    tax = ax
+    tax.bar(tmp + i * .25, mimF.mean(0)[..., i], width = .5, label = j)
+    tax.set_xticks(tmp + .25)
+ax.axhline(1/5, color = 'k', linestyle = 'dashed')
+#ax.plot(tmp + .25, ones(tmp.size) * 1.1, color = 'k')
+#ax.annotate('*', (tmp[tmp.size // 2], 1.1), fontsize = 50)
+#ax.set_ylim(0, 1.3)
+tax.set_ylabel('Feature importance')
+tax.legend()
+
+tax.set_xticklabels(['Information\nimpact', *(f.func.__name__.split('_')[0] for f in centralities.values())], \
+                     fontsize = 30, rotation = 60)
+fig.savefig(figDir + 'feature_single.png')
+    
 # %%
 from matplotlib import gridspec
 fig = figure()
@@ -1224,10 +1305,12 @@ for idx, (i, j, tmp) in enumerate(zip(d.mean(0), mimF.mean(0), list(gs2)[1:])):
 # [right.bar(xr + width * idx, i, width = width) for idx, i in enumerate(mimF.mean(0).T)]
 
 # %%
-d = (scores.mean(0) - shuffscores.mean(0)) / (scores.mean(0))
+d = array([(s - j) / s for s, j in zip(scores, shuffescores)])
+
+
 #s = (scores - shuffscores) / (
 
-p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5, 'greater')
+p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5)
 
 O    = imF.sum(0)
 E    = NOBS * 1 // (N + 1) * ones(O.shape, dtype = int)
@@ -1645,6 +1728,9 @@ for idx, i in enumerate(X.columns[1:]):
                      color = 'k', alpha = 0.5)
     elements.append(Line2D([0], [0], color = colors[idx], marker = '.', \
                            linestyle = 'none', label = i, markersize = 40))
+    ax[0,0].text(.9, .9, f"$R^2$ = {est.rsquared: .2f}", horizontalalignment = 'right',\
+         transform = tax.axes.transAxes, fontsize = 20, bbox = dict(\
+                                                                          fc = 'white'))
     if est.pvalues[i] < .05:
         tmp = x[x.size // 2]
         xy  = (tmp, linf(tmp, beta, est.params['intercept']))
@@ -1653,9 +1739,7 @@ for idx, i in enumerate(X.columns[1:]):
         t = tax.text(*xy, fr"$\beta$={round(beta, 2):.1e}", rotation = theta,\
                                       fontsize = 20,\
                                       bbox=bbox_props)
-        tax.text(.9, .9, f"$R^2$ = {est.rsquared: .2f}", horizontalalignment = 'right',\
-         transform = tax.axes.transAxes, fontsize = 20, bbox = dict(\
-                                                                          fc = 'white'))
+   
         bb = t.get_bbox_patch()
 #        bb.set_boxstyle('rarrow', pad = .5)
 #        tax.annotate(fr"$\beta$={round(beta, 2):e}", xy = xy, \
@@ -1673,7 +1757,7 @@ ax[1, 1].legend(handles = elements, loc = 'lower center', title = 'x', title_fon
 
 
 mainax.set_xlabel('Z-scored x', labelpad = 40, fontsize = 30)
-mainax.set_ylabel(f'Z-scored {causal_impact}', labelpad = 40, fontsize = 30)
+mainax.set_ylabel(f'Z-scored causal impact ({causal_impact})', labelpad = 40, fontsize = 30)
 fig.subplots_adjust(hspace = 0, wspace = 0)
 
 #tax.legend(title = 'x', title_fontsize = 15)
@@ -1684,7 +1768,7 @@ fig.subplots_adjust(hspace = 0, wspace = 0)
 #        ylabel = f'Z-scored {causal_impact}')
 fig.savefig(figDir + 'multiregr.eps')
 
-assert 0
+#assert 0
 
 # %% appendix box rejection
 rcParams['axes.labelpad'] = 40
@@ -1754,13 +1838,14 @@ for i, j in  enumerate(a):
         for m, n in enumerate(l):
             x, y  = aucs[i, k, m, n]
             dis[i,k,m] = np.sqrt((x - y) **2)
-fig, ax = subplots()
-l = ['Control', *condLabels]
+fig, ax = subplots(figsize = (12, 15))
+l = ['Information impact', *condLabels]
 for idx, (i, j) in enumerate(zip(dis.mean(-1), dis.std(-1))):
     ax.errorbar(np.arange(NTEMPS), i, j, alpha = .5, label = l[idx], zorder = 5 - idx)
-ax.set_xlabel('Magnetization fraction ($M_r$)', fontsize = 25, labelpad = 4)
-ax.set_ylabel('Distance ($\sqrt{( first - second )^2}$)', fontsize = 25, labelpad = 4)
+ax.set_xlabel('Magnetization fraction ($M_r$)', fontsize = 35, labelpad = 4)
+ax.set_ylabel('Mean distance ($\sqrt{( first - second )^2}$)', fontsize = 25, labelpad = 4)
 ax.set(xticks = np.arange(NTEMPS), xticklabels = temps)
+ax.tick_params(axis='both', which='major', labelsize=25)
 ax.legend(fontsize = 25)
 fig.savefig(figDir + 'distance.png')
 # h = ax.imshow(dis.mean(-1))
