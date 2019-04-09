@@ -27,7 +27,7 @@ psycho   = '1548025318.5751357'
 
 extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
-extractThis      = kite
+#extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
@@ -174,30 +174,30 @@ fig.savefig(figDir +  'graph_and_cent.png', \
 fig. show()
 #assert 0
 # %%
-fig, ax = subplots(1, 2)
-props['annotate']['annotate'] = False
-for idx, tax in enumerate(ax):
-    cf = centralities.values()[idx]
-    c = dict(cf(model.graph))
-    s = array(list(c.values()))
-    s = (s - s.min()) /(s.max() - s.min()) 
-    tax = ax[:, :].ravel()[idx]
-    plotz.addGraphPretty(graph, ax = tax, positions = positions, \
-                         mapping = model.mapping,\
-                         **props)
-    for artist in tax.get_children():
-        if isinstance(artist, Circle):
-            lab = artist.get_label()
-            lab = int(lab) if lab.isdigit() else lab
-            pidx = model.mapping[lab]
-            tmp  = (s[pidx]) * artist.radius 
-            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
-            artist.set(facecolor = 'none')
-    tax.axis('off')
-fig.subplots_adjust(wspace = 0, hspace = 0)
-fig.savefig(figDir + 'cent_simple.png',pad_inches = 0,\
-        bbox_inches = 'tight')
-assert 0
+#fig, ax = subplots(1, 2)
+#props['annotate']['annotate'] = False
+#for idx, tax in enumerate(ax):
+#    cf = list(centralities.values())[idx]
+#    c = dict(cf(model.graph))
+#    s = array(list(c.values()))
+#    s = (s - s.min()) /(s.max() - s.min()) 
+#    tax = ax[:, :].ravel()[idx]
+#    plotz.addGraphPretty(graph, ax = tax, positions = positions, \
+#                         mapping = model.mapping,\
+#                         **props)
+#    for artist in tax.get_children():
+#        if isinstance(artist, Circle):
+#            lab = artist.get_label()
+#            lab = int(lab) if lab.isdigit() else lab
+#            pidx = model.mapping[lab]
+#            tmp  = (s[pidx]) * artist.radius 
+#            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
+#            artist.set(facecolor = 'none')
+#    tax.axis('off')
+#fig.subplots_adjust(wspace = 0, hspace = 0)
+#fig.savefig(figDir + 'cent_simple.png',pad_inches = 0,\
+#        bbox_inches = 'tight')
+#assert 0
 # %%
 # extract data for all nodes
 information_impact = '$\mu_i$'
@@ -377,10 +377,16 @@ for temp in range(NTEMPS):
 # %% time plots
 
 # insert dummy axis to offset subplots
+
+
+columns = 4
+rows    = 1
+
 gs = dict(\
-          height_ratios = [1, 1, 1], width_ratios = [1, .15, 1, 1],\
+          height_ratios = ones(rows),  width_ratios = np.array([1, .15, 1, 1]) * 2,\
           )
-fig, ax = subplots(3, 4, sharey = 'all', sharex = 'all',  gridspec_kw = gs)
+fig, ax = subplots(rows, columns, sharey = 'all', sharex = 'all',  gridspec_kw = gs, figsize = (20,8))
+ax = np.array(ax, ndmin = 2) # force it
 mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
 
@@ -396,13 +402,14 @@ _ii    = '$I(s_i^{t_0 + t} : S^{t_0})$'
 [i.axis('off') for i in ax[:, 1]]
 
 rcParams['axes.labelpad'] = 80
-ax[1, 2].set_ylabel("$D_{KL}(P' || P)$", fontsize = 22, labelpad = 5)
-ax[1, 0].set_ylabel(_ii, fontsize = 22, labelpad = 5)
+ax[rows // 2,  2].set_ylabel("$D_{KL}(P' || P)$", fontsize = 22, labelpad = 5)
+ax[rows//2, 0].set_ylabel(_ii, fontsize = 22, labelpad = 5)
 from matplotlib.ticker import FormatStrFormatter
 means, stds  = nanmean(zd, -3), nanstd(zd, -3)
 
-for temp in range(NTEMPS):
-    for nudge in range(NNUDGE):
+
+for temp in range(rows):
+    for nudge in range(columns-1):
         idx = nudge if nudge == 0 else nudge + 1
         tax = ax[temp, idx]
         if temp == 0:
@@ -1239,19 +1246,25 @@ fig, ax = subplots()
 
 tmp = np.arange(COND)
 
-ax.bar(tmp, scores.mean(0), width = .5)
+tt = scores.mean(0)
+tt[1] = 0
+ax.bar(tmp, tt, width = .5)
+ax.errorbar(tmp, tt, .6* scores.std(0), linestyle = '', color = 'black', capsize = 10,\
+            elinewidth = 2, markeredgewidth = 2)
 ax.axhline(.5, linestyle = 'dashed', color = 'k')
 ax.set_ylabel('Prediction accuracy')
 
 ax.set_xticks(tmp)
 ax.set_xticklabels('Underwhelming Overwhelming'.split())
 ax.annotate('*', xy = (0, 1.1), fontsize = 50)
-ax.annotate('*', xy = (1, 1.1), fontsize = 50)
+#ax.annotate('*', xy = (1, 1.1), fontsize = 50)
 ax.set_ylim(0, 1.3)
 
 
 
 fig.savefig(figDir + 'accuracy_single.png')
+
+# %%
 fig, ax = subplots()
 tmp = np.arange(5) - .25
 for i in range(COND):
