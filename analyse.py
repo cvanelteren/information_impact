@@ -1952,14 +1952,56 @@ fig. show()
 loading = {}
 for label, cf in centralities.items():
     s = np.array(list(dict(cf(model.graph)).values()))
-    s = (s - s.min()) /(s.max() - s.min()) 
+#    s = (s - s.min()) /(s.max() - s.min()) 
     loading[label] = s
     
 labels = "Information impact\tUnderwhelming\tOverwhelming".split("\t")
 for idx, label in enumerate(labels[:1]):
-    s = aucs[idx].reshape(-1, NODES).mean(0)
-    s = (s - s.min()) /(s.max() - s.min()) 
+    s = aucs[0].reshape(-1, NODES).mean(0)
+#    s = (s - s.min()) /(s.max() - s.min()) 
     loading[label] = s
+    
+# %%
+fig, tax = subplots(frameon = False, sharex = 'all', figsize = (10, 5))
+titles = "Underwhelming Overwhelming".split()
+
+d = np.array(list(loading.values()))
+s   = aucs[1].reshape(-1, NODES).mean(0)
+s   = (s - s.min()) / (s.max() - s.min()) 
+d   = np.vstack((d,  s))
+s   = aucs[2].reshape(-1, NODES).mean(0)
+s   = (s - s.min()) / (s.max() - s.min()) 
+d   = np.vstack((d, s))
+
+tmp = np.argsort(d, 1)
+#tmp = tmp[:, ::-1]
+r = np.linspace(0, 1, tmp.shape[1])
+for i in range(NODES):
+    tax.plot(r[tmp[:, i]], color = colors[i], marker = 'o')
+    xy = (-.1, r[tmp[0, i]])
+    tax.annotate(model.rmapping[i], xy, horizontalalignment = 'right', fontsize = 20, \
+                 verticalalignment = 'center')
+    
+tax.set_xticks(np.arange(len(loading) + 2))
+
+y = 'degree \t betweenness \t information \t eigenvector \t information\nimpact \t causal impact\nunderwhelming \t causal impact\noverwhelming'.split(' \t ')
+
+tax.set_xticklabels(y, rotation = 30)
+tax.annotate('Highest', (6.1, 1.05), fontsize = 20,  horizontalalignment = 'left', bbox = bbox_props)
+tax.annotate('Lowest', (6.1, -0.05), fontsize = 20,  horizontalalignment = 'left', bbox = bbox_props)
+
+
+
+tax.spines['right'].set_visible(False)
+tax.spines['top'].set_visible(False)
+tax.spines['left'].set_visible(False)
+tax.yaxis.set_visible(False)
+tax.set_title(titles[idx])
+
+tax.arrow(6.15, 0, 0, .9, head_length = .1, head_width = .15, color = 'black')
+tax.annotate('Rank', (6.3, .45), rotation = 90, fontsize = 20)
+fig.subplots_adjust(hspace = .1)
+fig.savefig(figDir + 'overview_simple.png')
 # %%
 tmp = 20
 props = dict(
@@ -2010,43 +2052,7 @@ for cond, (title, tax) in enumerate(zip(labels[1:], ax)):
 fig.subplots_adjust(wspace = 0, hspace = 0)    
 
 
-# %%
 
-
-fig, tax = subplots(frameon = False, sharex = 'all', figsize = (10, 5))
-titles = "Underwhelming Overwhelming".split()
-
-tmp = np.array(list(loading.values()))
-s   = aucs[0, 1].reshape(-1, NODES).sum(0)
-s   = (s - s.min()) / (s.max() - s.min()) 
-tmp = np.vstack((tmp, s))
-s   = aucs[0, 2].reshape(-1, NODES).sum(0)
-s   = (s - s.min()) / (s.max() - s.min()) 
-tmp = np.vstack((tmp, s))
-
-tmp = np.argsort(tmp, 1)
-r = np.linspace(0, 1, tmp.shape[1])
-for i in range(NODES):
-    tax.plot(r[tmp[:, i]], color = colors[i], marker = 'o')
-    xy = (-.1, r[tmp[0, i]])
-    tax.annotate(model.rmapping[i], xy, horizontalalignment = 'right', fontsize = 20)
-tax.set_xticks(np.arange(len(loading) + 2))
-
-y = 'degree \t betweenness \t information \t eigenvector \t information\nimpact \t causal impact\nunderwhelming \t causal impact\noverwhelming'.split(' \t ')
-
-tax.set_xticklabels(y, rotation = 30)
-tax.annotate('Rank 1', (6.1, 1.05), fontsize = 20,  horizontalalignment = 'left', bbox = bbox_props)
-tax.annotate('Rank 12', (6.1, -0.05), fontsize = 20,  horizontalalignment = 'left', bbox = bbox_props)
-
-
-tax.spines['right'].set_visible(False)
-tax.spines['top'].set_visible(False)
-tax.spines['left'].set_visible(False)
-
-tax.set_title(titles[idx])
-tax.yaxis.set_visible(False)
-fig.subplots_adjust(hspace = .1)
-fig.savefig(figDir + 'overview_simple.png')
 
 # %%
 r = np.linspace(0, 1, tmp.shape[1])
@@ -2054,7 +2060,7 @@ fig, ax = subplots(2, 1, frameon = False, sharex = 'all', figsize = (10, 15))
 titles = "Underwhelming Overwhelming".split()
 for idx, tax in enumerate(ax):
     tmp = np.array(list(loading.values()))
-    s   = aucs[:, idx + 1].reshape(-1, NODES).mean(0)
+    s   = aucs[idx + 1].reshape(-1, NODES).mean(0)
     s   = (s - s.min()) /(s.max() - s.min()) 
     tmp = np.vstack((tmp, s))
     
