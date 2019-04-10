@@ -18,6 +18,8 @@ The memory views make it very fast (c array fast). Changing the defintions in px
 this issues, however it reduces the speed somewhat. The ultimate goal would be to replace it with full
 c arrays instead of memviews. I did try it with cpp vectors but it was (for some reason) slower.
 
+# Troubleshooting
+If you script does not run, check whether you are not loading the wrong binaries. The compilation process will prdoduce specific, optimized code for your machine. Recompiling for possible new hardware instruction may solve this.
 
 # Notes on threading
 - [x] UPDATE: threading currently works, but notes below may still be useful for future me

@@ -18,14 +18,15 @@ close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
 
-# dataPath = '/run/media/casper/test/'
+
+#dataPath = '/run/media/casper/test/information_impact/Data/'
 #dataPath = '/mnt/'
 # convenience
 kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
-# multiple = '1550482875.0001953'
+#multiple = '1550482875.0001953'
 
-extractThis      = IO.newest(dataPath)[-1]
+#extractThis      = IO.newest(dataPath)[-1]
 extractThis      = psycho
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
@@ -64,7 +65,7 @@ pulseSizes = settings.pulseSizes
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
-figDir = f'../thesis/presentation/figures/{extractThis.split(".")[0]}'
+figDir = f'../thesis/entropy/figures/{extractThis.split(".")[0]}'
 # %% # show mag vs temperature
 func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
 for root, subdirs, filenames in os.walk(loadThis):
