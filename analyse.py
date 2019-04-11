@@ -148,7 +148,7 @@ for idx, (cent, cf) in enumerate(centralities.items()):
     tax = ax[:, :].ravel()[idx]
     tax.axis('off')
 #    tax.set_aspect('equal','box')
-    tax.set_title(centLabels[idx], fontsize = 40, color = 'white')
+    tax.set_title(centLabels[idx], fontsize = 40, color = 'k')
     plotz.addGraphPretty(model.graph, tax, positions, \
                      mapping = model.mapping,\
                      **props,\
@@ -171,7 +171,7 @@ for idx, (cent, cf) in enumerate(centralities.items()):
 #    item.set_visisble(False)
 fig.subplots_adjust(hspace = 0, wspace = 0)
 fig.savefig(figDir +  'graph_and_cent.png', \
-            bbox_inches = 'tight', pad_inches = 0, transparent = True)
+            bbox_inches = 'tight', pad_inches = 0, transparent = False)
 fig. show()
 #assert 0
 # %%
@@ -381,12 +381,13 @@ for temp in range(NTEMPS):
 
 
 columns = 4
-rows    = 1
+rows    = 3
 
 gs = dict(\
           height_ratios = ones(rows),  width_ratios = np.array([1, .15, 1, 1]) * 2,\
           )
-fig, ax = subplots(rows, columns, sharey = 'all', sharex = 'all',  gridspec_kw = gs, figsize = (20,8))
+fig, ax = subplots(rows, columns, sharey = 'all', sharex = 'all', \
+                   gridspec_kw = gs, figsize = (15,10))
 ax = np.array(ax, ndmin = 2) # force it
 mainax  = fig.add_subplot(111, frameon = 0)
 mainax.set(xticks = [], yticks = [])
@@ -1865,89 +1866,93 @@ writer.save()
 ## h = ax.imshow(dis.mean(-1))
 ## plotz.colorbar(h)
 #            
-## %%
-#
-#centLabels = 'Degree Betweenness Information Eigenvector'.split()
-#idx = 50
-#
-#props['annotate']['fontsize'] = 1.9
-#
-#size = (2, 5)
-#fig, ax = subplots(*size, figsize = (idx, idx))
-#from matplotlib.patches import Circle
-##fig.subplots_adjust(hspace = 0.07, wspace = 0, left = 0, right = 1)
-#for idx, (cent, cf) in enumerate(centralities.items()):
-#    c = dict(cf(model.graph))
-#    s = array(list(c.values()))
-#    s = (s - s.min()) /(s.max() - s.min()) 
-#    tax = ax[1, :].ravel()[idx]
-#    tax.axis('off')
-##    tax.set_aspect('equal','box')
-#    tax.set_title(centLabels[idx], fontsize = 40, color = 'black')
-#    plotz.addGraphPretty(model.graph, tax, positions, \
-#                     mapping = model.mapping,\
-#                     **props,\
-#                     )
-#    for artist in tax.get_children():
-#        if isinstance(artist, Circle):
-#            lab = artist.get_label()
-#            lab = int(lab) if lab.isdigit() else lab
-#            pidx = model.mapping[lab]
-#            tmp  = (s[pidx]) * artist.radius 
-#            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
-#            artist.set(facecolor = 'none')
-#
-#
-#tax = ax[1, -1]
-#tax.set_title('Information impact')
-#plotz.addGraphPretty(model.graph, tax, positions, \
-#                     mapping = model.mapping,\
-#                     **props,\
-#                     )
-#
-#s = aucs[0, :].reshape(-1, NODES).mean(0)
-#s = (s - s.min()) /(s.max() - s.min()) 
-#for artist in tax.get_children():
-#    if isinstance(artist, Circle):
-#        lab = artist.get_label()
-#        lab = int(lab) if lab.isdigit() else lab
-#        pidx = model.mapping[lab]
-#        tmp  = (s[pidx]) * artist.radius 
-#        tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
-#        artist.set(facecolor = 'none')
-#
-#
-#l = 'Underwhelming Overwhelming'.split()
-#for i in range(COND):
-#    tax = ax[0, i]
-#    tax.set_title(l[i])
-#    s = aucs[i + 1, :].reshape(-1, NODES).mean(0)
-#    s = (s - s.min()) /(s.max() - s.min()) 
-#    plotz.addGraphPretty(model.graph, tax, positions, \
-#                     mapping = model.mapping,\
-#                     **props,\
-#                     )
-#    for artist in tax.get_children():
-#        if isinstance(artist, Circle):
-#            lab = artist.get_label()
-#            lab = int(lab) if lab.isdigit() else lab
-#            pidx = model.mapping[lab]
-#            tmp  = (s[pidx]) * artist.radius 
-#            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
-#            artist.set(facecolor = 'none')
-#        
-#
-##            artist.set(alpha = s[pidx])
-##mainax = fig.add_subplot(111, xticks = [], yticks = [], frameon = False)
-##mainax.legend(handles = [Line2D([0],[0], color = colors[idx], marker = 'o', linestyle = 'none',\
-##                                label = node) for idx, node in enumerate(graph)], \
-##             bbox_to_anchor = (1, 1), loc = 'upper left', borderaxespad = 0)
-##for item in [fig, ax]:
-##    item.set_visisble(False)
-#fig.subplots_adjust(hspace = 0, wspace = 0)
-#fig.savefig(figDir +  'graph_and_cent.png', \
-#            bbox_inches = 'tight', pad_inches = 0, transparent = True)
-#fig. show()
+# %% all graph and cents
+
+centLabels = 'Degree Betweenness Information Eigenvector'.split()
+idx = 50
+
+props['annotate']['fontsize'] = 1.9
+
+size = (2, 5)
+fig, ax = subplots(*size, figsize = (idx, idx))
+from matplotlib.patches import Circle
+#fig.subplots_adjust(hspace = 0.07, wspace = 0, left = 0, right = 1)
+for idx, (cent, cf) in enumerate(centralities.items()):
+    c = dict(cf(model.graph))
+    s = array(list(c.values()))
+    s = (s - s.min()) /(s.max() - s.min()) 
+    tax = ax[1, :].ravel()[idx]
+    tax.axis('off')
+#    tax.set_aspect('equal','box')
+    tax.set_title(centLabels[idx], fontsize = 40, color = 'black')
+    plotz.addGraphPretty(model.graph, tax, positions, \
+                     mapping = model.mapping,\
+                     **props,\
+                     )
+    for artist in tax.get_children():
+        if isinstance(artist, Circle):
+            lab = artist.get_label()
+            lab = int(lab) if lab.isdigit() else lab
+            pidx = model.mapping[lab]
+            tmp  = (s[pidx]) * artist.radius 
+            tax.add_artist(Circle(artist.center, \
+                                  facecolor = artist.get_facecolor(), \
+                                  radius = tmp))
+            artist.set(facecolor = 'none')
+
+
+tax = ax[1, -1]
+tax.set_title('Information impact')
+plotz.addGraphPretty(model.graph, tax, positions, \
+                     mapping = model.mapping,\
+                     **props,\
+                     )
+
+s = aucs[0, :].reshape(-1, NODES).mean(0)
+s = (s - s.min()) /(s.max() - s.min()) 
+for artist in tax.get_children():
+    if isinstance(artist, Circle):
+        lab = artist.get_label()
+        lab = int(lab) if lab.isdigit() else lab
+        pidx = model.mapping[lab]
+        tmp  = (s[pidx]) * artist.radius 
+        tax.add_artist(Circle(artist.center, \
+                              facecolor = artist.get_facecolor(), \
+                              radius = tmp))
+        artist.set(facecolor = 'none')
+
+
+l = 'Underwhelming Overwhelming'.split()
+for i in range(COND):
+    tax = ax[0, i]
+    tax.set_title(l[i])
+    s = aucs[i + 1, :].reshape(-1, NODES).mean(0)
+    s = (s - s.min()) /(s.max() - s.min()) 
+    plotz.addGraphPretty(model.graph, tax, positions, \
+                     mapping = model.mapping,\
+                     **props,\
+                     )
+    for artist in tax.get_children():
+        if isinstance(artist, Circle):
+            lab = artist.get_label()
+            lab = int(lab) if lab.isdigit() else lab
+            pidx = model.mapping[lab]
+            tmp  = (s[pidx]) * artist.radius 
+            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
+            artist.set(facecolor = 'none')
+        
+
+#            artist.set(alpha = s[pidx])
+#mainax = fig.add_subplot(111, xticks = [], yticks = [], frameon = False)
+#mainax.legend(handles = [Line2D([0],[0], color = colors[idx], marker = 'o', linestyle = 'none',\
+#                                label = node) for idx, node in enumerate(graph)], \
+#             bbox_to_anchor = (1, 1), loc = 'upper left', borderaxespad = 0)
+#for item in [fig, ax]:
+#    item.set_visisble(False)
+fig.subplots_adjust(hspace = 0, wspace = 0)
+fig.savefig(figDir +  'graph_and_cent.png', \
+            bbox_inches = 'tight', pad_inches = 0, transparent = True)
+fig. show()
 
 # %%
 loading = {}
@@ -1968,22 +1973,37 @@ fig, ax = subplots()
 
 tmp = array(list(loading.values()))
 
-plotz.addGraphPretty(model.graph, ax, positions = positions)
+#plotz.addGraphPretty(model.graph, ax, positions = positions)
 
 from matplotlib.patches import Wedge
 i = 0
-for child in ax.get_children():
-    if isinstance(child, Circle):
-        label    = child.get_label()
-        idx      = model.mapping[label]
-        d        = ax.pie(tmp[:, idx])[0]
-#        d.center = child.center
-#        d.set_radius(np.clip(tmp[:, idx], .1))
-#        ax.add_artist(d)
-        
-        i += 1
+
+for i, j in positions.items():
+    idx = model.mapping[i]
+    wedges = ax.pie(tmp[:, idx])
+    for wedge in wedges[0]:
+        wedge.center = (wedge.center[0] + random.rand(), wedge.center[1])
+    ax.axes.relim()
+#        wedge.set_radius(int(tmp[jdx, idx] * 100))
+#        wedge.set_radius(5)
+#    wedge.set_radius(5)
+#for child in ax.get_children():
+#    if isinstance(child, Circle):
+#        label    = child.get_label()
+#        idx      = model.mapping[label]
+#        d        = ax.pie(tmp[:, idx])[0]
+#        
+#        print(child.center)
+#        for jdx, di in enumerate(d):
+#            di.center = child.center
+#            di.set_radius(tmp[jdx, i])
+##        ax.add_artist(d)
+#        
+#        i += 1
+
+
+#ax.pie(tmp[:, 1])
 fig.show()
-assert 0
 
 # %%
 fig, tax = subplots(frameon = False, sharex = 'all', figsize = (10, 5))
@@ -2026,7 +2046,94 @@ tax.arrow(6.15, 0, 0, .9, head_length = .1, head_width = .15, color = 'black')
 tax.annotate('Rank', (6.3, .45), rotation = 90, fontsize = 20)
 fig.subplots_adjust(hspace = .1)
 fig.savefig(figDir + 'overview_simple.png')
+
+# %% 2, 5 circle plot
+#positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
+#                                         root = 'happy')
+figDir = '../thesis/arxiv/figures/1548025318'
+p = positions
+
+#p = nx.spring_layout(model.graph)
+p = {node : np.array(j) for node, j in p.items()}
+props = dict(annotate = dict(annotate = False, fontsize = 0))
+A = 15
+gs = {}
+fig, ax = subplots(4, 2, figsize = (20, 20), gridspec_kw = gs)
+
+
+#for axi in ax.ravel():
+#    axi.axis('off')
+#    axi.set_aspect(.5)
+fs = 30
+labels = "Degree\tBetweenness\tCurrent flow\tEigenvector\tInformation impact".split("\t")
+for idx, (lab, s) in enumerate(loading.items()):
+    tax = ax.ravel()[idx]
+    plotz.addGraphPretty(model.graph, tax, p, **props)
+    for arti in tax.get_children():
+        if isinstance(arti, Circle):
+            i = model.mapping[arti.get_label()]
+            rad = np.clip(s[i] * A, 5, 100)
+            b = Circle(arti.center, rad, label = arti.get_label(), color = colors[i])
+            tax.add_artist(b)
+            arti.set_facecolor('none')
+    tax.set_title(labels[idx], fontsize = fs)
+
+           
+            
+#tax = subplot2grid((2, 5), (1, 0), colspan = 1, fig = fig)
+tax = ax[-1, 0]
+tax.axis('off')
+plotz.addGraphPretty(model.graph, tax, p, **props)
+s = aucs[1].reshape(-1, NODES).mean(0)
+s = (s - s.min()) / (s.max() - s.min())
+for arti in tax.get_children():
+    if isinstance(arti, Circle):
+        print(arti.get_label())
+        i = model.mapping[arti.get_label()]
+        rad = np.clip(s[i] * A, 2, 100)
+        b = Circle(arti.center, rad, label = arti.get_label(), \
+                   color = colors[i])
+        tax.add_artist(b)
+        arti.set_facecolor('none')
+tax.set_title("Underwhelming\ncausal impact", fontsize = fs)
+
+#tax = subplot2grid((2, 5), (1, 2), colspan = 1, fig = fig)
+tax = ax[-1, 1]
+tax.axis('off')
+plotz.addGraphPretty(model.graph, tax, p, **props)
+s = aucs[2].reshape(-1, NODES).mean(0)
+s = (s - s.min()) / (s.max() - s.min())
+for arti in tax.get_children():
+    if isinstance(arti, Circle):
+        i = model.mapping[arti.get_label()]
+        rad = np.clip(s[i] * A, 2, 100)
+        b = Circle(arti.center, rad, label = arti.get_label(), color = colors[i])
+        tax.add_artist(b)
+        arti.set_facecolor('none')
+tax.set_title("Overwhelming\ncausal impact", fontsize = fs)
+
+elements = []
+for i in range(NODES):
+    idx = model.rmapping[i]
+    element = Line2D([0], [0], color = colors[i], label = idx, \
+                     marker = 'o', linestyle = 'none', markersize = 20, \
+                     )
+    elements.append(element)
+
+mainax = fig.add_subplot(111, xticks = [], yticks = [], frameon = 0)
+mainax.legend(handles = elements, ncol = NODES // 2, loc = (0, 0),\
+              handletextpad = 0, fontsize = 20, frameon = 0)
+
+
+#[plotz.addGraphPretty(model.graph, ax[1, i], p, **props) \
+# for i in [0, 2, 4, 4]]
+fig.subplots_adjust(hspace = .05, wspace = 0)
+fig.savefig(figDir + 'graph_cent_all.eps', bbox_inches = 'tight',
+    pad_inches = 0)
 # %%
+    
+    
+    
 tmp = 20
 props = dict(
          annotate = dict(fontsize = 150, annotate = True),\
