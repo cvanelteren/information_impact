@@ -118,7 +118,6 @@ if __name__ == '__main__':
             fmag = scipy.ndimage.gaussian_filter1d(mag, .2)
             a, b = scipy.optimize.curve_fit(func, fitTemps, fmag.squeeze(), maxfev = 10000)
 
-            # run the simulation per temperature
             matchedTemps = array([])
             f_root = lambda x,  c: func(x, *a) - c
             magnetizations = max(fmag) * magRange
@@ -130,7 +129,7 @@ if __name__ == '__main__':
             fig, ax = subplots()
             xx = linspace(0, max(fitTemps), 1000)
             ax.plot(xx, func(xx, *a))
-            ax.scatter(matchedTemp, func(matchedTemps, *a), c ='red')
+            ax.scatter(matchedTemps, func(matchedTemps, *a), c ='red')
             ax.scatter(fitTemps, mag, alpha = .2)
             ax.scatter(fitTemps, fmag, alpha = .2)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
@@ -159,13 +158,14 @@ if __name__ == '__main__':
                         graph            = nx.readwrite.json_graph.node_link_data(graph),\
                         mapping          = model.mapping,\
                         rmapping         = model.rmapping,\
-                        model            = model.__class__,\
+                        model            = type(model).__name__,\
                         directory        = targetDirectory,\
                         )
-            IO.saveSettings(targetDirectory, settings)
+            settingsObject = IO.Settings(settings)
+            settingsObject.save(targetDirectory)
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
 
-        for t, mag in zip(matchedTemp, magRange):
+        for t, mag in zip(matchedTemps, magRange):
             print(f'{time.time()} Setting {t}')
             model.t = t # update beta
             tempDir = f'{targetDirectory}/{mag}'

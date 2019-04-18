@@ -377,7 +377,7 @@ class Settings:
     def save(self, targetDirectory = None):
         targetDirectory = self.directory if targetDirectory is None else targetDirectory
         print('Saving settings')
-        s = {key.replace('_', '') : v for k, v in self.__dict__.items()}
+        s = {k.replace('_', '') : v for k, v in self.__dict__.items()}
         with open(os.path.join(targetDirectory, 'settings.json'), 'w') as f:
             json.dump(\
                       s, f,\
