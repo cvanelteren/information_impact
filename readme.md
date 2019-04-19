@@ -18,6 +18,11 @@ Models form a general model that can be found in models.py. Through inheritance
 one can define their own modes. Note that only a minimal set of properties are required
 for the different models
 
+Current implemented models:
+- Ising
+![ising](Notebooks/ising_low.gif)
+- Potts model
+![potts](Notebooks/4statepotts.gif)
 ## Modules:
 - models.py : contains the main model mold [inherit your model from this main mold]
 - fastIsing.py: numpy orientated Ising model
