@@ -26,12 +26,9 @@ Current implemented models:
 
 ![potts](Notebooks/4statepotts.gif)
 ## Modules:
-- models.py : contains the main model mold [inherit your model from this main mold]
-- fastIsing.py: numpy orientated Ising model
-- XOR.py: contains XOR and AND functions for testing simple properties of methods
--simulate.py: currently only contains simulate for simulation, the idea is to expand this
-or rework present functions for better cognitive separation. Ideas for the future are to check
-whether cythonizing this piece of code yields faster code.
+- Models: contains various models
+- Utils: various different statistical, plotting and IO related functions
+- Toolbox: the 'engine' responsible for Monte-Carlo methods
 
 # Methods
 This module contains the methods for the different information theoretical measures.
