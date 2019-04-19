@@ -20,8 +20,10 @@ for the different models
 
 Current implemented models:
 - Ising
+
 ![ising](Notebooks/ising_low.gif)
 - Potts model
+
 ![potts](Notebooks/4statepotts.gif)
 ## Modules:
 - models.py : contains the main model mold [inherit your model from this main mold]
