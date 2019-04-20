@@ -1,4 +1,4 @@
-import matplotlib as mpl
+import matplotlib as mpl, matplotlib.pyplot as plt
 from Models import  fastIsing, potts
 import networkx as nx, numpy as np
 
@@ -6,14 +6,18 @@ n = 30
 g = nx.grid_2d_graph(n, n)
 
 #m = fastIsing.Ising(g)
-m = potts.Potts(g, temperature = .5)
 
-res = m.simulate(190)
+m = potts.Potts(g, temperature = 0, updateType = 'sync', agentStates = [0, 1])
+temps = np.linspace(0, 3)
 
-
-import matplotlib.pyplot as plt
-print(res)
 fig, ax = plt.subplots()
-ax.imshow(res[-1].reshape(n, n), aspect = 'auto')
+for t in temps:
+    m.t = t
+    m.reset()
+    res = m.simulate(1000)
+    res = np.array([m.siteEnergy(i) for i in res])
+    ax.scatter(t, -res.mean())
 fig.show()
-print(set(res[:, 0]))
+
+
+
