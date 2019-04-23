@@ -284,9 +284,19 @@ class Settings:
         """
         assumes self.model is dotted, i.e. Models.[python-file].[model-name]
         """
-        m = self.model.split('.')
-        mt = '.'.join(i for i in m[:-1]) # remove extension
-        return getattr(importlib.import_module(mt), m[-1])(self.graph)
+        # not dotted anymore need to look for a class name in the directory of 
+        # the models 
+        
+        for file in os.listdir('Models/'):
+            if file.endswith('pyx'):
+                tmp = importlib.import_module(f'Models.{file.split(".")[0]}')
+                if getattr(tmp, self.model, None):
+                    # returned init model
+                    return getattr(tmp, self.model)(nx.node_link_graph(self.graph))
+        return None
+#        m = self.model.split('.')
+#        mt = '.'.join(i for i in m[:-1]) # remove extension
+#        return getattr(importlib.import_module(mt), m[-1])(self.graph)
 
     @property
     def mapping(self):

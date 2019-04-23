@@ -26,8 +26,9 @@ kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
 #multiple = '1550482875.0001953'
 
-#extractThis      = IO.newest(dataPath)[-1]
-extractThis      = psycho
+extractThis      = IO.newest(dataPath)[-1]
+#extractThis      = psycho
+#extractthis      = 
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
@@ -53,7 +54,7 @@ model     = settings.loadModel() # TODO: replace this with mappings
 # model    = Ising(control.graph)
 NTRIALS  = settings.nTrials
 NTEMPS   = len(data)
-NNUDGE   = len(settings.pulseSizes) + 1
+NNUDGE   = len(settings.pulseSizes) + 1 # add control?
 NODES    = settings.nNodes
 
 DELTAS_, EXTRA = divmod(deltas, 2) #use half, also correct for border artefact
@@ -260,7 +261,7 @@ def worker(fidx):
         # print(targetName, model.mapping[nodeNames[0]], mp.current_process())
         # load the corresponding dataset to the control
         controlidx = fidx - node
-        assert '{}' in fileNames[controlidx]
+        assert '{}' in fileNames[controlidx], 'not a control file'
         # load matching control
         control = IO.loadData(fileNames[controlidx])
          # load nudge
@@ -284,7 +285,7 @@ try:
 except:
     fileNames = sorted(\
                        [j for i in flattenDict(data) for j in i],\
-                       key = lambda x: os.path.getmtime(x),\
+                       key = lambda x: float(re.findall('\d+\.\d+', x)[2]),\
                        )
 #    fileNames = [j for i in flattenDict(data) for j in i]
     var_dict = {}
@@ -381,7 +382,7 @@ for temp in range(NTEMPS):
 
 
 columns = 4
-rows    = 3
+rows    = 1
 
 gs = dict(\
           height_ratios = ones(rows),  width_ratios = np.array([1, .15, 1, 1]) * 2,\
