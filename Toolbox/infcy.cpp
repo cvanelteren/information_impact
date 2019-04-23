@@ -1382,6 +1382,8 @@ struct __pyx_obj_6Models_6models_Model {
   __Pyx_memviewslice _newstates;
   __Pyx_memviewslice _nodeids;
   __Pyx_memviewslice _agentStates;
+  __Pyx_memviewslice _memory;
+  int _memorySize;
   std::mt19937 gen;
   unsigned long _seed;
   std::uniform_real_distribution<double>  dist;

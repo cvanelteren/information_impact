@@ -8,14 +8,19 @@ g = nx.grid_2d_graph(n, n)
 
 #m = fastIsing.Ising(g)
 
-m = potts.Potts(g, temperature = 0, updateType = 'async', agentStates = [0, 1, 2])
+m = potts.Potts(g, temperature = 0, \
+                updateType = 'async', \
+                agentStates = [0, 1, 2], \
+                memorySize = 10)
 temps = np.linspace(0, 10, 30)
 temps = np.logspace(-10, 1, 30)
 
 N = 1000
+
+#print(m.memory.base.shape)
 a, b = m.matchMagnetization(temps, N)
-
-
+#print(m.memory.base)
+dtype = int
 fig, ax = plt.subplots()
 tax = ax.twinx()
 ax.plot(temps, a )
