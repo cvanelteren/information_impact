@@ -190,7 +190,11 @@ if __name__ == '__main__':
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 if not os.path.exists(f'{tempDir}/control/'):
                     os.mkdir(f'{tempDir}/control')
-                fileName = f'{tempDir}/control/{time.time()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+
+                props = "nSamples deltas repeats updateType pulse".split())
+                fileName = f"{tempDir}/control/{time.time()}"
+                fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
+                # fileName = f'{tempDir}/control/{time.time()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr       = SimulationResult(\
                                         mi          = mi,\
                                         conditional = conditional,\
@@ -208,8 +212,11 @@ if __name__ == '__main__':
                         conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
 
                         print(f'{time.time()} Computing MI')
+
                         # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                        fileName = f'{pulseDir}/{time.time()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                        fileName = f"{pulseDir}/{time.time()}"
+                        fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
+                        # fileName = f'{pulseDir}/{time.time()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                         sr       = SimulationResult(\
                                                 mi          = mi,\
                                                 conditional = conditional,\

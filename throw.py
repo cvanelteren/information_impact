@@ -44,3 +44,7 @@ fig.show()
 
 plt.show()
 # %%
+
+import time
+test = dict(repeats = 10, deltas = 12)
+print(f'test/{time.time()}' + ''.join(f"_{k}={v}" for k, v in test.items()))
