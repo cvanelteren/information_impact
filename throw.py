@@ -11,7 +11,9 @@ g = nx.grid_2d_graph(n, n)
 m = potts.Potts(g, temperature = 0, \
                 updateType = 'async', \
                 agentStates = [0, 1, 2], \
-                memorySize = 10)
+                memorySize = 3)
+
+print(m.memorySize, m.memory.base)
 temps = np.linspace(0, 10, 30)
 temps = np.logspace(-10, 1, 30)
 
@@ -19,6 +21,8 @@ N = 1000
 
 #print(m.memory.base.shape)
 a, b = m.matchMagnetization(temps, N)
+
+print(m.memory.base)
 #print(m.memory.base)
 dtype = int
 fig, ax = plt.subplots()
