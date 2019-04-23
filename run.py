@@ -32,7 +32,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         real = sys.argv[1]
     else:
-        real = 0
+        real = 1 # change to 0
     repeats       = int(1e4)
     deltas        = 20
     step          = int(1e4)

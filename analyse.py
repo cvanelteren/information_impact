@@ -285,7 +285,7 @@ try:
 except:
     fileNames = sorted(\
                        [j for i in flattenDict(data) for j in i],\
-                       key = lambda x: float(re.findall('\d+\.\d+', x)[2]),\
+                       key = lambda x: float(re.findall('\d+\.\d+_', x)[0].strip('_')),\
                        )
 #    fileNames = [j for i in flattenDict(data) for j in i]
     var_dict = {}
