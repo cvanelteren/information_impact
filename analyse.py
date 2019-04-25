@@ -17,6 +17,7 @@ warnings.filterwarnings('ignore')
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
+dataPath = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/'
 
 
 #dataPath = '/run/media/casper/test/information_impact/Data/'
@@ -24,10 +25,12 @@ dataPath = f"{os.getcwd()}/Data/"
 # convenience
 kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
+
+psycho   = '1548025318'
 #multiple = '1550482875.0001953'
 
-extractThis      = IO.newest(dataPath)[-1]
-#extractThis      = psycho
+#extractThis      = IO.newest(dataPath)[-1]
+extractThis      = psycho
 #extractthis      = 
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
@@ -100,7 +103,8 @@ for root, subdirs, filenames in os.walk(loadThis):
 centralities = {
                     r'$c_i^{deg}$' : partial(nx.degree, weight = 'weight'), \
                     r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
-                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
+#                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
+                    r'$c_i^{cf}$'  : partial(nx.current_flow_betweenness_centrality, weight = 'weight'),\
                     r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
              }
 
@@ -135,7 +139,7 @@ savefig(figDir + 'network.png',\
 
 
 #%%
-centLabels = 'Degree Betweenness Information Eigenvector'.split()
+centLabels = 'Degree Betweenness Current Eigenvector'.split()
 idx = 22
 
 props['annotate']['fontsize'] = 1.9
@@ -382,7 +386,7 @@ for temp in range(NTEMPS):
 
 
 columns = 4
-rows    = 1
+rows    = 3
 
 gs = dict(\
           height_ratios = ones(rows),  width_ratios = np.array([1, .15, 1, 1]) * 2,\
@@ -836,7 +840,7 @@ width = .4
 xloc  = arange(NTEMPS) * 2
 conditions = [f'$M_r$ = {round(x, 2)}\n{y}' for x in temps for y in nudges]
 condLabels = 'Underwhelming Overwhelming'.split()
-labels = f'{information_impact}\tdeg\tclose\tbet\tev'.split('\t')
+labels = f'{information_impact}\tdeg\tclose\tcf\tev'.split('\t')
 
 maxT = argmax(targets,  -1)
 
@@ -1081,307 +1085,302 @@ fig.savefig(figDir + '3dscattercent.eps')
 #        [tax.tick_params(axis = i, pad = 40) for i in 'x y z'.split()]
 
 #%% randomforrest
-#from sklearn import model_selection
-#groups = arange(N + 1)
-#cv = model_selection.LeaveOneOut()
-#
-#ty = yy[..., 0]
-#ty = correct[:, 0]
-#from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-#
-#
-#
-#
-#scores = zeros((\
-#                ty.shape[0], \
-#                COND))
-#shuffescores = zeros(scores.shape)
-#imF = zeros((\
-#             ty.shape[0], \
-#             N + 1,\
-#             COND))
-#
-#shuffscores = zeros(\
-#                    (\
-#                    features.shape[0],\
-#                    features.shape[1],\
-#                    COND,
-#                    )\
-#                     )
+from sklearn import model_selection
+groups = arange(N + 1)
+cv = model_selection.LeaveOneOut()
 
-#for i, n in enumerate(nestims):
-#    clf.n_estimators = n
-#    for j, depth in enumerate(treedepths):
-#        clf.max_depth = depth
+ty = yy[..., 0]
+ty = correct[:, 0]
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+
+
+
+
+scores = zeros((\
+                ty.shape[0], \
+                COND))
+shuffescores = zeros(scores.shape)
+imF = zeros((\
+             ty.shape[0], \
+             N + 1,\
+             COND))
+
+shuffscores = zeros(\
+                    (\
+                    features.shape[0],\
+                    features.shape[1],\
+                    COND,
+                    )\
+                     )
+
 
 # The list of hyper-parameters we want to optimize. For each one we define the bounds,
 # the corresponding scikit-learn parameter name, as well as how to sample values
 # from that dimension (`'log-uniform'` for the learning rate)
-#NOBS   = NTRIALS * NTEMPS
-#
-#
-#clf = RandomForestClassifier(\
-#                            n_estimators = 100,\
-#                             n_jobs = -1,\
-#                             criterion = 'entropy',\
-#                             bootstrap = True,\
-#                             )
-#from sklearn.tree import export_graphviz
-#for cond in range(COND):
-#    ty = yy[...,cond]
-#    for k, (train, test) in enumerate(cv.split(ty)):
-#        xi, xj = features[train], features[test]
-#        yi, yj = ty[train], ty[test]
-#
-#        clf.fit(xi, yi)
-#
-#        pr = clf.predict(xj)
-#        s = metrics.accuracy_score(yj, pr)
-#        scores[k, cond] = s
-#        imF[k, :, cond] = clf.feature_importances_
-#
-#        for shuf in range(features.shape[1]):
-#            tf = features.copy()
-#            random.shuffle(tf[:, shuf])
-#            shuffpred = clf.predict(tf[test])
-#
-#            s = metrics.accuracy_score(yj, shuffpred)
-#            shuffscores[k, shuf, cond] = s
+NOBS   = NTRIALS * NTEMPS
+
+
+clf = RandomForestClassifier(\
+                            n_estimators = 100,\
+                             n_jobs = -1,\
+                             criterion = 'entropy',\
+                             bootstrap = True,\
+                             )
+from sklearn.tree import export_graphviz
+for cond in range(COND):
+    ty = yy[...,cond]
+    for k, (train, test) in enumerate(cv.split(ty)):
+        xi, xj = features[train], features[test]
+        yi, yj = ty[train], ty[test]
+
+        clf.fit(xi, yi)
+
+        pr = clf.predict(xj)
+        s = metrics.accuracy_score(yj, pr)
+        scores[k, cond] = s
+        imF[k, :, cond] = clf.feature_importances_
+
+        for shuf in range(features.shape[1]):
+            tf = features.copy()
+            random.shuffle(tf[:, shuf])
+            shuffpred = clf.predict(tf[test])
+
+            s = metrics.accuracy_score(yj, shuffpred)
+            shuffscores[k, shuf, cond] = s
 # %% plot score and feature importance
-#rcParams['axes.labelpad'] = 5
-#fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
-#                   figsize = (10,15))
-#x = arange(N + 1) * (1 + width) * 2
-#width = .5
-#mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
-#simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
-#s    = scores.reshape(NTEMPS, NTRIALS, COND)
-#ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
-#sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1)
-#t    = arange(NTEMPS)
-#
-#sc   = shuffscores.reshape(NTEMPS, NTRIALS, N+1, COND).mean(1)
-#
-#
-#d = (scores[:, None] - shuffscores) # / (scores)
-#d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
-#d = d.mean(1) / s.mean(1)[:, None] * 100
-#for temp in range(NTEMPS):
-#    for cond in range(COND):
-#        if temp == 0:
-#            ax[0, cond].set_title(condLabels[cond], fontsize = 30)
-#            
-#        tax = ax[0, cond]
-#        if temp == 0:
-#            tax.axhline(.5, color = 'black', linestyle = 'dashed')
-#        
-#            
-#        
-#        tax.bar(t[temp], ss[temp, cond], width = width, \
-#                color = colors[0])
-#        
-##        tax.boxplot(s[temp, :, cond], \
-##                )
-#        tax = ax[1, cond]
-#        tax.bar(x + width * temp, mimF[temp, :, cond],\
-#                width = width, label = f'$M_r$ ={round(temps[temp], 2)}')
-#        tax.axhline(1/5, color = 'black', linestyle = 'dashed')
-#
-#        tax = ax[2, cond]
-#        tax.bar(x + width * temp, d[temp, ..., cond], \
-#                width = width)
-##ax[0, 0].boxplot(s[..., 0].T)
-#ax[0,0].set(xticklabels = temps,\
-#            xticks = t, \
-#           )
-#
-#tmpax = fig.add_subplot(311, frameon = 0, xticks = [], yticks = [])
-#tmpax.set_xlabel('$M_r$', fontsize = 20, labelpad = 25)
-#ax[0, 0].set_ylabel('Accuracy score', fontsize = 25)
-#
-#height = 1.05
-#ax[0, 0].plot(t, height * ones(t.size) + .025, '-k')
-#ax[0, 0].text(t[1],  height + .015, '*', fontsize = 20)
-#ax[0, 0].set(ylim = (0, 1.3))
-#
-#ax[0, 1].plot(t, height * ones(t.size) + .025, '-k')
-#ax[0, 1].text(t[1],  height + .015, '*', fontsize = 20)
-#ax[0, 1].set(ylim = (0, 1.3))
-#
-#ax[1, 0].plot(x, height * ones(x.size) + .025, '-k')
-#ax[1, 0].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
-#ax[1, 0].set(ylim = (0, 1.3))
-#
-#ax[1, 1].plot(x, height * ones(x.size) + .025, '-k')
-#ax[1, 1].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
-#ax[1, 1].set(ylim = (0, 1.3))
-#
-##ax[2, 0].plot(x, 100 * ones(x.size) + .025, '-k')
-##ax[2, 0].text(x[x.size // 2],  100 + .015, '*', fontsize = 20)
-##ax[2, 0].set(ylim = (0, 115))
-#
+rcParams['axes.labelpad'] = 5
+fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
+                   figsize = (10,15))
+x = arange(N + 1) * (1 + width) * 2
+width = .5
+mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
+simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
+s    = scores.reshape(NTEMPS, NTRIALS, COND)
+ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
+sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1)
+t    = arange(NTEMPS)
+
+sc   = shuffscores.reshape(NTEMPS, NTRIALS, N+1, COND).mean(1)
+
+
+d = (scores[:, None] - shuffscores) # / (scores)
+d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
+d = d.mean(1) / s.mean(1)[:, None] * 100
+for temp in range(NTEMPS):
+    for cond in range(COND):
+        if temp == 0:
+            ax[0, cond].set_title(condLabels[cond], fontsize = 30)
+            
+        tax = ax[0, cond]
+        if temp == 0:
+            tax.axhline(.5, color = 'black', linestyle = 'dashed')
+        
+            
+        
+        tax.bar(t[temp], ss[temp, cond], width = width, \
+                color = colors[0])
+        
+#        tax.boxplot(s[temp, :, cond], \
+#                )
+        tax = ax[1, cond]
+        tax.bar(x + width * temp, mimF[temp, :, cond],\
+                width = width, label = f'$M_r$ ={round(temps[temp], 2)}')
+        tax.axhline(1/5, color = 'black', linestyle = 'dashed')
+
+        tax = ax[2, cond]
+        tax.bar(x + width * temp, d[temp, ..., cond], \
+                width = width)
+#ax[0, 0].boxplot(s[..., 0].T)
+ax[0,0].set(xticklabels = temps,\
+            xticks = t, \
+           )
+
+tmpax = fig.add_subplot(311, frameon = 0, xticks = [], yticks = [])
+tmpax.set_xlabel('$M_r$', fontsize = 20, labelpad = 25)
+ax[0, 0].set_ylabel('Accuracy score', fontsize = 25)
+
+height = 1.05
+ax[0, 0].plot(t, height * ones(t.size) + .025, '-k')
+ax[0, 0].text(t[1],  height + .015, '*', fontsize = 20)
+ax[0, 0].set(ylim = (0, 1.3))
+
+ax[0, 1].plot(t, height * ones(t.size) + .025, '-k')
+ax[0, 1].text(t[1],  height + .015, '*', fontsize = 20)
+ax[0, 1].set(ylim = (0, 1.3))
+
+ax[1, 0].plot(x, height * ones(x.size) + .025, '-k')
+ax[1, 0].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
+ax[1, 0].set(ylim = (0, 1.3))
+
+ax[1, 1].plot(x, height * ones(x.size) + .025, '-k')
+ax[1, 1].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
+ax[1, 1].set(ylim = (0, 1.3))
+
+#ax[2, 0].plot(x, 100 * ones(x.size) + .025, '-k')
+#ax[2, 0].text(x[x.size // 2],  100 + .015, '*', fontsize = 20)
+#ax[2, 0].set(ylim = (0, 115))
+
 #centralities = {
 #                    r'$c_i^{deg}$' : partial(nx.degree, weight = 'weight'), \
 #                    r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
 #                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
 #                    r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
 #             }
-#ax[1,0].set(xticks = x +  width * 3/NTEMPS, \
-#            xticklabels = '',\
-#            )
-#
-#ax[1, 0].set_ylabel('Feature importance', fontsize = 25)
-#ax[1,1].legend(fontsize = 25)
-#
-#ax[2, 0].set_ylabel('delta score(%)', fontsize = 25)
-#ax[2, 0].set(
-#             xticks = x +  width * 3/NTEMPS, \
-#             xticklabels = ['$\mu_{max}$', *(i.replace('_i', '_{max}') for i in centralities.keys())],\
-#             )
-#idx = 35
-#ax[2,0].tick_params('x', labelsize = idx, rotation = 60)
-#ax[2,1].tick_params('x', labelsize = idx, rotation = 60)
-#fig.subplots_adjust(wspace = 0)
-#fig.savefig(figDir + 'classifier_stats.eps')
+ax[1,0].set(xticks = x +  width * 3/NTEMPS, \
+            xticklabels = '',\
+            )
+
+ax[1, 0].set_ylabel('Feature importance', fontsize = 25)
+ax[1,1].legend(fontsize = 25)
+
+ax[2, 0].set_ylabel('delta score(%)', fontsize = 25)
+ax[2, 0].set(
+             xticks = x +  width * 3/NTEMPS, \
+             xticklabels = ['$\mu_{max}$', *(i.replace('_i', '_{max}') for i in centralities.keys())],\
+             )
+idx = 35
+ax[2,0].tick_params('x', labelsize = idx, rotation = 60)
+ax[2,1].tick_params('x', labelsize = idx, rotation = 60)
+fig.subplots_adjust(wspace = 0)
+fig.savefig(figDir + 'classifier_stats.eps')
 
 # %% rnf classifier simplified
-#fig, ax = subplots()
-#
-#tmp = np.arange(COND)
-#
-#tt = scores.mean(0)
-#tt[1] = 0
-#ax.bar(tmp, tt, width = .5)
-#ax.errorbar(tmp, tt, .6* scores.std(0), linestyle = '', color = 'black', capsize = 10,\
-#            elinewidth = 2, markeredgewidth = 2)
-#ax.axhline(.5, linestyle = 'dashed', color = 'k')
-#ax.set_ylabel('Prediction accuracy')
-#
-#ax.set_xticks(tmp)
-#ax.set_xticklabels('Underwhelming Overwhelming'.split())
-#ax.annotate('*', xy = (0, 1.1), fontsize = 50)
-##ax.annotate('*', xy = (1, 1.1), fontsize = 50)
+fig, ax = subplots()
+
+tmp = np.arange(COND)
+
+tt = scores.mean(0)
+tt[1] = 0
+ax.bar(tmp, tt, width = .5)
+ax.errorbar(tmp, tt, .6* scores.std(0), linestyle = '', color = 'black', capsize = 10,\
+            elinewidth = 2, markeredgewidth = 2)
+ax.axhline(.5, linestyle = 'dashed', color = 'k')
+ax.set_ylabel('Prediction accuracy')
+
+ax.set_xticks(tmp)
+ax.set_xticklabels('Underwhelming Overwhelming'.split())
+ax.annotate('*', xy = (0, 1.1), fontsize = 50)
+#ax.annotate('*', xy = (1, 1.1), fontsize = 50)
+ax.set_ylim(0, 1.3)
+
+
+
+fig.savefig(figDir + 'accuracy_single.png')
+
+# %%
+fig, ax = subplots()
+tmp = np.arange(5) - .25
+for i in range(COND):
+    j = labels[i]
+    tax = ax
+    tax.bar(tmp + i * .25, mimF.mean(0)[..., i], width = .5, label = j)
+    tax.set_xticks(tmp + .25)
+ax.axhline(1/5, color = 'k', linestyle = 'dashed')
+#ax.plot(tmp + .25, ones(tmp.size) * 1.1, color = 'k')
+#ax.annotate('*', (tmp[tmp.size // 2], 1.1), fontsize = 50)
 #ax.set_ylim(0, 1.3)
-#
-#
+tax.set_ylabel('Feature importance')
+tax.legend()
 
-#fig.savefig(figDir + 'accuracy_single.png')
+tax.set_xticklabels(['Information\nimpact', *(f.func.__name__.split('_')[0] for f in centralities.values())], \
+                     fontsize = 30, rotation = 60)
+fig.savefig(figDir + 'feature_single.png')
+    
+# %%
+from matplotlib import gridspec
+fig = figure()
 
-# %%
-#fig, ax = subplots()
-#tmp = np.arange(5) - .25
-#for i in range(COND):
-#    j = labels[i]
-#    tax = ax
-#    tax.bar(tmp + i * .25, mimF.mean(0)[..., i], width = .5, label = j)
-#    tax.set_xticks(tmp + .25)
-#ax.axhline(1/5, color = 'k', linestyle = 'dashed')
-##ax.plot(tmp + .25, ones(tmp.size) * 1.1, color = 'k')
-##ax.annotate('*', (tmp[tmp.size // 2], 1.1), fontsize = 50)
-##ax.set_ylim(0, 1.3)
-#tax.set_ylabel('Feature importance')
-#tax.legend()
-#
-#tax.set_xticklabels(['Information\nimpact', *(f.func.__name__.split('_')[0] for f in centralities.values())], \
-#                     fontsize = 30, rotation = 60)
-#fig.savefig(figDir + 'feature_single.png')
-#    
-# %%
-#from matplotlib import gridspec
-#fig = figure()
-#
-#gs1 = gridspec.GridSpec(1,1)
-#gs1.update(left = 0.05, right = 0.48, wspace = 0.05)
-#left = fig.add_subplot(gs1[0]) # ((2,3), (0,0), colspan = 1, rowspan = 2, fig = fig)
-#
-#gs2 = gridspec.GridSpec(3, 2)
-#gs2.update(left = .55, right = .98, hspace = 0, wspace = 0)
-#for idx, (i, j, tmp) in enumerate(zip(d.mean(0), mimF.mean(0), list(gs2)[1:])):
-#    ax = fig.add_subplot(tmp)
-#    # if ax.set(yticklabels = [], xticklabels = [])
-#    ax.scatter(i,j)
-# left.set_title('Prediction accuracy')
-# left.bar([0,1], ss.mean(0))
+gs1 = gridspec.GridSpec(1,1)
+gs1.update(left = 0.05, right = 0.48, wspace = 0.05)
+left = fig.add_subplot(gs1[0]) # ((2,3), (0,0), colspan = 1, rowspan = 2, fig = fig)
+
+gs2 = gridspec.GridSpec(3, 2)
+gs2.update(left = .55, right = .98, hspace = 0, wspace = 0)
+for idx, (i, j, tmp) in enumerate(zip(d.mean(0), mimF.mean(0), list(gs2)[1:])):
+    ax = fig.add_subplot(tmp)
+    # if ax.set(yticklabels = [], xticklabels = [])
+    ax.scatter(i,j)
+left.set_title('Prediction accuracy')
+left.bar([0,1], ss.mean(0))
    
-# left.set_ylabel('Accuracy score')
-# left.set(xticks = [0, 1], xticklabels = conditionLabels)
-# left.axhline(.5, color = 'red', linestyle = 'dashed', label = 'random choice')
-# [left.annotate('*', (i, j + .005), fontsize = 20) for i, j in zip([0, 1], ss.mean(0))]
+left.set_ylabel('Accuracy score')
+left.set(xticks = [0, 1], xticklabels = conditionLabels)
+left.axhline(.5, color = 'red', linestyle = 'dashed', label = 'random choice')
+[left.annotate('*', (i, j + .005), fontsize = 20) for i, j in zip([0, 1], ss.mean(0))]
 
-# xr = arange(len(labels))
-# left.legend(loc = 'upper left')
+xr = arange(len(labels))
+left.legend(loc = 'upper left')
 
-# labels = ['$\mu_i$', *centLabels]
-# for idx, label in enumerate(labels):
-#     r, c  = unravel_index(idx, (2,2))
-#     gs = gridspec.GridSpec
-#     ax = subplot2grid((2, 3), (r, c + 1), fig = fig)
-    # ax.scatter(d.mean(0)[idx], mimF.mean(0)[idx])
-# right.set(xlabel = '$\delta$ score(%)', ylabel = 'Feature importance')
-# [right.bar(xr + width * idx, i, width = width) for idx, i in enumerate(mimF.mean(0).T)]
+labels = ['$\mu_i$', *centLabels]
+for idx, label in enumerate(labels):
+    r, c  = unravel_index(idx, (2,2))
+#    gs = gridspec.GridSpec
+   
+    ax = subplot2grid((2, 3), (r, c + 1), fig = fig)
+    ax.scatter(d.mean(0)[idx], mimF.mean(0)[idx])
+right.set(xlabel = '$\delta$ score(%)', ylabel = 'Feature importance')
+[right.bar(xr + width * idx, i, width = width) for idx, i in enumerate(mimF.mean(0).T)]
 
 # %%
-#d = array([(s - j) / s for s, j in zip(scores, shuffescores)])
-#
-#
-##s = (scores - shuffscores) / (
-#
-#p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5)
-#
-#O    = imF.sum(0)
-#E    = NOBS * 1 // (N + 1) * ones(O.shape, dtype = int)
-#test, pp = scipy.stats.chisquare(O, E, ddof = O.shape[1] - 1, axis = 0)
-#
-#cO = O[0]
-#iO = O[1:].mean(0)
-#
-#OO = zeros((2, COND))
-#OO[0, :] = cO
-#OO[1, :] = iO
-#EE = NOBS // OO.shape[0] * ones(OO.shape)
-#
-#ptest, postp = scipy.stats.chisquare(OO, EE, axis = 0)
-#print(ptest, postp)
-#
-## correct for number of tests (n conditions + 1 post)
-#pp /= N + 2
-#postp /= N + 2
-#print(pp, postp)
+d = array([(s - j) / s for s, j in zip(scores, shuffescores)])
+
+
+#s = (scores - shuffscores) / (
+
+p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5)
+
+O    = imF.sum(0)
+E    = NOBS * 1 // (N + 1) * ones(O.shape, dtype = int)
+test, pp = scipy.stats.chisquare(O, E, ddof = O.shape[1] - 1, axis = 0)
+
+cO = O[0]
+iO = O[1:].mean(0)
+
+OO = zeros((2, COND))
+OO[0, :] = cO
+OO[1, :] = iO
+EE = NOBS // OO.shape[0] * ones(OO.shape)
+
+ptest, postp = scipy.stats.chisquare(OO, EE, axis = 0)
+print(ptest, postp)
+
+# correct for number of tests (n conditions + 1 post)
+pp /= N + 2
+postp /= N + 2
+print(pp, postp)
 # %% write results
-#import xlsxwriter
-#f = f'{extractThis}_statdata.xlsx'
-#writer = pd.ExcelWriter(f, engine = 'xlsxwriter')
-#
-#pscores = pd.DataFrame(scores, columns = 'Underwhelming Overwhelming'.split())
-#pscores.to_excel(writer, sheet_name = 'RNF_scores')
-#
-## squash conditions
-#pshuffscoresmean = shuffscores.mean(0)
-#pshuffscoresstd  = shuffscores.std(0) * 2
-#pshuffscores      = stack((pshuffscoresmean, \
-#                            pshuffscoresstd), axis = 0)
-#
-#pimF    = imF.mean(0)
-#pimFstd = imF.std(0)
-#pimFs   = stack((pimF , pimFstd), axis = 0)
-#
-## write to xlsx
-#for cond in range(COND):
-#    pshuffscore      = pd.DataFrame(\
-#                                pshuffscores[..., cond],\
-#                                columns = ['information impact',\
-#                                           *centLabels],\
-#                               index =  ['mean', 'std'])
-#    pshuffscore.to_excel(writer, sheet_name = f'shscores{condLabels[cond]}')
-#
-#    pimF = pd.DataFrame(pimFs[..., cond], \
-#                     columns = ['information impact',\
-#                                           *centLabels],\
-#                               index =  ['mean', 'std'])
-#    pimF.to_excel(writer, sheet_name = f'fi_{condLabels[cond]}')
+import xlsxwriter
+f = f'{extractThis}_statdata.xlsx'
+writer = pd.ExcelWriter(f, engine = 'xlsxwriter')
+
+pscores = pd.DataFrame(scores, columns = 'Underwhelming Overwhelming'.split())
+pscores.to_excel(writer, sheet_name = 'RNF_scores')
+
+# squash conditions
+pshuffscoresmean = shuffscores.mean(0)
+pshuffscoresstd  = shuffscores.std(0) * 2
+pshuffscores      = stack((pshuffscoresmean, \
+                            pshuffscoresstd), axis = 0)
+
+pimF    = imF.mean(0)
+pimFstd = imF.std(0)
+pimFs   = stack((pimF , pimFstd), axis = 0)
+
+# write to xlsx
+for cond in range(COND):
+    pshuffscore      = pd.DataFrame(\
+                                pshuffscores[..., cond],\
+                                columns = ['information impact',\
+                                           *centLabels],\
+                               index =  ['mean', 'std'])
+    pshuffscore.to_excel(writer, sheet_name = f'shscores{condLabels[cond]}')
+
+    pimF = pd.DataFrame(pimFs[..., cond], \
+                     columns = ['information impact',\
+                                           *centLabels],\
+                               index =  ['mean', 'std'])
+    pimF.to_excel(writer, sheet_name = f'fi_{condLabels[cond]}')
 writer.save()
-#    pd.MultiIndex(tuples, names = 'observed methodd )
-#for cond in range(COND):
 
 
 # %%
@@ -1410,38 +1409,38 @@ writer.save()
 
 
 #%%
-#fig, ax = subplots()
-#
-#ac = Y.sum(0)[:, None]
-#counts = ac @ ac.T
-#showThis = sqrt(counts) / Y.shape[0]
-#h  = ax.imshow(cov(Y.T))
-#plotz.colorbar(h)
-#yl = [i for i in Y.columns]
-#yr = arange(len(yl))
-#ax.set(\
-#       xticks = yr,\
-#       yticks = yr,\
-#       xticklabels = yl, \
-#       yticklabels = yl,\
-#       title = 'Covariance of correct predictions')
-#ax.tick_params(axis = 'x', rotation = 45)
-#fig.savefig(figDir + 'cov_predictions.eps')
-#
-#fig, ax = subplots()
-#
-#mainax = fig.add_subplot(121, frameon = 0,\
-#                         xticks = [],\
-#                         yticks = [])
-#mainax.set_xlabel('Underwhelming', labelpad = 100)
-#mainax = fig.add_subplot(122, frameon = 0,\
-#                         xticks = [],\
-#                         yticks = [])
-#mainax.set_xlabel('Overwhelming', labelpad = 100)
-#x = arange(Y.shape[1])
-#ax.bar(x, Y.mean(0))
-#ax.set(xticks = yr, xticklabels = yl, ylabel = 'Prediction accuracy(%)')
-#ax.tick_params(axis = 'x', rotation = 45)
+fig, ax = subplots()
+
+ac = Y.sum(0)[:, None]
+counts = ac @ ac.T
+showThis = sqrt(counts) / Y.shape[0]
+h  = ax.imshow(cov(Y.T))
+plotz.colorbar(h)
+yl = [i for i in Y.columns]
+yr = arange(len(yl))
+ax.set(\
+       xticks = yr,\
+       yticks = yr,\
+       xticklabels = yl, \
+       yticklabels = yl,\
+       title = 'Covariance of correct predictions')
+ax.tick_params(axis = 'x', rotation = 45)
+fig.savefig(figDir + 'cov_predictions.eps')
+
+fig, ax = subplots()
+
+mainax = fig.add_subplot(121, frameon = 0,\
+                         xticks = [],\
+                         yticks = [])
+mainax.set_xlabel('Underwhelming', labelpad = 100)
+mainax = fig.add_subplot(122, frameon = 0,\
+                         xticks = [],\
+                         yticks = [])
+mainax.set_xlabel('Overwhelming', labelpad = 100)
+x = arange(Y.shape[1])
+ax.bar(x, Y.mean(0))
+ax.set(xticks = yr, xticklabels = yl, ylabel = 'Prediction accuracy(%)')
+ax.tick_params(axis = 'x', rotation = 45)
 #%%
 
 
@@ -1492,384 +1491,10 @@ writer.save()
 
 
 
-# %% kmeans plots
-#
-#from sklearn import cluster
-#from sklearn import mixture
-#
-#nclus = arange(2, model.nNodes - 1)
-#
-#tmp = estimates[...,0, :].reshape(-1, 1)
-#y   = moveaxis(targets, -2, -1).reshape(-1, COND)
-#x   = hstack((tmp, y)).reshape(NTEMPS, NTRIALS * NODES, COND + 1)
-#
-#from sklearn.metrics import silhouette_samples, silhouette_score
-#
-#
-#gs = dict(\
-#          height_ratios = ones(NODES  - nclus.min()-1),\
-#          width_ratios  = [2, 1])
-#from sklearn.preprocessing import StandardScaler
-#
-#scores_ = zeros((NTEMPS, nclus.size, COND))
-#for temp in range(NTEMPS):
-#    for cond in range(COND):
-#        fig, ax = subplots(NODES  - nclus.min() - 1, 2, \
-#                           sharex = 'col', sharey = 'col', \
-#                           gridspec_kw = gs, \
-#                           figsize = (5, 15))
-#
-#        mainax = fig.add_subplot(111, xticks = [],\
-#                                 yticks = [],\
-#                                 frameon = False)
-#        mainax.set_title(f'$M_r$ = {temps[temp]}\n')
-#    #    mainax = fig.add_subplot(121, xticks = [],\
-#    #                             yticks = [],\
-#    #                             frameon = False, \
-#    #                             )
-#        mainax.set_ylabel(f'Z-scored {causal_impact}', labelpad = 40)
-#
-#
-#        subplots_adjust(wspace = 0)
-#        for idx, n in enumerate(nclus):
-#            tax = ax[idx, 1]
-#            clf = cluster.KMeans(n)
-#    #        clf = mixture.BayesianGaussianMixture(n, covariance_type = 'full')
-#            xi = x[temp, :, [0, cond + 1]].T
-#            xi = StandardScaler().fit_transform(xi)
-#            ypred = clf.fit_predict(xi)
-#            sil = silhouette_score(xi, ypred)
-#            sils= silhouette_samples(xi, ypred)
-#
-#            scores_[temp, idx, cond] = sil
-#            tax.set_title(f'N={n}')
-#            low = 2
-#            for ni in range(n):
-#                tmp_s = sils[ypred == ni]
-#                tmp_s.sort()
-#                high = low + tmp_s.size
-#
-#                color = cm.tab20(ni / n)
-#                color = colors[ni]
-#                tax.fill_betweenx(arange(low, high), \
-#                                  0, tmp_s, color = color,)
-#                low = high + 2
-#    #        tax.set(yscale = 'log')
-#            tax.axvline(sil, color = 'red', linestyle = '--')
-#            tax.set(yticks = [])
-#            tax = ax[idx, 0]
-#            tax.scatter(*xi.T, c = colors[ypred])
-#        ax[-1, 0].set_xlabel('Z-scored $\mu_i$', labelpad = 15)
-#        ax[-1, 1].set_xlabel('Silhouette score', labelpad = 15)
-#        fig.savefig(figDir + f'$M_r$ = {round(temps[temp], 2)}_kmeans{cond}.eps')
-## %% optimal kmeans plot
-#
-#fig, ax = subplots(1,2, sharey = 'all')
-#rcParams['axes.labelpad'] = 60
-#
-#sfig, sax = subplots(3,2, sharey = 'row')
-#
-#maxes = zeros((NTEMPS, COND))
-#
-#y   = moveaxis(targets, -2, -1).reshape(-1, COND)
-#x   = hstack((tmp, y)).reshape(NTEMPS, NTRIALS * NODES, COND + 1)
-#
-#for i in range(COND):
-#    tax = ax[i]
-#    s = scores_[...,i]
-#    for t in range(NTEMPS):
-#
-#        tax.plot(nclus, s[t], label = f'{round(temps[t],2)}', \
-#                 color = colors[t])
-#
-#        m = argmax(s[t])
-#        maxes[t, i] = m
-#        tax.axvline(x = nclus[m], color = colors[t], \
-#                    linestyle = '--')
-#
-#        # show cluster
-#        xi = x[t, :, [0, i + 1]].T # get correct data
-#        xi = StandardScaler().fit_transform(xi) # zscore
-#        clf = cluster.KMeans(nclus[m]) # kmeans
-#        ypred = clf.fit_predict(xi).reshape(NTRIALS, NODES)
-#        xi    =xi.reshape(NTRIALS, NODES, 2)
-#        ttax  = sax[t, i]
-#
-#        markers = array(['o', 'v', '^',\
-#                         '<', '>', '8',\
-#                         's', 'p', '*',\
-#                         'h', 'H',\
-#                         'D', 'd',\
-#                         'P', 'X'])
-#        for node in range(NODES):
-#            for trial in range(NTRIALS):
-#                ttax.scatter(*xi[trial, node], color = colors[node],\
-#                         marker = markers[ypred[trial, node]], \
-#                         )
-#
-#        # format axes
-#        if t == 0:
-#            ttax.set_title(condLabels[i])
-#
-#        if i == 0:
-#            ttax.text(.25 if i == 0 else .85, .85 , \
-#             f'$M_r$ = {round(temps[t], 2)}', \
-#             fontdict = dict(fontsize = 15),\
-#             transform = ttax.transAxes,\
-#             horizontalalignment = 'right')
-#
-#    tax.set_title(condLabels[i])
-#
-#
-#tax.legend(\
-#           loc = 'bottom right', \
-#           title = 'Temperature', \
-#           title_fontsize = 15,\
-#           )
-#mainax = fig.add_subplot(111,\
-#                         frameon = False,\
-#                         xticks = [],\
-#                         yticks = [])
-#
-#
-#mainax.set(xlabel = 'k clusters', \
-#            ylabel = 'silhouette score (s)')
-#
-#
-#fig.subplots_adjust(wspace = 0)
-#sfig.subplots_adjust(wspace = 0 , hspace = 0)
-#mainax = sfig.add_subplot(111,\
-#                         frameon = False,\
-#                         xticks = [],\
-#                         yticks = [])
-#mainax.set(xlabel = f'Z-scored information impact {information_impact}',\
-#           ylabel = f'Z-scored Causal impact {causal_impact}')
-#
-#fig.savefig(figDir + 'mean_silscores.eps')
-#elements = [\
-#            Line2D([0],[0], \
-#                   color = colors[i], \
-#                   label = model.rmapping[i],\
-#                   marker = 'o', linestyle = '',\
-#                   markersize = 15) \
-#           for i in range(NODES)]
-#
-#mainax.legend(handles = elements, loc = 'upper left',\
-#              bbox_to_anchor = (1,1),
-#              frameon = False, borderaxespad = 0)
-#sfig.savefig(figDir + 'optimal_clusters.eps')
-#
-##%% multiple linear regression
-#import statsmodels.api as sm
-#tmp = ['intercept', \
-#       '$\mu_i$',\
-#       *centLabels]
-#def imshow_symlog(ax, my_matrix, vmin, vmax, logthresh=5):
-#    img= ax.imshow( my_matrix ,
-#                vmin=float(vmin), vmax=float(vmax),
-#                norm=matplotlib.colors.SymLogNorm(10**-logthresh) )
-#    return img
-#X = moveaxis(estimates, 2, -1)
-#y = moveaxis(targets, 2, -1).reshape(-1, COND)
-#y = scipy.stats.zscore(y, 0)
-##X = scipy.stats.zscore(X, 2)
-#X = X.reshape(-1, N + 1)
-#X = scipy.stats.zscore(X, 0)
-#X[isfinite(X) == False] = 0
-#y = pd.DataFrame(y, columns = 'Underwhelming Overwhelming'.split())
-#
-#
-##X = X[:, [0]]
-#
-## visualize covariance
-#fig, ax =  subplots()
-##h = imshow_symlog(ax, abs(corrcoef(array(X)[:, 1:].T)), 0, 1)
-#cvar = corrcoef(array(X).T)
-#h = ax.imshow(cvar, vmin = -1, vmax = 1)
-#ax.set(xticks = arange(N+1),\
-#       yticks = arange(N+1),\
-#       xticklabels = tmp[1:], \
-#       yticklabels = tmp[1:])
-#cbar = plotz.colorbar(h)
-#cbar.set_label('R', rotation = 0)
-#fig.savefig(figDir + 'covariance.eps')
-## fit model
-#X = sm.add_constant(X)
-#
-#X = pd.DataFrame(X, columns = tmp[:X.shape[1]])
-#
-#est = sm.OLS(y['Underwhelming'], X).fit()
-#
-#mr = est.summary().as_latex()
-#print(est.summary())
-#import csv
-#with open(f'{extractThis}.linregress.tex', 'w') as f:
-#    f.write(mr)
-#
-#
-## %%
-## % fit the results
-#rcParams['axes.labelpad'] = 5
-#linf = lambda x, beta, c : beta * x + c
-#bbox_props = dict(fc="white", lw=2)
-#mins, maxs = X.min(0), X.max(0)
-#fig, ax = subplots(2, 3, sharex = 'all', sharey = 'all')
-#
-##fig = figure(2, 3)
-#import matplotlib.patheffects as pe
-## skip intercept
-#elements = []
-#for idx, i in enumerate(X.columns[1:]):
-##    tax = ax[idx]
-#    tax = ax.ravel()[idx]
-#    if idx == N:
-#        tax = ax.ravel()[idx + 1]
-#        ax.ravel()[idx].axis('off')
-##    row = 0 if idx < 3 else 1
-##    col = idx * 2 if idx < 3 else row
-#
-##    print(row, col)
-##    tax = subplot2grid((2, 6), loc = (row, col), colspan = 2)
-#    x = linspace(mins[i], maxs[i])
-#    tax.scatter(X[i], y['Underwhelming'],  alpha = 1, \
-#               color = colors[idx], label = i)
-#    beta = est.params[i]
-#    
-#    ex, ey = est.bse['intercept'], est.bse[i]
-#    tax.plot(x, linf(x, beta, est.params['intercept']), color = colors[idx],\
-#            linestyle = 'dashed', path_effects=[pe.Stroke(linewidth=5, foreground='k')])
-#    
-#    tax.fill_between(x, linf(x, beta + 2 * ex, est.params['intercept'] + 2 * ex), \
-#                     linf(x, beta - 2 * ex, est.params['intercept'] - 2 * ex),\
-#                     color = 'k', alpha = 0.5)
-#    elements.append(Line2D([0], [0], color = colors[idx], marker = '.', \
-#                           linestyle = 'none', label = i, markersize = 40))
-#    ax[0,0].text(.9, .9, f"$R^2$ = {est.rsquared: .2f}", horizontalalignment = 'right',\
-#         transform = tax.axes.transAxes, fontsize = 20, bbox = dict(\
-#                                                                          fc = 'white'))
-#    if est.pvalues[i] < .05:
-#        tmp = x[x.size // 2]
-#        xy  = (tmp, linf(tmp, beta, est.params['intercept']))
-#        bbox_props['ec'] = colors[idx]
-#        theta = 45 * beta# arcsin(beta)/ (2 * pi)* 180,
-#        t = tax.text(*xy, fr"$\beta$={round(beta, 2):.1e}", rotation = theta,\
-#                                      fontsize = 20,\
-#                                      bbox=bbox_props)
-#   
-#        bb = t.get_bbox_patch()
-##        bb.set_boxstyle('rarrow', pad = .5)
-##        tax.annotate(fr"$\beta$={round(beta, 2):e}", xy = xy, \
-##                 xytext = xy, xycoords = 'data', \
-##                 textcoords = 'data', rotation = 45, fontsize =  20)
-#
-#
-#mainax = fig.add_subplot(111, frameon = False, \
-#                         xticks = [], \
-#                         yticks = [], \
-#                         )
-#ax[1, 1].legend(handles = elements, loc = 'lower center', title = 'x', title_fontsize = 35,\
-#              bbox_to_anchor = (.5, -.1), fontsize = 23, frameon = False, \
-#              handletextpad = 0)
-#
-#
-#mainax.set_xlabel('Z-scored x', labelpad = 40, fontsize = 30)
-#mainax.set_ylabel(f'Z-scored causal impact ({causal_impact})', labelpad = 40, fontsize = 30)
-#fig.subplots_adjust(hspace = 0, wspace = 0)
-#
-##tax.legend(title = 'x', title_fontsize = 15)
-#
-#
-#
-##tax.set(xlabel = 'Z-scored x',\
-##        ylabel = f'Z-scored {causal_impact}')
-#fig.savefig(figDir + 'multiregr.eps')
-#
-##assert 0
-#
-## %% appendix box rejection
-#rcParams['axes.labelpad'] = 40
-#fig, ax = subplots(1, COND, sharey = 'all')
-#mainax = fig.add_subplot(111, frameon = False,\
-#                         xticks = [],\
-#                         yticks = [],\
-#                         ylabel = 'Rejection rate(%)'\
-#                         )
-#
-#subplots_adjust(wspace = 0)
-#x     = arange(NTEMPS) * 3
-#
-#width = .2
-#labels = 'Underwhelming Overwhelming'.split()
-#conditions = [f'$M_r$ = {round(i,2)}' for i in temps]
-#for cond in range(COND):
-#    tax = ax[cond]
-#    tax.set_title(labels[cond])
-#    tax.set(xticks = x + .5 * width * NODES, \
-#            xticklabels = conditions,\
-#            )
-#    tax.tick_params(axis = 'x', rotation = 45)
-#
-#    for node in range(NODES):
-#        y  = rejections[cond, :, node] * 100
-#        tx = x + width * node
-#        tax.bar(tx, y, width = width,\
-#                color = colors[node], label = model.rmapping[node])
-#tax.legend(loc = 'upper left',\
-#          bbox_to_anchor = (1, 1),\
-#          borderaxespad = 0, \
-#          frameon = False)
-#fig.savefig(figDir + 'rejection_rate.eps', format = 'eps', dpi = 1000)
-#
-### %% appendix plot: fit error comparison
-#fig, ax = subplots()
-#errors = errors.reshape(-1, NODES)
-#subplots_adjust(hspace = 0)
-#width= .07
-#locs = arange(0, len(errors))
-#for node in range(NODES):
-#    ax.bar(locs + width * node, \
-#           errors[:, node], color = colors[node],\
-#           width = width, label = model.rmapping[node])
-#
-#conditions = [f'$M_r$ = {round(x, 2)}\n{y}' for x in temps for y in nudges]
-## set labels per group and center it
-#ax.set(yscale = 'log', xticklabels = conditions, \
-#       xticks = locs + .5 * NODES * width, ylabel = 'Mean square error')
-#ax.tick_params(axis = 'x', rotation = 45)
-#ax.legend(loc = 'upper left',\
-#          bbox_to_anchor = (1, 1),\
-#          borderaxespad = 0, \
-#          frameon = False)
-#rcParams['axes.labelpad'] = 1
-#fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)
-#
-#
-## %%
-#from scipy import spatial
-#a = np.argsort(aucs)[..., -2:]
-#b = []
-#dis = np.zeros(a.shape[:-1])
-#for i, j in  enumerate(a):
-#    for k, l in enumerate(j):
-#        for m, n in enumerate(l):
-#            x, y  = aucs[i, k, m, n]
-#            dis[i,k,m] = np.sqrt((x - y) **2)
-#fig, ax = subplots(figsize = (12, 15))
-#l = ['Information impact', *condLabels]
-#for idx, (i, j) in enumerate(zip(dis.mean(-1), dis.std(-1))):
-#    ax.errorbar(np.arange(NTEMPS), i, j, alpha = .5, label = l[idx], zorder = 5 - idx)
-#ax.set_xlabel('Magnetization fraction ($M_r$)', fontsize = 35, labelpad = 4)
-#ax.set_ylabel('Mean distance ($\sqrt{( first - second )^2}$)', fontsize = 25, labelpad = 4)
-#ax.set(xticks = np.arange(NTEMPS), xticklabels = temps)
-#ax.tick_params(axis='both', which='major', labelsize=25)
-#ax.legend(fontsize = 25)
-#fig.savefig(figDir + 'distance.png')
-## h = ax.imshow(dis.mean(-1))
-## plotz.colorbar(h)
 #            
 # %% all graph and cents
 
-centLabels = 'Degree Betweenness Information Eigenvector'.split()
+centLabels = 'Degree Betweenness Current Eigenvector'.split()
 idx = 50
 
 props['annotate']['fontsize'] = 1.9
@@ -2029,7 +1654,7 @@ for i in range(NODES):
     
 tax.set_xticks(np.arange(len(loading) + 2))
 
-y = 'degree \t betweenness \t information \t eigenvector \t information\nimpact \t causal impact\nunderwhelming \t causal impact\noverwhelming'.split(' \t ')
+y = 'degree \t betweenness \t current \t eigenvector \t information\nimpact \t causal impact\nunderwhelming \t causal impact\noverwhelming'.split(' \t ')
 
 tax.set_xticklabels(y, rotation = 30)
 tax.annotate('Highest', (6.1, 1.05), fontsize = 20,  horizontalalignment = 'left', bbox = bbox_props)
@@ -2206,7 +1831,7 @@ for idx, tax in enumerate(ax):
         tax.annotate(model.rmapping[i], xy, horizontalalignment = 'right', fontsize = 20)
     tax.set_xticks(np.arange(len(loading) + 1))
     
-    y = 'degree \t betweenness \t information \t eigenvector \t information\nimpact \t causal\nimpact'.split(' \t ')
+    y = 'degree \t betweenness \t current \t eigenvector \t information\nimpact \t causal\nimpact'.split(' \t ')
     
     tax.set_xticklabels(y, rotation = 30)
     tax.annotate('Rank 1', (5.1, 1.05), fontsize = 20,  horizontalalignment = 'left', bbox = bbox_props)
@@ -2231,3 +1856,380 @@ d = np.exp(-5)*np.power(5, t)/scipy.misc.factorial(t)
 fig, ax = subplots()
 ax.plot(t, d)
 ax.set(ylabel = 'Dynamic impact', xlabel = 'Degree')
+
+
+
+# %% kmeans plots
+#
+#from sklearn import cluster
+#from sklearn import mixture
+#
+#nclus = arange(2, model.nNodes - 1)
+#
+#tmp = estimates[...,0, :].reshape(-1, 1)
+#y   = moveaxis(targets, -2, -1).reshape(-1, COND)
+#x   = hstack((tmp, y)).reshape(NTEMPS, NTRIALS * NODES, COND + 1)
+#
+#from sklearn.metrics import silhouette_samples, silhouette_score
+#
+#
+#gs = dict(\
+#          height_ratios = ones(NODES  - nclus.min()-1),\
+#          width_ratios  = [2, 1])
+#from sklearn.preprocessing import StandardScaler
+#
+#scores_ = zeros((NTEMPS, nclus.size, COND))
+#for temp in range(NTEMPS):
+#    for cond in range(COND):
+#        fig, ax = subplots(NODES  - nclus.min() - 1, 2, \
+#                           sharex = 'col', sharey = 'col', \
+#                           gridspec_kw = gs, \
+#                           figsize = (5, 15))
+#
+#        mainax = fig.add_subplot(111, xticks = [],\
+#                                 yticks = [],\
+#                                 frameon = False)
+#        mainax.set_title(f'$M_r$ = {temps[temp]}\n')
+#    #    mainax = fig.add_subplot(121, xticks = [],\
+#    #                             yticks = [],\
+#    #                             frameon = False, \
+#    #                             )
+#        mainax.set_ylabel(f'Z-scored {causal_impact}', labelpad = 40)
+#
+#
+#        subplots_adjust(wspace = 0)
+#        for idx, n in enumerate(nclus):
+#            tax = ax[idx, 1]
+#            clf = cluster.KMeans(n)
+#    #        clf = mixture.BayesianGaussianMixture(n, covariance_type = 'full')
+#            xi = x[temp, :, [0, cond + 1]].T
+#            xi = StandardScaler().fit_transform(xi)
+#            ypred = clf.fit_predict(xi)
+#            sil = silhouette_score(xi, ypred)
+#            sils= silhouette_samples(xi, ypred)
+#
+#            scores_[temp, idx, cond] = sil
+#            tax.set_title(f'N={n}')
+#            low = 2
+#            for ni in range(n):
+#                tmp_s = sils[ypred == ni]
+#                tmp_s.sort()
+#                high = low + tmp_s.size
+#
+#                color = cm.tab20(ni / n)
+#                color = colors[ni]
+#                tax.fill_betweenx(arange(low, high), \
+#                                  0, tmp_s, color = color,)
+#                low = high + 2
+#    #        tax.set(yscale = 'log')
+#            tax.axvline(sil, color = 'red', linestyle = '--')
+#            tax.set(yticks = [])
+#            tax = ax[idx, 0]
+#            tax.scatter(*xi.T, c = colors[ypred])
+#        ax[-1, 0].set_xlabel('Z-scored $\mu_i$', labelpad = 15)
+#        ax[-1, 1].set_xlabel('Silhouette score', labelpad = 15)
+#        fig.savefig(figDir + f'$M_r$ = {round(temps[temp], 2)}_kmeans{cond}.eps')
+## %% optimal kmeans plot
+#
+#fig, ax = subplots(1,2, sharey = 'all')
+#rcParams['axes.labelpad'] = 60
+#
+#sfig, sax = subplots(3,2, sharey = 'row')
+#
+#maxes = zeros((NTEMPS, COND))
+#
+#y   = moveaxis(targets, -2, -1).reshape(-1, COND)
+#x   = hstack((tmp, y)).reshape(NTEMPS, NTRIALS * NODES, COND + 1)
+#
+#for i in range(COND):
+#    tax = ax[i]
+#    s = scores_[...,i]
+#    for t in range(NTEMPS):
+#
+#        tax.plot(nclus, s[t], label = f'{round(temps[t],2)}', \
+#                 color = colors[t])
+#
+#        m = argmax(s[t])
+#        maxes[t, i] = m
+#        tax.axvline(x = nclus[m], color = colors[t], \
+#                    linestyle = '--')
+#
+#        # show cluster
+#        xi = x[t, :, [0, i + 1]].T # get correct data
+#        xi = StandardScaler().fit_transform(xi) # zscore
+#        clf = cluster.KMeans(nclus[m]) # kmeans
+#        ypred = clf.fit_predict(xi).reshape(NTRIALS, NODES)
+#        xi    =xi.reshape(NTRIALS, NODES, 2)
+#        ttax  = sax[t, i]
+#
+#        markers = array(['o', 'v', '^',\
+#                         '<', '>', '8',\
+#                         's', 'p', '*',\
+#                         'h', 'H',\
+#                         'D', 'd',\
+#                         'P', 'X'])
+#        for node in range(NODES):
+#            for trial in range(NTRIALS):
+#                ttax.scatter(*xi[trial, node], color = colors[node],\
+#                         marker = markers[ypred[trial, node]], \
+#                         )
+#
+#        # format axes
+#        if t == 0:
+#            ttax.set_title(condLabels[i])
+#
+#        if i == 0:
+#            ttax.text(.25 if i == 0 else .85, .85 , \
+#             f'$M_r$ = {round(temps[t], 2)}', \
+#             fontdict = dict(fontsize = 15),\
+#             transform = ttax.transAxes,\
+#             horizontalalignment = 'right')
+#
+#    tax.set_title(condLabels[i])
+#
+#
+#tax.legend(\
+#           loc = 'bottom right', \
+#           title = 'Temperature', \
+#           title_fontsize = 15,\
+#           )
+#mainax = fig.add_subplot(111,\
+#                         frameon = False,\
+#                         xticks = [],\
+#                         yticks = [])
+#
+#
+#mainax.set(xlabel = 'k clusters', \
+#            ylabel = 'silhouette score (s)')
+#
+#
+#fig.subplots_adjust(wspace = 0)
+#sfig.subplots_adjust(wspace = 0 , hspace = 0)
+#mainax = sfig.add_subplot(111,\
+#                         frameon = False,\
+#                         xticks = [],\
+#                         yticks = [])
+#mainax.set(xlabel = f'Z-scored information impact {information_impact}',\
+#           ylabel = f'Z-scored Causal impact {causal_impact}')
+#
+#fig.savefig(figDir + 'mean_silscores.eps')
+#elements = [\
+#            Line2D([0],[0], \
+#                   color = colors[i], \
+#                   label = model.rmapping[i],\
+#                   marker = 'o', linestyle = '',\
+#                   markersize = 15) \
+#           for i in range(NODES)]
+#
+#mainax.legend(handles = elements, loc = 'upper left',\
+#              bbox_to_anchor = (1,1),
+#              frameon = False, borderaxespad = 0)
+#sfig.savefig(figDir + 'optimal_clusters.eps')
+#
+#%% multiple linear regression
+import statsmodels.api as sm
+tmp = ['intercept', \
+       '$\mu_i$',\
+       *centLabels]
+def imshow_symlog(ax, my_matrix, vmin, vmax, logthresh=5):
+    img= ax.imshow( my_matrix ,
+                vmin=float(vmin), vmax=float(vmax),
+                norm=matplotlib.colors.SymLogNorm(10**-logthresh) )
+    return img
+X = moveaxis(estimates, 2, -1)
+y = moveaxis(targets, 2, -1).reshape(-1, COND)
+y = scipy.stats.zscore(y, 0)
+#X = scipy.stats.zscore(X, 2)
+X = X.reshape(-1, N + 1)
+X = scipy.stats.zscore(X, 0)
+X[isfinite(X) == False] = 0
+y = pd.DataFrame(y, columns = 'Underwhelming Overwhelming'.split())
+
+
+#X = X[:, [0]]
+
+# visualize covariance
+fig, ax =  subplots()
+#h = imshow_symlog(ax, abs(corrcoef(array(X)[:, 1:].T)), 0, 1)
+cvar = corrcoef(array(X).T)
+h = ax.imshow(cvar, vmin = -1, vmax = 1)
+ax.set(xticks = arange(N+1),\
+       yticks = arange(N+1),\
+       xticklabels = tmp[1:], \
+       yticklabels = tmp[1:])
+cbar = plotz.colorbar(h)
+cbar.set_label('R', rotation = 0)
+fig.savefig(figDir + 'covariance.eps')
+# fit model
+X = sm.add_constant(X)
+
+X = pd.DataFrame(X, columns = tmp[:X.shape[1]])
+
+est = sm.OLS(y['Underwhelming'], X).fit()
+
+mr = est.summary().as_latex()
+print(est.summary())
+import csv
+with open(f'{extractThis}.linregress.tex', 'w') as f:
+    f.write(mr)
+
+
+# %%
+# % fit the results
+rcParams['axes.labelpad'] = 5
+linf = lambda x, beta, c : beta * x + c
+bbox_props = dict(fc="white", lw=2)
+mins, maxs = X.min(0), X.max(0)
+fig, ax = subplots(2, 3, sharex = 'all', sharey = 'all')
+
+#fig = figure(2, 3)
+import matplotlib.patheffects as pe
+# skip intercept
+elements = []
+for idx, i in enumerate(X.columns[1:]):
+#    tax = ax[idx]
+    tax = ax.ravel()[idx]
+    if idx == N:
+        tax = ax.ravel()[idx + 1]
+        ax.ravel()[idx].axis('off')
+#    row = 0 if idx < 3 else 1
+#    col = idx * 2 if idx < 3 else row
+
+#    print(row, col)
+#    tax = subplot2grid((2, 6), loc = (row, col), colspan = 2)
+    x = linspace(mins[i], maxs[i])
+    tax.scatter(X[i], y['Underwhelming'],  alpha = 1, \
+               color = colors[idx], label = i)
+    beta = est.params[i]
+    
+    ex, ey = est.bse['intercept'], est.bse[i]
+    tax.plot(x, linf(x, beta, est.params['intercept']), color = colors[idx],\
+            linestyle = 'dashed', path_effects=[pe.Stroke(linewidth=5, foreground='k')])
+    
+    tax.fill_between(x, linf(x, beta + 2 * ex, est.params['intercept'] + 2 * ex), \
+                     linf(x, beta - 2 * ex, est.params['intercept'] - 2 * ex),\
+                     color = 'k', alpha = 0.5)
+    elements.append(Line2D([0], [0], color = colors[idx], marker = '.', \
+                           linestyle = 'none', label = i, markersize = 40))
+    ax[0,0].text(.9, .9, f"$R^2$ = {est.rsquared: .2f}", horizontalalignment = 'right',\
+         transform = tax.axes.transAxes, fontsize = 20, bbox = dict(\
+                                                                          fc = 'white'))
+    if est.pvalues[i] < .05:
+        tmp = x[x.size // 2]
+        xy  = (tmp, linf(tmp, beta, est.params['intercept']))
+        bbox_props['ec'] = colors[idx]
+        theta = 45 * beta# arcsin(beta)/ (2 * pi)* 180,
+        t = tax.text(*xy, fr"$\beta$={round(beta, 2):.1e}", rotation = theta,\
+                                      fontsize = 20,\
+                                      bbox=bbox_props)
+   
+        bb = t.get_bbox_patch()
+#        bb.set_boxstyle('rarrow', pad = .5)
+#        tax.annotate(fr"$\beta$={round(beta, 2):e}", xy = xy, \
+#                 xytext = xy, xycoords = 'data', \
+#                 textcoords = 'data', rotation = 45, fontsize =  20)
+
+
+mainax = fig.add_subplot(111, frameon = False, \
+                         xticks = [], \
+                         yticks = [], \
+                         )
+ax[1, 1].legend(handles = elements, loc = 'lower center', title = 'x', title_fontsize = 35,\
+              bbox_to_anchor = (.5, -.1), fontsize = 23, frameon = False, \
+              handletextpad = 0)
+
+
+mainax.set_xlabel('Z-scored x', labelpad = 40, fontsize = 30)
+mainax.set_ylabel(f'Z-scored causal impact ({causal_impact})', labelpad = 40, fontsize = 30)
+fig.subplots_adjust(hspace = 0, wspace = 0)
+
+#tax.legend(title = 'x', title_fontsize = 15)
+
+
+
+#tax.set(xlabel = 'Z-scored x',\
+#        ylabel = f'Z-scored {causal_impact}')
+fig.savefig(figDir + 'multiregr.eps')
+#
+##assert 0
+#
+## %% appendix box rejection
+#rcParams['axes.labelpad'] = 40
+#fig, ax = subplots(1, COND, sharey = 'all')
+#mainax = fig.add_subplot(111, frameon = False,\
+#                         xticks = [],\
+#                         yticks = [],\
+#                         ylabel = 'Rejection rate(%)'\
+#                         )
+#
+#subplots_adjust(wspace = 0)
+#x     = arange(NTEMPS) * 3
+#
+#width = .2
+#labels = 'Underwhelming Overwhelming'.split()
+#conditions = [f'$M_r$ = {round(i,2)}' for i in temps]
+#for cond in range(COND):
+#    tax = ax[cond]
+#    tax.set_title(labels[cond])
+#    tax.set(xticks = x + .5 * width * NODES, \
+#            xticklabels = conditions,\
+#            )
+#    tax.tick_params(axis = 'x', rotation = 45)
+#
+#    for node in range(NODES):
+#        y  = rejections[cond, :, node] * 100
+#        tx = x + width * node
+#        tax.bar(tx, y, width = width,\
+#                color = colors[node], label = model.rmapping[node])
+#tax.legend(loc = 'upper left',\
+#          bbox_to_anchor = (1, 1),\
+#          borderaxespad = 0, \
+#          frameon = False)
+#fig.savefig(figDir + 'rejection_rate.eps', format = 'eps', dpi = 1000)
+#
+### %% appendix plot: fit error comparison
+#fig, ax = subplots()
+#errors = errors.reshape(-1, NODES)
+#subplots_adjust(hspace = 0)
+#width= .07
+#locs = arange(0, len(errors))
+#for node in range(NODES):
+#    ax.bar(locs + width * node, \
+#           errors[:, node], color = colors[node],\
+#           width = width, label = model.rmapping[node])
+#
+#conditions = [f'$M_r$ = {round(x, 2)}\n{y}' for x in temps for y in nudges]
+## set labels per group and center it
+#ax.set(yscale = 'log', xticklabels = conditions, \
+#       xticks = locs + .5 * NODES * width, ylabel = 'Mean square error')
+#ax.tick_params(axis = 'x', rotation = 45)
+#ax.legend(loc = 'upper left',\
+#          bbox_to_anchor = (1, 1),\
+#          borderaxespad = 0, \
+#          frameon = False)
+#rcParams['axes.labelpad'] = 1
+#fig.savefig(figDir + 'fiterror.eps', format = 'eps', dpi = 1000)
+#
+#
+## %%
+#from scipy import spatial
+#a = np.argsort(aucs)[..., -2:]
+#b = []
+#dis = np.zeros(a.shape[:-1])
+#for i, j in  enumerate(a):
+#    for k, l in enumerate(j):
+#        for m, n in enumerate(l):
+#            x, y  = aucs[i, k, m, n]
+#            dis[i,k,m] = np.sqrt((x - y) **2)
+#fig, ax = subplots(figsize = (12, 15))
+#l = ['Information impact', *condLabels]
+#for idx, (i, j) in enumerate(zip(dis.mean(-1), dis.std(-1))):
+#    ax.errorbar(np.arange(NTEMPS), i, j, alpha = .5, label = l[idx], zorder = 5 - idx)
+#ax.set_xlabel('Magnetization fraction ($M_r$)', fontsize = 35, labelpad = 4)
+#ax.set_ylabel('Mean distance ($\sqrt{( first - second )^2}$)', fontsize = 25, labelpad = 4)
+#ax.set(xticks = np.arange(NTEMPS), xticklabels = temps)
+#ax.tick_params(axis='both', which='major', labelsize=25)
+#ax.legend(fontsize = 25)
+#fig.savefig(figDir + 'distance.png')
+## h = ax.imshow(dis.mean(-1))
+## plotz.colorbar(h)

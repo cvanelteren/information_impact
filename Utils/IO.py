@@ -223,7 +223,7 @@ class Settings:
 
 
     # defaults
-    model         : str   = 'Models.fastIsing.Ising'
+    model         : str   = 'Ising'
     _graph        : dict  = field(init = False, repr = False, default_factory = dict)
     _mapping      : dict  = field(init = False, repr = False, default_factory = dict)
     _rmapping     : dict  = field(init = False, repr = False, default_factory = dict)
@@ -292,7 +292,13 @@ class Settings:
                 tmp = importlib.import_module(f'Models.{file.split(".")[0]}')
                 if getattr(tmp, self.model, None):
                     # returned init model
-                    return getattr(tmp, self.model)(nx.node_link_graph(self.graph))
+                    # backward compatibility
+                    
+                    if isinstance(self.graph, nx.Graph) or isinstance(self.graph, nx.DiGraph):
+                        return getattr(tmp, self.model)(self.graph)
+                    # new method
+                    else:
+                        return getattr(tmp, self.model)(nx.node_link_graph(self.graph))
         return None
 #        m = self.model.split('.')
 #        mt = '.'.join(i for i in m[:-1]) # remove extension
