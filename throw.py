@@ -3,7 +3,7 @@ import matplotlib as mpl, matplotlib.pyplot as plt
 from Models import  fastIsing, potts
 import networkx as nx, numpy as np
 
-n = 10
+n = 32
 g = nx.grid_2d_graph(n, n)
 
 m = fastIsing.Ising(graph = g)
@@ -14,14 +14,13 @@ m = fastIsing.Ising(graph = g)
 m = potts.Potts(graph = g, temperature = 0, \
                 updateType = 'async', \
                 agentStates = [0, 1, 2], \
-                memorySize = 3)
+                memorySize = 2, delta = 0.5)
 
 ## print(m.memorySize, m.memory.base)
-temps = np.linspace(0, 10, 30)
-#temps = np.logspace(-10, 1, 30)
+temps = np.linspace(0, 10, 300)
+#temps = np.logspace(-10, 1, 300)
 ##
-N = 1000
-#
+N = 100
 ##print(m.memory.base.shape)
 a, b = m.matchMagnetization(temps, N)
 #
