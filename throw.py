@@ -13,7 +13,7 @@ m = potts.Potts(g, temperature = 0, \
                 agentStates = [0, 1, 2], \
                 memorySize = 3)
 
-print(m.memorySize, m.memory.base)
+# print(m.memorySize, m.memory.base)
 temps = np.linspace(0, 10, 30)
 temps = np.logspace(-10, 1, 30)
 
