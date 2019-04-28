@@ -50,3 +50,4 @@ the Hellinger distance.
 # TODO:
 - General: clean up code; remove redundant information.
 - move fastIsing in the models.py for cleaner outlook
+- Expand the toolbox to be able to be used by experimentalists
