@@ -51,3 +51,6 @@ the Hellinger distance.
 - General: clean up code; remove redundant information.
 - move fastIsing in the models.py for cleaner outlook
 - Expand the toolbox to be able to be used by experimentalists
+- Give confounder estimate
+- Train classifier with less features
+- Account for interaction effects with ols

@@ -295,10 +295,10 @@ class Settings:
                     # backward compatibility
                     
                     if isinstance(self.graph, nx.Graph) or isinstance(self.graph, nx.DiGraph):
-                        return getattr(tmp, self.model)(self.graph)
+                        return getattr(tmp, self.model)(graph = self.graph)
                     # new method
                     else:
-                        return getattr(tmp, self.model)(nx.node_link_graph(self.graph))
+                        return getattr(tmp, self.model)(graph = nx.node_link_graph(self.graph))
         return None
 #        m = self.model.split('.')
 #        mt = '.'.join(i for i in m[:-1]) # remove extension

@@ -17,7 +17,7 @@ warnings.filterwarnings('ignore')
 close('all')
 style.use('seaborn-poster')
 dataPath = f"{os.getcwd()}/Data/"
-dataPath = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/'
+#dataPath = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/'
 
 
 #dataPath = '/run/media/casper/test/information_impact/Data/'
@@ -26,7 +26,7 @@ dataPath = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/'
 kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
 
-psycho   = '1548025318'
+#psycho   = '1548025318'
 #multiple = '1550482875.0001953'
 
 #extractThis      = IO.newest(dataPath)[-1]
@@ -1089,6 +1089,7 @@ from sklearn import model_selection
 groups = arange(N + 1)
 cv = model_selection.LeaveOneOut()
 
+
 ty = yy[..., 0]
 ty = correct[:, 0]
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
@@ -1102,13 +1103,13 @@ scores = zeros((\
 shuffescores = zeros(scores.shape)
 imF = zeros((\
              ty.shape[0], \
-             N + 1,\
+             N,\
              COND))
 
 shuffscores = zeros(\
                     (\
                     features.shape[0],\
-                    features.shape[1],\
+                    features.shape[1] - 1,\
                     COND,
                     )\
                      )
@@ -1130,8 +1131,8 @@ from sklearn.tree import export_graphviz
 for cond in range(COND):
     ty = yy[...,cond]
     for k, (train, test) in enumerate(cv.split(ty)):
-        xi, xj = features[train], features[test]
-        yi, yj = ty[train], ty[test]
+        xi, xj = features[train, 1:], features[test, 1:]
+        yi, yj = ty[train, 1:], ty[test, 1:]
 
         clf.fit(xi, yi)
 
@@ -1140,31 +1141,31 @@ for cond in range(COND):
         scores[k, cond] = s
         imF[k, :, cond] = clf.feature_importances_
 
-        for shuf in range(features.shape[1]):
-            tf = features.copy()
-            random.shuffle(tf[:, shuf])
-            shuffpred = clf.predict(tf[test])
-
-            s = metrics.accuracy_score(yj, shuffpred)
-            shuffscores[k, shuf, cond] = s
+#        for shuf in range(imF.shape[1]):
+#            tf = features.copy()
+#            random.shuffle(tf[:, shuf])
+#            shuffpred = clf.predict(tf[test, 1:])
+#
+#            s = metrics.accuracy_score(yj, shuffpred)
+#            shuffscores[k, shuf, cond] = s
 # %% plot score and feature importance
 rcParams['axes.labelpad'] = 5
 fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
                    figsize = (10,15))
-x = arange(N + 1) * (1 + width) * 2
+x = arange(N) * (1 + width) * 2
 width = .5
-mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
-simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
+mimF = imF.reshape(NTEMPS, NTRIALS, N, COND).mean(1)
+simF = imF.reshape(NTEMPS, NTRIALS, N, COND).std(1)
 s    = scores.reshape(NTEMPS, NTRIALS, COND)
 ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
 sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1)
 t    = arange(NTEMPS)
 
-sc   = shuffscores.reshape(NTEMPS, NTRIALS, N+1, COND).mean(1)
+sc   = shuffscores.reshape(NTEMPS, NTRIALS, N, COND).mean(1)
 
 
 d = (scores[:, None] - shuffscores) # / (scores)
-d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
+d = d.reshape(NTEMPS, NTRIALS, N, COND)
 d = d.mean(1) / s.mean(1)[:, None] * 100
 for temp in range(NTEMPS):
     for cond in range(COND):
@@ -1287,39 +1288,6 @@ tax.set_xticklabels(['Information\nimpact', *(f.func.__name__.split('_')[0] for 
 fig.savefig(figDir + 'feature_single.png')
     
 # %%
-from matplotlib import gridspec
-fig = figure()
-
-gs1 = gridspec.GridSpec(1,1)
-gs1.update(left = 0.05, right = 0.48, wspace = 0.05)
-left = fig.add_subplot(gs1[0]) # ((2,3), (0,0), colspan = 1, rowspan = 2, fig = fig)
-
-gs2 = gridspec.GridSpec(3, 2)
-gs2.update(left = .55, right = .98, hspace = 0, wspace = 0)
-for idx, (i, j, tmp) in enumerate(zip(d.mean(0), mimF.mean(0), list(gs2)[1:])):
-    ax = fig.add_subplot(tmp)
-    # if ax.set(yticklabels = [], xticklabels = [])
-    ax.scatter(i,j)
-left.set_title('Prediction accuracy')
-left.bar([0,1], ss.mean(0))
-   
-left.set_ylabel('Accuracy score')
-left.set(xticks = [0, 1], xticklabels = conditionLabels)
-left.axhline(.5, color = 'red', linestyle = 'dashed', label = 'random choice')
-[left.annotate('*', (i, j + .005), fontsize = 20) for i, j in zip([0, 1], ss.mean(0))]
-
-xr = arange(len(labels))
-left.legend(loc = 'upper left')
-
-labels = ['$\mu_i$', *centLabels]
-for idx, label in enumerate(labels):
-    r, c  = unravel_index(idx, (2,2))
-#    gs = gridspec.GridSpec
-   
-    ax = subplot2grid((2, 3), (r, c + 1), fig = fig)
-    ax.scatter(d.mean(0)[idx], mimF.mean(0)[idx])
-right.set(xlabel = '$\delta$ score(%)', ylabel = 'Feature importance')
-[right.bar(xr + width * idx, i, width = width) for idx, i in enumerate(mimF.mean(0).T)]
 
 # %%
 d = array([(s - j) / s for s, j in zip(scores, shuffescores)])
