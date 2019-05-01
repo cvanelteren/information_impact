@@ -38,7 +38,9 @@ Current implemented models:
 
 </div>
 ## Modules
+
 ![codebase](Notebooks/codebase_overview.png)
+
 - Models: contains various models
 - Utils: various different statistical, plotting and IO related functions
 - Toolbox: the 'engine' responsible for Monte-Carlo methods
