@@ -136,7 +136,7 @@ if __name__ == '__main__':
             savefig(f'{targetDirectory}/temp vs mag.png')
             # show()
 
-            # TODO: combine these?
+            # TODO: combine these? > don't as it is model specific imo
             tmp = dict(\
                        fitTemps     = fitTemps, \
                        matchedTemps = matchedTemps, \
@@ -191,7 +191,7 @@ if __name__ == '__main__':
                 if not os.path.exists(f'{tempDir}/control/'):
                     os.mkdir(f'{tempDir}/control')
 
-                props = "nSamples deltas repeats updateType pulse".split())
+                props = "nSamples deltas repeats updateType pulse".split()
                 fileName = f"{tempDir}/control/{time.time()}"
                 fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
                 # fileName = f'{tempDir}/control/{time.time()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
