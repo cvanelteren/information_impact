@@ -1,51 +1,47 @@
-# Design philosophy
+# Introduction
 
-The idea is to design loosely connected modules. The package consists
-of different modules that can be used independently up to a point.
+Information toolbox for analyzing complex dynamical systems. The goal of the packages is to provide a general and fast framework for computational scientists to use in addition to providing methods to compute informational impact. The package was written as part of my master thesis and the accompaning paper can be found [here](https://arxiv.org/abs/1904.06654).
+## Requirements
+### System
+- Openmp >= 8.0.0.0-1
+- clang >= 8.0.0-3
+### Python
+- See `requirements.txt`
+### Optional
+- `Jupyter` for viewing of notebooks
 
+# Install instructions
 To install the package run:
 
 `python setup.py build_ext --inplace`
 TODO: update this
+
+
 ## Overview
 The main division can be found as follows:
 - Modeling
 - Methods
 - Plotting
 Please note that a unittest is written for nearly every different main file
-# Modeling
-Models form a general model that can be found in models.py. Through inheritance
-one can define their own modes. Note that only a minimal set of properties are required
-for the different models
 
+
+# Models
 Current implemented models:
-- Ising
+<!-- <img height="600px" class="center-block" src="Notebooks/ising_low.gif"> -->
+<div class = "row">
+    <div class="column" >
+    <img height="300px" class="center-block" src="Notebooks/ising_low.gif">
+    </div>
+    <div class="column">
+    <img height="300px" class="center-block" src="Notebooks/4statepotts.gif">
+    </div>
 
-![ising](Notebooks/ising_low.gif)
-- Potts model
-
-![potts](Notebooks/4statepotts.gif)
-## Modules:
+</div>
+## Modules
+![codebase](Notebooks/codebase_overview.png)
 - Models: contains various models
 - Utils: various different statistical, plotting and IO related functions
 - Toolbox: the 'engine' responsible for Monte-Carlo methods
-
-# Methods
-This module contains the methods for the different information theoretical measures.
-Currently, IDT for source and sinks are implemented.
-
-## Modules:
-- information.py: IDT and sampling methods (MCMC) and other miscellaneous functions
-
-# plotting
-This part of the model is responsible for plotting various parts of the results.
-
-
-## Modules
-- plotting.py contains functions to show graph (including adjacency) next to fits for
-computing the IDT as well as computing the impact of the nudge on node distribution using
-the Hellinger distance.
-
 
 # TODO:
 - General: clean up code; remove redundant information.
