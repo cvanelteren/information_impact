@@ -14,7 +14,7 @@ m = fastIsing.Ising(graph = g)
 m = potts.Potts(graph = g, temperature = 0, \
                 updateType = 'async', \
                 agentStates = [0, 1, 2], \
-                memorySize = 2, delta = 0.5)
+                memorySize = 0, delta = 0.5)
 
 ## print(m.memorySize, m.memory.base)
 temps = np.linspace(0, 10, 300)
