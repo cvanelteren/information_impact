@@ -11,6 +11,7 @@ from functools import partial
 # standard stuff
 #root =  '/run/media/casper/test/1550482875.0001953/'
 root = '/home/casper/projects/information_impact/Data/1548025318.5751357'
+root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
 settings = {key : IO.Settings(root) for key in data} # load corresponding settings
@@ -22,18 +23,22 @@ centralities = {
                     r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
             }
 
+
+#centralities = {key : partial(value, weight = 'weight') for key, value in nx.__dict__.items() if '_centrality' in key}
+
 figDir = '../thesis/figures/'
 information_impact = '$\mu_i$'
 causal_impact      = '$\gamma_i$'
 # %%
 # begin the uggliness
+
 class Worker:
     def __init__(self , datadict, setting):
         self.setting = setting
         # ctime is bugged on linux(?)
         self.filenames = sorted(\
                            misc.flattenDict(datadict), \
-                           key = lambda x: os.path.getmtime(x), \
+                           key = lambda x: float(re.findall('\d+\.\d+_', x)[0].strip('_')), \
                            )
 
         self.deltas = setting.deltas // 2 - 1
@@ -158,7 +163,7 @@ for k, v in loadedData.items():
     ax.plot(v[1, 0].mean(0).T)
 
     fig, ax  = plt.subplots(len(centralities) // 2, 2)
-    graph    = nx.readwrite.json_graph.node_link_graph(settings[k].graph)
+    graph    = settings[k].graph
     pos      = nx.nx_agraph.graphviz_layout(graph, prog = 'neato', \
                                         )
     for idx, (cent, cf) in enumerate(centralities.items()):
@@ -185,10 +190,10 @@ for k, v in loadedData.items():
 
 
 
-# %%
+# %% # %% normalize data
 # fit functions
 double = lambda x, a, b, c, d, e, f: a + b * np.exp(-c*(x)) + d * np.exp(- e * (x-f))
-double_= lambda x, b, c, d, e, f: b * np.exp(-c*(x)) + d * np.exp(- e * (x-f))
+double_= lambda x, b, c, d, e, f: b * np.exp(-c*(x)) + d * np.exp(- e * (x))
 single = lambda x, a, b, c : a + b * np.exp(-c * x)
 single_= lambda x, b, c : b * np.exp(-c * x)
 special= lambda x, a, b, c, d: a  + b * np.exp(- (x)**c - d)
@@ -199,7 +204,7 @@ fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, np.inf), p0 = p0,\
                    jac = 'cs')
 
-# %% normalize data
+
 
 # uggly mp case
 # note use of globals here!
@@ -208,7 +213,7 @@ def worker(sample):
     coeffs, errors = plotz.fit(sample, func, params = fitParam)
     for nodei, c in enumerate(coeffs):
         tmp = 0
-        F   = lambda x: func(x, *c) - c[0]
+        F      = lambda x: func(x, *c) 
         tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
         auc[nodei, 0] = tmp
         auc[nodei, 1] = errors[nodei]
@@ -338,20 +343,9 @@ for key, vals in loadedData.items():
     aucs[key] = auc # update data
 # %%
 
-for i in zd:
-    for j in i:
-        fig, ax = plt.subplots()
-        for c, k in zip(colors, j.mean(0)):
-            ax.plot(k, color = c)
-# %%
+tmp = np.argsort(auc, axis = -1)
+a = tmp[0] == tmp[[1,2]]
 
-for l in nx.generate_multiline_adjlist(graph):
-    tmp = []
-    w = l.split()
-    try:
-        for i in w:
-            print(i)
-            tmp.append(literal_eval(i))
-    except:
-        tmp.append(w)
-    print(tmp)
+# %%
+b = zd[2, 0].mean(0)
+d, e = plotz.fit(b, func, params = fitParam)

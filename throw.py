@@ -3,7 +3,7 @@ import matplotlib as mpl, matplotlib.pyplot as plt
 from Models import  fastIsing, potts
 import networkx as nx, numpy as np
 
-n = 32
+n = 500
 g = nx.grid_2d_graph(n, n)
 
 m = fastIsing.Ising(graph = g)
