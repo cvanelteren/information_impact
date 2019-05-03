@@ -29,16 +29,12 @@ import networkx as nx, \
         time
 close('all')
 if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        real = sys.argv[1]
-    else:
-        real = 1 # change to 0
     repeats       = int(1e4)
-    deltas        = 20
+    deltas        = 50
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [1, inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [.1, inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 5
     magSide       = ''
@@ -50,30 +46,16 @@ if __name__ == '__main__':
     # rootDirectory = '/var/scratch/cveltere/' # data storage
     rootDirectory = f'{os.getcwd()}/Data/'
 #    real = 1
-    if real:
 #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-        dataDir = 'Psycho' # relative path careful
-        df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-        h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-        graph   = nx.from_pandas_adjacency(df)
-        attr = {}
-        for node, row in h.iterrows():
-            attr[node] = dict(H = row['externalField'], nudges = 0)
-        nx.set_node_attributes(graph, attr)
-        graphs.append(graph)
-    else:
-       N = 100
-       tmp = logspace(0, log10(N - 1), 10, dtype = int)
-       graphs += [nx.barabasi_albert_graph(N, ni) for ni in tmp]
-       # graphs += [nx.krackhardt_kite_graph()]
-       # graphs = [nx.path_graph(3)]
-       # n = 10
-       # nn = 10
-       # for i in [3, 5, n - 1]:
-           # for a in range(nn):
-               # graphs.append(nx.barabasi_albert_graph(n, i))
-           # graphs += [nx.barabasi_albert_graph(n, i) for i in range(1, n)]
-    # graphs = [nx.barabasi_albert_graph(10,5)]
+    dataDir = 'Psycho' # relative path careful
+    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+    graph   = nx.from_pandas_adjacency(df)
+    attr = {}
+    for node, row in h.iterrows():
+        attr[node] = dict(H = row['externalField'], nudges = 0)
+    nx.set_node_attributes(graph, attr)
+    graphs.append(graph)
     targetDirectory = rootDirectory + f'{time.time()}' # make default path
     for graph in graphs:
         now = time.time()
