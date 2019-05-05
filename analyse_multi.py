@@ -349,3 +349,9 @@ a = tmp[0] == tmp[[1,2]]
 # %%
 b = zd[2, 0].mean(0)
 d, e = plotz.fit(b, func, params = fitParam)
+
+x = np.linspace(0, deltas)
+fig, ax = plt.subplots()
+for i in range(d.shape[0]):
+    ax.plot(b[i], color = colors[i], alpha = .3)
+    ax.plot(x, func(x, *d[i]), color = colors[i], linestyle = 'dashed')
