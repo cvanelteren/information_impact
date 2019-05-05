@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/hhusr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct 18 12:09:36 2018
@@ -25,12 +25,12 @@ dataPath = f"{os.getcwd()}/Data/"
 # convenience
 kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
-
+psycho_neg='1556092963.4608574'
 #psycho   = '1548025318'
 #multiple = '1550482875.0001953'
 
 #extractThis      = IO.newest(dataPath)[-1]
-extractThis      = psycho
+extractThis      = psycho_neg
 #extractthis      = 
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
@@ -428,8 +428,9 @@ for temp in range(rows):
         
         meanCoeffs, meanErrors = plotz.fit(mus, func, params = fitParam)
         
-        tmpauc = [scipy.integrate.quad(lambda x: func(x, *c), 0, np.inf)[0] for c in meanCoeffs]
+        tmpauc = [scipy.integrate.quad(lambda x: func(x, *c), 0, DELTAS)[0] for c in meanCoeffs]
         leader = np.argmax(tmpauc)
+        print(leader)
 #        print(np.argsort(tmpauc))
         for node, idx in sorted(model.mapping.items(), key = lambda x : x[1]):
             # plot mean fit
@@ -452,9 +453,10 @@ for temp in range(rows):
                               label = node, \
                               alpha = 1 if zorder == 1 else 1) # mpl3 broke legends?
             if idx == leader:
-                xx, yy = (deltas // 2  * .90, .8)
+                xx, yy = (deltas // 2  * .8, .8)
                 arti = Line2D([xx], [yy], marker = 'o', color = colors[idx],\
-                       )
+                       markersize = 100)
+                print('here')
                 tax.add_artist(arti)
 #                tax.annotate('Driver-node', (*x,*y), horizontalalignment = 'right')
 
@@ -528,7 +530,7 @@ x = arange(DELTAS)
 
 # uggly mp case
 LIMIT = DELTAS
-LIMIT = inf
+#LIMIT = inf
 from sklearn import metrics
 def worker(sample):
     auc = zeros((len(sample), 2))
@@ -613,7 +615,6 @@ for temp in range(NTEMPS):
             
             
             if showOutliers:
-                print('plotting outline')
                 tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
                         colors = colors[[idx]],\
                         levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
@@ -998,7 +999,7 @@ def removeLabels(ax, whichax, targets):
 
 
 from matplotlib.patches import Patch
-for ni in range(N):
+for ni in range(N + 1):
     mark = markers[ni]
     for cond in range(COND):
         for t in range(NTEMPS):
@@ -1068,7 +1069,7 @@ leg1 = mainax.legend(handles = elements, \
 elements = [
         Line2D([0], [0], color = 'k',\
               label = centLabels[i], marker = markers[i],\
-              linestyle = '', markersize = samesies) for i in range(N)]
+              linestyle = '', markersize = samesies) for i in range(N + 1)]
 
 leg2 = legend(handles = elements, \
                      bbox_to_anchor = (0.75, -0.05),\
@@ -1103,13 +1104,13 @@ scores = zeros((\
 shuffescores = zeros(scores.shape)
 imF = zeros((\
              ty.shape[0], \
-             N,\
+             N + 1,\
              COND))
 
 shuffscores = zeros(\
                     (\
                     features.shape[0],\
-                    features.shape[1] - 1,\
+                    features.shape[1],\
                     COND,
                     )\
                      )
@@ -1131,8 +1132,8 @@ from sklearn.tree import export_graphviz
 for cond in range(COND):
     ty = yy[...,cond]
     for k, (train, test) in enumerate(cv.split(ty)):
-        xi, xj = features[train, 1:], features[test, 1:]
-        yi, yj = ty[train, 1:], ty[test, 1:]
+        xi, xj = features[train], features[test]
+        yi, yj = ty[train], ty[test]
 
         clf.fit(xi, yi)
 
@@ -1152,20 +1153,20 @@ for cond in range(COND):
 rcParams['axes.labelpad'] = 5
 fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
                    figsize = (10,15))
-x = arange(N) * (1 + width) * 2
+x = arange(N + 1) * (1 + width) * 2
 width = .5
-mimF = imF.reshape(NTEMPS, NTRIALS, N, COND).mean(1)
-simF = imF.reshape(NTEMPS, NTRIALS, N, COND).std(1)
+mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
+simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
 s    = scores.reshape(NTEMPS, NTRIALS, COND)
 ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
 sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1)
 t    = arange(NTEMPS)
 
-sc   = shuffscores.reshape(NTEMPS, NTRIALS, N, COND).mean(1)
+sc   = shuffscores.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
 
 
 d = (scores[:, None] - shuffscores) # / (scores)
-d = d.reshape(NTEMPS, NTRIALS, N, COND)
+d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
 d = d.mean(1) / s.mean(1)[:, None] * 100
 for temp in range(NTEMPS):
     for cond in range(COND):
@@ -1269,23 +1270,23 @@ ax.set_ylim(0, 1.3)
 fig.savefig(figDir + 'accuracy_single.png')
 
 # %%
-fig, ax = subplots()
-tmp = np.arange(5) - .25
-for i in range(COND):
-    j = labels[i]
-    tax = ax
-    tax.bar(tmp + i * .25, mimF.mean(0)[..., i], width = .5, label = j)
-    tax.set_xticks(tmp + .25)
-ax.axhline(1/5, color = 'k', linestyle = 'dashed')
-#ax.plot(tmp + .25, ones(tmp.size) * 1.1, color = 'k')
-#ax.annotate('*', (tmp[tmp.size // 2], 1.1), fontsize = 50)
-#ax.set_ylim(0, 1.3)
-tax.set_ylabel('Feature importance')
-tax.legend()
-
-tax.set_xticklabels(['Information\nimpact', *(f.func.__name__.split('_')[0] for f in centralities.values())], \
-                     fontsize = 30, rotation = 60)
-fig.savefig(figDir + 'feature_single.png')
+#fig, ax = subplots()
+#tmp = np.arange(5) - .25
+#for i in range(COND):
+#    j = labels[i]
+#    tax = ax
+#    tax.bar(tmp + i * .25, mimF.mean(0)[..., i], width = .5, label = j)
+#    tax.set_xticks(tmp + .25)
+#ax.axhline(1/5, color = 'k', linestyle = 'dashed')
+##ax.plot(tmp + .25, ones(tmp.size) * 1.1, color = 'k')
+##ax.annotate('*', (tmp[tmp.size // 2], 1.1), fontsize = 50)
+##ax.set_ylim(0, 1.3)
+#tax.set_ylabel('Feature importance')
+#tax.legend()
+#
+#tax.set_xticklabels(['Information\nimpact', *(f.func.__name__.split('_')[0] for f in centralities.values())], \
+#                     fontsize = 30, rotation = 60)
+#fig.savefig(figDir + 'feature_single.png')
     
 # %%
 
