@@ -7,9 +7,9 @@ import numpy, multiprocessing as mp, os
 import re, os
 from subprocess import run
 clangCheck = run("clang --version".split(), capture_output= True)
-if not clangCheck.returncode:
-    os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -fast-math -Ofast -std=c++17 -march=native"
-    os.environ['CC']       = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -ffast-math -Ofast -std=c++17 -march=native"
+if not clangCheck.returncode and 'fs4' not in os.uname().nodename:
+    os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -fast-math -Ofast -std=c++11 -march=native"
+    os.environ['CC']       = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -ffast-math -Ofast -std=c++11 -march=native"
 # collect pyx files
 exts = []
 baseDir =  os.getcwd() + os.path.sep
