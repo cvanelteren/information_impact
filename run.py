@@ -134,13 +134,13 @@ if __name__ == '__main__':
                        fmag         = fmag,\
                        )
             settings = dict(
-                        repeat           = repeats,\
+                        repeats          = repeats,\
                         deltas           = deltas,\
                         nSamples         = nSamples,\
                         step             = step,\
                         burninSamples    = burninSamples,\
                         pulseSizes       = pulseSizes,\
-                        updateMethod     = updateType,\
+                        updateType     = updateType,\
                         nNodes           = graph.number_of_nodes(),\
                         nTrials          = nTrials,\
                         # this is added
@@ -180,9 +180,10 @@ if __name__ == '__main__':
                 if not os.path.exists(f'{tempDir}/control/'):
                     os.mkdir(f'{tempDir}/control')
 
-                props = "nSamples deltas repeats updateType pulse".split()
+                props = "nSamples deltas repeats updateType".split()
                 fileName = f"{tempDir}/control/{datetime.datetime.now().isoformat()}"
                 fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
+                fileName += f'_pulse={pulse}'
                 # fileName = f'{tempDir}/control/{datetime.datetime.now().isoformat()()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr       = SimulationResult(\
                                         mi          = mi,\
@@ -205,6 +206,7 @@ if __name__ == '__main__':
                         # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                         fileName = f"{pulseDir}/{datetime.datetime.now().isoformat()}"
                         fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
+                        fileName += f'_pulse={pulse}'
                         # fileName = f'{pulseDir}/{datetime.datetime.now().isoformat()()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                         sr       = SimulationResult(\
                                                 mi          = mi,\
