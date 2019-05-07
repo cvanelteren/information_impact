@@ -31,12 +31,12 @@ for (root, dirs, files) in os.walk(baseDir):
                            extra_compile_args = ['-fopenmp',\
                                                  '-ffast-math','-Ofast', \
                                                  '-march=native',\
-                                                 '-std=c++17',\
+                                                 '-std=c++11',\
                                                 '-fno-wrapv',\
                                                 # '-g',\
                                                 ],\
                            extra_link_args = ['-fopenmp',\
-                                              '-std=c++17',\
+                                              '-std=c++11',\
                                               '-lomp',\
                                               # '-g'\
                                               ],\
