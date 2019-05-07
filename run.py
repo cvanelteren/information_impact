@@ -43,19 +43,23 @@ if __name__ == '__main__':
 
     tempres       = 100
     graphs = []
-    # rootDirectory = '/var/scratch/cveltere/' # data storage
-    rootDirectory = f'{os.getcwd()}/Data/'
-#    real = 1
-#        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-    dataDir = 'Psycho' # relative path careful
-    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-    graph   = nx.from_pandas_adjacency(df)
-    attr = {}
-    for node, row in h.iterrows():
-        attr[node] = dict(H = row['externalField'], nudges = 0)
-    nx.set_node_attributes(graph, attr)
-    graphs.append(graph)
+    N  = 20
+    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
+        graphs.append(nx.barabasi_albert_graph(N, j))
+
+    rootDirectory = '/var/scratch/cveltere/' # data storage
+#     rootDirectory = f'{os.getcwd()}/Data/'
+# #    real = 1
+# #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+#     dataDir = 'Psycho' # relative path careful
+#     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+#     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+#     graph   = nx.from_pandas_adjacency(df)
+#     attr = {}
+#     for node, row in h.iterrows():
+#         attr[node] = dict(H = row['externalField'], nudges = 0)
+#     nx.set_node_attributes(graph, attr)
+#     graphs.append(graph)
     targetDirectory = rootDirectory + f'{time.time()}' # make default path
     for graph in graphs:
         now = time.time()

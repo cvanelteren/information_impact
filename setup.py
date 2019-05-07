@@ -9,7 +9,7 @@ __author__              = "Casper van Elteren"
 __email__               = "caspervanelteren@gmail.com"
 __description__         = "General toolbox for modelling discrete systems using information theory"
 __license__             = "MIT"
-__python__requires__    = ">=3.6"
+__python__requires__    = ">=3.7"
 __version__             = '1.0'
 
 

@@ -30,7 +30,7 @@ psycho_neg='1556092963.4608574'
 #multiple = '1550482875.0001953'
 
 #extractThis      = IO.newest(dataPath)[-1]
-extractThis      = psycho_neg
+extractThis      = psycho
 #extractthis      = 
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
@@ -352,7 +352,7 @@ repeats  = settings.repeat
 # %% normalize data
 
 from scipy import ndimage
-zd = zeros(loadedData.shape, dtype = np.float16)
+zd = zeros(loadedData.shape, dtype = np.float32)
 for temp in range(NTEMPS):
     for nudge in range(NNUDGE):
         zdi = loadedData[nudge, temp]
@@ -999,7 +999,7 @@ def removeLabels(ax, whichax, targets):
 
 
 from matplotlib.patches import Patch
-for ni in range(N + 1):
+for ni in range(N):
     mark = markers[ni]
     for cond in range(COND):
         for t in range(NTEMPS):
@@ -1069,7 +1069,7 @@ leg1 = mainax.legend(handles = elements, \
 elements = [
         Line2D([0], [0], color = 'k',\
               label = centLabels[i], marker = markers[i],\
-              linestyle = '', markersize = samesies) for i in range(N + 1)]
+              linestyle = '', markersize = samesies) for i in range(N)]
 
 leg2 = legend(handles = elements, \
                      bbox_to_anchor = (0.75, -0.05),\
@@ -1086,61 +1086,61 @@ fig.savefig(figDir + '3dscattercent.eps')
 #        [tax.tick_params(axis = i, pad = 40) for i in 'x y z'.split()]
 
 #%% randomforrest
-from sklearn import model_selection
-groups = arange(N + 1)
-cv = model_selection.LeaveOneOut()
-
-
-ty = yy[..., 0]
-ty = correct[:, 0]
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-
-
-
-
-scores = zeros((\
-                ty.shape[0], \
-                COND))
-shuffescores = zeros(scores.shape)
-imF = zeros((\
-             ty.shape[0], \
-             N + 1,\
-             COND))
-
-shuffscores = zeros(\
-                    (\
-                    features.shape[0],\
-                    features.shape[1],\
-                    COND,
-                    )\
-                     )
-
-
-# The list of hyper-parameters we want to optimize. For each one we define the bounds,
-# the corresponding scikit-learn parameter name, as well as how to sample values
-# from that dimension (`'log-uniform'` for the learning rate)
-NOBS   = NTRIALS * NTEMPS
-
-
-clf = RandomForestClassifier(\
-                            n_estimators = 100,\
-                             n_jobs = -1,\
-                             criterion = 'entropy',\
-                             bootstrap = True,\
-                             )
-from sklearn.tree import export_graphviz
-for cond in range(COND):
-    ty = yy[...,cond]
-    for k, (train, test) in enumerate(cv.split(ty)):
-        xi, xj = features[train], features[test]
-        yi, yj = ty[train], ty[test]
-
-        clf.fit(xi, yi)
-
-        pr = clf.predict(xj)
-        s = metrics.accuracy_score(yj, pr)
-        scores[k, cond] = s
-        imF[k, :, cond] = clf.feature_importances_
+#from sklearn import model_selection
+#groups = arange(N + 1)
+#cv = model_selection.LeaveOneOut()
+#
+#
+#ty = yy[..., 0]
+#ty = correct[:, 0]
+#from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+#
+#
+#
+#
+#scores = zeros((\
+#                ty.shape[0], \
+#                COND))
+#shuffescores = zeros(scores.shape)
+#imF = zeros((\
+#             ty.shape[0], \
+#             N + 1,\
+#             COND))
+#
+#shuffscores = zeros(\
+#                    (\
+#                    features.shape[0],\
+#                    features.shape[1],\
+#                    COND,
+#                    )\
+#                     )
+#
+#
+## The list of hyper-parameters we want to optimize. For each one we define the bounds,
+## the corresponding scikit-learn parameter name, as well as how to sample values
+## from that dimension (`'log-uniform'` for the learning rate)
+#NOBS   = NTRIALS * NTEMPS
+#
+#
+#clf = RandomForestClassifier(\
+#                            n_estimators = 100,\
+#                             n_jobs = -1,\
+#                             criterion = 'entropy',\
+#                             bootstrap = True,\
+#                             )
+#from sklearn.tree import export_graphviz
+#for cond in range(COND):
+#    ty = yy[...,cond]
+#    for k, (train, test) in enumerate(cv.split(ty)):
+#        xi, xj = features[train], features[test]
+#        yi, yj = ty[train], ty[test]
+#
+#        clf.fit(xi, yi)
+#
+#        pr = clf.predict(xj)
+#        s = metrics.accuracy_score(yj, pr)
+#        scores[k, cond] = s
+#        imF[k, :, cond] = clf.feature_importances_
 
 #        for shuf in range(imF.shape[1]):
 #            tf = features.copy()
@@ -1150,124 +1150,124 @@ for cond in range(COND):
 #            s = metrics.accuracy_score(yj, shuffpred)
 #            shuffscores[k, shuf, cond] = s
 # %% plot score and feature importance
-rcParams['axes.labelpad'] = 5
-fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
-                   figsize = (10,15))
-x = arange(N + 1) * (1 + width) * 2
-width = .5
-mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
-simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
-s    = scores.reshape(NTEMPS, NTRIALS, COND)
-ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
-sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1)
-t    = arange(NTEMPS)
-
-sc   = shuffscores.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
-
-
-d = (scores[:, None] - shuffscores) # / (scores)
-d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
-d = d.mean(1) / s.mean(1)[:, None] * 100
-for temp in range(NTEMPS):
-    for cond in range(COND):
-        if temp == 0:
-            ax[0, cond].set_title(condLabels[cond], fontsize = 30)
-            
-        tax = ax[0, cond]
-        if temp == 0:
-            tax.axhline(.5, color = 'black', linestyle = 'dashed')
-        
-            
-        
-        tax.bar(t[temp], ss[temp, cond], width = width, \
-                color = colors[0])
-        
-#        tax.boxplot(s[temp, :, cond], \
-#                )
-        tax = ax[1, cond]
-        tax.bar(x + width * temp, mimF[temp, :, cond],\
-                width = width, label = f'$M_r$ ={round(temps[temp], 2)}')
-        tax.axhline(1/5, color = 'black', linestyle = 'dashed')
-
-        tax = ax[2, cond]
-        tax.bar(x + width * temp, d[temp, ..., cond], \
-                width = width)
-#ax[0, 0].boxplot(s[..., 0].T)
-ax[0,0].set(xticklabels = temps,\
-            xticks = t, \
-           )
-
-tmpax = fig.add_subplot(311, frameon = 0, xticks = [], yticks = [])
-tmpax.set_xlabel('$M_r$', fontsize = 20, labelpad = 25)
-ax[0, 0].set_ylabel('Accuracy score', fontsize = 25)
-
-height = 1.05
-ax[0, 0].plot(t, height * ones(t.size) + .025, '-k')
-ax[0, 0].text(t[1],  height + .015, '*', fontsize = 20)
-ax[0, 0].set(ylim = (0, 1.3))
-
-ax[0, 1].plot(t, height * ones(t.size) + .025, '-k')
-ax[0, 1].text(t[1],  height + .015, '*', fontsize = 20)
-ax[0, 1].set(ylim = (0, 1.3))
-
-ax[1, 0].plot(x, height * ones(x.size) + .025, '-k')
-ax[1, 0].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
-ax[1, 0].set(ylim = (0, 1.3))
-
-ax[1, 1].plot(x, height * ones(x.size) + .025, '-k')
-ax[1, 1].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
-ax[1, 1].set(ylim = (0, 1.3))
-
-#ax[2, 0].plot(x, 100 * ones(x.size) + .025, '-k')
-#ax[2, 0].text(x[x.size // 2],  100 + .015, '*', fontsize = 20)
-#ax[2, 0].set(ylim = (0, 115))
-
-#centralities = {
-#                    r'$c_i^{deg}$' : partial(nx.degree, weight = 'weight'), \
-#                    r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
-#                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
-#                    r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
-#             }
-ax[1,0].set(xticks = x +  width * 3/NTEMPS, \
-            xticklabels = '',\
-            )
-
-ax[1, 0].set_ylabel('Feature importance', fontsize = 25)
-ax[1,1].legend(fontsize = 25)
-
-ax[2, 0].set_ylabel('delta score(%)', fontsize = 25)
-ax[2, 0].set(
-             xticks = x +  width * 3/NTEMPS, \
-             xticklabels = ['$\mu_{max}$', *(i.replace('_i', '_{max}') for i in centralities.keys())],\
-             )
-idx = 35
-ax[2,0].tick_params('x', labelsize = idx, rotation = 60)
-ax[2,1].tick_params('x', labelsize = idx, rotation = 60)
-fig.subplots_adjust(wspace = 0)
-fig.savefig(figDir + 'classifier_stats.eps')
-
-# %% rnf classifier simplified
-fig, ax = subplots()
-
-tmp = np.arange(COND)
-
-tt = scores.mean(0)
-tt[1] = 0
-ax.bar(tmp, tt, width = .5)
-ax.errorbar(tmp, tt, .6* scores.std(0), linestyle = '', color = 'black', capsize = 10,\
-            elinewidth = 2, markeredgewidth = 2)
-ax.axhline(.5, linestyle = 'dashed', color = 'k')
-ax.set_ylabel('Prediction accuracy')
-
-ax.set_xticks(tmp)
-ax.set_xticklabels('Underwhelming Overwhelming'.split())
-ax.annotate('*', xy = (0, 1.1), fontsize = 50)
-#ax.annotate('*', xy = (1, 1.1), fontsize = 50)
-ax.set_ylim(0, 1.3)
-
-
-
-fig.savefig(figDir + 'accuracy_single.png')
+#rcParams['axes.labelpad'] = 5
+#fig, ax = subplots(3,2, sharex = 'row', sharey = 'row',\
+#                   figsize = (10,15))
+#x = arange(N + 1) * (1 + width) * 2
+#width = .5
+#mimF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
+#simF = imF.reshape(NTEMPS, NTRIALS, N + 1, COND).std(1)
+#s    = scores.reshape(NTEMPS, NTRIALS, COND)
+#ss   = scores.reshape(NTEMPS, NTRIALS, COND).mean(1)
+#sss  = scores.reshape(NTEMPS, NTRIALS, COND).std(1)
+#t    = arange(NTEMPS)
+#
+#sc   = shuffscores.reshape(NTEMPS, NTRIALS, N + 1, COND).mean(1)
+#
+#
+#d = (scores[:, None] - shuffscores) # / (scores)
+#d = d.reshape(NTEMPS, NTRIALS, N + 1, COND)
+#d = d.mean(1) / s.mean(1)[:, None] * 100
+#for temp in range(NTEMPS):
+#    for cond in range(COND):
+#        if temp == 0:
+#            ax[0, cond].set_title(condLabels[cond], fontsize = 30)
+#            
+#        tax = ax[0, cond]
+#        if temp == 0:
+#            tax.axhline(.5, color = 'black', linestyle = 'dashed')
+#        
+#            
+#        
+#        tax.bar(t[temp], ss[temp, cond], width = width, \
+#                color = colors[0])
+#        
+##        tax.boxplot(s[temp, :, cond], \
+##                )
+#        tax = ax[1, cond]
+#        tax.bar(x + width * temp, mimF[temp, :, cond],\
+#                width = width, label = f'$M_r$ ={round(temps[temp], 2)}')
+#        tax.axhline(1/5, color = 'black', linestyle = 'dashed')
+#
+#        tax = ax[2, cond]
+#        tax.bar(x + width * temp, d[temp, ..., cond], \
+#                width = width)
+##ax[0, 0].boxplot(s[..., 0].T)
+#ax[0,0].set(xticklabels = temps,\
+#            xticks = t, \
+#           )
+#
+#tmpax = fig.add_subplot(311, frameon = 0, xticks = [], yticks = [])
+#tmpax.set_xlabel('$M_r$', fontsize = 20, labelpad = 25)
+#ax[0, 0].set_ylabel('Accuracy score', fontsize = 25)
+#
+#height = 1.05
+#ax[0, 0].plot(t, height * ones(t.size) + .025, '-k')
+#ax[0, 0].text(t[1],  height + .015, '*', fontsize = 20)
+#ax[0, 0].set(ylim = (0, 1.3))
+#
+#ax[0, 1].plot(t, height * ones(t.size) + .025, '-k')
+#ax[0, 1].text(t[1],  height + .015, '*', fontsize = 20)
+#ax[0, 1].set(ylim = (0, 1.3))
+#
+#ax[1, 0].plot(x, height * ones(x.size) + .025, '-k')
+#ax[1, 0].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
+#ax[1, 0].set(ylim = (0, 1.3))
+#
+#ax[1, 1].plot(x, height * ones(x.size) + .025, '-k')
+#ax[1, 1].text(x[x.size // 2],  height + .015, '*', fontsize = 20)
+#ax[1, 1].set(ylim = (0, 1.3))
+#
+##ax[2, 0].plot(x, 100 * ones(x.size) + .025, '-k')
+##ax[2, 0].text(x[x.size // 2],  100 + .015, '*', fontsize = 20)
+##ax[2, 0].set(ylim = (0, 115))
+#
+##centralities = {
+##                    r'$c_i^{deg}$' : partial(nx.degree, weight = 'weight'), \
+##                    r'$c_i^{betw}$': partial(nx.betweenness_centrality, weight = 'weight'),\
+##                    r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
+##                    r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
+##             }
+#ax[1,0].set(xticks = x +  width * 3/NTEMPS, \
+#            xticklabels = '',\
+#            )
+#
+#ax[1, 0].set_ylabel('Feature importance', fontsize = 25)
+#ax[1,1].legend(fontsize = 25)
+#
+#ax[2, 0].set_ylabel('delta score(%)', fontsize = 25)
+#ax[2, 0].set(
+#             xticks = x +  width * 3/NTEMPS, \
+#             xticklabels = ['$\mu_{max}$', *(i.replace('_i', '_{max}') for i in centralities.keys())],\
+#             )
+#idx = 35
+#ax[2,0].tick_params('x', labelsize = idx, rotation = 60)
+#ax[2,1].tick_params('x', labelsize = idx, rotation = 60)
+#fig.subplots_adjust(wspace = 0)
+#fig.savefig(figDir + 'classifier_stats.eps')
+#
+## %% rnf classifier simplified
+#fig, ax = subplots()
+#
+#tmp = np.arange(COND)
+#
+#tt = scores.mean(0)
+#tt[1] = 0
+#ax.bar(tmp, tt, width = .5)
+#ax.errorbar(tmp, tt, .6* scores.std(0), linestyle = '', color = 'black', capsize = 10,\
+#            elinewidth = 2, markeredgewidth = 2)
+#ax.axhline(.5, linestyle = 'dashed', color = 'k')
+#ax.set_ylabel('Prediction accuracy')
+#
+#ax.set_xticks(tmp)
+#ax.set_xticklabels('Underwhelming Overwhelming'.split())
+#ax.annotate('*', xy = (0, 1.1), fontsize = 50)
+##ax.annotate('*', xy = (1, 1.1), fontsize = 50)
+#ax.set_ylim(0, 1.3)
+#
+#
+#
+#fig.savefig(figDir + 'accuracy_single.png')
 
 # %%
 #fig, ax = subplots()
@@ -1291,65 +1291,65 @@ fig.savefig(figDir + 'accuracy_single.png')
 # %%
 
 # %%
-d = array([(s - j) / s for s, j in zip(scores, shuffescores)])
-
-
-#s = (scores - shuffscores) / (
-
-p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5)
-
-O    = imF.sum(0)
-E    = NOBS * 1 // (N + 1) * ones(O.shape, dtype = int)
-test, pp = scipy.stats.chisquare(O, E, ddof = O.shape[1] - 1, axis = 0)
-
-cO = O[0]
-iO = O[1:].mean(0)
-
-OO = zeros((2, COND))
-OO[0, :] = cO
-OO[1, :] = iO
-EE = NOBS // OO.shape[0] * ones(OO.shape)
-
-ptest, postp = scipy.stats.chisquare(OO, EE, axis = 0)
-print(ptest, postp)
-
-# correct for number of tests (n conditions + 1 post)
-pp /= N + 2
-postp /= N + 2
-print(pp, postp)
-# %% write results
-import xlsxwriter
-f = f'{extractThis}_statdata.xlsx'
-writer = pd.ExcelWriter(f, engine = 'xlsxwriter')
-
-pscores = pd.DataFrame(scores, columns = 'Underwhelming Overwhelming'.split())
-pscores.to_excel(writer, sheet_name = 'RNF_scores')
-
-# squash conditions
-pshuffscoresmean = shuffscores.mean(0)
-pshuffscoresstd  = shuffscores.std(0) * 2
-pshuffscores      = stack((pshuffscoresmean, \
-                            pshuffscoresstd), axis = 0)
-
-pimF    = imF.mean(0)
-pimFstd = imF.std(0)
-pimFs   = stack((pimF , pimFstd), axis = 0)
-
-# write to xlsx
-for cond in range(COND):
-    pshuffscore      = pd.DataFrame(\
-                                pshuffscores[..., cond],\
-                                columns = ['information impact',\
-                                           *centLabels],\
-                               index =  ['mean', 'std'])
-    pshuffscore.to_excel(writer, sheet_name = f'shscores{condLabels[cond]}')
-
-    pimF = pd.DataFrame(pimFs[..., cond], \
-                     columns = ['information impact',\
-                                           *centLabels],\
-                               index =  ['mean', 'std'])
-    pimF.to_excel(writer, sheet_name = f'fi_{condLabels[cond]}')
-writer.save()
+#d = array([(s - j) / s for s, j in zip(scores, shuffescores)])
+#
+#
+##s = (scores - shuffscores) / (
+#
+#p = scipy.stats.binom_test(scores.sum(0)[1], 60, .5)
+#
+#O    = imF.sum(0)
+#E    = NOBS * 1 // (N + 1) * ones(O.shape, dtype = int)
+#test, pp = scipy.stats.chisquare(O, E, ddof = O.shape[1] - 1, axis = 0)
+#
+#cO = O[0]
+#iO = O[1:].mean(0)
+#
+#OO = zeros((2, COND))
+#OO[0, :] = cO
+#OO[1, :] = iO
+#EE = NOBS // OO.shape[0] * ones(OO.shape)
+#
+#ptest, postp = scipy.stats.chisquare(OO, EE, axis = 0)
+#print(ptest, postp)
+#
+## correct for number of tests (n conditions + 1 post)
+#pp /= N + 2
+#postp /= N + 2
+#print(pp, postp)
+## %% write results
+#import xlsxwriter
+#f = f'{extractThis}_statdata.xlsx'
+#writer = pd.ExcelWriter(f, engine = 'xlsxwriter')
+#
+#pscores = pd.DataFrame(scores, columns = 'Underwhelming Overwhelming'.split())
+#pscores.to_excel(writer, sheet_name = 'RNF_scores')
+#
+## squash conditions
+#pshuffscoresmean = shuffscores.mean(0)
+#pshuffscoresstd  = shuffscores.std(0) * 2
+#pshuffscores      = stack((pshuffscoresmean, \
+#                            pshuffscoresstd), axis = 0)
+#
+#pimF    = imF.mean(0)
+#pimFstd = imF.std(0)
+#pimFs   = stack((pimF , pimFstd), axis = 0)
+#
+## write to xlsx
+#for cond in range(COND):
+#    pshuffscore      = pd.DataFrame(\
+#                                pshuffscores[..., cond],\
+#                                columns = ['information impact',\
+#                                           *centLabels],\
+#                               index =  ['mean', 'std'])
+#    pshuffscore.to_excel(writer, sheet_name = f'shscores{condLabels[cond]}')
+#
+#    pimF = pd.DataFrame(pimFs[..., cond], \
+#                     columns = ['information impact',\
+#                                           *centLabels],\
+#                               index =  ['mean', 'std'])
+#    pimF.to_excel(writer, sheet_name = f'fi_{condLabels[cond]}')
+#writer.save()
 
 
 # %%
@@ -1378,38 +1378,38 @@ writer.save()
 
 
 #%%
-fig, ax = subplots()
-
-ac = Y.sum(0)[:, None]
-counts = ac @ ac.T
-showThis = sqrt(counts) / Y.shape[0]
-h  = ax.imshow(cov(Y.T))
-plotz.colorbar(h)
-yl = [i for i in Y.columns]
-yr = arange(len(yl))
-ax.set(\
-       xticks = yr,\
-       yticks = yr,\
-       xticklabels = yl, \
-       yticklabels = yl,\
-       title = 'Covariance of correct predictions')
-ax.tick_params(axis = 'x', rotation = 45)
-fig.savefig(figDir + 'cov_predictions.eps')
-
-fig, ax = subplots()
-
-mainax = fig.add_subplot(121, frameon = 0,\
-                         xticks = [],\
-                         yticks = [])
-mainax.set_xlabel('Underwhelming', labelpad = 100)
-mainax = fig.add_subplot(122, frameon = 0,\
-                         xticks = [],\
-                         yticks = [])
-mainax.set_xlabel('Overwhelming', labelpad = 100)
-x = arange(Y.shape[1])
-ax.bar(x, Y.mean(0))
-ax.set(xticks = yr, xticklabels = yl, ylabel = 'Prediction accuracy(%)')
-ax.tick_params(axis = 'x', rotation = 45)
+#fig, ax = subplots()
+#
+#ac = Y.sum(0)[:, None]
+#counts = ac @ ac.T
+#showThis = sqrt(counts) / Y.shape[0]
+#h  = ax.imshow(cov(Y.T))
+#plotz.colorbar(h)
+#yl = [i for i in Y.columns]
+#yr = arange(len(yl))
+#ax.set(\
+#       xticks = yr,\
+#       yticks = yr,\
+#       xticklabels = yl, \
+#       yticklabels = yl,\
+#       title = 'Covariance of correct predictions')
+#ax.tick_params(axis = 'x', rotation = 45)
+#fig.savefig(figDir + 'cov_predictions.eps')
+#
+#fig, ax = subplots()
+#
+#mainax = fig.add_subplot(121, frameon = 0,\
+#                         xticks = [],\
+#                         yticks = [])
+#mainax.set_xlabel('Underwhelming', labelpad = 100)
+#mainax = fig.add_subplot(122, frameon = 0,\
+#                         xticks = [],\
+#                         yticks = [])
+#mainax.set_xlabel('Overwhelming', labelpad = 100)
+#x = arange(Y.shape[1])
+#ax.bar(x, Y.mean(0))
+#ax.set(xticks = yr, xticklabels = yl, ylabel = 'Prediction accuracy(%)')
+#ax.tick_params(axis = 'x', rotation = 45)
 #%%
 
 
@@ -1996,52 +1996,52 @@ ax.set(ylabel = 'Dynamic impact', xlabel = 'Degree')
 #sfig.savefig(figDir + 'optimal_clusters.eps')
 #
 #%% multiple linear regression
-import statsmodels.api as sm
-tmp = ['intercept', \
-       '$\mu_i$',\
-       *centLabels]
-def imshow_symlog(ax, my_matrix, vmin, vmax, logthresh=5):
-    img= ax.imshow( my_matrix ,
-                vmin=float(vmin), vmax=float(vmax),
-                norm=matplotlib.colors.SymLogNorm(10**-logthresh) )
-    return img
-X = moveaxis(estimates, 2, -1)
-y = moveaxis(targets, 2, -1).reshape(-1, COND)
-y = scipy.stats.zscore(y, 0)
-#X = scipy.stats.zscore(X, 2)
-X = X.reshape(-1, N + 1)
-X = scipy.stats.zscore(X, 0)
-X[isfinite(X) == False] = 0
-y = pd.DataFrame(y, columns = 'Underwhelming Overwhelming'.split())
-
-
-#X = X[:, [0]]
-
-# visualize covariance
-fig, ax =  subplots()
-#h = imshow_symlog(ax, abs(corrcoef(array(X)[:, 1:].T)), 0, 1)
-cvar = corrcoef(array(X).T)
-h = ax.imshow(cvar, vmin = -1, vmax = 1)
-ax.set(xticks = arange(N+1),\
-       yticks = arange(N+1),\
-       xticklabels = tmp[1:], \
-       yticklabels = tmp[1:])
-cbar = plotz.colorbar(h)
-cbar.set_label('R', rotation = 0)
-fig.savefig(figDir + 'covariance.eps')
-# fit model
-X = sm.add_constant(X)
-
-X = pd.DataFrame(X, columns = tmp[:X.shape[1]])
-
-est = sm.OLS(y['Underwhelming'], X).fit()
-
-mr = est.summary().as_latex()
-print(est.summary())
-import csv
-with open(f'{extractThis}.linregress.tex', 'w') as f:
-    f.write(mr)
-
+#import statsmodels.api as sm
+#tmp = ['intercept', \
+#       '$\mu_i$',\
+#       *centLabels]
+#def imshow_symlog(ax, my_matrix, vmin, vmax, logthresh=5):
+#    img= ax.imshow( my_matrix ,
+#                vmin=float(vmin), vmax=float(vmax),
+#                norm=matplotlib.colors.SymLogNorm(10**-logthresh) )
+#    return img
+#X = moveaxis(estimates, 2, -1)
+#y = moveaxis(targets, 2, -1).reshape(-1, COND)
+#y = scipy.stats.zscore(y, 0)
+##X = scipy.stats.zscore(X, 2)
+#X = X.reshape(-1, N + 1)
+#X = scipy.stats.zscore(X, 0)
+#X[isfinite(X) == False] = 0
+#y = pd.DataFrame(y, columns = 'Underwhelming Overwhelming'.split())
+#
+#
+##X = X[:, [0]]
+#
+## visualize covariance
+#fig, ax =  subplots()
+##h = imshow_symlog(ax, abs(corrcoef(array(X)[:, 1:].T)), 0, 1)
+#cvar = corrcoef(array(X).T)
+#h = ax.imshow(cvar, vmin = -1, vmax = 1)
+#ax.set(xticks = arange(N+1),\
+#       yticks = arange(N+1),\
+#       xticklabels = tmp[1:], \
+#       yticklabels = tmp[1:])
+#cbar = plotz.colorbar(h)
+#cbar.set_label('R', rotation = 0)
+#fig.savefig(figDir + 'covariance.eps')
+## fit model
+#X = sm.add_constant(X)
+#
+#X = pd.DataFrame(X, columns = tmp[:X.shape[1]])
+#
+#est = sm.OLS(y['Underwhelming'], X).fit()
+#
+#mr = est.summary().as_latex()
+#print(est.summary())
+#import csv
+#with open(f'{extractThis}.linregress.tex', 'w') as f:
+#    f.write(mr)
+#
 
 # %%
 # % fit the results

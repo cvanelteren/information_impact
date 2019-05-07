@@ -8,9 +8,6 @@ import re, os
 from subprocess import run
 clangCheck = run("clang --version".split(), capture_output= True)
 if not clangCheck.returncode:
-    version =  re.findall('(\d+.)+', str(clangCheck.stdout))[0]
-    if version <= '8.0.0':
-        print("Warning older clang version used. May not compile")
     os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -fast-math -Ofast -std=c++17 -march=native"
     os.environ['CC']       = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -ffast-math -Ofast -std=c++17 -march=native"
 # collect pyx files
@@ -34,13 +31,13 @@ for (root, dirs, files) in os.walk(baseDir):
                            extra_compile_args = ['-fopenmp',\
                                                  '-ffast-math','-Ofast', \
                                                  '-march=native',\
-                                                 '-std=c++17',\
+                                                 '-std=c++17',\ # fails on lisa cluster 
                                                 '-fno-wrapv',\
                                                 # '-g',\
                                                 ],\
                            extra_link_args = ['-fopenmp',\
                                               '-std=c++17',\
-                                              '-lomp',\
+                                              '-lomp',\ # fails on lisa cluster
                                               # '-g'\
                                               ],\
             )
