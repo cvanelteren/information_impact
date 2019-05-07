@@ -5,16 +5,15 @@ import networkx as nx, numpy as np
 
 n = 500
 g = nx.grid_2d_graph(n, n)
-
+g = nx.path_graph(3)
 m = fastIsing.Ising(graph = g)
 
 
-#assert 0
 
-m = potts.Potts(graph = g, temperature = 0, \
-                updateType = 'async', \
-                agentStates = [0, 1, 2], \
-                memorySize = 0, delta = 0.5)
+# m = potts.Potts(graph = g, temperature = 0, \
+#                 updateType = 'async', \
+#                 agentStates = [1, 2, 3], \
+#                 memorySize = 0, delta = 0.5)
 
 ## print(m.memorySize, m.memory.base)
 temps = np.linspace(0, 10, 300)
@@ -22,7 +21,13 @@ temps = np.linspace(0, 10, 300)
 ##
 N = 100
 ##print(m.memory.base.shape)
-a, b = m.matchMagnetization(temps, N)
+# a, b = m.matchMagnetization(temps, N)
+
+from Toolbox import infcy
+while True:
+    snapshots    = infcy.getSnapShots(m, 1000)
+    conditional, px, mi = infcy.runMC(m, snapshots, 10, 100)
+
 #
 ##print(m.memory.base)
 ##print(m.memory.base)
@@ -54,4 +59,3 @@ fig.show()
 
 plt.show()
 # %%
-
