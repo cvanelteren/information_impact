@@ -208,7 +208,7 @@ class Settings:
     Reads json file and converts in a convenient python dataclass
     """
     # simulation parameters
-    repeat        : int
+    repeats       : int
     deltas        : int
     nSamples      : int
     step          : int
@@ -218,7 +218,7 @@ class Settings:
     pulseSizes    : list
 
     # model properties
-    updateMethod  : str
+    updateType  : str
     # legacy support needed of these
 
 

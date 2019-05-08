@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt, numpy as np, scipy, multiprocessing as mp, os, \
 re, networkx as nx
 
@@ -10,8 +11,8 @@ from functools import partial
 """
 # standard stuff
 #root =  '/run/media/casper/test/1550482875.0001953/'
-root = '/home/casper/projects/information_impact/Data/1548025318.5751357'
-root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
+root = 'Data/1548025318.5751357'
+#root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
 settings = {key : IO.Settings(root) for key in data} # load corresponding settings
@@ -149,7 +150,7 @@ for key in data:
     with ThreadPool(processes = processes) as p:
         p.map(worker, worker.idx)
     loadedData[key] = np.frombuffer(worker.buff, dtype = np.float64).reshape(*worker.buffshape)
-del worker
+    del worker
 # %% plot graphs
 colors = plt.cm.tab20(np.arange(12))
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', colors)
@@ -186,14 +187,14 @@ for k, v in loadedData.items():
             if isinstance(pp, Circle):
                 pp.set(radius = s[pidx] * pp.radius * 2.4 )
     fig.subplots_adjust(hspace = .05, wspace = 0)
-    fig.savefig(os.path.join(figDir, f'{k}_centrality.eps'))
+#    fig.savefig(os.path.join(figDir, f'{k}_centrality.eps'))
 
 
 
 # %% # %% normalize data
 # fit functions
 double = lambda x, a, b, c, d, e, f: a + b * np.exp(-c*(x)) + d * np.exp(- e * (x-f))
-double_= lambda x, b, c, d, e, f: b * np.exp(-c*(x)) + d * np.exp(- e * (x))
+double_= lambda x, b, c, d, e, f: b * np.exp(-c*(x)) + d * np.exp(- e * (x - f ))
 single = lambda x, a, b, c : a + b * np.exp(-c * x)
 single_= lambda x, b, c : b * np.exp(-c * x)
 special= lambda x, a, b, c, d: a  + b * np.exp(- (x)**c - d)
@@ -213,7 +214,7 @@ def worker(sample):
     coeffs, errors = plotz.fit(sample, func, params = fitParam)
     for nodei, c in enumerate(coeffs):
         tmp = 0
-        F      = lambda x: func(x, *c) 
+        F      = lambda x: func(x, *c) - c[0]
         tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
         auc[nodei, 0] = tmp
         auc[nodei, 1] = errors[nodei]
@@ -337,15 +338,14 @@ for key, vals in loadedData.items():
     mainax.set_title('Outlier rejection')
 
     # save figures
-    fig.savefig(os.path.join(figDir, f'{key}_causalimpact_information_impact.eps'))
-    sfig.savefig(os.path.join(figDir, f'{key}_raw_causalimpact_information_impact.eps'))
+#l    fig.savefig(os.path.join(figDir, f'{key}_causalimpact_information_impact.eps'))
+#    sfig.savefig(os.path.join(figDir, f'{key}_raw_causalimpact_information_impact.eps'))
 
     aucs[key] = auc # update data
 # %%
 
-tmp = np.argsort(auc, axis = -1)
-a = tmp[0] == tmp[[1,2]]
 
+<<<<<<< HEAD
 # %%
 b = zd[2, 0].mean(0)
 d, e = plotz.fit(b, func, params = fitParam)
@@ -355,3 +355,55 @@ fig, ax = plt.subplots()
 for i in range(d.shape[0]):
     ax.plot(b[i], color = colors[i], alpha = .3)
     ax.plot(x, func(x, *d[i]), color = colors[i], linestyle = 'dashed')
+=======
+centralities = {
+                    'degree' : partial(nx.degree, weight = 'weight'), \
+                    'betweenness': partial(nx.betweenness_centrality, weight = 'weight'),\
+                    'current flow'  : partial(nx.information_centrality, weight = 'weight'),\
+                    'eigenvector'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
+            }
+
+
+# produce ranking for mu with causal influence metrics
+ranking    = np.argsort(auc, axis = -1)
+prediction = (ranking[0] == ranking[[1, 2]])
+structural = np.zeros((len(centralities), setting.nNodes))
+
+
+for idx, (k, f) in enumerate(centralities.items()):
+    structural[idx] = np.argsort(np.fromiter(dict(f(setting.graph)).values(), dtype = float))
+
+pred_struct = np.array([i  == ranking[[1,2]].reshape(-1, setting.nNodes) for i in structural])
+pred_struct = pred_struct.reshape((len(centralities), *ranking[[1,2]].shape))
+
+pred = np.vstack((prediction[None, ...], pred_struct))
+tmp = pred[..., -1] # driver-estimates
+
+tmp = tmp.reshape((tmp.shape[0], 2, -1))
+
+
+
+
+labels = ['informational\nimpact', *centralities.keys()]
+conditions = 'Underwhelming Overwhelming'.split()
+width = .5
+x = np.arange(tmp.shape[0]) - width
+fig, ax = plt.subplots(1)
+
+elements = []
+for idx in range(tmp.shape[1]):
+    for jdx, xi in enumerate(x):
+        print(tmp[jdx, idx].std())
+        ax.bar(xi + idx * width, tmp[jdx, idx].mean(), color = colors[idx], width = width)
+        ax.errorbar(xi + idx * width, tmp[jdx, idx].mean(), tmp[jdx, idx].std(), \
+                    color = 'black', capsize = 10, capthick = 2)
+    ax.set_xticks(x + width)
+    ax.set_xticklabels(labels)
+    
+    element = plt.Line2D([0], [0], linestyle = 'none', marker = 's', label = conditions[idx], color = colors[idx])
+    elements.append(element)
+
+ax.legend(handles = elements, loc = 'upper right')
+ax.set_ylabel('Prediction accuracy (ratio)')
+    
+>>>>>>> 935106a096ca4b96a4a0388c6f9c6a5e3bd2134d

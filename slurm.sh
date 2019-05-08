@@ -7,5 +7,5 @@
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
 source activate
 cd $HOME/information_impact
-python setup.py build_ext --inplace
+python compile.py build_ext --inplace
 srun python run.py

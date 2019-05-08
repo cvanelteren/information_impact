@@ -160,7 +160,11 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
     for sample in range(nThreads):
         tmp = copy.deepcopy(model)
         tmp.reset()
-        tmp.burnin(burninSamples)
+        # TODO: remove this
+        try:
+            tmp.burnin(burninSamples)
+        except:
+            pass
         tmp.seed += sample # enforce different seeds
         # modelsPy.append(tmp)
         models_.push_back(PyObjectHolder(<PyObject *> tmp))

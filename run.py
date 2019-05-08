@@ -43,22 +43,29 @@ if __name__ == '__main__':
 
     tempres       = 100
     graphs = []
-    # rootDirectory = '/var/scratch/cveltere/' # data storage
-    rootDirectory = f'{os.getcwd()}/Data/'
-#    real = 1
-#        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-    dataDir = 'Psycho' # relative path careful
-    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-    graph   = nx.from_pandas_adjacency(df)
-    attr = {}
-    for node, row in h.iterrows():
-        attr[node] = dict(H = row['externalField'], nudges = 0)
-    nx.set_node_attributes(graph, attr)
-    graphs.append(graph)
-    targetDirectory = rootDirectory + f'{time.time()}' # make default path
+    N  = 20
+    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
+        graphs.append(nx.barabasi_albert_graph(N, j))
+    if 'fs4' in os.uname().nodename:
+        rootDirectory = '/var/scratch/cveltere/' # data storage
+    else:
+        rootDirectory = f'{os.getcwd()}/Data/'
+# #    real = 1
+# #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+#     dataDir = 'Psycho' # relative path careful
+#     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+#     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+#     graph   = nx.from_pandas_adjacency(df)
+#     attr = {}
+#     for node, row in h.iterrows():
+#         attr[node] = dict(H = row['externalField'], nudges = 0)
+#     nx.set_node_attributes(graph, attr)
+#     graphs.append(graph)
+
+    start = datetime.datetime.now()
+    targetDirectory = rootDirectory + f'{start.isoformat()}' # make default path
     for graph in graphs:
-        now = time.time()
+        now =  datetime.datetime.now().isoformat()
         # if multiple graphs are tested; group them together
         if len(graphs) > 1:
             if not os.path.exists(rootDirectory):
@@ -127,13 +134,13 @@ if __name__ == '__main__':
                        fmag         = fmag,\
                        )
             settings = dict(
-                        repeat           = repeats,\
+                        repeats          = repeats,\
                         deltas           = deltas,\
                         nSamples         = nSamples,\
                         step             = step,\
                         burninSamples    = burninSamples,\
                         pulseSizes       = pulseSizes,\
-                        updateMethod     = updateType,\
+                        updateType     = updateType,\
                         nNodes           = graph.number_of_nodes(),\
                         nTrials          = nTrials,\
                         # this is added
@@ -148,7 +155,7 @@ if __name__ == '__main__':
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
 
         for t, mag in zip(matchedTemps, magRange):
-            print(f'{time.time()} Setting {t}')
+            print(f'{datetime.datetime.now().isoformat()} Setting {t}')
             model.t = t # update beta
             tempDir = f'{targetDirectory}/{mag}'
             if not os.path.exists(tempDir):
@@ -158,7 +165,7 @@ if __name__ == '__main__':
             for trial in range(nTrials):
                 from multiprocessing import cpu_count
                 # st = [random.choice(model.agentStates, size = model.nNodes) for i in range(nSamples)]
-                print(f'{time.time()} Getting snapshots')
+                print(f'{datetime.datetime.now().isoformat()} Getting snapshots')
                 # enforce no external influence
                 pulse        = {}
                 model.nudges = pulse
@@ -168,15 +175,16 @@ if __name__ == '__main__':
                 # TODO: uggly, against DRY
                 # always perform control
                 conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
-                print(f'{time.time()} Computing MI')
+                print(f'{datetime.datetime.now().isoformat()} Computing MI')
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 if not os.path.exists(f'{tempDir}/control/'):
                     os.mkdir(f'{tempDir}/control')
 
-                props = "nSamples deltas repeats updateType pulse".split()
-                fileName = f"{tempDir}/control/{time.time()}"
+                props = "nSamples deltas repeats updateType".split()
+                fileName = f"{tempDir}/control/{datetime.datetime.now().isoformat()}"
                 fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
-                # fileName = f'{tempDir}/control/{time.time()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                fileName += f'_pulse={pulse}'
+                # fileName = f'{tempDir}/control/{datetime.datetime.now().isoformat()()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr       = SimulationResult(\
                                         mi          = mi,\
                                         conditional = conditional,\
@@ -193,12 +201,13 @@ if __name__ == '__main__':
                         model.nudges = pulse
                         conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
 
-                        print(f'{time.time()} Computing MI')
+                        print(f'{datetime.datetime.now().isoformat()} Computing MI')
 
                         # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
-                        fileName = f"{pulseDir}/{time.time()}"
+                        fileName = f"{pulseDir}/{datetime.datetime.now().isoformat()}"
                         fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
-                        # fileName = f'{pulseDir}/{time.time()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
+                        fileName += f'_pulse={pulse}'
+                        # fileName = f'{pulseDir}/{datetime.datetime.now().isoformat()()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                         sr       = SimulationResult(\
                                                 mi          = mi,\
                                                 conditional = conditional,\
