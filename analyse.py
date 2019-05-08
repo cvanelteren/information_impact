@@ -32,8 +32,8 @@ psycho = '2019-05-07T14:04:28.747149'
 #psycho   = '1548025318'
 #multiple = '1550482875.0001953'
 
-#extractThis      = IO.newest(dataPath)[-1]
-extractThis      = psycho
+extractThis      = IO.newest(dataPath)[-1]
+#extractThis      = psycho
 #extractthis      = 
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
@@ -296,7 +296,7 @@ try:
 except:
     fileNames = sorted(\
                        [j for i in flattenDict(data) for j in i],\
-                       key = lambda x: float(re.findall('\d+\.\d+_', x)[0].strip('_')),\
+                       key = lambda x: x.split('/')[-1].split('_')[0],\
                        )
 #    fileNames = [j for i in flattenDict(data) for j in i]
     var_dict = {}
@@ -354,7 +354,7 @@ fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, inf), p0 = p0,\
                    jac = 'cs')
 
-repeats  = settings.repeat
+repeats  = settings.repeats
 
 # %% normalize data
 

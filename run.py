@@ -34,9 +34,9 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [.1, inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 5
+    nTrials       = 1
     magSide       = ''
     updateType    = 'async'
     CHECK         = [.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
@@ -44,8 +44,9 @@ if __name__ == '__main__':
     tempres       = 100
     graphs = []
     N  = 20
-    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
-        graphs.append(nx.barabasi_albert_graph(N, j))
+    graphs = [nx.path_graph(3, nx.DiGraph())]
+#    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
+#        graphs.append(nx.barabasi_albert_graph(N, j))
     if 'fs4' in os.uname().nodename:
         rootDirectory = '/var/scratch/cveltere/' # data storage
     else:
@@ -192,6 +193,10 @@ if __name__ == '__main__':
                                         px          = px,\
                                         snapshots   = snapshots)
                 IO.savePickle(fileName, sr)
+                
+                
+                ddddd = px.copy()
+                from Utils.stats import KL
                 for pulseSize in pulseSizes:
                     pulseDir = f'{tempDir}/{pulseSize}'
                     if not os.path.exists(pulseDir):
@@ -200,7 +205,8 @@ if __name__ == '__main__':
                         pulse        = {n : pulseSize}
                         model.nudges = pulse
                         conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
-
+                        
+                        print(n, KL(ddddd[-deltas:], px[-deltas:]).sum(-1))
                         print(f'{datetime.datetime.now().isoformat()} Computing MI')
 
                         # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]

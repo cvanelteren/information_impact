@@ -39,7 +39,7 @@ class Worker:
         # ctime is bugged on linux(?)
         self.filenames = sorted(\
                            misc.flattenDict(datadict), \
-                           key = lambda x: float(re.findall('\d+\.\d+_', x)[0].strip('_')), \
+                           key = lambda x: x.split('/')[-1].split('_')[0], \
                            )
 
         self.deltas = setting.deltas // 2 - 1
@@ -345,17 +345,6 @@ for key, vals in loadedData.items():
 # %%
 
 
-<<<<<<< HEAD
-# %%
-b = zd[2, 0].mean(0)
-d, e = plotz.fit(b, func, params = fitParam)
-
-x = np.linspace(0, deltas)
-fig, ax = plt.subplots()
-for i in range(d.shape[0]):
-    ax.plot(b[i], color = colors[i], alpha = .3)
-    ax.plot(x, func(x, *d[i]), color = colors[i], linestyle = 'dashed')
-=======
 centralities = {
                     'degree' : partial(nx.degree, weight = 'weight'), \
                     'betweenness': partial(nx.betweenness_centrality, weight = 'weight'),\
@@ -399,11 +388,9 @@ for idx in range(tmp.shape[1]):
                     color = 'black', capsize = 10, capthick = 2)
     ax.set_xticks(x + width)
     ax.set_xticklabels(labels)
-    
+
     element = plt.Line2D([0], [0], linestyle = 'none', marker = 's', label = conditions[idx], color = colors[idx])
     elements.append(element)
 
 ax.legend(handles = elements, loc = 'upper right')
 ax.set_ylabel('Prediction accuracy (ratio)')
-    
->>>>>>> 935106a096ca4b96a4a0388c6f9c6a5e3bd2134d

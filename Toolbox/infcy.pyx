@@ -160,6 +160,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
     for sample in range(nThreads):
         tmp = copy.deepcopy(model)
         tmp.reset()
+
         # TODO: remove this
         try:
             tmp.burnin(burninSamples)
