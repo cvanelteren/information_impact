@@ -375,7 +375,7 @@ tmp = tmp.reshape((tmp.shape[0], 2, -1))
 
 labels = ['informational\nimpact', *centralities.keys()]
 conditions = 'Underwhelming Overwhelming'.split()
-width = .25
+width = .5
 x = np.arange(tmp.shape[0]) - width
 fig, ax = plt.subplots(1)
 

@@ -26,6 +26,9 @@ dataPath = f"{os.getcwd()}/Data/"
 kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
 psycho_neg='1556092963.4608574'
+
+psycho = 'cveltere/2019-05-07T14:04:28.747149'
+psycho = '2019-05-07T14:04:28.747149'
 #psycho   = '1548025318'
 #multiple = '1550482875.0001953'
 
@@ -41,7 +44,7 @@ data        = IO.DataLoader(loadThis)[extractThis]
 
 settings = IO.Settings(loadThis)
 deltas   = settings.deltas
-repeats  = settings.repeat
+repeats  = settings.repeats
 
 
 temps    = [float(i.split('=')[-1]) for i in data.keys()]
@@ -162,7 +165,11 @@ for idx, (cent, cf) in enumerate(centralities.items()):
         if isinstance(artist, Circle):
             lab = artist.get_label()
             lab = int(lab) if lab.isdigit() else lab
-            pidx = model.mapping[lab]
+            try:
+                pidx = model.mapping[lab]
+            except:
+                pidx = model.mapping[int(eval(lab))]
+            
             tmp  = (s[pidx]) * artist.radius 
             tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
             artist.set(facecolor = 'none')
