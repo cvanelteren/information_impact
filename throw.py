@@ -4,12 +4,13 @@ from Models import  fastIsing, potts
 import networkx as nx, numpy as np
 
 n = 500
-g = nx.grid_2d_graph(n, n)
-g = nx.star_graph(10)
+# g = nx.grid_2d_graph(n, n)
+# g = nx.star_graph(10)
 
 g = nx.path_graph(3, nx.DiGraph())
 
 m = fastIsing.Ising(graph = g)
+print(m.states.base)
 
 
 
