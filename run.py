@@ -32,12 +32,12 @@ if __name__ == '__main__':
     repeats       = int(1e4)
     deltas        = 50
     step          = int(1e4)
-    nSamples      = int(1e2)
+    nSamples      = int(1e3)
     burninSamples = 0
-    pulseSizes    = [2] #, -np.inf]# , .8, .7]
+    pulseSizes    = [1, np.inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
-    magSide       = ''
+    magSide       = 'neg'
     updateType    = 'async'
     CHECK         = [.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 
