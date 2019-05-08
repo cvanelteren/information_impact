@@ -34,7 +34,7 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [2] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
     magSide       = ''
@@ -45,6 +45,7 @@ if __name__ == '__main__':
     graphs = []
     N  = 20
     graphs = [nx.path_graph(3, nx.DiGraph())]
+    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
 #        graphs.append(nx.barabasi_albert_graph(N, j))
     if 'fs4' in os.uname().nodename:
@@ -156,8 +157,9 @@ if __name__ == '__main__':
             IO.savePickle(f'{targetDirectory}/mags.pickle', tmp)
 
         for t, mag in zip(matchedTemps, magRange):
+            model.t = .4
             print(f'{datetime.datetime.now().isoformat()} Setting {t}')
-            model.t = t # update beta
+#            model.t = t # update beta
             tempDir = f'{targetDirectory}/{mag}'
             if not os.path.exists(tempDir):
                 print('making directory')
