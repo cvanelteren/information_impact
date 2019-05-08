@@ -44,10 +44,10 @@ if __name__ == '__main__':
     tempres       = 100
     graphs = []
     N  = 20
-    graphs = [nx.path_graph(3, nx.DiGraph())]
-    graphs[0].add_edge(0,0)
-#    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
-#        graphs.append(nx.barabasi_albert_graph(N, j))
+    # graphs = [nx.path_graph(3, nx.DiGraph())]
+    # graphs[0].add_edge(0,0)
+    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
+       graphs.append(nx.barabasi_albert_graph(N, j))
     if 'fs4' in os.uname().nodename:
         rootDirectory = '/var/scratch/cveltere/' # data storage
     else:
@@ -195,8 +195,8 @@ if __name__ == '__main__':
                                         px          = px,\
                                         snapshots   = snapshots)
                 IO.savePickle(fileName, sr)
-                
-                
+
+
                 ddddd = px.copy()
                 from Utils.stats import KL
                 for pulseSize in pulseSizes:
@@ -207,7 +207,7 @@ if __name__ == '__main__':
                         pulse        = {n : pulseSize}
                         model.nudges = pulse
                         conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
-                        
+
                         print(n, KL(ddddd[-deltas:], px[-deltas:]).sum(-1))
                         print(f'{datetime.datetime.now().isoformat()} Computing MI')
 
