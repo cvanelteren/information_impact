@@ -28,22 +28,22 @@ kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
 psycho_neg='1556092963.4608574'
 
-psycho = 'cveltere/2019-05-08T18:01:18.841674'
+psycho = 'Data/cvelteren/2019-05-09T11:32:07.177432'
 #psycho = '2019-05-07T14:04:28.747149'
 #psycho   = '1548025318'
-#multiple = '1550482875.0001953'
+#multiple = '1550482875.0001953'1
 
-extractThis      = IO.newest(dataPath)[-1]
-#extractThis      = psycho
+#extractThis      = IO.newest(dataPath)[-1]
+extractThis      = psycho
 #extractthis      = 
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
 #extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
-loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
+#loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
 
 #extractThis    = '2019-05-08T18:01:18.841674'
-data      = IO.DataLoader(loadThis)
+data      = IO.DataLoader(extractThis)
 data        = data[next(iter(data))]
 
 settings = IO.Settings(loadThis)
@@ -228,6 +228,8 @@ from tqdm import tqdm
 rcParams['axes.prop_cycle'] = cycler('color', colors)
 
 # %% Need an alternative for this badly...
+
+from tqdm import tqdm
 def flattenDict(d):
     out = []
     for k, v in d.items():
