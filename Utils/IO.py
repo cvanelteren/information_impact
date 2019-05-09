@@ -284,16 +284,16 @@ class Settings:
         """
         assumes self.model is dotted, i.e. Models.[python-file].[model-name]
         """
-        # not dotted anymore need to look for a class name in the directory of 
-        # the models 
-        
+        # not dotted anymore need to look for a class name in the directory of
+        # the models
+
         for file in os.listdir('Models/'):
             if file.endswith('pyx'):
                 tmp = importlib.import_module(f'Models.{file.split(".")[0]}')
                 if getattr(tmp, self.model, None):
                     # returned init model
                     # backward compatibility
-                    
+
                     if isinstance(self.graph, nx.Graph) or isinstance(self.graph, nx.DiGraph):
                         return getattr(tmp, self.model)(graph = self.graph)
                     # new method

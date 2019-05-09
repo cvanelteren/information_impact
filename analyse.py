@@ -9,6 +9,7 @@ from numpy import *
 from functools import partial
 
 from scipy import optimize, integrate
+
 from matplotlib.pyplot import *
 from time import sleep
 from Utils import plotting as plotz, stats, IO
@@ -27,8 +28,8 @@ kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
 psycho_neg='1556092963.4608574'
 
-psycho = 'cveltere/2019-05-07T14:04:28.747149'
-psycho = '2019-05-07T14:04:28.747149'
+psycho = 'cveltere/2019-05-08T18:01:18.841674'
+#psycho = '2019-05-07T14:04:28.747149'
 #psycho   = '1548025318'
 #multiple = '1550482875.0001953'
 
@@ -38,9 +39,12 @@ extractThis      = IO.newest(dataPath)[-1]
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
 #extractThis  = '1548338989.260526'
-extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
+#extractThis = extractThis.split('/')[-1] if extractThis.startswith('/') else extractThis
 loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
-data        = IO.DataLoader(loadThis)[extractThis]
+
+#extractThis    = '2019-05-08T18:01:18.841674'
+data      = IO.DataLoader(loadThis)
+data        = data[next(iter(data))]
 
 settings = IO.Settings(loadThis)
 deltas   = settings.deltas
@@ -72,7 +76,7 @@ pulseSizes = settings.pulseSizes
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
-figDir = f'../thesis/entropy/figures/{extractThis.split(".")[0]}'
+#figDir = f'../thesis/entropy/figures/{extractThis.split(".")[0]}'
 # %% # show mag vs temperature
 func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
 for root, subdirs, filenames in os.walk(loadThis):
@@ -99,7 +103,7 @@ for root, subdirs, filenames in os.walk(loadThis):
         ax.set_xlabel('Temperature (T)', fontsize =30)
         ax.set_ylabel('|<M>|',  fontsize = 30)
         rcParams['axes.labelpad'] = 10
-        fig.savefig(figDir + f"temp_mag.png", bbox_inches = 'tight', pad_inches = 0)
+#        fig.savefig(figDir + f"temp_mag.png", bbox_inches = 'tight', pad_inches = 0)
 #assert 0
 # %% plot graph
 
@@ -168,7 +172,7 @@ for idx, (cent, cf) in enumerate(centralities.items()):
             try:
                 pidx = model.mapping[lab]
             except:
-                pidx = model.mapping[int(eval(lab))]
+                pidx = model.mapping[lab]
             
             tmp  = (s[pidx]) * artist.radius 
             tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
@@ -278,7 +282,8 @@ def worker(fidx):
          # load nudge
         sample  = IO.loadData(fileName)
         # impact  = stats.KL(control.px, sample.px)
-        impact = stats.KL(sample.px, control.px)
+        impact = stats.hellingerDistance(sample.px, control.px)
+        print(impact[-DELTAS, :])
         # don't use +1 as the nudge has no effect at zero
         redIm = nansum(impact[-DELTAS:], axis = -1).T
         # TODO: check if this works with tuples (not sure)
@@ -364,8 +369,8 @@ for temp in range(NTEMPS):
     for nudge in range(NNUDGE):
         zdi = loadedData[nudge, temp]
         # scale data 0-1 along each sample (nodes x delta)
+        rescale = False
         rescale = True
-#        rescale = False
 
 #        rescale for each trial over min / max
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 8, axis = -1)
@@ -386,7 +391,7 @@ for temp in range(NTEMPS):
         # remove the negative small numbers, e.g. -1e-5
         zdi[isfinite(zdi) == False] = 0 # check this
         zd[nudge, temp] = zdi
-
+plot(zd.squeeze()[1].T)
 # %% time plots
 
 # insert dummy axis to offset subplots

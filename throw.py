@@ -7,12 +7,17 @@ n = 500
 # g = nx.grid_2d_graph(n, n)
 # g = nx.star_graph(10)
 
-g = nx.path_graph(3, nx.DiGraph())
+g = nx.path_graph(5)
 
-m = fastIsing.Ising(graph = g)
-print(m.states.base)
+#g.add_edge(0, 0)
+
+#g = nx.barabasi_albert_graph(10, 2)
+
+m = fastIsing.Ising(graph = g, updateType = 'single')
+#print(m.states.base)
 
 
+colors = plt.cm.tab20(np.arange(m.nNodes))
 
 # m = potts.Potts(graph = g, temperature = 0, \
 #                 updateType = 'async', \
@@ -30,18 +35,31 @@ N = 100
 from Toolbox import infcy
 
 
-print(m.nudges.base)
+print('>', m.nudges.base)
+#assert 0
 
-
-snapshots    = infcy.getSnapShots(m, 1000)
-conditional, px, mi = infcy.runMC(m, snapshots, 13, 100)
-
-m.nudges = {0 : 1}
-c, p, n = infcy.runMC(m, snapshots, 13, 1000)
-#
-# %%
+deltas = 100
+snapshots    = infcy.getSnapShots(m, 10000)
+repeats = int(1e5)
+conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 from Utils.stats import KL
 
-x  = KL(px, p)
+NUDGE = np.inf
 
-plt.plot(x.sum(-1))
+out = np.zeros((m.nNodes, deltas))
+for node, idx in m.mapping.items():
+    m.nudges = {node : NUDGE}
+    
+    c, p, n = infcy.runMC(m, snapshots, deltas, repeats)
+    out[idx, :] = KL(px, p).sum(-1)
+# %%
+fig, ax = plt.subplots()
+[ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
+ax.set_xlim(deltas // 2, deltas)
+ax.legend()
+fig.show()
+# %%
+fig, ax = plt.subplots()
+nx.draw(g, ax = ax, with_labels = 1)
+fig.show()
+    
