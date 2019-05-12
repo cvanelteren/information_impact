@@ -11,7 +11,7 @@ from functools import partial
 """
 # standard stuff
 #root =  '/run/media/casper/test/1550482875.0001953/'
-root = 'Data/1548025318.5751357'
+root = 'Data/cveltere/2019-05-09T16:10:34.645885'
 #root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
@@ -31,126 +31,10 @@ figDir = '../thesis/figures/'
 information_impact = '$\mu_i$'
 causal_impact      = '$\gamma_i$'
 # %%
-# begin the uggliness
 
-class Worker:
-    def __init__(self , datadict, setting):
-        self.setting = setting
-        # ctime is bugged on linux(?)
-        self.filenames = sorted(\
-                           misc.flattenDict(datadict), \
-                           key = lambda x: x.split('/')[-1].split('_')[0], \
-                           )
-
-        self.deltas = setting.deltas // 2 - 1
-        numberOfNudges = len(setting.pulseSizes)
-
-        expectedShape = (\
-                         setting.nNodes * numberOfNudges  + 1,\
-                         setting.nTrials,\
-                         numberOfNudges + 1,\
-                         )
-
-
-#        DELTAS_, EXTRA = divmod(setting.deltas, 2) # extract relevant time data
-#        DELTAS  = DELTAS_ - 1
-
-        # linearize this shape
-        # nudges and control hence + 1
-        bufferShape = (\
-                       numberOfNudges + 1, \
-                       len(datadict),\
-                       setting.nTrials,\
-                       setting.nNodes,\
-                       self.deltas, \
-                       )
-        # double raw array
-        self.buff = mp.RawArray('d', int(np.prod(bufferShape)))
-        self.buffshape     = bufferShape
-        self.expectedShape = expectedShape
-        """
-        The data is filled by control (1) -> nudges system per nudge size
-        for example for a system of 10 nodes with 2 conditions we would have
-        (1 + 10 + 10) files for a full set
-        """
-
-        fullset = numberOfNudges * setting.nNodes + 1
-        # if not completed; extracted only fullsets
-        # i.e. when we have 20 out of full 21 we only want to have less
-        # trials extracted otherwise we introduce artefacts when plotting data
-        a, b = divmod(len(self.filenames), fullset)
-        c = 1 if b else 0
-        N = fullset * (a - c)
-        self.pbar = tqdm(total = N)
-        #    print(a, b, c, COND * NODES + 1 )
-        self.idx = list(range(N))
-    def __call__(self, fidx):
-        """
-        Temporary worker to load data files
-        This function does the actual processing of the correct target values
-        used in the analysis below
-        """
-        # shorthands
-        fileName  = self.filenames[fidx]
-        fileNames = self.filenames
-        setting   = self.setting
-
-
-        # do control
-        data = np.frombuffer(self.buff).reshape(self.buffshape)
-        node, temp, trial = np.unravel_index(fidx, self.expectedShape, order = 'F')
-        # control data
-        if '{}' in fileName:
-            # load control; bias correct mi
-            control = IO.loadData(fileName)
-            # panzeri-treves correction
-            mi   = control.mi
-            bias = stats.panzeriTrevesCorrection(control.px,\
-                                                 control.conditional, \
-                                                 setting.repeat)
-            mi -= bias
-
-            data[0, trial, temp]  = mi[:self.deltas, :].T
-        # nudged data
-        else:
-            targetName = fileName.split('=')[-1].strip('.pickle') # extract relevant part
-            # extract pulse and only get left part
-            targetName = re.sub('{|}', '', targetName).split(':')[0]
-            # get the idx of the node
-            nodeNames = []
-            for name, idx in setting.mapping.items():
-                if name in targetName:
-                    nodeNames.append(idx)
-                    # print(idx, name, targetName)
-
-            # load the corresponding dataset to the control
-            controlidx = fidx - node
-            assert '{}' in fileNames[controlidx]
-            # load matching control
-            control  = IO.loadData(fileNames[controlidx])
-             # load nudge
-            sample   = IO.loadData(fileName)
-            # impact = stats.KL(control.px, sample.px)
-            impact   = stats.KL(sample.px, control.px)
-            # don't use +1 as the nudge has no effect at zero
-            redIm    = np.nansum(impact[-self.deltas:], axis = -1).T
-            # TODO: check if this works with tuples (not sure)
-            for name in nodeNames:
-                data[(node - 1) // setting.nNodes + 1, trial, temp, name,  :] = redIm.squeeze().T
-        self.pbar.update(1)
 # %% load data
 # functionize this; part of IO?
-loadedData = {}
-for key in data:
-    setting = settings[key]
-    processes = mp.cpu_count()
-    worker = Worker(data[key], setting)
-    from multiprocessing.pool import ThreadPool
 
-    with ThreadPool(processes = processes) as p:
-        p.map(worker, worker.idx)
-    loadedData[key] = np.frombuffer(worker.buff, dtype = np.float64).reshape(*worker.buffshape)
-    del worker
 # %% plot graphs
 colors = plt.cm.tab20(np.arange(12))
 plt.rcParams['axes.prop_cycle'] = plt.cycler('color', colors)

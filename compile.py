@@ -14,7 +14,7 @@ try:
         os.environ['CC']       = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -ffast-math -Ofast -std=c++11 -march=native"
         add.append('-lomp') # clang openmp stuff
 except:
-    continue
+    pass
 # collect pyx files
 exts = []
 baseDir =  os.getcwd() + os.path.sep

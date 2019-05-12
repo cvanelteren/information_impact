@@ -28,13 +28,13 @@ kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
 psycho_neg='1556092963.4608574'
 
-psycho = 'Data/cvelteren/2019-05-09T11:32:07.177432'
+psycho = 'Data/cvelteren/2019-05-09T16:10:34.645885'
 #psycho = '2019-05-07T14:04:28.747149'
 #psycho   = '1548025318'
 #multiple = '1550482875.0001953'1
 
 #extractThis      = IO.newest(dataPath)[-1]
-extractThis      = psycho
+#extractThis      = psycho
 #extractthis      = 
 #extractThis      = kite
 #extractThis      = '1547303564.8185222'
@@ -46,7 +46,7 @@ extractThis      = psycho
 data      = IO.DataLoader(extractThis)
 data        = data[next(iter(data))]
 
-settings = IO.Settings(loadThis)
+settings = IO.Settings(extractThis)
 deltas   = settings.deltas
 repeats  = settings.repeats
 
@@ -78,32 +78,32 @@ print(f'Listing nudges: {pulseSizes}')
 
 #figDir = f'../thesis/entropy/figures/{extractThis.split(".")[0]}'
 # %% # show mag vs temperature
-func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
-for root, subdirs, filenames in os.walk(loadThis):
-    msettings = {}
-
-    if any(['mags' in i for i in filenames]):
-        msettings = IO.loadPickle(os.path.join(root, 'mags.pickle'))
-
-    if msettings:
-        # fitted
-        fx = msettings.get('fitTemps', msettings.get('temps')) # legacy
-        fy = msettings.get('fmag', msettings['mag'])
-
-        # matched
-        mx = msettings.get('matchedTemps', msettings.get('temperatures')) # legacy
-        my = msettings.get('magRange')
-
-        fig, ax  = subplots(figsize = (10, 12))
-        ax.scatter(fx, fy, alpha = .2)
-        ax.scatter(mx, my * fy.max(), color = 'red', zorder = 2)
-        a, b = scipy.optimize.curve_fit(func, fx, fy, maxfev = 10000)
-        x = linspace(fx.min(), fx.max(), 1000)
-        ax.plot(x, func(x, *a), '--k')
-        ax.set_xlabel('Temperature (T)', fontsize =30)
-        ax.set_ylabel('|<M>|',  fontsize = 30)
-        rcParams['axes.labelpad'] = 10
-#        fig.savefig(figDir + f"temp_mag.png", bbox_inches = 'tight', pad_inches = 0)
+#func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
+#for root, subdirs, filenames in os.walk(extractThis):
+#    msettings = {}
+#
+#    if any(['mags' in i for i in filenames]):
+#        msettings = IO.loadPickle(os.path.join(root, 'mags.pickle'))
+#
+#    if msettings:
+#        # fitted
+#        fx = msettings.get('fitTemps', msettings.get('temps')) # legacy
+#        fy = msettings.get('fmag', msettings['mag'])
+#
+#        # matched
+#        mx = msettings.get('matchedTemps', msettings.get('temperatures')) # legacy
+#        my = msettings.get('magRange')
+#
+#        fig, ax  = subplots(figsize = (10, 12))
+#        ax.scatter(fx, fy, alpha = .2)
+#        ax.scatter(mx, my * fy.max(), color = 'red', zorder = 2)
+#        a, b = scipy.optimize.curve_fit(func, fx, fy, maxfev = 10000)
+#        x = linspace(fx.min(), fx.max(), 1000)
+#        ax.plot(x, func(x, *a), '--k')
+#        ax.set_xlabel('Temperature (T)', fontsize =30)
+#        ax.set_ylabel('|<M>|',  fontsize = 30)
+#        rcParams['axes.labelpad'] = 10
+##        fig.savefig(figDir + f"temp_mag.png", bbox_inches = 'tight', pad_inches = 0)
 #assert 0
 # %% plot graph
 
@@ -116,79 +116,79 @@ centralities = {
              }
 
 # %%
-colors = cm.tab20(arange(NODES))
-fig, ax  = subplots(figsize = (10, 10), frameon = False)
-ax.set(xticks = [], yticks = [])
-positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
-                                         root = 'happy')
-#positions = nx.shell_layout(graph)
-#positions = nx.nx_pydot.pydot_layout(graph, prog = '')
-#                                         root = sorted(dict(model.graph.degree()).items())[0][0])
-
-props = dict(
-         annotate = dict(fontsize  = 1.3, annotate = True),\
-         )
-#p = {}
-plotz.addGraphPretty(model.graph, ax = ax, positions = positions, \
-                     mapping = model.mapping,
-                     **props,\
-                     )
-
-
-#nx.draw(model.graph, positions, ax = ax)
-ax.set_aspect('equal', 'box')
-ax.set(xticks = [], yticks = [])
-ax.axis('off')
+#colors = cm.tab20(arange(NODES))
+#fig, ax  = subplots(figsize = (10, 10), frameon = False)
+#ax.set(xticks = [], yticks = [])
+#positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
+#                                         root = 'happy')
+##positions = nx.shell_layout(graph)
+##positions = nx.nx_pydot.pydot_layout(graph, prog = '')
+##                                         root = sorted(dict(model.graph.degree()).items())[0][0])
+#
+#props = dict(
+#         annotate = dict(fontsize  = 1.3, annotate = True),\
+#         )
+##p = {}
+#plotz.addGraphPretty(model.graph, ax = ax, positions = positions, \
+#                     mapping = model.mapping,
+#                     **props,\
+#                     )
+#
+#
+##nx.draw(model.graph, positions, ax = ax)
+#ax.set_aspect('equal', 'box')
+#ax.set(xticks = [], yticks = [])
+#ax.axis('off')
 fig.show()
-savefig(figDir + 'network.png',\
-        bbox_inches = 'tight', pad_inches = 0, transparent = True)
+#savefig(figDir + 'network.png',\
+#        bbox_inches = 'tight', pad_inches = 0, transparent = True)
 
 
 
 #%%
-centLabels = 'Degree Betweenness Current Eigenvector'.split()
-idx = 22
-
-props['annotate']['fontsize'] = 1.9
-fig, ax = subplots(2, 2, figsize = (idx, idx))
-from matplotlib.patches import Circle
-#fig.subplots_adjust(hspace = 0.07, wspace = 0, left = 0, right = 1)
-for idx, (cent, cf) in enumerate(centralities.items()):
-    c = dict(cf(model.graph))
-    s = array(list(c.values()))
-    s = (s - s.min()) /(s.max() - s.min()) 
-    tax = ax[:, :].ravel()[idx]
-    tax.axis('off')
-#    tax.set_aspect('equal','box')
-    tax.set_title(centLabels[idx], fontsize = 40, color = 'k')
-    plotz.addGraphPretty(model.graph, tax, positions, \
-                     mapping = model.mapping,\
-                     **props,\
-                     )
-    for artist in tax.get_children():
-        if isinstance(artist, Circle):
-            lab = artist.get_label()
-            lab = int(lab) if lab.isdigit() else lab
-            try:
-                pidx = model.mapping[lab]
-            except:
-                pidx = model.mapping[lab]
-            
-            tmp  = (s[pidx]) * artist.radius 
-            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
-            artist.set(facecolor = 'none')
-    
-#            artist.set(alpha = s[pidx])
-#mainax = fig.add_subplot(111, xticks = [], yticks = [], frameon = False)
-#mainax.legend(handles = [Line2D([0],[0], color = colors[idx], marker = 'o', linestyle = 'none',\
-#                                label = node) for idx, node in enumerate(graph)], \
-#             bbox_to_anchor = (1, 1), loc = 'upper left', borderaxespad = 0)
-#for item in [fig, ax]:
-#    item.set_visisble(False)
-fig.subplots_adjust(hspace = 0, wspace = 0)
-fig.savefig(figDir +  'graph_and_cent.png', \
-            bbox_inches = 'tight', pad_inches = 0, transparent = False)
-fig. show()
+#centLabels = 'Degree Betweenness Current Eigenvector'.split()
+#idx = 22
+#
+#props['annotate']['fontsize'] = 1.9
+#fig, ax = subplots(2, 2, figsize = (idx, idx))
+#from matplotlib.patches import Circle
+##fig.subplots_adjust(hspace = 0.07, wspace = 0, left = 0, right = 1)
+#for idx, (cent, cf) in enumerate(centralities.items()):
+#    c = dict(cf(model.graph))
+#    s = array(list(c.values()))
+#    s = (s - s.min()) /(s.max() - s.min()) 
+#    tax = ax[:, :].ravel()[idx]
+#    tax.axis('off')
+##    tax.set_aspect('equal','box')
+#    tax.set_title(centLabels[idx], fontsize = 40, color = 'k')
+#    plotz.addGraphPretty(model.graph, tax, positions, \
+#                     mapping = model.mapping,\
+#                     **props,\
+#                     )
+#    for artist in tax.get_children():
+#        if isinstance(artist, Circle):
+#            lab = artist.get_label()
+#            lab = int(lab) if lab.isdigit() else lab
+#            try:
+#                pidx = model.mapping[lab]
+#            except:
+#                pidx = model.mapping[lab]
+#            
+#            tmp  = (s[pidx]) * artist.radius 
+#            tax.add_artist(Circle(artist.center, facecolor = artist.get_facecolor(), radius = tmp))
+#            artist.set(facecolor = 'none')
+#    
+##            artist.set(alpha = s[pidx])
+##mainax = fig.add_subplot(111, xticks = [], yticks = [], frameon = False)
+##mainax.legend(handles = [Line2D([0],[0], color = colors[idx], marker = 'o', linestyle = 'none',\
+##                                label = node) for idx, node in enumerate(graph)], \
+##             bbox_to_anchor = (1, 1), loc = 'upper left', borderaxespad = 0)
+##for item in [fig, ax]:
+##    item.set_visisble(False)
+#fig.subplots_adjust(hspace = 0, wspace = 0)
+#fig.savefig(figDir +  'graph_and_cent.png', \
+#            bbox_inches = 'tight', pad_inches = 0, transparent = False)
+#fig. show()
 #assert 0
 # %%
 #fig, ax = subplots(1, 2)
@@ -394,6 +394,7 @@ for temp in range(NTEMPS):
         zdi[isfinite(zdi) == False] = 0 # check this
         zd[nudge, temp] = zdi
 plot(zd.squeeze()[1].T)
+
 # %% time plots
 
 # insert dummy axis to offset subplots
@@ -507,7 +508,6 @@ subplots_adjust(hspace = 0, wspace = 0)
 fig.show()
 fig.savefig(figDir + 'mi_time.eps', pad_inches = 0,\
         bbox_inches = 'tight')
-
 #assert 0 
 # %% presentation plot
 rcParams['axes.labelpad'] = 0

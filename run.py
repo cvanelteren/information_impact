@@ -29,22 +29,22 @@ import networkx as nx, \
         time
 close('all')
 if __name__ == '__main__':
-    repeats       = int(1e4)
-    deltas        = 50
+    repeats       = int(3e4)
+    deltas        = 100
     step          = int(1e4)
-    nSamples      = int(1e3)
+    nSamples      = int(1e4)
     burninSamples = 0
-    pulseSizes    = [1] #, -np.inf]# , .8, .7]
+    pulseSizes    = [3] #, -np.inf]# , .8, .7]
 
-    nTrials       = 1
-    magSide       = 'neg'
-    updateType    = 'single'
+    nTrials       = .5
+    magSide       = ''
+    updateType    = 'async'
     CHECK         = [.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 
     tempres       = 100
     graphs = []
     N  = 20
-    graphs = [nx.path_graph(3, nx.DiGraph())]
+    graphs = [nx.path_graph(3)]
     
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):

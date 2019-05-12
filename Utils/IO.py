@@ -31,18 +31,17 @@ class DataLoader(OrderedDict):
         allowedExtensions = "pickle h5".split()
         #TODO :  make aggregate dataclass -> how to deal with multiple samples
         # current work around is bad imo
+        dataDir
         if dataDir:
             # Warning: this only works in python 3.6+ due to how dictionaries retain order
             print("Extracting data...")
-            if not dataDir.endswith('/'):
-                dataDir += '/'
             files = []
             # walk root and find all the possible data files
             for root, dir, fileNames in os.walk(dataDir):
                 for fileName in fileNames:
                     for extension in allowedExtensions:
                         if fileName.endswith(extension):
-                            files.append(f'{root}/{fileName}')
+                            files.append(os.path.join(root, fileName))
                             break # prevent possible doubles
             files = sorted(files, key = lambda x: \
                            os.path.getctime(x))
@@ -77,46 +76,167 @@ class DataLoader(OrderedDict):
                     continue
             print('Done')
 
-def getGraph(folderName):
-    """
-    Exctract the graph from the rootfolder
-    and writes the graph if it is not in the folder
-    """
-    try:
-        print(f'Looking for graph in {folderName}')
-        graph = readSettings(folderName)[0].get('graph', None)
-        if graph:
-            print('Graph found in settings')
-            return nx.readwrite.json_graph.node_link_graph(graph)
-    except FileNotFoundError:
-        print("Default not found, attempting load from data")
+#def getGraph(folderName):
+#    """
+#    Exctract the graph from the rootfolder
+#    and writes the graph if it is not in the folder
+#    """
+#    try:
+#        print(f'Looking for graph in {folderName}')
+#        graph = readSettings(folderName)[0].get('graph', None)
+#        if graph:
+#            print('Graph found in settings')
+#            return nx.readwrite.json_graph.node_link_graph(graph)
+#    except FileNotFoundError:
+#        print("Default not found, attempting load from data")
+#
+#    graph = None
+#    for root, dirs, files in os.walk(folderName):
+#        for file in files:
+#            print(file)
+#            # settings will always be read first when walked over folders
+#            if 'settings' in file:
+#                print('reading settings...')
+#                settings = readSettings(root)[0]
+#                if 'graph' in settings:
+#                    print('Graph found in settings')
+#                    return nx.readwrite.node_link_graph(settings['graph'])
+#            else:
+#                try:
+#                    graph  = loadData(os.path.join(root, file)).graph
+#                    if graph:
+#                        print("Graph found in data file!")
+#                        return graph
+#                except AttributeError:
+#                    continue
+#    print("No suitable file found :(")
 
-    graph = None
-    for root, dirs, files in os.walk(folderName):
-        for file in files:
-            print(file)
-            # settings will always be read first when walked over folders
-            if 'settings' in file:
-                print('reading settings...')
-                settings = readSettings(root)[0]
-                if 'graph' in settings:
-                    print('Graph found in settings')
-                    return nx.readwrite.node_link_graph(settings['graph'])
-            else:
-                try:
-                    graph  = loadData(os.path.join(root, file)).graph
-                    if graph:
-                        print("Graph found in data file!")
-                        return graph
-                except AttributeError:
-                    continue
-    print("No suitable file found :(")
+# begin the uggliness
+from Utils import misc, stats
+import multiprocessing as mp
+from tqdm import tqdm
+class Worker:
+    def __init__(self , datadict, setting):
+        self.setting = setting
+
+        # ctime is bugged on linux(?)
+        self.filenames = sorted(\
+                           misc.flattenDict(datadict), \
+                           key = lambda x: x.split('/')[-1].split('_')[0], \
+                           )
+
+        self.deltas = setting.deltas // 2 - 1
+        numberOfNudges = len(setting.pulseSizes)
+
+        expectedShape = (\
+                         setting.nNodes * numberOfNudges  + 1,\
+                         setting.nTrials,\
+                         numberOfNudges + 1,\
+                         )
 
 
-def loadData(filename):
-    # TODO: change
-    if filename.endswith('pickle'):
+#        DELTAS_, EXTRA = divmod(setting.deltas, 2) # extract relevant time data
+#        DELTAS  = DELTAS_ - 1
+
+        # linearize this shape
+        # nudges and control hence + 1
+        bufferShape = (\
+                       numberOfNudges + 1, \
+                       len(datadict),\
+                       setting.nTrials,\
+                       setting.nNodes,\
+                       self.deltas, \
+                       )
+        # double raw array
+        self.buff = mp.RawArray('d', int(np.prod(bufferShape)))
+        self.buffshape     = bufferShape
+        self.expectedShape = expectedShape
+        """
+        The data is filled by control (1) -> nudges system per nudge size
+        for example for a system of 10 nodes with 2 conditions we would have
+        (1 + 10 + 10) files for a full set
+        """
+
+        fullset = numberOfNudges * setting.nNodes + 1
+        # if not completed; extracted only fullsets
+        # i.e. when we have 20 out of full 21 we only want to have less
+        # trials extracted otherwise we introduce artefacts when plotting data
+        a, b = divmod(len(self.filenames), fullset)
+        c = 1 if b else 0
+        N = fullset * (a - c)
+        self.pbar = tqdm(total = N)
+        #    print(a, b, c, COND * NODES + 1 )
+        self.idx = list(range(N))
+    def __call__(self, fidx):
+        """
+        Temporary worker to load data files
+        This function does the actual processing of the correct target values
+        used in the analysis below
+        """
+        # shorthands
+        fileName  = self.filenames[fidx]
+        fileNames = self.filenames
+        setting   = self.setting
+
+
+        # do control
+        data = np.frombuffer(self.buff).reshape(self.buffshape)
+        node, temp, trial = np.unravel_index(fidx, self.expectedShape, order = 'F')
+        # control data
+        if '{}' in fileName:
+            # load control; bias correct mi
+            control = loadData(fileName)
+            # panzeri-treves correction
+            
+            mi   = control.mi
+            bias = stats.panzeriTrevesCorrection(control.px,\
+                                                 control.conditional, \
+                                                 setting.repeats)
+            mi -= bias
+
+            data[0, trial, temp]  = mi[:self.deltas, :].T
+        # nudged data
+        else:
+            targetName = fileName.split('=')[-1].strip('.pickle') # extract relevant part
+            # extract pulse and only get left part
+            targetName = re.sub('{|}', '', targetName).split(':')[0]
+            # get the idx of the node
+            nodeNames = []
+            for name, idx in setting.mapping.items():
+                if name in targetName:
+                    nodeNames.append(idx)
+                    # print(idx, name, targetName)
+
+            # load the corresponding dataset to the control
+            controlidx = fidx - node
+            assert '{}' in fileNames[controlidx]
+            # load matching control
+            control  =  loadData(fileNames[controlidx])
+             # load nudge
+            sample   = loadData(fileName)
+            # impact = stats.KL(control.px, sample.px)
+            impact   = stats.KL(sample.px, control.px)
+            # don't use +1 as the nudge has no effect at zero
+            redIm    = np.nansum(impact[-self.deltas:], axis = -1).T
+            # TODO: check if this works with tuples (not sure)
+            for name in nodeNames:
+                data[(node - 1) // setting.nNodes + 1, trial, temp, name,  :] = redIm.squeeze().T
+        self.pbar.update(1)
+
+# TODO: careful
+def loadData(root):
+    files  = []
+    for (root, dirs, file) in os.walk(root):
+        if file.endswith('pickle'):
+            files.append(file)
         return loadPickle(filename)
+    if root.endswith('.pickle'):
+        return loadPickle(root)
+    
+#def loadData(filename):
+    # TODO: change
+#    if filename.endswith('pickle'):
+#        return loadPickle(filename)
 #    print(isinstance(fileNames, str), fileNames) # debug
 #    if isinstance(fileNames, list):
 #        data = []
