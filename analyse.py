@@ -33,7 +33,7 @@ psycho = 'Data/cvelteren/2019-05-09T16:10:34.645885'
 #psycho   = '1548025318'
 #multiple = '1550482875.0001953'1
 
-#extractThis      = IO.newest(dataPath)[-1]
+extractThis      = IO.newest(dataPath)[-1]
 #extractThis      = psycho
 #extractthis      = 
 #extractThis      = kite
@@ -116,7 +116,7 @@ centralities = {
              }
 
 # %%
-#colors = cm.tab20(arange(NODES))
+colors = cm.tab20(arange(NODES))
 #fig, ax  = subplots(figsize = (10, 10), frameon = False)
 #ax.set(xticks = [], yticks = [])
 #positions = nx.nx_agraph.graphviz_layout(model.graph, prog = 'neato', \
@@ -372,7 +372,7 @@ for temp in range(NTEMPS):
         zdi = loadedData[nudge, temp]
         # scale data 0-1 along each sample (nodes x delta)
         rescale = False
-        rescale = True
+#        rescale = True
 
 #        rescale for each trial over min / max
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 8, axis = -1)

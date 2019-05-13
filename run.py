@@ -34,12 +34,12 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e2)
     burninSamples = 0
-    pulseSizes    = [3] #, -np.inf]# , .8, .7]
+    pulseSizes    = [-.2] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
     magSide       = ''
     updateType    = 'async'
-    CHECK         = [.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [-1] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 
     tempres       = 100
     graphs = []
@@ -125,7 +125,7 @@ if __name__ == '__main__':
             ax.scatter(fitTemps, mag, alpha = .2)
             ax.scatter(fitTemps, fmag, alpha = .2)
             setp(ax, **dict(xlabel = 'Temperature', ylabel = '<M>'))
-            savefig(f'{targetDirectory}/temp vs mag.png')
+#            savefig(f'{targetDirectory}/temp vs mag.png')
             # show()
 
             # TODO: combine these? > don't as it is model specific imo

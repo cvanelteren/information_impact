@@ -7,13 +7,17 @@ n = 500
 # g = nx.grid_2d_graph(n, n)
 # g = nx.star_graph(10)
 
+#g = nx.path_graph(3, nx.DiGraph())
+#g.add_edge(0,0)
 g = nx.path_graph(3)
+
 #g = nx.barabasi_albert_graph(10, 3)
 #g.add_edge(0, 0)
 
 #g = nx.barabasi_albert_graph(10, 2)
 
-m = fastIsing.Ising(graph = g, updateType = 'async', nudgeType = 'constant')
+m = fastIsing.Ising(graph = g, updateType = 'single ', magSide = '', \
+                    nudgeType = 'constant')
 temps = np.linspace(0, g.number_of_nodes(), 100)
 mag  = m.matchMagnetization(temps, 100)[0]
 idx = np.argmin(abs(mag - 0.75))
@@ -23,6 +27,7 @@ ax.plot(temps, mag)
 ax.plot(temps[idx], mag[idx], 'r.')
 
 m.t = temps[idx]
+#m.t = 1
 #print(m.states.base)
 
 
@@ -46,25 +51,31 @@ from Toolbox import infcy
 
 print('>', m.nudges.base)
 #assert 0
+#
+#m.nudges = {'0': 1}
 
-deltas = 50
+deltas = 100
 snapshots    = infcy.getSnapShots(m, 1000)
-repeats = int(1e5)
+repeats = int(1e3)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
+
+assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance
 
-NUDGE = 10
+# %%
 
+NUDGE = .8
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
-    
+    print(m.nudges.base)
     c, p, n = infcy.runMC(m, snapshots, deltas, repeats)
     out[idx, :] = KL(px, p).sum(-1)
+    
 # %%
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
-#ax.set_xlim(deltas // 2, deltas)
+#ax.set_xlim(deltas // 2 - 2, deltas)
 #ax.set_yscale('log')
 ax.legend()
 fig.show()
@@ -72,4 +83,5 @@ fig.show()
 fig, ax = plt.subplots()
 nx.draw(g, ax = ax, with_labels = 1)
 fig.show()
+plt.show()
     
