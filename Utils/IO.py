@@ -11,105 +11,98 @@ from matplotlib.pyplot import *
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
 from collections import defaultdict, OrderedDict
-class DataLoader(OrderedDict):
-    def __init__(self, *args, **kwargs):
-        """
-        Data loader because hdf5 cannot use pyobjects. I am dumb because
-        I want to store the graph with the data, hdf5 is probably better
-        If the end-user doesn't care about this (and faster). Regardless,
-        here is a hdf5 emulator.
-
-        The format is :
-        data[temperature][pulse] = SimulationResult // old format is dict
-
-        THe object returns an ordered dict with the leafes consisiting of the
-        filenames belowing to the subdict categories
-        """
-        dataDir = args[0] if args else ''
-        super(DataLoader, self).__init__(**kwargs)
-
-        allowedExtensions = "pickle h5".split()
-        #TODO :  make aggregate dataclass -> how to deal with multiple samples
-        # current work around is bad imo
-        dataDir
-        if dataDir:
-            # Warning: this only works in python 3.6+ due to how dictionaries retain order
-            print("Extracting data...")
-            files = []
-            # walk root and find all the possible data files
-            for root, dir, fileNames in os.walk(dataDir):
-                for fileName in fileNames:
-                    for extension in allowedExtensions:
-                        if fileName.endswith(extension):
-                            files.append(os.path.join(root, fileName))
-                            break # prevent possible doubles
-            files = sorted(files, key = lambda x: \
-                           os.path.getctime(x))
-            """
-            Although dicts are ordered by default from >= py3.6
-            Here I enforce the order as it matters for matching controls
-            """
-            data = DataLoader()
-            # files still contains non-compliant pickle files, e.g. mags.pickle
-            for file in files:
-                # filter out non-compliant pickle files
-                try:
-                    # look for t=
-                    # temp = re.search('t=\d+\.[0-9]+', file).group
-                    temp = file.split('/')[-3] # magnetization
-                    root = file.split('/')[-4]
-                    # deltas = re.search('deltas=\d+', file).group()
-                    # deltas = re.search('\d+', deltas).group()
-                    # look for pulse
-                    pulse = re.search("\{.*\}", file).group()
-                    structure = [root, temp]
-                    if pulse == '{}':
-                        structure += ['control']
-                    else:
-                        # there is a bug that there is a white space in my data;
-                        structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
-                    # tmp  = loadPickle(file)
-                    self.update(addData(data, file, structure))
-                # attempt to load with certain properties, if not found gracdefully exit
-                # this is the case for every pickle file other than the ones with props above
-                except AttributeError:
-                    continue
-            print('Done')
-
-#def getGraph(folderName):
-#    """
-#    Exctract the graph from the rootfolder
-#    and writes the graph if it is not in the folder
-#    """
-#    try:
-#        print(f'Looking for graph in {folderName}')
-#        graph = readSettings(folderName)[0].get('graph', None)
-#        if graph:
-#            print('Graph found in settings')
-#            return nx.readwrite.json_graph.node_link_graph(graph)
-#    except FileNotFoundError:
-#        print("Default not found, attempting load from data")
+# class DataLoader(OrderedDict):
+#     def __init__(self, *args, **kwargs):
+#         """
+#         Data loader because hdf5 cannot use pyobjects. I am dumb because
+#         I want to store the graph with the data, hdf5 is probably better
+#         If the end-user doesn't care about this (and faster). Regardless,
+#         here is a hdf5 emulator.
 #
-#    graph = None
-#    for root, dirs, files in os.walk(folderName):
-#        for file in files:
-#            print(file)
-#            # settings will always be read first when walked over folders
-#            if 'settings' in file:
-#                print('reading settings...')
-#                settings = readSettings(root)[0]
-#                if 'graph' in settings:
-#                    print('Graph found in settings')
-#                    return nx.readwrite.node_link_graph(settings['graph'])
-#            else:
-#                try:
-#                    graph  = loadData(os.path.join(root, file)).graph
-#                    if graph:
-#                        print("Graph found in data file!")
-#                        return graph
-#                except AttributeError:
-#                    continue
-#    print("No suitable file found :(")
+#         The format is :
+#         data[temperature][pulse] = SimulationResult // old format is dict
+#
+#         THe object returns an ordered dict with the leafes consisiting of the
+#         filenames belowing to the subdict categories
+#         """
+#         dataDir = args[0] if args else ''
+#         super(DataLoader, self).__init__(**kwargs)
+#
+#         allowedExtensions = "pickle h5".split()
+#         #TODO :  make aggregate dataclass -> how to deal with multiple samples
+#         # current work around is bad imo
+#         dataDir
+#         if dataDir:
+#             # Warning: this only works in python 3.6+ due to how dictionaries retain order
+#             print("Extracting data...")
+#             files = []
+#             # walk root and find all the possible data files
+#             for root, dir, fileNames in os.walk(dataDir):
+#                 for fileName in fileNames:
+#                     for extension in allowedExtensions:
+#                         if fileName.endswith(extension):
+#                             files.append(os.path.join(root, fileName))
+#                             break # prevent possible doubles
+#             files = sorted(files, key = lambda x: \
+#                            os.path.getctime(x))
+#             """
+#             Although dicts are ordered by default from >= py3.6
+#             Here I enforce the order as it matters for matching controls
+#             """
+#             data = DataLoader()
+#             # files still contains non-compliant pickle files, e.g. mags.pickle
+#             for file in files:
+#                 # filter out non-compliant pickle files
+#                 try:
+#                     # look for t=
+#                     # temp = re.search('t=\d+\.[0-9]+', file).group
+#                     temp = file.split('/')[-3] # magnetization
+#                     root = file.split('/')[-4]
+#                     # deltas = re.search('deltas=\d+', file).group()
+#                     # deltas = re.search('\d+', deltas).group()
+#                     # look for pulse
+#                     pulse = re.search("\{.*\}", file).group()
+#                     structure = [root, temp]
+#                     if pulse == '{}':
+#                         structure += ['control']
+#                     else:
+#                         # there is a bug that there is a white space in my data;
+#                         structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
+#                     # tmp  = loadPickle(file)
+#                     self.update(addData(data, file, structure))
+#                 # attempt to load with certain properties, if not found gracdefully exit
+#                 # this is the case for every pickle file other than the ones with props above
+#                 except AttributeError:
+#                     continue
+#             print('Done')
+
+
+# class DataLoader:
+    # def __init__(self):
+        # self.data = {}
+
+    # def load_data(self, root, types = ''):
+    #
+
+def flatLoader(root):
+    """
+    Walks root directory and returns flatten set of
+    data filenames sorted based on date time in filename
+    """
+
+    # pattern is backwards compatible
+    data, pattern = set(), '((\d+-\d+-\d+T\d+:\d+:)?(\d+\.\d+))'
+    for root, dirs, files in os.walk(root):
+        # will fail on files not containing date
+        try:
+            files = sorted(files, key = lambda x:\
+                       re.search(pattern, x).group())
+            for file in files:
+                if file.endswith('pickle') and not file in data:
+                    data.add(os.path.join(root, file))
+        except:
+            pass
+    return data
 
 # begin the uggliness
 from Utils import misc, stats
@@ -177,8 +170,6 @@ class Worker:
         fileName  = self.filenames[fidx]
         fileNames = self.filenames
         setting   = self.setting
-
-
         # do control
         data = np.frombuffer(self.buff).reshape(self.buffshape)
         node, temp, trial = np.unravel_index(fidx, self.expectedShape, order = 'F')
@@ -187,13 +178,11 @@ class Worker:
             # load control; bias correct mi
             control = loadData(fileName)
             # panzeri-treves correction
-            
             mi   = control.mi
             bias = stats.panzeriTrevesCorrection(control.px,\
                                                  control.conditional, \
                                                  setting.repeats)
             mi -= bias
-
             data[0, trial, temp]  = mi[:self.deltas, :].T
         # nudged data
         else:
@@ -232,7 +221,7 @@ def loadData(root):
         return loadPickle(filename)
     if root.endswith('.pickle'):
         return loadPickle(root)
-    
+
 #def loadData(filename):
     # TODO: change
 #    if filename.endswith('pickle'):

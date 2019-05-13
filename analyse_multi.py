@@ -12,6 +12,7 @@ from functools import partial
 # standard stuff
 #root =  '/run/media/casper/test/1550482875.0001953/'
 root = 'Data/cveltere/2019-05-09T16:10:34.645885'
+root = '/run/media/casper/fc7e7a2a-73e9-41fe-9020-f721489b1900/cveltere'
 #root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
@@ -228,31 +229,31 @@ for key, vals in loadedData.items():
     aucs[key] = auc # update data
 # %%
 
-
-centralities = {
-                    'degree' : partial(nx.degree, weight = 'weight'), \
-                    'betweenness': partial(nx.betweenness_centrality, weight = 'weight'),\
-                    'current flow'  : partial(nx.information_centrality, weight = 'weight'),\
-                    'eigenvector'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
-            }
-
-
-# produce ranking for mu with causal influence metrics
-ranking    = np.argsort(auc, axis = -1)
-prediction = (ranking[0] == ranking[[1, 2]])
-structural = np.zeros((len(centralities), setting.nNodes))
-
-
-for idx, (k, f) in enumerate(centralities.items()):
-    structural[idx] = np.argsort(np.fromiter(dict(f(setting.graph)).values(), dtype = float))
-
-pred_struct = np.array([i  == ranking[[1,2]].reshape(-1, setting.nNodes) for i in structural])
-pred_struct = pred_struct.reshape((len(centralities), *ranking[[1,2]].shape))
-
-pred = np.vstack((prediction[None, ...], pred_struct))
-tmp = pred[..., -1] # driver-estimates
-
-tmp = tmp.reshape((tmp.shape[0], 2, -1))
+plt.show()
+# centralities = {
+#                     'degree' : partial(nx.degree, weight = 'weight'), \
+#                     'betweenness': partial(nx.betweenness_centrality, weight = 'weight'),\
+#                     'current flow'  : partial(nx.information_centrality, weight = 'weight'),\
+#                     'eigenvector'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
+#             }
+#
+#
+# # produce ranking for mu with causal influence metrics
+# ranking    = np.argsort(auc, axis = -1)
+# prediction = (ranking[0] == ranking[[1, 2]])
+# structural = np.zeros((len(centralities), setting.nNodes))
+#
+#
+# for idx, (k, f) in enumerate(centralities.items()):
+#     structural[idx] = np.argsort(np.fromiter(dict(f(setting.graph)).values(), dtype = float))
+#
+# pred_struct = np.array([i  == ranking[[1,2]].reshape(-1, setting.nNodes) for i in structural])
+# pred_struct = pred_struct.reshape((len(centralities), *ranking[[1,2]].shape))
+#
+# pred = np.vstack((prediction[None, ...], pred_struct))
+# tmp = pred[..., -1] # driver-estimates
+#
+# tmp = tmp.reshape((tmp.shape[0], 2, -1))
 
 
 
