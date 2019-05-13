@@ -11,70 +11,70 @@ from matplotlib.pyplot import *
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
 from collections import defaultdict, OrderedDict
-# class DataLoader(OrderedDict):
-#     def __init__(self, *args, **kwargs):
-#         """
-#         Data loader because hdf5 cannot use pyobjects. I am dumb because
-#         I want to store the graph with the data, hdf5 is probably better
-#         If the end-user doesn't care about this (and faster). Regardless,
-#         here is a hdf5 emulator.
-#
-#         The format is :
-#         data[temperature][pulse] = SimulationResult // old format is dict
-#
-#         THe object returns an ordered dict with the leafes consisiting of the
-#         filenames belowing to the subdict categories
-#         """
-#         dataDir = args[0] if args else ''
-#         super(DataLoader, self).__init__(**kwargs)
-#
-#         allowedExtensions = "pickle h5".split()
-#         #TODO :  make aggregate dataclass -> how to deal with multiple samples
-#         # current work around is bad imo
-#         dataDir
-#         if dataDir:
-#             # Warning: this only works in python 3.6+ due to how dictionaries retain order
-#             print("Extracting data...")
-#             files = []
-#             # walk root and find all the possible data files
-#             for root, dir, fileNames in os.walk(dataDir):
-#                 for fileName in fileNames:
-#                     for extension in allowedExtensions:
-#                         if fileName.endswith(extension):
-#                             files.append(os.path.join(root, fileName))
-#                             break # prevent possible doubles
-#             files = sorted(files, key = lambda x: \
-#                            os.path.getctime(x))
-#             """
-#             Although dicts are ordered by default from >= py3.6
-#             Here I enforce the order as it matters for matching controls
-#             """
-#             data = DataLoader()
-#             # files still contains non-compliant pickle files, e.g. mags.pickle
-#             for file in files:
-#                 # filter out non-compliant pickle files
-#                 try:
-#                     # look for t=
-#                     # temp = re.search('t=\d+\.[0-9]+', file).group
-#                     temp = file.split('/')[-3] # magnetization
-#                     root = file.split('/')[-4]
-#                     # deltas = re.search('deltas=\d+', file).group()
-#                     # deltas = re.search('\d+', deltas).group()
-#                     # look for pulse
-#                     pulse = re.search("\{.*\}", file).group()
-#                     structure = [root, temp]
-#                     if pulse == '{}':
-#                         structure += ['control']
-#                     else:
-#                         # there is a bug that there is a white space in my data;
-#                         structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
-#                     # tmp  = loadPickle(file)
-#                     self.update(addData(data, file, structure))
-#                 # attempt to load with certain properties, if not found gracdefully exit
-#                 # this is the case for every pickle file other than the ones with props above
-#                 except AttributeError:
-#                     continue
-#             print('Done')
+class DataLoader(OrderedDict):
+    def __init__(self, *args, **kwargs):
+     """
+     Data loader because hdf5 cannot use pyobjects. I am dumb because
+     I want to store the graph with the data, hdf5 is probably better
+     If the end-user doesn't care about this (and faster). Regardless,
+     here is a hdf5 emulator.
+
+     The format is :
+     data[temperature][pulse] = SimulationResult // old format is dict
+
+     THe object returns an ordered dict with the leafes consisiting of the
+     filenames belowing to the subdict categories
+     """
+     dataDir = args[0] if args else ''
+     super(DataLoader, self).__init__(**kwargs)
+
+     allowedExtensions = "pickle h5".split()
+     #TODO :  make aggregate dataclass -> how to deal with multiple samples
+     # current work around is bad imo
+     dataDir
+     if dataDir:
+         # Warning: this only works in python 3.6+ due to how dictionaries retain order
+         print("Extracting data...")
+         files = []
+         # walk root and find all the possible data files
+         for root, dir, fileNames in os.walk(dataDir):
+             for fileName in fileNames:
+                 for extension in allowedExtensions:
+                     if fileName.endswith(extension):
+                         files.append(os.path.join(root, fileName))
+                         break # prevent possible doubles
+         files = sorted(files, key = lambda x: \
+                        os.path.getctime(x))
+         """
+         Although dicts are ordered by default from >= py3.6
+         Here I enforce the order as it matters for matching controls
+         """
+         data = DataLoader()
+         # files still contains non-compliant pickle files, e.g. mags.pickle
+         for file in files:
+             # filter out non-compliant pickle files
+             try:
+                 # look for t=
+                 # temp = re.search('t=\d+\.[0-9]+', file).group
+                 temp = file.split('/')[-3] # magnetization
+                 root = file.split('/')[-4]
+                 # deltas = re.search('deltas=\d+', file).group()
+                 # deltas = re.search('\d+', deltas).group()
+                 # look for pulse
+                 pulse = re.search("\{.*\}", file).group()
+                 structure = [root, temp]
+                 if pulse == '{}':
+                     structure += ['control']
+                 else:
+                     # there is a bug that there is a white space in my data;
+                     structure += pulse[1:-1].replace(" ", "").split(':')[::-1]
+                 # tmp  = loadPickle(file)
+                 self.update(addData(data, file, structure))
+             # attempt to load with certain properties, if not found gracdefully exit
+             # this is the case for every pickle file other than the ones with props above
+             except AttributeError:
+                 continue
+         print('Done')
 
 
 # class DataLoader:
@@ -533,7 +533,7 @@ class SimulationResult(object):
     snapshots   : dict
     mi          : array
     # model       : object
-    graph       : object
+#    graph       : object
     # TODO: add these?
     # temperature : int
     # pulse       : dict
