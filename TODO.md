@@ -33,7 +33,8 @@ in parallel.
 - [x] Found the segfault; writing to the buffer is not threadsafe, even though the keys are unique. (wasn't it was a wrongful idx)
 - [x] If you replace the memviews with ndarrays and slice into them, the speed will be reduces by 300 percent. This is the cause of issues in mp
 - Clang++ does not work on LISA; ask system admins
-
+- [X] please note that assigning slices of memory views are not thread safe, copying them to separate parts
+should be safe
 # Notes on slurm
 
 - run a command using the slurm.sh batch script; sbatch slurm.sh
@@ -41,11 +42,11 @@ in parallel.
 - stop it with scancel
 
 # Causal measures
-Currently we apply a version of KL-divergence. Although commonly used, it only offers 
-an asymmetric distance between probability distributions; in our application the non 
-intervened system is considered to be the 'true' state of the system; nudges can 
-yield a dynamic that is not common in teh system. Therefore, we can justify the use 
-of KL-divergence by means of this measure; however there is also a symmetric variant 
-of KL-divergence named Jenson-Shannon divergence; which is essentially the weighted 
-average of the the KL-divergence both ways, and can be interpreted in terms of 
-entropy. 
+Currently we apply a version of KL-divergence. Although commonly used, it only offers
+an asymmetric distance between probability distributions; in our application the non
+intervened system is considered to be the 'true' state of the system; nudges can
+yield a dynamic that is not common in teh system. Therefore, we can justify the use
+of KL-divergence by means of this measure; however there is also a symmetric variant
+of KL-divergence named Jenson-Shannon divergence; which is essentially the weighted
+average of the the KL-divergence both ways, and can be interpreted in terms of
+entropy.

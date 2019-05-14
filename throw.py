@@ -8,21 +8,22 @@ n = 500
 # g = nx.grid_2d_graph(n, n)
 # g = nx.star_graph(10)
 
-g = nx.path_graph(3)
+# g = nx.path_graph(3)
 #g.add_edge(0,0)
-# g = nx.barabasi_albert_graph(20, 2)
-# g = nx.path_graph(10, nx.DiGraph())
+g =  nx.soft_random_geometric_graph(20, .5)
+#g = nx.grid_2d_graph(10, 10)
+#g = nx.path_graph(3, nx.DiGraph()).
 #g = nx.barabasi_albert_graph(10, 3)
 #g.add_edge(0, 0)
 
 #g = nx.barabasi_albert_graph(10, 2)
 
-m = fastIsing.Ising(graph = g, updateType = 'single ', \
-                    magSide = '', \
+m = fastIsing.Ising(graph = g, updateType = 'async', \
+                    magSide = 'neg', \
                     nudgeType = 'constant')
 temps = np.linspace(0, g.number_of_nodes(), 100)
 mag  = m.matchMagnetization(temps, 100)[0]
-idx = np.argmin(abs(mag - 0.75))
+idx = np.argmin(abs(mag - .7))
 
 fig, ax = plt.subplots()
 ax.plot(temps, mag)
@@ -58,7 +59,8 @@ print('>', m.nudges.base)
 
 deltas = 20
 start = time.time()
-snapshots    = infcy.getSnapShots(m, 100)
+snapshots    = infcy.getSnapShots(m, int(1e2), 1)
+
 repeats = int(1e3)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 
@@ -71,7 +73,6 @@ NUDGE = 1
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
-    print(m.nudges.base)
     c, p, n = infcy.runMC(m, snapshots, deltas, repeats)
     out[idx, :] = KL(px, p).sum(-1)
 print(time.time() - start)

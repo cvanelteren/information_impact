@@ -309,8 +309,7 @@ cpdef dict monteCarlo(\
     # cdef double ZZ
     with nogil, parallel(num_threads = nThreads):
         for state in prange(states, schedule = 'static'):
-            # tid         = threadid()
-            tid         = openmp.omp_get_thread_num()
+            tid         = threadid()
             modelptr    = models_[tid].ptr
             out[tid]    = 0 # reset buffer
             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
@@ -329,8 +328,12 @@ cpdef dict monteCarlo(\
                         (<Model> modelptr)._nudges[:] = 0
             # TODO: replace this with   a concurrent unordered_map
             with gil:
+                # note: copy method is required otherwise zeros will appear
                 conditional[tuple(s.base[state])] = out.base[tid].copy()
                 pbar.update(1)
+    # for idx, si in enumerate(out.base):
+    #     conditional[tuple(s.base[idx])] = si
+
     pbar.close()
     print(f"Delta = {timer() - past: .2f} sec")
     return conditional
