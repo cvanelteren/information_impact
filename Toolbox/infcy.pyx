@@ -303,52 +303,34 @@ cpdef dict monteCarlo(\
     cdef int tid  # init thread id
 
     cdef double ZZ
+
+    cdef Model t
     print('starting runs')
     # cdef double ZZ
     with nogil, parallel(num_threads = nThreads):
-        for state in prange(states, schedule = 'static'):
-            tid = threadid()
+        for state in prange(states, schedule = 'statics'):
+            # tid         = threadid()
+            tid         = openmp.omp_get_thread_num()
             modelptr    = models_[tid].ptr
-            r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
-            # for some reason casting to c-extensions thinks its an PyObject
-            # However this works?
             out[tid]    = 0 # reset buffer
-            # threadModel = *modelptr
+            r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
+            # (<PyObject> models_[tid]).sampleNodes(1)
             for repeat in range(repeats):
-                # only copy values
-                for node in range(nNodes):
-                    # kinda uggly syntax
-                    (<Model> modelptr)._states[node] = s[state][node]
-                    (<Model> modelptr)._nudges[node] = copyNudge[node]
-
-                # with gil:
-                    # print((<Model> modelptr)._nudges.base)
-                    # (<Model>(models_[tid]))._nudges[node] = copyNudge[node]
-                # sample for N times
+                (<Model> modelptr)._states[:] = s[state, :]
+                (<Model> modelptr)._nudges[:] = copyNudge[:]
                 for delta in range(deltas):
-                    # bin data
-                    ZZ = 0
                     for node in range(nNodes):
                         jdx = idxer[(<Model> modelptr)._states[node]]
                         out[tid, delta, node, jdx] += 1 / Z
-                        ZZ = ZZ + (<Model> modelptr)._nudges[node]
-                        ZZ = ZZ - copyNudge[node]
-                    if ZZ != 0 and delta < half:
-                        with gil:
-                            assert False, f'{copyNudge.base}, {(<Model> modelptr)._nudges.base}'
-                    # update
                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
-
                     if nudgeType == 'pulse' or \
                     nudgeType    == 'constant' and delta >= half:
                         (<Model> modelptr)._nudges[:] = 0
-                        # for node in range(nNodes):
-                            # (<Model> modelptr)._nudges[node] = 0
             # TODO: replace this with   a concurrent unordered_map
             with gil:
+                conditional[tuple(s.base[state])] = out.base[tid].copy()
                 pbar.update(1)
-                conditional[tuple(s.base[state])] = out.base[tid]
     pbar.close()
     print(f"Delta = {timer() - past: .2f} sec")
     return conditional
