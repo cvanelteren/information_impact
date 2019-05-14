@@ -18,6 +18,10 @@ The memory views make it very fast (c array fast). Changing the defintions in px
 this issues, however it reduces the speed somewhat. The ultimate goal would be to replace it with full
 c arrays instead of memviews. I did try it with cpp vectors but it was (for some reason) slower.
 
+# Nudges
+- percentage wise increase identifies hubs as most 'important'
+- fixed constant nudges will cause a non-uniform difference in node distributions
+
 # Troubleshooting
 If you script does not run, check whether you are not loading the wrong binaries. The compilation process will prdoduce specific, optimized code for your machine. Recompiling for possible new hardware instruction may solve this.
 
