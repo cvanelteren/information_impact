@@ -308,7 +308,7 @@ cpdef dict monteCarlo(\
     print('starting runs')
     # cdef double ZZ
     with nogil, parallel(num_threads = nThreads):
-        for state in prange(states, schedule = 'statics'):
+        for state in prange(states, schedule = 'static'):
             # tid         = threadid()
             tid         = openmp.omp_get_thread_num()
             modelptr    = models_[tid].ptr
