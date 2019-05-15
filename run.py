@@ -40,7 +40,7 @@ if __name__ == '__main__':
     magSide       = ''
     updateType    = 'async'
     CHECK         = [-1] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
-
+    nudgeType     = 'pulse'
     tempres       = 100
     graphs = []
     N  = 20
@@ -82,7 +82,8 @@ if __name__ == '__main__':
                              graph       = graph,\
                              temperature = 0,\
                              updateType  = updateType,\
-                             magSide     = magSide)
+                             magSide     = magSide,\
+                             nudgeType   = nudgeType)
         model = fastIsing.Ising(**modelSettings)
 #        print(model.mapping.items())
 #        assert 0
@@ -136,6 +137,7 @@ if __name__ == '__main__':
                        mag          = mag,\
                        fmag         = fmag,\
                        )
+            
             settings = dict(
                         repeats          = repeats,\
                         deltas           = deltas,\
@@ -152,6 +154,7 @@ if __name__ == '__main__':
                         rmapping         = model.rmapping,\
                         model            = type(model).__name__,\
                         directory        = targetDirectory,\
+                        nudgeType        = nudgeType,\
                         )
             settingsObject = IO.Settings(settings)
             settingsObject.save(targetDirectory)

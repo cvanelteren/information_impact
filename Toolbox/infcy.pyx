@@ -128,7 +128,7 @@ cpdef vector[long] decodeState(int dec, int N) nogil:
 @cython.cdivision(True)
 @cython.initializedcheck(False)
 cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
-                   int burninSamples = int(1e3)):
+                   int burninSamples = int(1e3), int nThreads = -1):
     """
     Determines the state distribution of the :model: in parallel. The model is reset
     to random state and simulated for :step: + :burninSamples: steps after which
@@ -155,7 +155,9 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
         list modelsPy  = []
         vector[PyObjectHolder] models_
         Model tmp
-        cdef int tid, nThreads = mp.cpu_count()
+        cdef int tid,
+
+    nThreads = mp.cpu_count() if nThreads == -1 else nThreads
     # threadsafe model access; can be reduces to n_threads
     for sample in range(nThreads):
         tmp = copy.deepcopy(model)

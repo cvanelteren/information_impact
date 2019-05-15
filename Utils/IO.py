@@ -325,6 +325,8 @@ class Settings:
     nNodes        : int
     nTrials       : int
     pulseSizes    : list
+    
+    nudgeType     : str
 
     # model properties
     updateType  : str
