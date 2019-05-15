@@ -13,7 +13,7 @@ g = nx.path_graph(3)
 #g =  nx.soft_random_geometric_graph(20, .2)
 #g = nx.grid_2d_graph(10, 10)
 #g = nx.path_graph(3, nx.DiGraph()).
-w = nx.utils.powerlaw_sequence(20, exponent = 2)
+w = nx.utils.powerlaw_sequence(10, exponent = 2)
 
 
 #plt.hist(w)
@@ -36,7 +36,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, updateType = 'async', \
-                    magSide = '', \
+                    magSide = 'neg', \
                     nudgeType = 'constant')
 
 #m = potts.Potts(graph = g, agentStates = [1, 2])
@@ -78,9 +78,9 @@ print('>', m.nudges.base)
 #
 #m.nudges = {'0': 1}
 
-deltas = 100
+deltas = 20
 start = time.time()
-snapshots    = infcy.getSnapShots(m, int(1e2), int(1e3), nThreads = 1)
+snapshots    = infcy.getSnapShots(m, int(1e3), 1, nThreads = -1)
 
 repeats = int(1e4)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
@@ -102,7 +102,7 @@ print(time.time() - start)
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
-ax.set_xlim(deltas // 2 - 2, deltas//2 + 20)
+#ax.set_xlim(deltas // 2 - 2, deltas//2 + 20)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend()
@@ -110,7 +110,7 @@ fig.show()
 
 fig, ax = plt.subplots(); 
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
-ax.set_xlim(0, 35)
+#ax.set_xlim(0, 35)
 ax.legend()
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
 #ax.set_xlim(0, 3)
