@@ -31,7 +31,7 @@ class DataLoader(OrderedDict):
      allowedExtensions = "pickle h5".split()
      #TODO :  make aggregate dataclass -> how to deal with multiple samples
      # current work around is bad imo
-     dataDir
+     pattern = '((\d+-\d+-\d+T\d+:\d+:)?(\d+\.\d+))'
      if dataDir:
          # Warning: this only works in python 3.6+ due to how dictionaries retain order
          print("Extracting data...")
@@ -44,7 +44,7 @@ class DataLoader(OrderedDict):
                          files.append(os.path.join(root, fileName))
                          break # prevent possible doubles
          files = sorted(files, key = lambda x: \
-                        os.path.getctime(x))
+                            re.search(pattern, x).group())
          """
          Although dicts are ordered by default from >= py3.6
          Here I enforce the order as it matters for matching controls
@@ -56,6 +56,7 @@ class DataLoader(OrderedDict):
              try:
                  # look for t=
                  # temp = re.search('t=\d+\.[0-9]+', file).group
+                 
                  temp = file.split('/')[-3] # magnetization
                  root = file.split('/')[-4]
                  # deltas = re.search('deltas=\d+', file).group()
@@ -72,7 +73,7 @@ class DataLoader(OrderedDict):
                  self.update(addData(data, file, structure))
              # attempt to load with certain properties, if not found gracdefully exit
              # this is the case for every pickle file other than the ones with props above
-             except AttributeError:
+             except:
                  continue
          print('Done')
 
@@ -98,6 +99,7 @@ def flatLoader(root):
             files = sorted(files, key = lambda x:\
                        re.search(pattern, x).group())
             for file in files:
+                print(file)
                 if file.endswith('pickle') and not file in data:
                     data.add(os.path.join(root, file))
         except:
@@ -466,7 +468,6 @@ class Settings:
         print(f"Reading settings in {targetDirectory}: ", end = '')
         for root, subdirs, files in os.walk(targetDirectory):
             for file in files:
-                print(file)
                 if "settings" in file:
                     print("using json")
                     with open(os.path.join(root, file), 'r') as f:

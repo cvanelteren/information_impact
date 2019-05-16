@@ -28,12 +28,11 @@ kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
 psycho_neg='1556092963.4608574'
 
-psycho = 'Data/cvelteren/2019-05-09T16:10:34.645885'
+#psycho = 'Data/cvelteren/2019-05-09T16:10:34.645885'
 #psycho = '2019-05-07T14:04:28.747149'
-#psycho   = '1548025318'
 #multiple = '1550482875.0001953'1
 
-extractThis      = IO.newest(dataPath)[-1]
+#extractThis      = IO.newest(dataPath)[-1]
 #extractThis      = psycho
 #extractthis      = 
 #extractThis      = kite
@@ -43,7 +42,10 @@ extractThis      = IO.newest(dataPath)[-1]
 #loadThis    = extractThis if extractThis.startswith('/') else f"{dataPath}{extractThis}"
 
 #extractThis    = '2019-05-08T18:01:18.841674'
+extractThis = kite 
+extractThis = os.path.join(dataPath, extractThis)
 data      = IO.DataLoader(extractThis)
+#data      = IO.flatLoader(tmp)
 data        = data[next(iter(data))]
 
 settings = IO.Settings(extractThis)
@@ -76,7 +78,7 @@ pulseSizes = settings.pulseSizes
 print(f'Listing temps: {temps}')
 print(f'Listing nudges: {pulseSizes}')
 
-#figDir = f'../thesis/entropy/figures/{extractThis.split(".")[0]}'
+figDir = f'../thesis/entropy/figures/{extractThis.split(".")[0]}'
 # %% # show mag vs temperature
 #func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
 #for root, subdirs, filenames in os.walk(extractThis):
@@ -139,7 +141,7 @@ colors = cm.tab20(arange(NODES))
 #ax.set_aspect('equal', 'box')
 #ax.set(xticks = [], yticks = [])
 #ax.axis('off')
-fig.show()
+#fig.show()
 #savefig(figDir + 'network.png',\
 #        bbox_inches = 'tight', pad_inches = 0, transparent = True)
 
@@ -334,7 +336,7 @@ except:
 # %% extract root from samples
 
 # fit functions
-double = lambda x, a, b, c, d, e, f: a + b * exp(-c*(x)) + d * exp(- e * (x-f))
+double = lambda x, a, b, c, d, e, f: a + b * exp(-c*(x)) + d * exp(- e * (x - f))
 double_= lambda x, b, c, d, e, f: b * exp(-c*(x)) + d * exp(- e * (x-f))
 single = lambda x, a, b, c : a + b * exp(-c * x)
 single_= lambda x, b, c : b * exp(-c * x)
@@ -372,7 +374,7 @@ for temp in range(NTEMPS):
         zdi = loadedData[nudge, temp]
         # scale data 0-1 along each sample (nodes x delta)
         rescale = False
-#        rescale = True
+        rescale = True
 
 #        rescale for each trial over min / max
 #        zdi = ndimage.filters.gaussian_filter1d(zdi, 8, axis = -1)
@@ -393,7 +395,7 @@ for temp in range(NTEMPS):
         # remove the negative small numbers, e.g. -1e-5
         zdi[isfinite(zdi) == False] = 0 # check this
         zd[nudge, temp] = zdi
-plot(zd.squeeze()[1].T)
+#plot(zd.squeeze()[1].T)
 
 # %% time plots
 
@@ -470,8 +472,7 @@ for temp in range(rows):
             if idx == leader:
                 xx, yy = (deltas // 2  * .8, .8)
                 arti = Line2D([xx], [yy], marker = 'o', color = colors[idx],\
-                       markersize = 100)
-                print('here')
+                       markersize = 15)
                 tax.add_artist(arti)
 #                tax.annotate('Driver-node', (*x,*y), horizontalalignment = 'right')
 
@@ -544,7 +545,7 @@ x = arange(DELTAS)
 
 # uggly mp case
 LIMIT = DELTAS
-#LIMIT = inf
+LIMIT = inf
 from sklearn import metrics
 def worker(sample):
     auc = zeros((len(sample), 2))

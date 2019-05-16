@@ -36,18 +36,18 @@ if __name__ == '__main__':
     burninSamples = 0
     pulseSizes    = [1, np.inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 1
+    nTrials       = 20
     magSide       = 'neg'
     updateType    = 'async'
-    CHECK         = [-1] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [.8, .5 , .2] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
     tempres       = 100
     graphs = []
-    N  = 20
+    # N  = 20
 
-    for i in range(10):
-        w = nx.utils.powerlaw_sequence(N, 2)
-        graphs.append(nx.expected_degree_graph(w))
+    # for i in range(10):
+        # w = nx.utils.powerlaw_sequence(N, 2)
+        # graphs.append(nx.expected_degree_graph(w))
 
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
@@ -58,15 +58,15 @@ if __name__ == '__main__':
         rootDirectory = f'{os.getcwd()}/Data/'
 # #    real = 1
 # #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-#     dataDir = 'Psycho' # relative path careful
-#     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-#     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-#     graph   = nx.from_pandas_adjacency(df)
-#     attr = {}
-#     for node, row in h.iterrows():
-#         attr[node] = dict(H = row['externalField'], nudges = 0)
-#     nx.set_node_attributes(graph, attr)
-#     graphs.append(graph)
+    dataDir = 'Psycho' # relative path careful
+    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+    graph   = nx.from_pandas_adjacency(df)
+    attr = {}
+    for node, row in h.iterrows():
+        attr[node] = dict(H = row['externalField'], nudges = 0)
+    nx.set_node_attributes(graph, attr)
+    graphs.append(graph)
 
     start = datetime.datetime.now()
     targetDirectory = rootDirectory + f'{start.isoformat()}' # make default path
