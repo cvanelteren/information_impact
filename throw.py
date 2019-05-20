@@ -13,15 +13,14 @@ g = nx.path_graph(3)
 #g =  nx.soft_random_geometric_graph(20, .2)
 #g = nx.grid_2d_graph(10, 10)
 #g = nx.path_graph(3, nx.DiGraph()).
-w = nx.utils.powerlaw_sequence(10, exponent = 2)
+#w = nx.utils.powerlaw_sequence(10, exponent = 2)
 
 
 #plt.hist(w)
-g = nx.expected_degree_graph(w)
+#g = nx.expected_degree_graph(w)
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-#g = nx.duplication_divergence_graph(100, .8)
-#g = nx.partial_duplication_graph(10, 3, .2, .2)
+g = nx.duplication_divergence_graph(10, .4)
 #g = nx.krackhardt_kite_graph()
 #g.add_edge(0, 0)
 
@@ -33,9 +32,11 @@ fig, ax = plt.subplots();
 deg = list(dict(g.degree()).values())
 ax.hist(deg, bins = 20)
 fig.show()
+
 # %%
 
-m = fastIsing.Ising(graph = g, updateType = 'async', \
+m = fastIsing.Ising(graph = g, \
+                    updateType = 'single', \
                     magSide = 'neg', \
                     nudgeType = 'constant')
 
@@ -50,8 +51,8 @@ fig, ax = plt.subplots()
 ax.plot(temps, mag)
 ax.plot(temps[idx], mag[idx], 'r.')
 plt.show()
-#m.t = temps[idx]
-m.t = 1
+m.t = temps[idx]
+#m.t = 1
 #print(m.states.base)
 
 
@@ -78,11 +79,11 @@ print('>', m.nudges.base)
 #
 #m.nudges = {'0': 1}
 
-deltas = 20
+deltas = 100
 start = time.time()
-snapshots    = infcy.getSnapShots(m, int(1e3), 1, nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
 
-repeats = int(1e4)
+repeats = int(1e3)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 
 
@@ -91,7 +92,7 @@ from Utils.stats import KL, hellingerDistance, JS
 
 # %%
 
-NUDGE = 1
+NUDGE = np.inf
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
@@ -102,7 +103,7 @@ print(time.time() - start)
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
-#ax.set_xlim(deltas // 2 - 2, deltas//2 + 20)
+ax.set_xlim(deltas // 2 - 2, deltas//2 + 20)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend()

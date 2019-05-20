@@ -12,7 +12,7 @@ import pickle, pandas, os, re, json, datetime
 import networkx as nx
 from collections import defaultdict, OrderedDict
 class DataLoader(OrderedDict):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, root = '', **kwargs):
      """
      Data loader because hdf5 cannot use pyobjects. I am dumb because
      I want to store the graph with the data, hdf5 is probably better
@@ -25,7 +25,7 @@ class DataLoader(OrderedDict):
      THe object returns an ordered dict with the leafes consisiting of the
      filenames belowing to the subdict categories
      """
-     dataDir = args[0] if args else ''
+     dataDir = root
      super(DataLoader, self).__init__(**kwargs)
 
      allowedExtensions = "pickle h5".split()
@@ -43,8 +43,23 @@ class DataLoader(OrderedDict):
                      if fileName.endswith(extension):
                          files.append(os.path.join(root, fileName))
                          break # prevent possible doubles
+                         
+         def tmp(x):
+             d = re.search(pattern, x)
+             if d:
+                 return d.group()
+             else:
+                 return '' 
          files = sorted(files, key = lambda x: \
-                            re.search(pattern, x).group())
+                                    tmp(x))
+         
+#         common = ''
+#         for fs in zip(*files):
+#             fs = set(fs)
+#             if len(fs) == 1:
+#                 common += str(list(fs)[0])
+#             
+         
          """
          Although dicts are ordered by default from >= py3.6
          Here I enforce the order as it matters for matching controls
@@ -53,6 +68,7 @@ class DataLoader(OrderedDict):
          # files still contains non-compliant pickle files, e.g. mags.pickle
          for file in files:
              # filter out non-compliant pickle files
+             
              try:
                  # look for t=
                  # temp = re.search('t=\d+\.[0-9]+', file).group
@@ -78,6 +94,7 @@ class DataLoader(OrderedDict):
          print('Done')
 
 
+    
 # class DataLoader:
     # def __init__(self):
         # self.data = {}
@@ -336,13 +353,13 @@ class Settings:
 
 
     # defaults
-    model         : str   = 'Ising'
     _graph        : dict  = field(init = False, repr = False, default_factory = dict)
-    _mapping      : dict  = field(init = False, repr = False, default_factory = dict)
-    _rmapping     : dict  = field(init = False, repr = False, default_factory = dict)
     graph         : dict
     rmapping      : dict
     mapping       : dict
+    model         : str   = 'Ising'
+    _mapping      : dict  = field(init = False, repr = False, default_factory = dict)
+    _rmapping     : dict  = field(init = False, repr = False, default_factory = dict)
     directory     : str   = field(init = False)  # "data directory"
 
     def __init__(self, data = None):
@@ -383,8 +400,8 @@ class Settings:
                         if graph:
                             graph.__version__ = 1.0 # assume legacy data
                             print("Graph found in data file!")
-                            self._graph = graph
-                            return
+                            self._graph = nx.node_link_data(graph)
+                            return 0
                     except AttributeError:
                         continue
             else:
@@ -392,21 +409,22 @@ class Settings:
         # if present in the data just load it
         elif isinstance(val, dict):
             self._graph = val
+#            self._graph = nx.node_link_data(val)
+        print('loading graph')
 
     def loadModel(self):
         """
-        assumes self.model is dotted, i.e. Models.[python-file].[model-name]
         """
         # not dotted anymore need to look for a class name in the directory of
         # the models
-
+        
+        # look for model name inside the module files
         for file in os.listdir('Models/'):
             if file.endswith('pyx'):
                 tmp = importlib.import_module(f'Models.{file.split(".")[0]}')
                 if getattr(tmp, self.model, None):
                     # returned init model
                     # backward compatibility
-
                     if isinstance(self.graph, nx.Graph) or isinstance(self.graph, nx.DiGraph):
                         return getattr(tmp, self.model)(graph = self.graph)
                     # new method
@@ -457,7 +475,7 @@ class Settings:
             # ignore missing types and privates
             if not isinstance(fetched, _MISSING_TYPE) and not field.name.startswith('_'):
                 self.__setattr__(field.name, fetched)
-            else:
+            elif not field.name.startswith('_'):
                 print(f"WARNING: {field.name.replace('_','')} not found in input")
 
     def read(self, targetDirectory):
@@ -506,6 +524,7 @@ class Settings:
         targetDirectory = self.directory if targetDirectory is None else targetDirectory
         print('Saving settings')
         s = {k.replace('_', '') : v for k, v in self.__dict__.items()}
+        print(s)
         with open(os.path.join(targetDirectory, 'settings.json'), 'w') as f:
             json.dump(\
                       s, f,\

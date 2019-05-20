@@ -22,32 +22,35 @@ from Utils.IO import SimulationResult
 import networkx as nx, \
         itertools, scipy,\
         os,     pickle, \
-        h5py,   sys, \
+        sys, \
         multiprocessing as mp, json,\
         datetime, sys, \
-        scipy, msgpack, \
+        scipy, \
         time
 close('all')
 if __name__ == '__main__':
     repeats       = int(4e4)
-    deltas        = 50
+    deltas        = 100
     step          = int(1e4)
     nSamples      = int(1e3)
     burninSamples = 0
     pulseSizes    = [1, np.inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 20
+    nTrials       = 1
     magSide       = 'neg'
-    updateType    = 'async'
-    CHECK         = [.8, .5 , .2] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = 'single'
+    CHECK         = [0.5] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
     tempres       = 100
     graphs = []
-    # N  = 20
-
-    # for i in range(10):
-        # w = nx.utils.powerlaw_sequence(N, 2)
-        # graphs.append(nx.expected_degree_graph(w))
+    N  = 20
+    
+    for i in range(10):
+        w = nx.utils.powerlaw_sequence(N, 2)
+        g = nx.expected_degree_graph(w)
+        g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
+        graphs.append(g)
+         
 
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
@@ -58,15 +61,15 @@ if __name__ == '__main__':
         rootDirectory = f'{os.getcwd()}/Data/'
 # #    real = 1
 # #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-    dataDir = 'Psycho' # relative path careful
-    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-    graph   = nx.from_pandas_adjacency(df)
-    attr = {}
-    for node, row in h.iterrows():
-        attr[node] = dict(H = row['externalField'], nudges = 0)
-    nx.set_node_attributes(graph, attr)
-    graphs.append(graph)
+#    dataDir = 'Psycho' # relative path careful
+#    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+#    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+#    graph   = nx.from_pandas_adjacency(df)
+#    attr = {}
+#    for node, row in h.iterrows():
+#        attr[node] = dict(H = row['externalField'], nudges = 0)
+#    nx.set_node_attributes(graph, attr)
+#    graphs.append(graph)
 
     start = datetime.datetime.now()
     targetDirectory = rootDirectory + f'{start.isoformat()}' # make default path

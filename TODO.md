@@ -1,3 +1,7 @@
+# [18 - 5 - 2019]
+How to solve issues regarding the variance with the pyschonetwork data. In my opinion the additional runs were intended to check whehter we werent under sampling the network. As such I created independent runs to check for this. this can be seen as more of a sensitivity analysis than anything else. 
+
+- How to combine multiple graphs. The best thing to do is to get a per node estimate basis. Namely, the graph are the atomergic unit of comparison. As such I need to extract the relevant data on a analysis basis and eventually combine them in to one single estimate. 
 # TODOs
 - [x] Update setup.py
 - [x] General code cleaning and commenting

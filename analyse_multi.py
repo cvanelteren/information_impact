@@ -15,6 +15,7 @@ root = 'Data/cveltere/2019-05-09T16:10:34.645885'
 root = '/run/media/casper/fc7e7a2a-73e9-41fe-9020-f721489b1900/cveltere'
 root = 'Data/2019-05-13T13:34:02.290439'
 root = 'Data/1548025318.5751357'
+root = 'Data/cveltere/test'
 #root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
@@ -37,47 +38,21 @@ causal_impact      = '$\gamma_i$'
 
 # %% load data
 # functionize this; part of IO?
-
-# %% plot graphs
-colors = plt.cm.tab20(np.arange(12))
-plt.rcParams['axes.prop_cycle'] = plt.cycler('color', colors)
-plt.style.use('seaborn-poster')
-
-from matplotlib.patches import Circle
-
-# plot pretty graphs with centralities
-for k, v in loadedData.items():
-    fig, ax = plt.subplots()
-    ax.plot(v[1, 0].mean(0).T)
-
-    fig, ax  = plt.subplots(len(centralities) // 2, 2)
-    graph    = settings[k].graph
-    pos      = nx.nx_agraph.graphviz_layout(graph, prog = 'neato', \
-                                        )
-    for idx, (cent, cf) in enumerate(centralities.items()):
-        c = dict(cf(graph))
-        s = np.fromiter(c.values(), dtype = float)
-        s = (s - s.min()) /(s.max() - s.min())
-        tax = ax[:, :].ravel()[idx]
-        tax.axis('off')
-        tax.set_aspect('equal','box')
-
-        centralityLabel = \
-        cf.func.__name__.replace('_', ' ').replace('centrality','')
-
-        tax.set_title(centralityLabel)
-
-        plotz.addGraphPretty(graph, tax, pos, \
-                         mapping = settings[k].mapping,\
-                         )
-        for pidx, pp in enumerate(tax.get_children()):
-            if isinstance(pp, Circle):
-                pp.set(radius = s[pidx] * pp.radius * 2.4 )
-    fig.subplots_adjust(hspace = .05, wspace = 0)
-#    fig.savefig(os.path.join(figDir, f'{k}_centrality.eps'))
+loadedData = {}
+settings   = {}
 
 
-
+import multiprocessing as mp
+from multiprocessing.pool import ThreadPool
+processes = mp.cpu_count()
+for k, v in data.items():
+    tmp = os.path.join(root, k)
+    settings[k] = IO.Settings(tmp)
+    worker = IO.Worker(v, settings[k])
+    with ThreadPool(processes = processes) as p:
+        p.map(worker, worker.idx)
+    loadedData[k] = np.frombuffer(worker.buff, dtype = np.float64).reshape(*worker.buffshape)    
+del worker
 # %% # %% normalize data
 # fit functions
 double = lambda x, a, b, c, d, e, f: a + b * np.exp(-c*(x)) + d * np.exp(- e * (x-f))
@@ -92,7 +67,7 @@ fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, np.inf), p0 = p0,\
                    jac = 'cs')
 
-
+aucs
 
 # uggly mp case
 # note use of globals here!
@@ -167,32 +142,35 @@ for key, vals in loadedData.items():
     rows, columns = s[1], s[0] - 1
     fig, ax  = plt.subplots(rows, columns, sharex = 'all')  # cleaned data
     sfig, sax = plt.subplots(rows, columns, sharex = 'all') #  outlier detection
-
+    colors = plt.cm.tab20(range(settings[key].nNodes))
     conditions = np.fromiter(data[key].keys(), dtype = float)
     for row in range(rows): # nudge conditions
         for column in range(columns): # temperatures
             for n in range(s[-1]): # nodes
-                tax = ax[row, column]
-                stax = sax[row, column]
+                tax = ax[row, column] if rows * columns > 1 else ax
+                stax = sax[row, column] if rows * columns > 1  else sax
                 tmpraw = aucs_raw[[0, column + 1], row, :, n]
                 tmp = tmpraw.copy()
-                inliers, outliers = RejectOutliers(tmp.T)
-                inliermean = tmp[:, inliers].mean(-1)
-                for outlier in outliers:
-                    tmp[:, outlier] = inliermean
-                tax.scatter(*tmp, color = colors[n])
-
-                if column == 0: # add label per row
-                    rowLabel = f'M={conditions[row]}'
-                    d = dict(fontsize = 15)
-                    tax.text(.2, .8, rowLabel,\
-                             transform = tax.transAxes,\
-                             horizontalalignment = 'right',
-                             fontdict = d)
-                    stax.text(.2, .8, rowLabel,\
-                              transform = stax.transAxes,\
-                              horizontalalignment = 'right',\
-                              fontdict = d)
+                try:
+                    inliers, outliers = RejectOutliers(tmp.T)
+                    inliermean = tmp[:, inliers].mean(-1)
+                    for outlier in outliers:
+                        tmp[:, outlier] = inliermean
+                    tax.scatter(*tmp, color = colors[n])
+    
+                    if column == 0: # add label per row
+                        rowLabel = f'M={conditions[row]}'
+                        d = dict(fontsize = 15)
+                        tax.text(.2, .8, rowLabel,\
+                                 transform = tax.transAxes,\
+                                 horizontalalignment = 'right',
+                                 fontdict = d)
+                        stax.text(.2, .8, rowLabel,\
+                                  transform = stax.transAxes,\
+                                  horizontalalignment = 'right',\
+                                  fontdict = d)
+                except:
+                    continue
 
                 stax.scatter(*tmpraw[:, inliers], color = colors[n])
                 stax.scatter(*tmpraw[:, outliers], color = colors[n], marker = 's')
@@ -231,6 +209,24 @@ for key, vals in loadedData.items():
     aucs[key] = auc # update data
 # %%
 
+
+for k, v in loadedData.items():
+    fig, ax = plt.subplots()
+    tmp = sorted(nx.connected_component_subgraphs(settings[k].graph), key = lambda x: len(x))
+    
+    inax = ax.inset_axes((0.8, 0.8, .5, .5))
+    nx.draw(tmp[-1], ax = inax, with_labels =1)
+    s = v.shape
+    tmp =  v.reshape(s[0], -1, s[-2], s[-1]).mean(1)
+    ax.plot(tmp[1].T)    
+    colors = plt.cm.tab20(np.arange(settings[k].nNodes))
+    elements = [plt.Line2D([0], [0], label = j, color = colors[idx]) for j, idx in \
+                settings[k].mapping.items()]
+    ax.legend(handles = elements)
+    ax.set_xlim(0, 5)
+    ax.set_title(k)
+
+# %%
 plt.show()
 # centralities = {
 #                     'degree' : partial(nx.degree, weight = 'weight'), \
