@@ -85,7 +85,7 @@ print(f'Listing nudges: {pulseSizes}')
 figDir = f'../thesis/entropy/figures/{extractThis.split(".")[0]}'
 figDir = f'../thesis/figures/{extractThis.split(".")[0]}'
 
-
+print(model.mapping)
 # %% # show mag vs temperature
 #func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
 #for root, subdirs, filenames in os.walk(extractThis):
@@ -396,7 +396,7 @@ syF         = symbols[1] * sy.exp(- symbols[2] * \
 #print(syF)
 ##syF         = symbols[1] * sy.exp(- symbols[2] * symbols[0])
 #func        = lambdify(symbols, syF, 'numpy')
-func        = double
+func        = single
 p0          = ones((func.__code__.co_argcount - 1)); # p0[0] = 0
 fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, inf), p0 = p0,\
@@ -510,16 +510,16 @@ COEFFS = zeros((COND, NTRIALS, NODES, p0.size))
 x = arange(DELTAS)
 
 # uggly mp case
-LIMIT = DELTAS
-#LIMIT = inf
+#LIMIT = DELTAS
+LIMIT = inf
 from sklearn import metrics
 def worker(sample):
     auc = zeros((len(sample), 2))
     coeffs, errors = plotz.fit(sample, func, params = fitParam)
     for nodei, c in enumerate(coeffs):
-        tmp = 0
+#        tmp = 0
 #        if c[0] < 1e-4:
-#            tmp = syF.subs([(s, v) for s,v in zip(symbols[1:], c)])
+#            tmp = syF.subs([(s, v) for s,v in zip(symb  ols[1:], c)])
 #            tmp = sy.integrals.integrate(tmp, (abc.x, 0, sy.oo),\
 #                                     meijerg = False).evalf()
         F   = lambda x: func(x, *c) 
@@ -547,7 +547,7 @@ errors       = tmp[..., 1].mean(-2)
 aucs_raw[aucs_raw <= finfo(aucs_raw.dtype).eps / 2] = 0
 
 # %% show idt auc vs impact auc and apply correction
-
+# causal impact vs informational impact
 information_impact = '$\mu_i$'
 causal_impact      = '$\gamma_i$'
 from sklearn.covariance import EllipticEnvelope
@@ -564,7 +564,7 @@ mainax = fig.add_subplot(111, frameon = False, \
 out = lof(n_neighbors = NTRIALS)
 
 aucs   = aucs_raw.copy()
-thresh = 4
+thresh = 3
 clf    = MinCovDet()
 
 labels       = 'Underwhelming\tOverwhelming'.split('\t')
@@ -592,31 +592,32 @@ for temp in range(NTEMPS):
 
             # value error for zero variance
 #            try:
+            
             tmp = aucs_raw[[0, nudge], temp, :, idx]
-            clf.fit(tmp.T)
-            Z = clf.mahalanobis(np.c_[xx.ravel(), yy.ravel()])
-            
-            
-            if showOutliers:
-                tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
-                        colors = colors[[idx]],\
-                        levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
-
-            # plot ci vs ii
-            ident = sqrt(clf.mahalanobis(tmp.T))
-#            print(model.rmapping[idx], ident)
-            outliers = where(ident >= thresh)[0]
-            ingroup  = where(ident < thresh)[0]
-            rejections[nudge - 1, temp, idx] = len(outliers) / NTRIALS
-            ingroupmean = tmp[:, ingroup].mean(1)
-            for outlier in outliers:
-                aucs[[0, nudge], temp, outlier, idx]= ingroupmean
+            try:
+                clf.fit(tmp.T)
+                Z = clf.mahalanobis(np.c_[xx.ravel(), yy.ravel()])
+                
+                
                 if showOutliers:
-                    tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
-                            color = colors[idx], \
-                            alpha = 1, marker = 's')
-#            except:
-#                pass.
+                    tax.contour(xx, yy, sqrt(Z.reshape(xx.shape)), \
+                            levels = [thresh], linewidths = 2, alpha = 1, zorder = 5)
+    
+                # plot ci vs ii
+                ident = sqrt(clf.mahalanobis(tmp.T))
+    #            print(model.rmapping[idx], ident)
+                outliers = where(ident >= thresh)[0]
+                ingroup  = where(ident < thresh)[0]
+                rejections[nudge - 1, temp, idx] = len(outliers) / NTRIALS
+                ingroupmean = tmp[:, ingroup].mean(1)
+                for outlier in outliers:
+                    aucs[[0, nudge], temp, outlier, idx]= ingroupmean
+                    if showOutliers:
+                        tax.scatter(*aucs_raw[[0, nudge], temp, outlier, idx], \
+                                color = colors[idx], \
+                                alpha = 1, marker = 's')
+            except:
+                pass
 
 #            tax.scatter(*tmp.mean(1), color = 'k', s = 50, zorder = 5)
             alpha = .1 if showOutliers else 1
@@ -653,7 +654,6 @@ out = 'causal_ii_scatter_raw' if showOutliers else 'causal_ii_scatter_corrected'
 out += '.png' if showOutliers else '.eps'
 savefig(figDir + out, dpi = 1000)
 # %% information impact vs centrality
-
 
 centLabels = list(centralities.keys())
 infImpact = aucs.mean(-2)
@@ -763,23 +763,45 @@ for temp in range(NTEMPS):
                 estimates[temp, :, ni + 1, model.mapping[k]] = v * ones((NTRIALS))
                 
 
-    
-# %%
+
+# %% prediction accuracy regardless of temperature
+a = maxestimates.reshape(-1, N + 1)
+b = maxT.reshape(-1, COND)
+rcParams['axes.labelpad'] = 5
+pred = np.array([equal(a, bi[:, None]) for bi in b.T])
+
+fig, ax = subplots()
+width = .5
+x = np.arange(N + 1)
+labels = "Underwhelming Overwhelming".split()
+for i in range(COND):
+    ax.bar(x + i * width, pred[i].mean(0), yerr = pred[i].std(0),\
+           width = width, error_kw=dict(lw=5, capsize=5, capthick=3), \
+           label = labels[i])
+labels = ['informational\nimpact', \
+          *[i.func.__name__.split('_')[0] for i in centralities.values()]]
+ax.set_xticklabels(labels )
+ax.set_xticks(x + width * width)
+ax.set(ylabel = 'Prediction accuracy (ratio)')
+ax.legend()
+fig.show()
+
+import scipy
+
+expected =  ones((COND, N+1)) * pred.shape[1] // model.nNodes
+res = scipy.stats.chisquare(pred.sum(1), expected, axis = 1)
+
+
+for pidx, pvalue in enumerate(res.pvalue):
+    if pvalue < 0.05:
+        i = np.argmax(pred[pidx].mean(0))
+        estimation = pred[pidx, :, i].mean()
+        a = scipy.stats.chisquare([estimation], [pred.shape[1] // model.nNodes])
+        print(a)
         
-#print(percentages)
-# plot max only
+# %%  prediction accuracy with temperature
 
-#fig, ax = subplots(2, sharex = 'all')
-#
-#m = estimates.max(-1)
-#n = targets.max(-1)
-#rcParams['axes.labelpad'] = 5
-#for temp in range(NTEMPS):
-#    for ni in range(2):
-#        ax[0].scatter(n[temp, :, 0],  m[temp, :, ni])
-#        ax[1].scatter(n[temp, :, 1], m[temp, :, ni])
-#xlabel('causal')
-
+# %%
 tmp = zeros((NTEMPS, N + 1, COND))
 fig, ax = subplots(1, 2, sharex = 'all', sharey = 'all')
 rcParams['axes.labelpad'] = 50
@@ -791,7 +813,7 @@ mainax = fig.add_subplot(111, frameon = False, \
 subplots_adjust(wspace = 0)
 width = .4
 xloc  = arange(NTEMPS) * 2
-conditions = [f'$M_r$ = {round(x, 2)}\n{y}' for x in temps for y in nudges]
+conditions = [f'$M_r$ = {round(x, 2)}\n' for x in temps ]
 condLabels = 'Underwhelming Overwhelming'.split()
 labels = f'{information_impact}\tdeg\tclose\tcf\tev'.split('\t')
 
@@ -811,13 +833,13 @@ for cond in range(COND):
 
     for temp in range(NTEMPS):
         for ni in range(N + 1):
-
             x = equal(maxestimates[temp, :, ni], maxT[temp, :, cond])
+            err = x.std() * 100
             y = x.mean() * 100
             x = xloc[temp]
 
             tmp[temp, ni, cond] =  x.mean()
-            tax.bar(x + width * ni, y, width = width,\
+            tax.bar(x + width * ni, y, yerr = err, width = width,\
               color = colors[ni], label = lll[ni])
             if y > 0:
                 tax.text(x + width * ni, y + .5, \
@@ -1419,7 +1441,7 @@ fig.savefig(figDir + '3dscattercent.eps')
 centLabels = 'Degree Betweenness Current Eigenvector'.split()
 idx = 50
 
-props['annotate']['fontsize'] = 1.9
+#props['annotate']['fontsize'] = 1.9
 
 size = (2, 5)
 fig, ax = subplots(*size, figsize = (idx, idx))

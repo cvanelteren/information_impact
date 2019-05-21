@@ -160,7 +160,8 @@ class Worker:
                        self.deltas, \
                        )
         # double raw array
-        self.buff = mp.RawArray('d', int(np.prod(bufferShape)))
+        from multiprocessing import sharedctypes
+        self.buff = sharedctypes.RawArray('d', int(np.prod(bufferShape)))
         self.buffshape     = bufferShape
         self.expectedShape = expectedShape
         """
@@ -369,6 +370,7 @@ class Settings:
             If string it excpects a root folder which it will search for settings
             or emulate them
         """
+        self._use_old_format_ = False 
         # assign defaults
         for field in fields(self):
             if not any(isinstance(field.default, i) for i in [_MISSING_TYPE, property]):
@@ -398,9 +400,9 @@ class Settings:
                     try:
                         graph  = loadData(os.path.join(root, file)).graph
                         if graph:
-                            graph.__version__ = 1.0 # assume legacy data
                             print("Graph found in data file!")
                             self._graph = nx.node_link_data(graph)
+                            self._use_old_format_ = True
                             return 0
                     except AttributeError:
                         continue
@@ -429,12 +431,18 @@ class Settings:
                         return getattr(tmp, self.model)(graph = self.graph)
                     # new method
                     else:
-                        return getattr(tmp, self.model)(graph = nx.node_link_graph(self.graph))
+                        print('loading model', self._use_old_format_)
+                        g =  nx.node_link_graph(self.graph)
+                        if self._use_old_format_:
+                            g.__version__ = 1.0
+                        return getattr(tmp, self.model)(graph = g)
         return None
 #        m = self.model.split('.')
 #        mt = '.'.join(i for i in m[:-1]) # remove extension
 #        return getattr(importlib.import_module(mt), m[-1])(self.graph)
-
+    
+    
+    # add simple check instead of sideways?
     @property
     def mapping(self):
         return self._mapping
@@ -462,6 +470,7 @@ class Settings:
             # self._rmapping = {j: i for i, j in self.mapping.items()}
             model = self.loadModel()
             self._rmapping  = model.rmapping
+
         elif isinstance(val, dict):
             self._rmapping = val
 

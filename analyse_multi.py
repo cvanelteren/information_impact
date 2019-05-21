@@ -67,7 +67,6 @@ fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, np.inf), p0 = p0,\
                    jac = 'cs')
 
-aucs
 
 # uggly mp case
 # note use of globals here!
@@ -211,22 +210,34 @@ for key, vals in loadedData.items():
 
 
 for k, v in loadedData.items():
-    fig, ax = plt.subplots()
-    tmp = sorted(nx.connected_component_subgraphs(settings[k].graph), key = lambda x: len(x))
+#    v = v.squeeze()
+#    v = (v - v.min(0)) / (v.max(0) - v.min(0))
     
-    inax = ax.inset_axes((0.8, 0.8, .5, .5))
-    nx.draw(tmp[-1], ax = inax, with_labels =1)
+    colors = plt.cm.tab20(np.arange(settings[k].nNodes))
+    fig, ax = plt.subplots()
+    graph = nx.node_link_graph(settings[k].graph )
+    tmp = sorted(nx.connected_component_subgraphs(graph), \
+                 key = lambda x: len(x))
+    
+    inax = ax.inset_axes((0.3, 0.3, 1, 1))
+    nx.draw(tmp[-1], ax = inax, pos = nx.circular_layout(tmp[-1]),  with_labels =1)
     s = v.shape
+    
     tmp =  v.reshape(s[0], -1, s[-2], s[-1]).mean(1)
-    ax.plot(tmp[1].T)    
+    [ax.plot(i, color = colors[idx]) for idx, i in enumerate(tmp[1])]    
+    [ax.plot(i, linestyle ='--', color = colors[idx]) for idx, i in enumerate(tmp[0])]
+#    ax.scatter(*tmp[[0, 1   ], ..., -1])
     colors = plt.cm.tab20(np.arange(settings[k].nNodes))
     elements = [plt.Line2D([0], [0], label = j, color = colors[idx]) for j, idx in \
                 settings[k].mapping.items()]
     ax.legend(handles = elements)
-    ax.set_xlim(0, 5)
+#    ax.set_xlim(0, 5)
     ax.set_title(k)
 
 # %%
+    
+        
+    
 plt.show()
 # centralities = {
 #                     'degree' : partial(nx.degree, weight = 'weight'), \

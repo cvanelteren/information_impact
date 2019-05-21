@@ -2,25 +2,43 @@
 import matplotlib as mpl, matplotlib.pyplot as plt
 from Models import  fastIsing, potts
 import networkx as nx, numpy as np
-
+from Utils import IO
 import time
 n = 500
 # g = nx.grid_2d_graph(n, n)
 # g = nx.star_graph(10)
 
 g = nx.path_graph(3)
+
+# #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+dataDir = 'Psycho' # relative path careful
+df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+g   = nx.from_pandas_adjacency(df)
+attr = {}
+for node, row in h.iterrows():
+    attr[node] = dict(H = row['externalField'], nudges = 0)
+nx.set_node_attributes(g, attr)
+
+
+
+
 #g.add_edge(0,0)
-#g =  nx.soft_random_geometric_graph(20, .2)
+g =  nx.soft_random_geometric_graph(20, .2)
 #g = nx.grid_2d_graph(10, 10)
 #g = nx.path_graph(3, nx.DiGraph()).
-#w = nx.utils.powerlaw_sequence(10, exponent = 2)
+w = nx.utils.powerlaw_sequence(100, exponent = 1.6)
 
 
 #plt.hist(w)
-#g = nx.expected_degree_graph(w)
+g = nx.expected_degree_graph(w)
+
+for i, j in g.edges():
+    g[i][j]['weight'] = np.random.rand()  * 2 - 1
+    
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-g = nx.duplication_divergence_graph(10, .4)
+#g = nx.duplication_divergence_graph(10, .4)
 #g = nx.krackhardt_kite_graph()
 #g.add_edge(0, 0)
 
@@ -33,25 +51,29 @@ deg = list(dict(g.degree()).values())
 ax.hist(deg, bins = 20)
 fig.show()
 
+
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'single', \
-                    magSide = 'neg', \
+                    updateType = 'async', \
+                    magSide = '', \
                     nudgeType = 'constant')
 
 #m = potts.Potts(graph = g, agentStates = [1, 2])
+
 temps = np.linspace(0, g.number_of_nodes(), 1000)
 mag  = m.matchMagnetization(temps, 100)[0]
 idx = np.argmin(abs(mag - .5))
 
 
-
+# %% 
 fig, ax = plt.subplots()
 ax.plot(temps, mag)
 ax.plot(temps[idx], mag[idx], 'r.')
+ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
+# %%
 #m.t = 1
 #print(m.states.base)
 
