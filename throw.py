@@ -58,7 +58,7 @@ fig.show()
 
 m = fastIsing.Ising(graph = g, \
                     updateType = 'single', \
-                    magSide = '', \
+                    magSide = 'neg', \
                     nudgeType = 'constant')
 
 #m = potts.Potts(graph = g, agentStates = [1, 2])
