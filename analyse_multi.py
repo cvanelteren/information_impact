@@ -15,7 +15,7 @@ root = 'Data/cveltere/2019-05-09T16:10:34.645885'
 root = '/run/media/casper/fc7e7a2a-73e9-41fe-9020-f721489b1900/cveltere'
 root = 'Data/2019-05-13T13:34:02.290439'
 root = 'Data/1548025318.5751357'
-root = 'Data/cveltere/test'
+root = 'Data/cveltere/real'
 #root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
@@ -58,16 +58,16 @@ del worker
 double = lambda x, a, b, c, d, e, f: a + b * np.exp(-c*(x)) + d * np.exp(- e * (x-f))
 double_= lambda x, b, c, d, e, f: b * np.exp(-c*(x)) + d * np.exp(- e * (x - f ))
 single = lambda x, a, b, c : a + b * np.exp(-c * x)
-single_= lambda x, b, c : b * np.exp(-c * x)
+single_= lambda x, a, b, c : a + b * np.exp(-c * x)
 special= lambda x, a, b, c, d: a  + b * np.exp(- (x)**c - d)
 
-func        = double
+func        = single
 p0          = np.ones((func.__code__.co_argcount - 1)); # p0[0] = 0
 fitParam    = dict(maxfev = int(1e6), \
                    bounds = (0, np.inf), p0 = p0,\
                    jac = 'cs')
 
-
+# %%
 # uggly mp case
 # note use of globals here!
 def worker(sample):
@@ -208,83 +208,100 @@ for key, vals in loadedData.items():
     aucs[key] = auc # update data
 # %%
 
-
+aucs = {}
+fitParams    = dict(maxfev = int(1e6), \
+                   bounds = (0, np.inf), p0 = p0,\
+                   jac = 'cs')
 for k, v in loadedData.items():
 #    v = v.squeeze()
 #    v = (v - v.min(0)) / (v.max(0) - v.min(0))
-    
-    colors = plt.cm.tab20(np.arange(settings[k].nNodes))
-    fig, ax = plt.subplots()
-    graph = nx.node_link_graph(settings[k].graph )
-    tmp = sorted(nx.connected_component_subgraphs(graph), \
-                 key = lambda x: len(x))
-    
-    inax = ax.inset_axes((0.3, 0.3, 1, 1))
-    nx.draw(tmp[-1], ax = inax, pos = nx.circular_layout(tmp[-1]),  with_labels =1)
-    s = v.shape
-    
-    tmp =  v.reshape(s[0], -1, s[-2], s[-1]).mean(1)
-    [ax.plot(i, color = colors[idx]) for idx, i in enumerate(tmp[1])]    
-    [ax.plot(i, linestyle ='--', color = colors[idx]) for idx, i in enumerate(tmp[0])]
-#    ax.scatter(*tmp[[0, 1   ], ..., -1])
-    colors = plt.cm.tab20(np.arange(settings[k].nNodes))
-    elements = [plt.Line2D([0], [0], label = j, color = colors[idx]) for j, idx in \
-                settings[k].mapping.items()]
-    ax.legend(handles = elements)
-#    ax.set_xlim(0, 5)
-    ax.set_title(k)
-
+    if v.mean() > 1e-3:
+        try:
+            s = v.shape
+            v = v.reshape(*s[:-2], -1)
+            
+            MIN = np.nanmin(v, axis = -1)[..., None]
+            MAX = np.nanmax(v, axis = -1)[..., None]
+            v = (v - MIN) / (MAX - MIN)
+            
+            v = v.reshape(s).squeeze()
+            
+            t_aucs = np.zeros(v.shape[:-1])
+            for idx, i in enumerate(v):
+                coeffs, _ = plotz.fit(i, func, params = fitParams)
+                for cidx, c in enumerate(coeffs):
+                    t_aucs[idx, cidx], err = scipy.integrate.quad(lambda x: func(x, *c),  0, deltas)
+                    
+            aucs[k] = t_aucs
+                    
+            colors = plt.cm.tab20(np.arange(settings[k].nNodes))
+            fig, ax = plt.subplots()
+            graph = nx.node_link_graph(settings[k].graph )
+            
+            g = sorted(nx.connected_component_subgraphs(graph), \
+                         key = lambda x: len(x))[-1]
+            inax = ax.inset_axes((1, 0, 1, 1))
+            pos = nx.circular_layout(g)
+            colors = plt.cm.tab20(np.arange(g.number_of_nodes()))
+            print(colors.shape)
+            nx.draw_networkx_nodes(g, pos = pos, node_color = colors, ax = inax)
+            nx.draw_networkx_edges(g, pos = pos, ax = inax)
+            inax.axis('off')        
+            s = v.shape
+            
+            
+            tmp =  v.reshape(s[0], -1, s[-2], s[-1]).mean(1)
+            [ax.plot(i, color = colors[idx]) for idx, i in enumerate(tmp[1])]    
+            [ax.plot(i, linestyle ='--', color = colors[idx]) for idx, i in enumerate(tmp[0])]
+        #    ax.scatter(*tmp[[0, 1   ], ..., -1])
+            colors = plt.cm.tab20(np.arange(settings[k].nNodes))
+            elements = [plt.Line2D([0], [0], label = j, color = colors[idx]) for j, idx in \
+                        settings[k].mapping.items()]
+        #    ax.legend(handles = elements)
+        #    ax.set_xlim(0, 5)
+            ax.set_title(k)
+        except:
+            continue
 # %%
     
-        
+conds = 'Underwhelming Overwhelming'.split()
+for jdx in range(2):
+    fig, ax = plt.subplots(2, 2, sharex = 'all')
+    mainax = fig.add_subplot(111, frameon = False,\
+                             xticks = [], yticks = [],\
+                             )
+    mainax.set_title(conds[jdx], pad = 30)
+    mainax.set_ylabel('centrality', labelpad = 20)
+    mainax.set_xlabel('causality', labelpad = 20)
+    for k, v in aucs.items():
+        g = nx.node_link_graph(settings[k].graph)
+        colors = plt.cm.tab20(np.arange(g.number_of_nodes()))
+        mapping = settings[k].mapping
+        for cidx, (c, cf) in enumerate(centralities.items()):
+            tmp = dict(cf(g))
+            node, val = sorted(tmp.items(), key = lambda x: abs(x[1]))[-1]
+            idx = mapping[str(node)]
+            ax.ravel()[cidx].scatter(v[jdx + 1, idx], val, color = colors[cidx])        
+            ax.ravel()[cidx].set_title(cf.func.__name__.split('_')[0])
+    fig.subplots_adjust(wspace = .2)
+#    ax.scatter(*v.max(-1)[[0, 1]])
+#ax.set(xlabel = 'informational impact', ylabel = 'causal impact')
     
-plt.show()
-# centralities = {
-#                     'degree' : partial(nx.degree, weight = 'weight'), \
-#                     'betweenness': partial(nx.betweenness_centrality, weight = 'weight'),\
-#                     'current flow'  : partial(nx.information_centrality, weight = 'weight'),\
-#                     'eigenvector'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
-#             }
-#
-#
-# # produce ranking for mu with causal influence metrics
-# ranking    = np.argsort(auc, axis = -1)
-# prediction = (ranking[0] == ranking[[1, 2]])
-# structural = np.zeros((len(centralities), setting.nNodes))
-#
-#
-# for idx, (k, f) in enumerate(centralities.items()):
-#     structural[idx] = np.argsort(np.fromiter(dict(f(setting.graph)).values(), dtype = float))
-#
-# pred_struct = np.array([i  == ranking[[1,2]].reshape(-1, setting.nNodes) for i in structural])
-# pred_struct = pred_struct.reshape((len(centralities), *ranking[[1,2]].shape))
-#
-# pred = np.vstack((prediction[None, ...], pred_struct))
-# tmp = pred[..., -1] # driver-estimates
-#
-# tmp = tmp.reshape((tmp.shape[0], 2, -1))
 
-
-
-
-labels = ['informational\nimpact', *centralities.keys()]
-conditions = 'Underwhelming Overwhelming'.split()
-width = .5
-x = np.arange(tmp.shape[0]) - width
-fig, ax = plt.subplots(1)
-
-elements = []
-for idx in range(tmp.shape[1]):
-    for jdx, xi in enumerate(x):
-        print(tmp[jdx, idx].std())
-        ax.bar(xi + idx * width, tmp[jdx, idx].mean(), color = colors[idx], width = width)
-        ax.errorbar(xi + idx * width, tmp[jdx, idx].mean(), tmp[jdx, idx].std(), \
-                    color = 'black', capsize = 10, capthick = 2)
-    ax.set_xticks(x + width)
-    ax.set_xticklabels(labels)
-
-    element = plt.Line2D([0], [0], linestyle = 'none', marker = 's', label = conditions[idx], color = colors[idx])
-    elements.append(element)
-
-ax.legend(handles = elements, loc = 'upper right')
-ax.set_ylabel('Prediction accuracy (ratio)')
+# %%
+fig, ax = plt.subplots(1, 2)
+for idx, axi in enumerate(ax):
+    axi.set_title(conds[idx])
+    if idx == 0 :
+        axi.set_ylabel('Causal')
+    axi.set_xlabel('Informational impact')
+    for k, v in aucs.items():
+        axi.scatter(*v.max(-1)[[0, idx + 1]])
+#    axi.set_xscale('log')
+    
+# %%
+for name, setting in settings.items():
+    deg = dict(nx.node_link_graph(setting.graph).degree())
+    
+    print(np.fromiter(deg.values(), dtype = int).mean())
+    

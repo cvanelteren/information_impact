@@ -45,14 +45,15 @@ if __name__ == '__main__':
     graphs = []
     N  = 20
     
-    for i in range(5):
-        w = nx.utils.powerlaw_sequence(N, 2)
-        g = nx.expected_degree_graph(w)
-        g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
+    for i in range(100):
+        g = nx.barabasi_albert_graph(N, 2)
+       # w = nx.utils.powerlaw_sequence(N, 2)
+       # g = nx.expected_degree_graph(w)
+       # g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
         
-        for i, j in g.edges():
-            g[i][j]['weight'] = np.random.rand() * 2 - 1
-        graphs.append(g)
+        #for i, j in g.edges():
+        #    g[i][j]['weight'] = np.random.rand() * 2 - 1
+        #graphs.append(g)
          
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):

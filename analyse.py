@@ -510,7 +510,7 @@ COEFFS = zeros((COND, NTRIALS, NODES, p0.size))
 x = arange(DELTAS)
 
 # uggly mp case
-#LIMIT = DELTAS
+LIMIT = DELTAS
 LIMIT = inf
 from sklearn import metrics
 def worker(sample):
@@ -524,8 +524,10 @@ def worker(sample):
 #                                     meijerg = False).evalf()
         F   = lambda x: func(x, *c) 
 #        tmp = metrics.auc(F)
-        tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
-        auc[nodei, 0] = tmp
+        tmp = scipy.integrate.quad(F, 0, LIMIT, full_output = 1)
+        if tmp[1] > 1:
+            print('Warning error is high')
+        auc[nodei, 0] = tmp[0]
         auc[nodei, 1] = errors[nodei]
     return auc
 
@@ -764,42 +766,7 @@ for temp in range(NTEMPS):
                 
 
 
-# %% prediction accuracy regardless of temperature
-a = maxestimates.reshape(-1, N + 1)
-b = maxT.reshape(-1, COND)
-rcParams['axes.labelpad'] = 5
-pred = np.array([equal(a, bi[:, None]) for bi in b.T])
 
-fig, ax = subplots()
-width = .5
-x = np.arange(N + 1)
-labels = "Underwhelming Overwhelming".split()
-for i in range(COND):
-    ax.bar(x + i * width, pred[i].mean(0), yerr = pred[i].std(0),\
-           width = width, error_kw=dict(lw=5, capsize=5, capthick=3), \
-           label = labels[i])
-labels = ['informational\nimpact', \
-          *[i.func.__name__.split('_')[0] for i in centralities.values()]]
-ax.set_xticklabels(labels )
-ax.set_xticks(x + width * width)
-ax.set(ylabel = 'Prediction accuracy (ratio)')
-ax.legend()
-fig.show()
-
-import scipy
-
-expected =  ones((COND, N+1)) * pred.shape[1] // model.nNodes
-res = scipy.stats.chisquare(pred.sum(1), expected, axis = 1)
-
-
-for pidx, pvalue in enumerate(res.pvalue):
-    if pvalue < 0.05:
-        i = np.argmax(pred[pidx].mean(0))
-        estimation = pred[pidx, :, i].mean()
-        a = scipy.stats.chisquare([estimation], [pred.shape[1] // model.nNodes])
-        print(a)
-        
-# %%  prediction accuracy with temperature
 
 # %%
 tmp = zeros((NTEMPS, N + 1, COND))
@@ -849,8 +816,41 @@ for cond in range(COND):
 tax.legend(tax.get_legend_handles_labels()[1][:N + 1], loc = 'upper left' , bbox_to_anchor = (1,1),\
            borderaxespad = 0)
 fig.savefig(figDir + 'statistics_overview.eps', format = 'eps', dpi = 1000)
-# %%
 
+# %% prediction accuracy regardless of temperature
+a = maxestimates.reshape(-1, N + 1)
+b = maxT.reshape(-1, COND)
+rcParams['axes.labelpad'] = 5
+pred = np.array([equal(a, bi[:, None]) for bi in b.T])
+
+fig, ax = subplots()
+width = .5
+x = np.arange(N + 1)
+labels = "Underwhelming Overwhelming".split()
+for i in range(COND):
+    ax.bar(x + i * width, pred[i].mean(0), yerr = pred[i].std(0),\
+           width = width, error_kw=dict(lw=5, capsize=5, capthick=3), \
+           label = labels[i])
+labels = ['informational\nimpact', \
+          *[i.func.__name__.split('_')[0] for i in centralities.values()]]
+ax.set_xticklabels(labels )
+ax.set_xticks(x + width * width)
+ax.set(ylabel = 'Prediction accuracy (ratio)')
+ax.legend()
+fig.show()
+
+import scipy
+
+expected =  ones((COND, N+1)) * pred.shape[1] // model.nNodes
+res = scipy.stats.chisquare(pred.sum(1), expected, axis = 1)
+
+
+for pidx, pvalue in enumerate(res.pvalue):
+    if pvalue < 0.05:
+        i = np.argmax(pred[pidx].mean(0))
+        estimation = pred[pidx, :, i].mean()
+        a = scipy.stats.chisquare([estimation], [pred.shape[1] // model.nNodes])
+        
 # %% classfication with cross validation
 from sklearn.feature_selection import SelectKBest, RFE, RFECV
 from sklearn.svm import SVC

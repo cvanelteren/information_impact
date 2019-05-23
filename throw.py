@@ -8,37 +8,39 @@ n = 500
 # g = nx.grid_2d_graph(n, n)
 # g = nx.star_graph(10)
 
-g = nx.path_graph(3)
 
 # #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-dataDir = 'Psycho' # relative path careful
-df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-g   = nx.from_pandas_adjacency(df)
-attr = {}
-for node, row in h.iterrows():
-    attr[node] = dict(H = row['externalField'], nudges = 0)
-nx.set_node_attributes(g, attr)
+#dataDir = 'Psycho' # relative path careful
+#df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+#h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+#g   = nx.from_pandas_adjacency(df)
+#attr = {}
+#for node, row in h.iterrows():
+#    attr[node] = dict(H = row['externalField'], nudges = 0)
+#nx.set_node_attributes(g, attr)
 
 
 
 
 #g.add_edge(0,0)
-g =  nx.soft_random_geometric_graph(20, .2)
+#g =  nx.soft_random_geometric_graph(20, .2)
 #g = nx.grid_2d_graph(10, 10)
 #g = nx.path_graph(3, nx.DiGraph()).
-w = nx.utils.powerlaw_sequence(100, exponent = 1.6)
+#w = nx.utils.powerlaw_sequence(20, exponent = 1.2)
 
+g = nx.barabasi_albert_graph(10, 2)
+#g = nx.erdos_renyi_graph(20, .2)
 
 #plt.hist(w)
-g = nx.expected_degree_graph(w)
+#g = nx.expected_degree_graph(w)
 
-for i, j in g.edges():
-    g[i][j]['weight'] = np.random.rand()  * 2 - 1
+#for i, j in g.edges():
+#    g[i][j]['weight'] = np.random.rand()  * 2 - 1
     
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-#g = nx.duplication_divergence_graph(10, .4)
+#g = nx.duplication_divergence_graph(10, .25)
+#
 #g = nx.krackhardt_kite_graph()
 #g.add_edge(0, 0)
 
@@ -55,22 +57,22 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'async', \
-                    magSide = '', \
+                    updateType = 'single', \
+                    magSide = 'neg', \
                     nudgeType = 'constant')
 
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
-temps = np.linspace(0, g.number_of_nodes(), 1000)
+temps = np.linspace(0, g.number_of_nodes(), 100)
 mag  = m.matchMagnetization(temps, 100)[0]
-idx = np.argmin(abs(mag - .5))
+idx = np.argmin(abs(mag - .7))
 
 
 # %% 
 fig, ax = plt.subplots()
 ax.plot(temps, mag)
 ax.plot(temps[idx], mag[idx], 'r.')
-ax.set(xlim = (0, 10))
+#ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
 # %%
@@ -105,7 +107,7 @@ deltas = 100
 start = time.time()
 snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
 
-repeats = int(1e3)
+repeats = int(1e4)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 
 
@@ -114,7 +116,7 @@ from Utils.stats import KL, hellingerDistance, JS
 
 # %%
 
-NUDGE = np.inf
+NUDGE = 1
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
@@ -125,7 +127,7 @@ print(time.time() - start)
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
-ax.set_xlim(deltas // 2 - 2, deltas//2 + 20)
+#ax.set_xlim(deltas // 2 - 2, deltas//2 + 20)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend()
