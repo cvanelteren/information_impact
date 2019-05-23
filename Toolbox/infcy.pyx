@@ -162,7 +162,6 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
     for sample in range(nThreads):
         tmp = copy.deepcopy(model)
         tmp.reset()
-
         # TODO: remove this
         try:
             tmp.burnin(burninSamples)
@@ -199,6 +198,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
         with gil:
             state = tuple((<Model> modelptr)._states.base)
             snapshots[state] = snapshots.get(state, 0) + 1 / Z
+            (<Model> modelptr).reset()
             pbar.update(1)
     print('done')
     pbar.close()

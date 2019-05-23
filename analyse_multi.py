@@ -15,7 +15,7 @@ root = 'Data/cveltere/2019-05-09T16:10:34.645885'
 root = '/run/media/casper/fc7e7a2a-73e9-41fe-9020-f721489b1900/cveltere'
 root = 'Data/2019-05-13T13:34:02.290439'
 root = 'Data/1548025318.5751357'
-root = 'Data/cveltere/real'
+root = 'Data/new'
 #root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
@@ -243,7 +243,6 @@ for k, v in loadedData.items():
             inax = ax.inset_axes((1, 0, 1, 1))
             pos = nx.circular_layout(g)
             colors = plt.cm.tab20(np.arange(g.number_of_nodes()))
-            print(colors.shape)
             nx.draw_networkx_nodes(g, pos = pos, node_color = colors, ax = inax)
             nx.draw_networkx_edges(g, pos = pos, ax = inax)
             inax.axis('off')        
@@ -278,11 +277,15 @@ for jdx in range(2):
         colors = plt.cm.tab20(np.arange(g.number_of_nodes()))
         mapping = settings[k].mapping
         for cidx, (c, cf) in enumerate(centralities.items()):
-            tmp = dict(cf(g))
-            node, val = sorted(tmp.items(), key = lambda x: abs(x[1]))[-1]
-            idx = mapping[str(node)]
-            ax.ravel()[cidx].scatter(v[jdx + 1, idx], val, color = colors[cidx])        
-            ax.ravel()[cidx].set_title(cf.func.__name__.split('_')[0])
+            try:
+                tmp = dict(cf(g))
+                node, val = sorted(tmp.items(), key = lambda x: abs(x[1]))[-1]
+                idx = mapping[str(node)]
+                ax.ravel()[cidx].scatter(v[jdx + 1, idx], val, color = colors[cidx])        
+                ax.ravel()[cidx].set_title(cf.func.__name__.split('_')[0])
+            except Exception as e:
+                print(e)
+                continue
     fig.subplots_adjust(wspace = .2)
 #    ax.scatter(*v.max(-1)[[0, 1]])
 #ax.set(xlabel = 'informational impact', ylabel = 'causal impact')

@@ -28,8 +28,8 @@ n = 500
 #g = nx.path_graph(3, nx.DiGraph()).
 #w = nx.utils.powerlaw_sequence(20, exponent = 1.2)
 
-g = nx.barabasi_albert_graph(10, 2)
-#g = nx.erdos_renyi_graph(20, .2)
+#g = nx.barabasi_albert_graph(10, 2)
+g = nx.erdos_renyi_graph(10, .2)
 
 #plt.hist(w)
 #g = nx.expected_degree_graph(w)
@@ -58,14 +58,14 @@ fig.show()
 
 m = fastIsing.Ising(graph = g, \
                     updateType = 'single', \
-                    magSide = 'neg', \
+                    magSide = '', \
                     nudgeType = 'constant')
 
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
 mag  = m.matchMagnetization(temps, 100)[0]
-idx = np.argmin(abs(mag - .7))
+idx = np.argmin(abs(mag - .9))
 
 
 # %% 
@@ -105,7 +105,7 @@ print('>', m.nudges.base)
 
 deltas = 100
 start = time.time()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 
 repeats = int(1e4)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
