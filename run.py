@@ -39,16 +39,16 @@ if __name__ == '__main__':
     nTrials       = 1
     magSide       = 'neg'
     updateType    = 'single'
-    CHECK         = [0.5] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
     tempres       = 100
     graphs = []
     N  = 20
     
-    for i in range(100):
+#    for i in range(100):
 #        g = nx.barabasi_albert_graph(N, 2)
-        g = nx.erdos_renyi_graph(N, .2)
-        graphs.append(g)
+#        g = nx.erdos_renyi_graph(N, .2)
+#        graphs.append(g)
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
        # g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
@@ -65,11 +65,11 @@ if __name__ == '__main__':
     else:
         rootDirectory = f'{os.getcwd()}/Data/'
 # #    real = 1
-# #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-#    dataDir = 'Psycho' # relative path careful
-#    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+ #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+    dataDir = 'Psycho' # relative path careful
+    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 #    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-#    graph   = nx.from_pandas_adjacency(df)
+    graph   = nx.from_pandas_adjacency(df)
 #    attr = {}
 #    for node, row in h.iterrows():
 #        attr[node] = dict(H = row['externalField'], nudges = 0)
