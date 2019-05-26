@@ -15,7 +15,7 @@ root = 'Data/cveltere/2019-05-09T16:10:34.645885'
 root = '/run/media/casper/fc7e7a2a-73e9-41fe-9020-f721489b1900/cveltere'
 root = 'Data/2019-05-13T13:34:02.290439'
 root = 'Data/1548025318.5751357'
-root = 'Data/new'
+root = 'Data/new2'
 #root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
@@ -215,7 +215,8 @@ fitParams    = dict(maxfev = int(1e6), \
 for k, v in loadedData.items():
 #    v = v.squeeze()
 #    v = (v - v.min(0)) / (v.max(0) - v.min(0))
-    if v.mean() > 1e-3:
+    g = nx.node_link_graph(settings[k].graph)
+    if v.mean() > 1e-3 and nx.is_connected(g):
         try:
             s = v.shape
             v = v.reshape(*s[:-2], -1)
@@ -284,27 +285,78 @@ for jdx in range(2):
                 ax.ravel()[cidx].scatter(v[jdx + 1, idx], val, color = colors[cidx])        
                 ax.ravel()[cidx].set_title(cf.func.__name__.split('_')[0])
             except Exception as e:
-                print(e)
+                print(k, e)
                 continue
     fig.subplots_adjust(wspace = .2)
+    
 #    ax.scatter(*v.max(-1)[[0, 1]])
 #ax.set(xlabel = 'informational impact', ylabel = 'causal impact')
     
 
 # %%
-fig, ax = plt.subplots(1, 2)
+    
+from bokeh import plotting as p
+from bokeh.layouts import column, row
+from bokeh.io import output_file
+from bokeh.models.callbacks import CustomJS
+
+output_file('test.html')
+#fig, ax = plt.subplots(1, 2)
+
+figs = []
+TOOLS="hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out,box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+
+
+
+from bokeh.models import ColumnDataSource, HoverTool
+import pandas as pd
+
+
+tt =  [\
+               ("Index", "@index"),\
+               ]
+tmp = {k: v.max(-1) for k, v in aucs.items()}
+df = pd.DataFrame.from_dict(tmp).T
+df.columns = 'ii ci_u ci_o'.split()
+
+d = ColumnDataSource(data = df)
+
+def selection_change(attr, old, new):
+    
+    print(attr, old, new, d.value)
+    return 0
+
+#test = ColumnDataSource(data = dict(x = np.arange(deltas), y = [] ))
+
+#test.selected.on_change('indices', selection_change)
+
+d.selected.on_change('indices', selection_change)
+
+titles = 'underwhelming overwhelming'.split()
 for idx, axi in enumerate(ax):
-    axi.set_title(conds[idx])
-    if idx == 0 :
-        axi.set_ylabel('Causal')
-    axi.set_xlabel('Informational impact')
-    for k, v in aucs.items():
-        axi.scatter(*v.max(-1)[[0, idx + 1]])
+#    axi.set_title(conds[idx])
+    fig = p.figure(tooltips = tt, title = titles[idx])
+    
+#    if idx == 0 :
+#        axi.set_ylabel('Causal')
+#    axi.set_xlabel('Informational impact')
+    fig.scatter(x = 'ii', y = df.columns[idx + 1], source = d)
+#    fig.selected.js_on_change('indices', \
+#                              CustomJS(args = dict(s1 = s1)), code = tmp_code)
+    figs.append(fig)
+#    for k, v in aucs.items():
+#        l = f"<p> {k} </p>"
+#        fig.scatter(*v.max(-1)[[0, idx + 1]], name = k)
 #    axi.set_xscale('log')
     
+fig = p.figure()
+
+figs.append(fig)
+p.show(row(figs))
+
 # %%
-for name, setting in settings.items():
-    deg = dict(nx.node_link_graph(setting.graph).degree())
-    
-    print(np.fromiter(deg.values(), dtype = int).mean())
-    
+fig = p.figure()
+x =  np.arange(deltas)
+for k, v in loadedData.items():
+    [fig.line(x, i) for i in v[0].squeeze()]
+p.show(fig)
