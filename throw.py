@@ -58,14 +58,14 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'async', \
+                    updateType = 'single', \
                     magSide = 'neg', \
                     nudgeType = 'constant')
 
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
-mag  = m.matchMagnetization(temps, 100)[0]
+mag  = m.matchMagnetization(temps, 500)[0]
 idx = np.argmin(abs(mag - .9))
 
 
@@ -73,7 +73,7 @@ idx = np.argmin(abs(mag - .9))
 fig, ax = plt.subplots()
 ax.plot(temps, mag)
 ax.plot(temps[idx], mag[idx], 'r.')
-#ax.set(xlim = (0, 10))
+ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
 # %%
@@ -104,13 +104,17 @@ print('>', m.nudges.base)
 #
 #m.nudges = {'0': 1}
 
-deltas = 100
-start = time.time()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
+deltas = 50
 
+#m.t = -np.inf
+
+
+start = time.time()
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
+#
 repeats = int(1e4)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
-
+#
 
 assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance, JS
