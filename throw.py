@@ -58,7 +58,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'async', \
+                    updateType = 'single', \
                     magSide = 'neg', \
                     nudgeType = 'constant')
 
@@ -112,7 +112,7 @@ deltas = 50
 start = time.time()
 snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 #
-repeats = int(1e4)
+repeats = int(1e5)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
