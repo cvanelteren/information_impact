@@ -45,8 +45,8 @@ if __name__ == '__main__':
     graphs = []
     N  = 20
     
-#    for i in range(100):
-#        g = nx.barabasi_albert_graph(N, 2)
+    for i in range(100):
+        g = nx.barabasi_albert_graph(N, 2)
 #        g = nx.erdos_renyi_graph(N, .2)
 #        graphs.append(g)
        # w = nx.utils.powerlaw_sequence(N, 2)
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     dataDir = 'Psycho' # relative path careful
     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 #    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-    graph   = nx.from_pandas_adjacency(df)
+#    graph   = nx.from_pandas_adjacency(df)
 #    attr = {}
 #    for node, row in h.iterrows():
 #        attr[node] = dict(H = row['externalField'], nudges = 0)

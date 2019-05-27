@@ -28,8 +28,8 @@ n = 500
 #g = nx.path_graph(3, nx.DiGraph()).
 #w = nx.utils.powerlaw_sequence(20, exponent = 1.2)
 
-g = nx.barabasi_albert_graph(10, 2)
-#g = nx.erdos_renyi_graph(10, .4)
+g = nx.barabasi_albert_graph(10, 3)
+#g = nx.erdos_renyi_graph(10, .3)
 #g = nx.star_graph(5)
 
 #plt.hist(w)
@@ -58,7 +58,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'single', \
+                    updateType = 'async', \
                     magSide = 'neg', \
                     nudgeType = 'constant')
 
@@ -66,7 +66,7 @@ m = fastIsing.Ising(graph = g, \
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
 mag  = m.matchMagnetization(temps, 500)[0]
-idx = np.argmin(abs(mag - .9))
+idx = np.argmin(abs(mag - mag.max() * .8))
 
 
 # %% 
@@ -110,7 +110,7 @@ deltas = 50
 
 
 start = time.time()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 #
 repeats = int(1e4)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
@@ -132,7 +132,7 @@ print(time.time() - start)
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
-#ax.set_xlim(deltas // 2 - 2, deltas//2 + 5)
+ax.set_xlim(deltas // 2 - 2, deltas//2 + 5)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend()
@@ -143,7 +143,7 @@ fig, ax = plt.subplots();
 #ax.set_xlim(0, 4)
 ax.legend()
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
-#ax.set_xlim(0, 3)
+ax.set_xlim(0, 3)
 fig.show()
 fig, ax = plt.subplots()
 nx.draw(g, ax = ax, pos = nx.circular_layout(g), with_labels = 1)
