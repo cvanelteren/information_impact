@@ -15,7 +15,7 @@ root = 'Data/cveltere/2019-05-09T16:10:34.645885'
 root = '/run/media/casper/fc7e7a2a-73e9-41fe-9020-f721489b1900/cveltere'
 root = 'Data/2019-05-13T13:34:02.290439'
 root = 'Data/1548025318.5751357'
-root = 'Data/new2'
+root = 'Data/new3'
 #root = '/run/media/casper/4fdab2ee-95ad-4fc5-8027-8d079de9d4f8/Data/1548025318'
 
 data     = IO.DataLoader(root) # extracts data folders
@@ -27,7 +27,7 @@ centralities = {
                     r'$c_i^{ic}$'  : partial(nx.information_centrality, weight = 'weight'),\
                     r'$c_i^{ev}$'  : partial(nx.eigenvector_centrality, weight = 'weight'),\
             }
-
+copying build/lib.linux-x86_64-3.7/Toolbox/infcy.cpython-37m-x86_64-linux-gnu.so -> Toolbox
 
 #centralities = {key : partial(value, weight = 'weight') for key, value in nx.__dict__.items() if '_centrality' in key}
 

@@ -28,7 +28,9 @@ n = 500
 #g = nx.path_graph(3, nx.DiGraph()).
 #w = nx.utils.powerlaw_sequence(20, exponent = 1.2)
 
-g = nx.barabasi_albert_graph(10, 3)
+g = nx.barabasi_albert_graph(5, 3)
+g = nx.erdos_renyi_graph(5, .2,)
+#g = nx.florentine_families_graph()
 #g = nx.erdos_renyi_graph(10, .3)
 #g = nx.star_graph(5)
 
@@ -68,7 +70,6 @@ temps = np.linspace(0, g.number_of_nodes(), 100)
 mag  = m.matchMagnetization(temps, 500)[0]
 idx = np.argmin(abs(mag - mag.max() * .8))
 
-
 # %% 
 fig, ax = plt.subplots()
 ax.plot(temps, mag)
@@ -79,7 +80,6 @@ m.t = temps[idx]
 # %%
 #m.t = 1
 #print(m.states.base)
-
 
 colors = plt.cm.tab20(np.arange(m.nNodes))
 
@@ -97,31 +97,19 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-
-
-print('>', m.nudges.base)
-#assert 0
-#
-#m.nudges = {'0': 1}
-
-deltas = 50
-
-#m.t = -np.inf
-
-
+deltas = 100
 start = time.time()
 snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 #
-repeats = int(1e5)
+repeats = int(1e3)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
 assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance, JS
-
 # %%
 
-NUDGE = 1
+NUDGE = np.inf
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
@@ -135,13 +123,13 @@ ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
 ax.set_xlim(deltas // 2 - 2, deltas//2 + 5)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
-ax.legend()
+ax.legend(bbox_to_anchor = (1.05, 1))
 fig.show()
 
 fig, ax = plt.subplots(); 
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
 #ax.set_xlim(0, 4)
-ax.legend()
+ax.legend(bbox_to_anchor = (1.02, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
 ax.set_xlim(0, 3)
 fig.show()
