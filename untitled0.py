@@ -1,29 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun May 26 14:01:06 2019
+Created on Sat Jun  1 01:05:40 2019
 
 @author: casper
 """
 
-# -*- coding: utf-8 -*-
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from mpl_toolkits.mplot3d import axes3d
+import matplotlib.pyplot as plt
+from matplotlib import cm
 
-app = dash.Dash()
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+X, Y, Z = axes3d.get_test_data(0.05)
+ax.plot_surface(X, Y, Z, rstride=8, cstride=8, alpha=1, cmap = cm.viridis)
+cset = ax.contourf3D(X, Y, Z, zdir='z', offset=-100, cmap=cm.viridis)
+#cset = ax.contour(X, Y, Z, zdir='x', offset=-40, cmap=cm.coolwarm)
+#cset = ax.contour(X, Y, Z, zdir='y', offset=40, cmap=cm.coolwarm)
 
-# default values
-app.css.config.serve_locally = True
-app.scripts.config.serve_locally = True
-app.config.assets_folder = 'assets'     # The path to the assets folder.
-app.config.include_asset_files = True   # Include the files in the asset folder
-app.config.assets_external_path = ""    # The external prefix if serve_locally == False
-app.config.assets_url_path = '/assets'  # the local url prefix ie `/assets/*.js`
+ax.set_xlabel('X')
+ax.set_xlim(-40, 40)
+ax.set_ylabel('Y')
+ax.set_ylim(-40, 40)
+ax.set_zlabel('Z')
+ax.set_zlim(-100, 100)
 
-app.layout = html.Div(
-    [ html.H1("This is a test")]
-)
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
+plt.show()

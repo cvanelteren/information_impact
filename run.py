@@ -29,7 +29,7 @@ import networkx as nx, \
         time
 close('all')
 if __name__ == '__main__':
-    repeats       = int(4e4)
+    repeats       = int(1e3)
     deltas        = 100
     step          = int(1e4)
     nSamples      = int(1e3)
@@ -47,15 +47,15 @@ if __name__ == '__main__':
     
     for i in range(100):
         g = nx.barabasi_albert_graph(N, 2)
-#        g = nx.erdos_renyi_graph(N, .2)
+        g = nx.erdos_renyi_graph(N, .2)
 #        graphs.append(g)
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
-       # g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
+        g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
         
         #for i, j in g.edges():
         #    g[i][j]['weight'] = np.random.rand() * 2 - 1
-        #graphs.append(g)
+        graphs.append(g)
          
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
