@@ -62,8 +62,9 @@ fig.show()
 m = fastIsing.Ising(graph = g, \
                     updateType = 'single', \
                     magSide = 'neg', \
-                    nudgeType = 'constant')
-
+                    nudgeType = 'constant',\
+                    nudges = {})
+assert 0
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
@@ -106,6 +107,7 @@ conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
 assert len(conditional) == len(snapshots)
+
 from Utils.stats import KL, hellingerDistance, JS
 # %%
 
@@ -165,4 +167,7 @@ def randomizeEdges(graph):
     node = choice(graph.nodes())
         
     
-    
+# %%
+def temp(**kwargs):
+    print(locals())
+temp(x = 3)
