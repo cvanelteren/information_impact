@@ -61,7 +61,8 @@ if __name__ == '__main__':
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
 #       graphs.append(nx.barabasi_albert_graph(N, j))
     if 'fs4' in os.uname().nodename or 'node' in os.uname().nodename:
-        rootDirectory = '/var/scratch/cveltere/' # data storage
+        now = datetime.datetime.now().isoformat()
+        rootDirectory = f'/var/scratch/cveltere/{now}/' # data storage
     else:
         rootDirectory = f'{os.getcwd()}/Data/'
 # #    real = 1
