@@ -28,10 +28,15 @@ n = 500
 #g = nx.path_graph(3, nx.DiGraph()).
 #w = nx.utils.powerlaw_sequence(20, exponent = 1.2)
 
-g = nx.barabasi_albert_graph(5, 3)
-g = nx.erdos_renyi_graph(5, .2,)
-#g = nx.florentine_families_graph()
-#g = nx.erdos_renyi_graph(10, .3)
+#while True:
+#    g = nx.erdos_renyi_graph(30, .05)
+#    g = sorted(nx.connected_component_subgraphs(g), key = len)[-1]
+#    if len(g) == 20:
+#        break
+    
+    
+g = nx.florentine_families_graph()
+g = nx.erdos_renyi_graph(30, .3)
 #g = nx.star_graph(5)
 
 #plt.hist(w)
@@ -64,21 +69,32 @@ m = fastIsing.Ising(graph = g, \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
-assert 0
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
-mag  = m.matchMagnetization(temps, 500)[0]
-idx = np.argmin(abs(mag - mag.max() * .8))
+samps = [m.matchMagnetization(temps, 100) for i in range(10)]
 
+from scipy import ndimage
+
+# %%
+samps = np.array(samps)
+samps = samps.mean(0)
+mag, sus = samps
 # %% 
+idx = np.nanargmax(sus)
+idx = np.argmin(abs(mag - .8 * mag.max()))
+
 fig, ax = plt.subplots()
 ax.plot(temps, mag)
+tax = ax.twinx()
+tax.scatter(temps, sus)
 ax.plot(temps[idx], mag[idx], 'r.')
 ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
+assert 0
 # %%
+#assert 0 
 #m.t = 1
 #print(m.states.base)
 
@@ -98,11 +114,11 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 100
+deltas = 250
 start = time.time()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e2), steps = int(1e3),  nThreads = -1)
 #
-repeats = int(1e3)
+repeats = int(1e4)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
@@ -110,8 +126,7 @@ assert len(conditional) == len(snapshots)
 
 from Utils.stats import KL, hellingerDistance, JS
 # %%
-
-NUDGE = np.inf
+NUDGE = 1
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
@@ -122,7 +137,7 @@ print(time.time() - start)
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
-ax.set_xlim(deltas // 2 - 2, deltas//2 + 5)
+ax.set_xlim(deltas // 2 - 2, deltas//2 + 50)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend(bbox_to_anchor = (1.05, 1))
@@ -131,9 +146,16 @@ fig.show()
 fig, ax = plt.subplots(); 
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
 #ax.set_xlim(0, 4)
-ax.legend(bbox_to_anchor = (1.02, 1))
+ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
-ax.set_xlim(0, 3)
+ax.set_xlim(0, 50)
+
+
+fig, ax = plt.subplots()
+x = mi[:deltas // 2, :].sum(0)
+y = out[:, deltas // 2:].sum(-1)
+ax.scatter(x, y)
+
 fig.show()
 fig, ax = plt.subplots()
 nx.draw(g, ax = ax, pos = nx.circular_layout(g), with_labels = 1)
@@ -168,6 +190,3 @@ def randomizeEdges(graph):
         
     
 # %%
-def temp(**kwargs):
-    print(locals())
-temp(x = 3)
