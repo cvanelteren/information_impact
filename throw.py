@@ -5,6 +5,8 @@ import networkx as nx, numpy as np
 from Utils import IO
 import time
 n = 500
+
+
 # g = nx.grid_2d_graph(n, n)
 # g = nx.star_graph(10)
 
@@ -36,7 +38,21 @@ n = 500
     
     
 g = nx.florentine_families_graph()
-g = nx.erdos_renyi_graph(30, .3)
+n = 100
+g = nx.grid_2d_graph(n, n)
+from Models.percolation import Percolation
+
+m = Percolation(graph = g, p = 1/20, updateType = 'async')
+m.reset()
+#print(m.simulate(500))
+#m.reset()
+a = m.simulate(1000)
+fig, ax = plt.subplots()
+ax.imshow(a.mean(0).reshape(n, n), aspect = 'auto')
+
+
+
+assert 0
 #g = nx.star_graph(5)
 
 #plt.hist(w)
