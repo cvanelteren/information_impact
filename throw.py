@@ -38,13 +38,19 @@ n = 500
     
     
 g = nx.florentine_families_graph()
-n = 100
+n = 150
 g = nx.grid_2d_graph(n, n)
 from Models.percolation import Percolation
-
-m = Percolation(graph = g, p = 1/20, updateType = 'async')
+n
+m = Percolation(graph = g, p = .55, updateType = 'async')
 m.reset()
+
+tmp = [j for i, j in m.mapping.items() if i == str((n//2, n//2))][0]
+b = np.zeros(m.nNodes, dtype = int)
+b[tmp] = 1
+m.states = b
 #print(m.simulate(500))
+
 #m.reset()
 a = m.simulate(1000)
 fig, ax = plt.subplots()

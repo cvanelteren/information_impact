@@ -45,6 +45,7 @@ class DataLoader(OrderedDict):
                          break # prevent possible doubles
                          
          def tmp(x):
+             x = x.split('/')[-1].split('_')[0]
              d = re.search(pattern, x)
              if d:
                  return d.group()
