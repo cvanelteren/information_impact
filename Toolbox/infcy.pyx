@@ -316,8 +316,9 @@ cpdef dict monteCarlo(\
             out[tid]    = 0 # reset buffer
             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
             for repeat in range(repeats):
-                (<Model> modelptr)._states = s[state, :]
-                (<Model> modelptr)._nudges = copyNudge[:]
+                for node in range(nNodes):
+                    (<Model> modelptr)._states[node] = s[state, node]
+                    (<Model> modelptr)._nudges[node] = copyNudge[node]
 
                 for delta in range(deltas):
                     for node in range(nNodes):

@@ -12,10 +12,10 @@ n = 500
 
 
 # #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-#dataDir = 'Psycho' # relative path careful
-#df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-#h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-#g   = nx.from_pandas_adjacency(df)
+dataDir = 'Psycho' # relative path careful
+df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+g   = nx.from_pandas_adjacency(df)
 #attr = {}
 #for node, row in h.iterrows():
 #    attr[node] = dict(H = row['externalField'], nudges = 0)
@@ -35,7 +35,6 @@ n = 500
 #    g = sorted(nx.connected_component_subgraphs(g), key = len)[-1]
 #    if len(g) == 20:
 #        break
-g = nx.florentine_families_graph()
 n = 150
 #g = nx.star_graph(5)
 #plt.hist(w)
@@ -45,8 +44,8 @@ n = 150
     
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-#g = nx.duplication_divergence_graph(30, .25)
-
+g = nx.duplication_divergence_graph(10, .25)
+#g = nx.florentine_families_graph()
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
 fig, ax = plt.subplots();
@@ -60,13 +59,13 @@ fig.show()
 
 m = fastIsing.Ising(graph = g, \
                     updateType = 'single', \
-                    magSide = '', \
+                    magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
-samps = [m.matchMagnetization(temps, 100) for i in range(1)]
+samps = [m.matchMagnetization(temps, 100) for i in range(5)]
 
 from scipy import ndimage
 
@@ -78,6 +77,7 @@ mag, sus = samps
 idx = np.nanargmax(sus)
 idx = np.argmin(abs(mag - .8 * mag.max()))
 
+
 fig, ax = plt.subplots()
 ax.plot(temps, mag)
 tax = ax.twinx()
@@ -87,7 +87,6 @@ ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
 
-assert 0 
 
 # %%
 #assert 0 
@@ -110,7 +109,7 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 20
+deltas = 10
 start = time.time()
 snapshots    = infcy.getSnapShots(m, nSamples = int(1e2), steps = int(1e3),  nThreads = -1)
 #
@@ -142,18 +141,19 @@ fig.show()
 
 fig, ax = plt.subplots(); 
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
-#ax.set_xlim(0, 4)
+ax.set_xlim(0, 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
-ax.set_xlim(0, idx)
+#ax.set_xlim(0, idx)
 
 
 fig, ax = plt.subplots()
 x = np.trapz(mi[:deltas // 2, :], axis = 0)
 y = np.trapz(out[:, deltas // 2:], axis = -1)
 [ax.scatter(xi, yi, color = ci) for ci, xi, yi in zip(colors, x.T, y.T)]
-
 fig.show()
+
+
 fig, ax = plt.subplots()
 nx.draw(g, ax = ax, pos = nx.circular_layout(g), with_labels = 1)
 
