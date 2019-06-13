@@ -35,46 +35,18 @@ n = 500
 #    g = sorted(nx.connected_component_subgraphs(g), key = len)[-1]
 #    if len(g) == 20:
 #        break
-    
-    
 g = nx.florentine_families_graph()
 n = 150
-g = nx.grid_2d_graph(n, n)
-from Models.percolation import Percolation
-n
-m = Percolation(graph = g, p = .55, updateType = 'async')
-m.reset()
-
-tmp = [j for i, j in m.mapping.items() if i == str((n//2, n//2))][0]
-b = np.zeros(m.nNodes, dtype = int)
-b[tmp] = 1
-m.states = b
-#print(m.simulate(500))
-
-#m.reset()
-a = m.simulate(1000)
-fig, ax = plt.subplots()
-ax.imshow(a.mean(0).reshape(n, n), aspect = 'auto')
-
-
-
-assert 0
 #g = nx.star_graph(5)
-
 #plt.hist(w)
 #g = nx.expected_degree_graph(w)
-
 #for i, j in g.edges():
 #    g[i][j]['weight'] = np.random.rand()  * 2 - 1
     
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-#g = nx.duplication_divergence_graph(10, .25)
-#
-#g = nx.krackhardt_kite_graph()
-#g.add_edge(0, 0)
+#g = nx.duplication_divergence_graph(30, .25)
 
-#g = nx.barabasi_albert_graph(10, 2)
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
 fig, ax = plt.subplots();
@@ -88,13 +60,13 @@ fig.show()
 
 m = fastIsing.Ising(graph = g, \
                     updateType = 'single', \
-                    magSide = 'neg', \
+                    magSide = '', \
                     nudgeType = 'constant',\
                     nudges = {})
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
-samps = [m.matchMagnetization(temps, 100) for i in range(10)]
+samps = [m.matchMagnetization(temps, 100) for i in range(1)]
 
 from scipy import ndimage
 
@@ -114,7 +86,9 @@ ax.plot(temps[idx], mag[idx], 'r.')
 ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
-assert 0
+
+assert 0 
+
 # %%
 #assert 0 
 #m.t = 1
@@ -136,11 +110,11 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 250
+deltas = 20
 start = time.time()
 snapshots    = infcy.getSnapShots(m, nSamples = int(1e2), steps = int(1e3),  nThreads = -1)
 #
-repeats = int(1e4)
+repeats = int(1e3)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
@@ -159,7 +133,8 @@ print(time.time() - start)
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
-ax.set_xlim(deltas // 2 - 2, deltas//2 + 50)
+idx = 5
+ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend(bbox_to_anchor = (1.05, 1))
@@ -170,13 +145,13 @@ fig, ax = plt.subplots();
 #ax.set_xlim(0, 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
-ax.set_xlim(0, 50)
+ax.set_xlim(0, idx)
 
 
 fig, ax = plt.subplots()
-x = mi[:deltas // 2, :].sum(0)
-y = out[:, deltas // 2:].sum(-1)
-ax.scatter(x, y)
+x = np.trapz(mi[:deltas // 2, :], axis = 0)
+y = np.trapz(out[:, deltas // 2:], axis = -1)
+[ax.scatter(xi, yi, color = ci) for ci, xi, yi in zip(colors, x.T, y.T)]
 
 fig.show()
 fig, ax = plt.subplots()
@@ -199,16 +174,3 @@ fig, ax = plt.subplots()
 degs = list(dict(g.degree()).values())
 ax.hist(degs, bins = 10)
 plt.show()
-
-def randomizeEdges(graph):
-    """
-    Randomly connect an edge to another node
-    """
-    from random import choice
-    edges = graph.edges()
-    swap = choice(list(edges))
-    
-    node = choice(graph.nodes())
-        
-    
-# %%

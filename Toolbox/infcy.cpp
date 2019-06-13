@@ -4854,8 +4854,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
   __Pyx_memviewslice __pyx_t_38 = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_t_39;
   int __pyx_t_40;
-  Py_ssize_t __pyx_t_41;
-  Py_UCS4 __pyx_t_42;
+  Py_UCS4 __pyx_t_41;
   __Pyx_RefNannySetupContext("monteCarlo", 0);
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
@@ -5605,7 +5604,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
                 #define unlikely(x) (x)
             #endif
             #ifdef _OPENMP
-            #pragma omp parallel  private(__pyx_t_12, __pyx_t_15, __pyx_t_16, __pyx_t_17, __pyx_t_21, __pyx_t_22, __pyx_t_25, __pyx_t_26, __pyx_t_27, __pyx_t_28, __pyx_t_29, __pyx_t_30, __pyx_t_31, __pyx_t_32, __pyx_t_33, __pyx_t_34, __pyx_t_35, __pyx_t_36, __pyx_t_37, __pyx_t_39, __pyx_t_40, __pyx_t_41) firstprivate(__pyx_t_1, __pyx_t_11, __pyx_t_13, __pyx_t_18, __pyx_t_23, __pyx_t_24, __pyx_t_38, __pyx_t_8) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb) num_threads(__pyx_v_nThreads)
+            #pragma omp parallel  private(__pyx_t_12, __pyx_t_15, __pyx_t_16, __pyx_t_17, __pyx_t_21, __pyx_t_22, __pyx_t_25, __pyx_t_26, __pyx_t_27, __pyx_t_28, __pyx_t_29, __pyx_t_30, __pyx_t_31, __pyx_t_32, __pyx_t_33, __pyx_t_34, __pyx_t_35, __pyx_t_36, __pyx_t_37, __pyx_t_39, __pyx_t_40) firstprivate(__pyx_t_1, __pyx_t_11, __pyx_t_13, __pyx_t_18, __pyx_t_23, __pyx_t_24, __pyx_t_38, __pyx_t_8) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb) num_threads(__pyx_v_nThreads)
             #endif /* _OPENMP */
             {
                 #ifdef _OPENMP
@@ -5728,7 +5727,7 @@ __pyx_t_23.strides[2] = __pyx_v_out.strides[3];
  *             out[tid]    = 0 # reset buffer
  *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)             # <<<<<<<<<<<<<<
  *             for repeat in range(repeats):
- *                 (<Model> modelptr)._states[:] = s[state, :]
+ *                 (<Model> modelptr)._states = s[state, :]
  */
                                 __pyx_t_11 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->__pyx_vtab)->sampleNodes(((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr), __pyx_v_nTrial); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 317, __pyx_L26_error)
                                 __pyx_t_24.data = __pyx_v_r.data;
@@ -5761,8 +5760,8 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_11, __pyx_t_24, 2, 2, 0) < 0
  *             out[tid]    = 0 # reset buffer
  *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
  *             for repeat in range(repeats):             # <<<<<<<<<<<<<<
- *                 (<Model> modelptr)._states[:] = s[state, :]
- *                 (<Model> modelptr)._nudges[:] = copyNudge[:]
+ *                 (<Model> modelptr)._states = s[state, :]
+ *                 (<Model> modelptr)._nudges = copyNudge[:]
  */
                                 __pyx_t_21 = __pyx_v_repeats;
                                 __pyx_t_25 = __pyx_t_21;
@@ -5772,9 +5771,9 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_11, __pyx_t_24, 2, 2, 0) < 0
                                   /* "Toolbox/infcy.pyx":319
  *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
  *             for repeat in range(repeats):
- *                 (<Model> modelptr)._states[:] = s[state, :]             # <<<<<<<<<<<<<<
- *                 (<Model> modelptr)._nudges[:] = copyNudge[:]
- *                 for delta in range(deltas):
+ *                 (<Model> modelptr)._states = s[state, :]             # <<<<<<<<<<<<<<
+ *                 (<Model> modelptr)._nudges = copyNudge[:]
+ * 
  */
                                   __pyx_t_13.data = __pyx_v_s.data;
                                   __pyx_t_13.memview = __pyx_v_s.memview;
@@ -5790,23 +5789,25 @@ __pyx_t_13.shape[0] = __pyx_v_s.shape[1];
 __pyx_t_13.strides[0] = __pyx_v_s.strides[1];
     __pyx_t_13.suboffsets[0] = -1;
 
-if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_13, ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_states, 1, 1, 0) < 0)) __PYX_ERR(0, 319, __pyx_L26_error)
-                                  __PYX_XDEC_MEMVIEW(&__pyx_t_13, 0);
+__PYX_XDEC_MEMVIEW(&((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_states, 0);
+                                  ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_states = __pyx_t_13;
                                   __pyx_t_13.memview = NULL;
                                   __pyx_t_13.data = NULL;
 
                                   /* "Toolbox/infcy.pyx":320
  *             for repeat in range(repeats):
- *                 (<Model> modelptr)._states[:] = s[state, :]
- *                 (<Model> modelptr)._nudges[:] = copyNudge[:]             # <<<<<<<<<<<<<<
+ *                 (<Model> modelptr)._states = s[state, :]
+ *                 (<Model> modelptr)._nudges = copyNudge[:]             # <<<<<<<<<<<<<<
+ * 
  *                 for delta in range(deltas):
- *                     for node in range(nNodes):
  */
-                                  if (unlikely(__pyx_memoryview_copy_contents(__pyx_v_copyNudge, ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_nudges, 1, 1, 0) < 0)) __PYX_ERR(0, 320, __pyx_L26_error)
+                                  __PYX_XDEC_MEMVIEW(&((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_nudges, 0);
+                                  __PYX_INC_MEMVIEW(&__pyx_v_copyNudge, 1);
+                                  ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_nudges = __pyx_v_copyNudge;
 
-                                  /* "Toolbox/infcy.pyx":321
- *                 (<Model> modelptr)._states[:] = s[state, :]
- *                 (<Model> modelptr)._nudges[:] = copyNudge[:]
+                                  /* "Toolbox/infcy.pyx":322
+ *                 (<Model> modelptr)._nudges = copyNudge[:]
+ * 
  *                 for delta in range(deltas):             # <<<<<<<<<<<<<<
  *                     for node in range(nNodes):
  *                         jdx = idxer[(<Model> modelptr)._states[node]]
@@ -5816,8 +5817,8 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_13, ((struct __pyx_obj_6Mode
                                   for (__pyx_t_29 = 0; __pyx_t_29 < __pyx_t_28; __pyx_t_29+=1) {
                                     __pyx_v_delta = __pyx_t_29;
 
-                                    /* "Toolbox/infcy.pyx":322
- *                 (<Model> modelptr)._nudges[:] = copyNudge[:]
+                                    /* "Toolbox/infcy.pyx":323
+ * 
  *                 for delta in range(deltas):
  *                     for node in range(nNodes):             # <<<<<<<<<<<<<<
  *                         jdx = idxer[(<Model> modelptr)._states[node]]
@@ -5828,7 +5829,7 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_13, ((struct __pyx_obj_6Mode
                                     for (__pyx_t_32 = 0; __pyx_t_32 < __pyx_t_31; __pyx_t_32+=1) {
                                       __pyx_v_node = __pyx_t_32;
 
-                                      /* "Toolbox/infcy.pyx":323
+                                      /* "Toolbox/infcy.pyx":324
  *                 for delta in range(deltas):
  *                     for node in range(nNodes):
  *                         jdx = idxer[(<Model> modelptr)._states[node]]             # <<<<<<<<<<<<<<
@@ -5838,7 +5839,7 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_13, ((struct __pyx_obj_6Mode
                                       __pyx_t_33 = __pyx_v_node;
                                       __pyx_v_jdx = (__pyx_v_idxer[(*((long *) ( /* dim=0 */ ((char *) (((long *) ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_states.data) + __pyx_t_33)) )))]);
 
-                                      /* "Toolbox/infcy.pyx":324
+                                      /* "Toolbox/infcy.pyx":325
  *                     for node in range(nNodes):
  *                         jdx = idxer[(<Model> modelptr)._states[node]]
  *                         out[tid, delta, node, jdx] += 1 / Z             # <<<<<<<<<<<<<<
@@ -5852,7 +5853,7 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_13, ((struct __pyx_obj_6Mode
                                       *((double *) ( /* dim=3 */ ((char *) (((double *) ( /* dim=2 */ (( /* dim=1 */ (( /* dim=0 */ (__pyx_v_out.data + __pyx_t_34 * __pyx_v_out.strides[0]) ) + __pyx_t_35 * __pyx_v_out.strides[1]) ) + __pyx_t_36 * __pyx_v_out.strides[2]) )) + __pyx_t_37)) )) += (1.0 / __pyx_v_Z);
                                     }
 
-                                    /* "Toolbox/infcy.pyx":325
+                                    /* "Toolbox/infcy.pyx":326
  *                         jdx = idxer[(<Model> modelptr)._states[node]]
  *                         out[tid, delta, node, jdx] += 1 / Z
  *                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)             # <<<<<<<<<<<<<<
@@ -5861,7 +5862,7 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_13, ((struct __pyx_obj_6Mode
  */
                                     __pyx_v_jdx = ((__pyx_v_delta + 1) * (__pyx_v_repeat + 1));
 
-                                    /* "Toolbox/infcy.pyx":326
+                                    /* "Toolbox/infcy.pyx":327
  *                         out[tid, delta, node, jdx] += 1 / Z
  *                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
  *                     (<Model> modelptr)._updateState(r[tid, jdx - 1])             # <<<<<<<<<<<<<<
@@ -5874,14 +5875,14 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_13, ((struct __pyx_obj_6Mode
                                     {
     Py_ssize_t __pyx_tmp_idx = __pyx_v_tid;
     Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[0];
-        if ((0)) __PYX_ERR(0, 326, __pyx_L26_error)
+        if ((0)) __PYX_ERR(0, 327, __pyx_L26_error)
         __pyx_t_13.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
 {
     Py_ssize_t __pyx_tmp_idx = (__pyx_v_jdx - 1);
     Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[1];
-        if ((0)) __PYX_ERR(0, 326, __pyx_L26_error)
+        if ((0)) __PYX_ERR(0, 327, __pyx_L26_error)
         __pyx_t_13.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
@@ -5889,7 +5890,7 @@ __pyx_t_13.shape[0] = __pyx_v_r.shape[2];
 __pyx_t_13.strides[0] = __pyx_v_r.strides[2];
     __pyx_t_13.suboffsets[0] = -1;
 
-__pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->__pyx_vtab)->_updateState(((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr), __pyx_t_13); if (unlikely(!__pyx_t_38.memview)) __PYX_ERR(0, 326, __pyx_L26_error)
+__pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->__pyx_vtab)->_updateState(((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr), __pyx_t_13); if (unlikely(!__pyx_t_38.memview)) __PYX_ERR(0, 327, __pyx_L26_error)
                                     __PYX_XDEC_MEMVIEW(&__pyx_t_13, 0);
                                     __pyx_t_13.memview = NULL;
                                     __pyx_t_13.data = NULL;
@@ -5897,14 +5898,14 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                     __pyx_t_38.memview = NULL;
                                     __pyx_t_38.data = NULL;
 
-                                    /* "Toolbox/infcy.pyx":327
+                                    /* "Toolbox/infcy.pyx":328
  *                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
  *                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
  *                     if nudgeType == 'pulse' or \             # <<<<<<<<<<<<<<
  *                     nudgeType    == 'constant' and delta >= half:
- *                         for node in range(nNodes):
+ *                         (<Model> modelptr)._nudges[:] = 0
  */
-                                    __pyx_t_39 = (__Pyx_PyUnicode_Equals(__pyx_v_nudgeType, __pyx_n_u_pulse, Py_EQ)); if (unlikely(__pyx_t_39 < 0)) __PYX_ERR(0, 327, __pyx_L26_error)
+                                    __pyx_t_39 = (__Pyx_PyUnicode_Equals(__pyx_v_nudgeType, __pyx_n_u_pulse, Py_EQ)); if (unlikely(__pyx_t_39 < 0)) __PYX_ERR(0, 328, __pyx_L26_error)
                                     __pyx_t_40 = (__pyx_t_39 != 0);
                                     if (!__pyx_t_40) {
                                     } else {
@@ -5912,14 +5913,14 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                       goto __pyx_L35_bool_binop_done;
                                     }
 
-                                    /* "Toolbox/infcy.pyx":328
+                                    /* "Toolbox/infcy.pyx":329
  *                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
  *                     if nudgeType == 'pulse' or \
  *                     nudgeType    == 'constant' and delta >= half:             # <<<<<<<<<<<<<<
- *                         for node in range(nNodes):
- *                                 (<Model> modelptr)._nudges[node] = 0
+ *                         (<Model> modelptr)._nudges[:] = 0
+ *             # TODO: replace this with   a concurrent unordered_map
  */
-                                    __pyx_t_40 = (__Pyx_PyUnicode_Equals(__pyx_v_nudgeType, __pyx_n_u_constant, Py_EQ)); if (unlikely(__pyx_t_40 < 0)) __PYX_ERR(0, 328, __pyx_L26_error)
+                                    __pyx_t_40 = (__Pyx_PyUnicode_Equals(__pyx_v_nudgeType, __pyx_n_u_constant, Py_EQ)); if (unlikely(__pyx_t_40 < 0)) __PYX_ERR(0, 329, __pyx_L26_error)
                                     __pyx_t_39 = (__pyx_t_40 != 0);
                                     if (__pyx_t_39) {
                                     } else {
@@ -5930,51 +5931,48 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                     __pyx_t_17 = __pyx_t_39;
                                     __pyx_L35_bool_binop_done:;
 
-                                    /* "Toolbox/infcy.pyx":327
+                                    /* "Toolbox/infcy.pyx":328
  *                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
  *                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
  *                     if nudgeType == 'pulse' or \             # <<<<<<<<<<<<<<
  *                     nudgeType    == 'constant' and delta >= half:
- *                         for node in range(nNodes):
+ *                         (<Model> modelptr)._nudges[:] = 0
  */
                                     if (__pyx_t_17) {
 
-                                      /* "Toolbox/infcy.pyx":329
+                                      /* "Toolbox/infcy.pyx":330
  *                     if nudgeType == 'pulse' or \
  *                     nudgeType    == 'constant' and delta >= half:
- *                         for node in range(nNodes):             # <<<<<<<<<<<<<<
- *                                 (<Model> modelptr)._nudges[node] = 0
- *             # TODO: replace this with   a concurrent unordered_map
- */
-                                      __pyx_t_30 = __pyx_v_nNodes;
-                                      __pyx_t_31 = __pyx_t_30;
-                                      for (__pyx_t_32 = 0; __pyx_t_32 < __pyx_t_31; __pyx_t_32+=1) {
-                                        __pyx_v_node = __pyx_t_32;
-
-                                        /* "Toolbox/infcy.pyx":330
- *                     nudgeType    == 'constant' and delta >= half:
- *                         for node in range(nNodes):
- *                                 (<Model> modelptr)._nudges[node] = 0             # <<<<<<<<<<<<<<
+ *                         (<Model> modelptr)._nudges[:] = 0             # <<<<<<<<<<<<<<
  *             # TODO: replace this with   a concurrent unordered_map
  *             with gil:
  */
-                                        __pyx_t_41 = __pyx_v_node;
-                                        *((double *) ( /* dim=0 */ ((char *) (((double *) ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_nudges.data) + __pyx_t_41)) )) = 0.0;
+                                      {
+                                          double __pyx_temp_scalar = 0.0;
+                                          {
+                                              Py_ssize_t __pyx_temp_extent = ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_nudges.shape[0];
+                                              Py_ssize_t __pyx_temp_idx;
+                                              double *__pyx_temp_pointer = (double *) ((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->_nudges.data;
+                                              for (__pyx_temp_idx = 0; __pyx_temp_idx < __pyx_temp_extent; __pyx_temp_idx++) {
+                                                *((double *) __pyx_temp_pointer) = __pyx_temp_scalar;
+                                                __pyx_temp_pointer += 1;
+                                              }
+                                          }
                                       }
 
-                                      /* "Toolbox/infcy.pyx":327
+                                      /* "Toolbox/infcy.pyx":328
  *                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
  *                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
  *                     if nudgeType == 'pulse' or \             # <<<<<<<<<<<<<<
  *                     nudgeType    == 'constant' and delta >= half:
- *                         for node in range(nNodes):
+ *                         (<Model> modelptr)._nudges[:] = 0
  */
                                     }
                                   }
                                 }
 
                                 /* "Toolbox/infcy.pyx":332
- *                                 (<Model> modelptr)._nudges[node] = 0
+ *                         (<Model> modelptr)._nudges[:] = 0
  *             # TODO: replace this with   a concurrent unordered_map
  *             with gil:             # <<<<<<<<<<<<<<
  *                 # note: copy method is required otherwise zeros will appear
@@ -5993,15 +5991,15 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
  *                 pbar.update(1)
  *     # for idx, si in enumerate(out.base):
  */
-                                      __pyx_t_8 = __pyx_memoryview_fromslice(__pyx_v_out, 4, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_8 = __pyx_memoryview_fromslice(__pyx_v_out, 4, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_8);
-                                      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_base); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_base); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_1);
                                       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-                                      __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_tid, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_8 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_tid, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_8);
                                       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-                                      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_copy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_copy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_1);
                                       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
                                       __pyx_t_8 = NULL;
@@ -6016,21 +6014,21 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                       }
                                       __pyx_t_18 = (__pyx_t_8) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_8) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
                                       __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-                                      if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_18);
                                       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-                                      __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_s, 2, (PyObject *(*)(char *)) __pyx_memview_get_long, (int (*)(char *, PyObject *)) __pyx_memview_set_long, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_1 = __pyx_memoryview_fromslice(__pyx_v_s, 2, (PyObject *(*)(char *)) __pyx_memview_get_long, (int (*)(char *, PyObject *)) __pyx_memview_set_long, 0);; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_1);
-                                      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_base); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_base); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_8);
                                       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-                                      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_8, __pyx_v_state, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_8, __pyx_v_state, int, 1, __Pyx_PyInt_From_int, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_1);
                                       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-                                      __pyx_t_8 = __Pyx_PySequence_Tuple(__pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      __pyx_t_8 = __Pyx_PySequence_Tuple(__pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_8);
                                       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-                                      if (unlikely(PyDict_SetItem(__pyx_v_conditional, __pyx_t_8, __pyx_t_18) < 0)) __PYX_ERR(0, 334, __pyx_L43_error)
+                                      if (unlikely(PyDict_SetItem(__pyx_v_conditional, __pyx_t_8, __pyx_t_18) < 0)) __PYX_ERR(0, 334, __pyx_L41_error)
                                       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
                                       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
 
@@ -6041,7 +6039,7 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
  *     # for idx, si in enumerate(out.base):
  *     #     conditional[tuple(s.base[idx])] = si
  */
-                                      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_pbar, __pyx_n_s_update); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 335, __pyx_L43_error)
+                                      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_pbar, __pyx_n_s_update); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 335, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_8);
                                       __pyx_t_1 = NULL;
                                       if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_8))) {
@@ -6055,14 +6053,14 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                       }
                                       __pyx_t_18 = (__pyx_t_1) ? __Pyx_PyObject_Call2Args(__pyx_t_8, __pyx_t_1, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_8, __pyx_int_1);
                                       __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-                                      if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 335, __pyx_L43_error)
+                                      if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 335, __pyx_L41_error)
                                       __Pyx_GOTREF(__pyx_t_18);
                                       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
                                       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
                                     }
 
                                     /* "Toolbox/infcy.pyx":332
- *                                 (<Model> modelptr)._nudges[node] = 0
+ *                         (<Model> modelptr)._nudges[:] = 0
  *             # TODO: replace this with   a concurrent unordered_map
  *             with gil:             # <<<<<<<<<<<<<<
  *                 # note: copy method is required otherwise zeros will appear
@@ -6073,18 +6071,18 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                         #ifdef WITH_THREAD
                                         __Pyx_PyGILState_Release(__pyx_gilstate_save);
                                         #endif
-                                        goto __pyx_L44;
+                                        goto __pyx_L42;
                                       }
-                                      __pyx_L43_error: {
+                                      __pyx_L41_error: {
                                         #ifdef WITH_THREAD
                                         __Pyx_PyGILState_Release(__pyx_gilstate_save);
                                         #endif
                                         goto __pyx_L26_error;
                                       }
-                                      __pyx_L44:;
+                                      __pyx_L42:;
                                     }
                                 }
-                                goto __pyx_L46;
+                                goto __pyx_L44;
                                 __pyx_L26_error:;
                                 {
                                     #ifdef WITH_THREAD
@@ -6103,8 +6101,8 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                     #endif
                                 }
                                 __pyx_parallel_why = 4;
-                                goto __pyx_L45;
-                                __pyx_L45:;
+                                goto __pyx_L43;
+                                __pyx_L43:;
                                 #ifdef _OPENMP
                                 #pragma omp critical(__pyx_parallel_lastprivates1)
                                 #endif /* _OPENMP */
@@ -6117,7 +6115,7 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                                     __pyx_parallel_temp5 = __pyx_v_state;
                                     __pyx_parallel_temp6 = __pyx_v_tid;
                                 }
-                                __pyx_L46:;
+                                __pyx_L44:;
                                 #ifdef _OPENMP
                                 #pragma omp flush(__pyx_parallel_why)
                                 #endif /* _OPENMP */
@@ -6153,7 +6151,7 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                       }
                     }
                 }
-                goto __pyx_L48;
+                goto __pyx_L46;
                 __pyx_L22_error:;
                 {
                     #ifdef WITH_THREAD
@@ -6172,8 +6170,8 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
                     #endif
                 }
                 __pyx_parallel_why = 4;
-                goto __pyx_L48;
-                __pyx_L48:;
+                goto __pyx_L46;
+                __pyx_L46:;
                 #ifdef _OPENMP
                 Py_END_ALLOW_THREADS
                 #else
@@ -6293,7 +6291,7 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
   __pyx_t_18 = PyTuple_New(3); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_18);
   __pyx_t_9 = 0;
-  __pyx_t_42 = 127;
+  __pyx_t_41 = 127;
   __Pyx_INCREF(__pyx_kp_u_Delta);
   __pyx_t_9 += 8;
   __Pyx_GIVEREF(__pyx_kp_u_Delta);
@@ -6324,7 +6322,7 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
   __pyx_t_1 = __Pyx_PyObject_Format(__pyx_t_7, __pyx_kp_u_2f); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_42 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_1) > __pyx_t_42) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_1) : __pyx_t_42;
+  __pyx_t_41 = (__Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_1) > __pyx_t_41) ? __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_1) : __pyx_t_41;
   __pyx_t_9 += __Pyx_PyUnicode_GET_LENGTH(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_18, 1, __pyx_t_1);
@@ -6333,7 +6331,7 @@ __pyx_t_38 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_ob
   __pyx_t_9 += 4;
   __Pyx_GIVEREF(__pyx_kp_u_sec);
   PyTuple_SET_ITEM(__pyx_t_18, 2, __pyx_kp_u_sec);
-  __pyx_t_1 = __Pyx_PyUnicode_Join(__pyx_t_18, 3, __pyx_t_9, __pyx_t_42); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 340, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyUnicode_Join(__pyx_t_18, 3, __pyx_t_9, __pyx_t_41); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 340, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
   __pyx_t_18 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 340, __pyx_L1_error)

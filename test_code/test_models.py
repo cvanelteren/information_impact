@@ -32,12 +32,12 @@ class TestIsing(unittest.TestCase):
         node = next(iter(self.model.graph.nodes()))
         test_nudges = {node : 1}
         self.model.nudges = test_nudges
-        models = [deepcopy(self.model) for _ in range(2)]
+        models = [deepcopy(self.model) for _ in range(5)]
 
         nodeidx = self.model.mapping[str(node)]
         for model in models:
-            for node, nudge in test_nudges.items():
-                self.assertEqual(model.nudges[nodeidx], nudge)
+            for node, idx in model.mapping.items():
+                self.assertEqual(model.nudges[idx], test_nudges.get(node, 0))
 
 
 
