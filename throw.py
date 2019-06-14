@@ -44,7 +44,7 @@ n = 150
     
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-g = nx.duplication_divergence_graph(10, .25)
+g = nx.duplication_divergence_graph(20, .25)
 #g = nx.florentine_families_graph()
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
@@ -58,7 +58,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'single', \
+                    updateType = 'async', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
@@ -74,12 +74,7 @@ samps = np.array(samps)
 samps = samps.mean(0)
 mag, sus = samps
 # %% 
-idx = np.nanargmax(sus)
-idx = np.argmin(abs(mag - .8 * mag.max()))
-
-
-fig, ax = plt.subplots()
-ax.plot(temps, mag)
+idx = np.nanargmax(sus) 
 tax = ax.twinx()
 tax.scatter(temps, sus)
 ax.plot(temps[idx], mag[idx], 'r.')
@@ -109,9 +104,9 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 10
+deltas = 50
 start = time.time()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e2), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 #
 repeats = int(1e3)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
@@ -133,7 +128,7 @@ fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
 idx = 5
-ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
+#ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend(bbox_to_anchor = (1.05, 1))
@@ -141,7 +136,7 @@ fig.show()
 
 fig, ax = plt.subplots(); 
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
-ax.set_xlim(0, 4)
+#ax.set_xlim(0, 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
 #ax.set_xlim(0, idx)
