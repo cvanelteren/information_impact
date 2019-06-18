@@ -11,16 +11,28 @@ n = 500
 # g = nx.star_graph(10)
 
 
+<<<<<<< HEAD
  #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+=======
+# #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+>>>>>>> a05455f947dbdb62bd49af2c8133b956c09296c9
 dataDir = 'Psycho' # relative path careful
 df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
 h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
 g   = nx.from_pandas_adjacency(df)
+<<<<<<< HEAD
 attr = {}
 for node, row in h.iterrows():
     attr[node] = dict(H = row['externalField'], nudges = 0)
 nx.set_node_attributes(g, attr)
 #
+=======
+#attr = {}
+#for node, row in h.iterrows():
+#    attr[node] = dict(H = row['externalField'], nudges = 0)
+#nx.set_node_attributes(g, attr)
+
+>>>>>>> a05455f947dbdb62bd49af2c8133b956c09296c9
 
 
 
@@ -35,6 +47,7 @@ nx.set_node_attributes(g, attr)
 #    g = sorted(nx.connected_component_subgraphs(g), key = len)[-1]
 #    if len(g) == 20:
 #        break
+<<<<<<< HEAD
     
     
 #g = nx.florentine_families_graph()
@@ -57,22 +70,19 @@ n = 150
 #ax.imshow(a.mean(0).reshape(n, n), aspect = 'auto')
 
 
+=======
+n = 150
+>>>>>>> a05455f947dbdb62bd49af2c8133b956c09296c9
 #g = nx.star_graph(5)
-
 #plt.hist(w)
 #g = nx.expected_degree_graph(w)
-
 #for i, j in g.edges():
 #    g[i][j]['weight'] = np.random.rand()  * 2 - 1
     
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-#g = nx.duplication_divergence_graph(10, .25)
-#
-#g = nx.krackhardt_kite_graph()
-#g.add_edge(0, 0)
-
-#g = nx.barabasi_albert_graph(10, 2)
+g = nx.duplication_divergence_graph(20, .25)
+#g = nx.florentine_families_graph()
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
 fig, ax = plt.subplots();
@@ -85,14 +95,14 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'single', \
+                    updateType = 'async', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
-samps = [m.matchMagnetization(temps, 100) for i in range(10)]
+samps = [m.matchMagnetization(temps, 100) for i in range(5)]
 
 from scipy import ndimage
 
@@ -101,17 +111,18 @@ samps = np.array(samps)
 samps = samps.mean(0)
 mag, sus = samps
 # %% 
-idx = np.nanargmax(sus)
-idx = np.argmin(abs(mag - .8 * mag.max()))
-
-fig, ax = plt.subplots()
-ax.plot(temps, mag)
+idx = np.nanargmax(sus) 
 tax = ax.twinx()
 tax.scatter(temps, sus)
 ax.plot(temps[idx], mag[idx], 'r.')
 ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> a05455f947dbdb62bd49af2c8133b956c09296c9
 # %%
 #assert 0 
 #m.t = 1
@@ -133,11 +144,11 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 250
+deltas = 50
 start = time.time()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e2), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 #
-repeats = int(1e4)
+repeats = int(1e3)
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
@@ -156,7 +167,8 @@ print(time.time() - start)
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
-ax.set_xlim(deltas // 2 - 2, deltas//2 + 50)
+idx = 5
+#ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend(bbox_to_anchor = (1.05, 1))
@@ -167,15 +179,16 @@ fig, ax = plt.subplots();
 #ax.set_xlim(0, 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
-ax.set_xlim(0, 50)
+#ax.set_xlim(0, idx)
 
 
 fig, ax = plt.subplots()
-x = mi[:deltas // 2, :].sum(0)
-y = out[:, deltas // 2:].sum(-1)
-ax.scatter(x, y)
-
+x = np.trapz(mi[:deltas // 2, :], axis = 0)
+y = np.trapz(out[:, deltas // 2:], axis = -1)
+[ax.scatter(xi, yi, color = ci) for ci, xi, yi in zip(colors, x.T, y.T)]
 fig.show()
+
+
 fig, ax = plt.subplots()
 nx.draw(g, ax = ax, pos = nx.circular_layout(g), with_labels = 1)
 
@@ -196,16 +209,3 @@ fig, ax = plt.subplots()
 degs = list(dict(g.degree()).values())
 ax.hist(degs, bins = 10)
 plt.show()
-
-def randomizeEdges(graph):
-    """
-    Randomly connect an edge to another node
-    """
-    from random import choice
-    edges = graph.edges()
-    swap = choice(list(edges))
-    
-    node = choice(graph.nodes())
-        
-    
-# %%

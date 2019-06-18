@@ -316,8 +316,10 @@ cpdef dict monteCarlo(\
             out[tid]    = 0 # reset buffer
             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
             for repeat in range(repeats):
-                (<Model> modelptr)._states[:] = s[state, :]
-                (<Model> modelptr)._nudges[:] = copyNudge[:]
+                for node in range(nNodes):
+                    (<Model> modelptr)._states[node] = s[state, node]
+                    (<Model> modelptr)._nudges[node] = copyNudge[node]
+
                 for delta in range(deltas):
                     for node in range(nNodes):
                         jdx = idxer[(<Model> modelptr)._states[node]]
@@ -326,8 +328,7 @@ cpdef dict monteCarlo(\
                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
                     if nudgeType == 'pulse' or \
                     nudgeType    == 'constant' and delta >= half:
-                        for node in range(nNodes):
-                                (<Model> modelptr)._nudges[node] = 0
+                        (<Model> modelptr)._nudges[:] = 0
             # TODO: replace this with   a concurrent unordered_map
             with gil:
                 # note: copy method is required otherwise zeros will appear
