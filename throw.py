@@ -11,16 +11,16 @@ n = 500
 # g = nx.star_graph(10)
 
 
-# #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-#dataDir = 'Psycho' # relative path careful
-#df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-#h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-#g   = nx.from_pandas_adjacency(df)
-#attr = {}
-#for node, row in h.iterrows():
-#    attr[node] = dict(H = row['externalField'], nudges = 0)
-#nx.set_node_attributes(g, attr)
-
+ #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+dataDir = 'Psycho' # relative path careful
+df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+g   = nx.from_pandas_adjacency(df)
+attr = {}
+for node, row in h.iterrows():
+    attr[node] = dict(H = row['externalField'], nudges = 0)
+nx.set_node_attributes(g, attr)
+#
 
 
 
@@ -37,28 +37,26 @@ n = 500
 #        break
     
     
-g = nx.florentine_families_graph()
+#g = nx.florentine_families_graph()
 n = 150
-g = nx.grid_2d_graph(n, n)
-from Models.percolation import Percolation
-n
-m = Percolation(graph = g, p = .55, updateType = 'async')
-m.reset()
+#g = nx.grid_2d_graph(n, n)
+#from Models.percolation import Percolation
+#n
+#m = Percolation(graph = g, p = .55, updateType = 'async')
+#m.reset()
 
-tmp = [j for i, j in m.mapping.items() if i == str((n//2, n//2))][0]
-b = np.zeros(m.nNodes, dtype = int)
-b[tmp] = 1
-m.states = b
+#tmp = [j for i, j in m.mapping.items() if i == str((n//2, n//2))][0]
+#b = np.zeros(m.nNodes, dtype = int)
+#b[tmp] = 1
+#m.states = b
 #print(m.simulate(500))
 
 #m.reset()
-a = m.simulate(1000)
-fig, ax = plt.subplots()
-ax.imshow(a.mean(0).reshape(n, n), aspect = 'auto')
+#a = m.simulate(1000)
+#fig, ax = plt.subplots()
+#ax.imshow(a.mean(0).reshape(n, n), aspect = 'auto')
 
 
-
-assert 0
 #g = nx.star_graph(5)
 
 #plt.hist(w)
@@ -114,7 +112,6 @@ ax.plot(temps[idx], mag[idx], 'r.')
 ax.set(xlim = (0, 10))
 plt.show()
 m.t = temps[idx]
-assert 0
 # %%
 #assert 0 
 #m.t = 1
