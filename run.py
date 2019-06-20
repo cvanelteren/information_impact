@@ -46,8 +46,9 @@ if __name__ == '__main__':
     N  = 20
     
     for i in range(100):
-        g = nx.barabasi_albert_graph(N, 2)
-        g = nx.erdos_renyi_graph(N, .2)
+        #g = nx.barabasi_albert_graph(N, 2)
+        #g = nx.erdos_renyi_graph(N, .2)
+        g = nx.duplication_divergence_graph(N, .25)
 #        graphs.append(g)
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
