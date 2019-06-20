@@ -51,7 +51,7 @@ if __name__ == '__main__':
 #        graphs.append(g)
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
-        g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
+        # g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
         
         #for i, j in g.edges():
         #    g[i][j]['weight'] = np.random.rand() * 2 - 1

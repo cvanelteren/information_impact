@@ -26,7 +26,7 @@ dataPath = f"{os.getcwd()}/Data/"
 # convenience
 kite     = '1548347769.6300871'
 psycho   = '1548025318.5751357'
-psycho_neg='1556092963.4608574'
+#psycho_neg='1556092963.4608574'
 
 #psycho = 'Data/cvelteren/2019-05-09T16:10:34.645885'
 #psycho = '2019-05-07T14:04:28.747149'

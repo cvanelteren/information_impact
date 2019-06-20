@@ -44,8 +44,8 @@ n = 150
     
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
-g = nx.duplication_divergence_graph(20, .25)
-#g = nx.florentine_families_graph()
+g = nx.duplication_divergence_graph(10, .25)
+g = nx.florentine_families_graph()
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
 fig, ax = plt.subplots();
@@ -58,7 +58,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'async', \
+                    updateType = 'single', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
