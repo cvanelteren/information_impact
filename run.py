@@ -30,7 +30,7 @@ import networkx as nx, \
 close('all')
 if __name__ == '__main__':
     repeats       = int(1e3)
-    deltas        = 100
+    deltas        = 30
     step          = int(1e4)
     nSamples      = int(1e3)
     burninSamples = 0
@@ -38,14 +38,14 @@ if __name__ == '__main__':
 
     nTrials       = 1
     magSide       = 'neg'
-    updateType    = 'single'
-    CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = 'async'
+    CHECK         = [0.7] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
     tempres       = 100
     graphs = []
-    N  = 20
+    N  = 50
     
-    for i in range(100):
+    for i in range(10):
         #g = nx.barabasi_albert_graph(N, 2)
         #g = nx.erdos_renyi_graph(N, .2)
         g = nx.duplication_divergence_graph(N, .25)
