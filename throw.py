@@ -72,7 +72,7 @@ n = 150
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
 g = nx.duplication_divergence_graph(10, .25)
-g = nx.florentine_families_graph()
+#g = nx.florentine_families_graph()
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
 fig, ax = plt.subplots();
@@ -85,14 +85,14 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'single', \
+                    updateType = 'async', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.linspace(0, g.number_of_nodes(), 100)
-samps = [m.matchMagnetization(temps, 100) for i in range(5)]
+samps = [m.matchMagnetization(temps, 100) for i in range(1)]
 
 from scipy import ndimage
 
@@ -112,7 +112,38 @@ m.t = temps[idx]
 #assert 0 
 #m.t = 1
 #print(m.states.base)
+from Toolbox import infcy
+def entropy(p):
+    return - (np.log2(p)*p).sum()
 
+from itertools import product
+N = 10
+M = 100
+tmp = np.zeros((M, 2))
+
+snaps = list(product(m.agentStates, repeat = N))
+for i in range(M):
+    g = nx.erdos_renyi_graph(N, .2)
+    m = fastIsing.Ising(graph = g, \
+                    updateType = 'async', \
+                    magSide = '', \
+                    nudgeType = 'constant',\
+                    nudges = {}, t = np.random.rand() * 1000)
+    snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
+
+
+    e = np.zeros(len(snaps))
+    for idx, s in enumerate(snaps):
+        m.states = np.asarray(s)
+        e[idx] = np.exp(-m.beta * m.hammy() / 2)
+    e /= e.sum()
+    print(e)
+    tmp[i, 1] = entropy(e)
+    tmp[i, 0] = entropy(np.fromiter(snapshots.values(), dtype = float))
+print(tmp)
+print(all(tmp[:, 0] < tmp[:, 1]))
+assert 0
+# %%
 colors = plt.cm.tab20(np.arange(m.nNodes))
 
 #m = potts.Potts(graph = g, temperature = 0, \
@@ -129,17 +160,20 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 50
+deltas = 30
 start = time.time()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
-#
+m.reset()
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
 repeats = int(1e3)
+#assert False
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
 assert len(conditional) == len(snapshots)
 
 from Utils.stats import KL, hellingerDistance, JS
+
+
 # %%
 NUDGE = 1
 out = np.zeros((m.nNodes, deltas))
@@ -153,7 +187,7 @@ fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
 idx = 5
-#ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
+ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 ax.legend(bbox_to_anchor = (1.05, 1))
@@ -168,7 +202,7 @@ ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
 
 
 fig, ax = plt.subplots()
-x = np.trapz(mi[:deltas // 2, :], axis = 0)
+x = np.trapz(mi[:deltas // 2 - 1, :], axis = 0)
 y = np.trapz(out[:, deltas // 2:], axis = -1)
 [ax.scatter(xi, yi, color = ci) for ci, xi, yi in zip(colors, x.T, y.T)]
 fig.show()
