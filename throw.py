@@ -128,7 +128,7 @@ for i in range(M):
                     updateType = 'async', \
                     magSide = '', \
                     nudgeType = 'constant',\
-                    nudges = {}, t = np.random.rand() * 1000)
+                    nudges = {}, t = np.random.rand() * 10)
     snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 
 
