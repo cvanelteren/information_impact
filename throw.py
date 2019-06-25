@@ -91,8 +91,8 @@ m = fastIsing.Ising(graph = g, \
                     nudges = {})
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
-temps = np.linspace(0, g.number_of_nodes(), 100)
-samps = [m.matchMagnetization(temps, 100) for i in range(1)]
+temps = np.logspace(-3, np.log10(g.number_of_nodes()), 20)
+samps = [m.matchMagnetization(temps, 100) for i in range(2)]
 
 from scipy import ndimage
 
@@ -101,13 +101,19 @@ samps = np.array(samps)
 samps = samps.mean(0)
 mag, sus = samps
 # %% 
+fig, ax = plt.subplots()
+ax.scatter(temps, mag, color = 'orange', label = 'magnetization')
 idx = np.nanargmax(sus) 
 tax = ax.twinx()
-tax.scatter(temps, sus)
+tax.scatter(temps, sus, label = 'susceptibility')
+ax.legend(); tax.legend(loc = 'lower right')
 ax.plot(temps[idx], mag[idx], 'r.')
 ax.set(xlim = (0, 10))
-plt.show()
+fig.show()
 m.t = temps[idx]
+
+fig, ax = plt.subplots(); ax.scatter(temps, sus)
+assert 0
 # %%
 #assert 0 
 #m.t = 1
@@ -117,32 +123,32 @@ def entropy(p):
     return - (np.log2(p)*p).sum()
 
 from itertools import product
-N = 10
-M = 100
-tmp = np.zeros((M, 2))
+#N = 10
+#M = 100
+#tmp = np.zeros((M, 2))
 
-snaps = list(product(m.agentStates, repeat = N))
-for i in range(M):
-    g = nx.erdos_renyi_graph(N, .2)
-    m = fastIsing.Ising(graph = g, \
-                    updateType = 'async', \
-                    magSide = '', \
-                    nudgeType = 'constant',\
-                    nudges = {}, t = np.random.rand() * 10)
-    snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
-
-
-    e = np.zeros(len(snaps))
-    for idx, s in enumerate(snaps):
-        m.states = np.asarray(s)
-        e[idx] = np.exp(-m.beta * m.hammy() / 2)
-    e /= e.sum()
-    print(e)
-    tmp[i, 1] = entropy(e)
-    tmp[i, 0] = entropy(np.fromiter(snapshots.values(), dtype = float))
-print(tmp)
-print(all(tmp[:, 0] < tmp[:, 1]))
-assert 0
+#snaps = list(product(m.agentStates, repeat = N))
+#for i in range(M):
+#    g = nx.erdos_renyi_graph(N, .2)
+#    m = fastIsing.Ising(graph = g, \
+#                    updateType = 'async', \
+#                    magSide = '', \
+#                    nudgeType = 'constant',\
+#                    nudges = {}, t = np.random.rand() * 10)
+#    snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
+#
+#
+#    e = np.zeros(len(snaps))
+#    for idx, s in enumerate(snaps):
+#        m.states = np.asarray(s)
+#        e[idx] = np.exp(-m.beta * m.hammy() / 2)
+#    e /= e.sum()
+#    print(e)
+#    tmp[i, 1] = entropy(e)
+#    tmp[i, 0] = entropy(np.fromiter(snapshots.values(), dtype = float))
+#print(tmp)
+#print(all(tmp[:, 0] < tmp[:, 1]))
+#assert 0
 # %%
 colors = plt.cm.tab20(np.arange(m.nNodes))
 
@@ -173,12 +179,11 @@ assert len(conditional) == len(snapshots)
 
 from Utils.stats import KL, hellingerDistance, JS
 
-
 # %%
 NUDGE = 1
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
-    m.nudges = {node : NUDGE}
+    m.nudges = {node : NUDGE}:q
     c, p, n = infcy.runMC(m, snapshots, deltas, repeats)
     out[idx, :] = KL(px, p).sum(-1)
 print(time.time() - start)

@@ -343,20 +343,34 @@ cpdef dict monteCarlo(\
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
-cpdef mutualInformation(dict conditional, int deltas, \
-                          dict snapshots, Model model):
+cpdef mutualInformation(dict conditional, \
+                          dict snapshots):
     '''
     Returns the node distribution and the mutual information decay
+    Please note that it uses information implicitly from conditional to determine the correct dimensions
+    of the data.
     '''
-    cdef  np.ndarray px = np.zeros((deltas, model._nNodes, model._nStates))
-    cdef  np.ndarray H  = np.zeros((deltas, model._nNodes))
-    for key, p in conditional.items():
+    cdef  np.ndarray px, H
+    cdef int deltas, nodes, states
+    for idx, (key, p) in enumerate(conditional.items()):
+        if idx == 0:
+            deltas, nodes, states = p.shape
+            px = np.zeros((deltas, nodes, states))
+            H  = np.zeros((deltas, nodes))
         # p    = np.asarray(p)
-        H   -= np.nansum(p * np.log2(p), -1) * snapshots[key]
+        H   -= entropy(p) * snapshots[key]
         px  += p  * snapshots[key] # update node distribution
-    H += np.nansum(px *  np.log2(px), -1)
-    return px, -H
-
+    H += entropy(px)
+    # H += np.nansum(px *  np.log2(px), -1)
+    return px, H
+    
+cpdef entropy(np.ndarray p, ax = -1):
+    """
+    Computes entropy
+    Removes negatives
+    Expect the states to be at axis= - 1
+    """
+    return -np.nansum((p * np.log2(p)), axis = ax)
 cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = {}):
     """ wrapper to perform MC and MI"""
     cdef:
@@ -364,5 +378,5 @@ cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = 
                         deltas = deltas, repeats = repeats,\
                         **kwargs)
         np.ndarray px, mi
-    px, mi = mutualInformation(conditional, deltas, snapshots, model)
+    px, mi = mutualInformation(conditional, snapshots)
     return conditional, px, mi
