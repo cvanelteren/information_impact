@@ -72,6 +72,8 @@ n = 150
 #g = nx.erdos_renyi_graph(20, .2)
 #g = nx.watts_strogatz_graph(10, 3, .4)
 g = nx.duplication_divergence_graph(10, .25)
+g = nx.grid_2d_graph(10, 10)
+g = nx.complete_graph(10)
 #g = nx.florentine_families_graph()
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
@@ -91,8 +93,9 @@ m = fastIsing.Ising(graph = g, \
                     nudges = {})
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
-temps = np.logspace(-3, np.log10(g.number_of_nodes()), 20)
-samps = [m.matchMagnetization(temps, 100) for i in range(2)]
+temps = np.logspace(-3, np.log10(g.number_of_nodes()), 50)
+temps = np.linspace(0, 10, 20)
+samps = [m.matchMagnetization(temps, 1000) for i in range(4)]
 
 from scipy import ndimage
 
@@ -183,7 +186,7 @@ from Utils.stats import KL, hellingerDistance, JS
 NUDGE = 1
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
-    m.nudges = {node : NUDGE}:q
+    m.nudges = {node : NUDGE}
     c, p, n = infcy.runMC(m, snapshots, deltas, repeats)
     out[idx, :] = KL(px, p).sum(-1)
 print(time.time() - start)
