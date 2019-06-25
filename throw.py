@@ -69,11 +69,13 @@ n = 150
 #for i, j in g.edges():
 #    g[i][j]['weight'] = np.random.rand()  * 2 - 1
     
-#g = nx.erdos_renyi_graph(20, .2)
+#g = nx.erdos_renyi_graph(5, .4)
 #g = nx.watts_strogatz_graph(10, 3, .4)
 g = nx.duplication_divergence_graph(10, .25)
-g = nx.grid_2d_graph(10, 10)
-g = nx.complete_graph(10)
+#g = nx.grid_2d_graph(10, 10)
+#g = nx.complete_graph(10)
+
+#g = nx.erdos_renyi_graph(5, .25)
 #g = nx.florentine_families_graph()
 fig, ax = plt.subplots()
 nx.draw(g, pos = nx.circular_layout(g), ax = ax, with_labels = 1)
@@ -87,7 +89,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'async', \
+                    updateType = 'single', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
@@ -95,10 +97,11 @@ m = fastIsing.Ising(graph = g, \
 
 temps = np.logspace(-3, np.log10(g.number_of_nodes()), 50)
 temps = np.linspace(0, 10, 20)
-samps = [m.matchMagnetization(temps, 1000) for i in range(4)]
+samps = [m.matchMagnetization(temps, 1000) for i in range(1)]
+
 
 from scipy import ndimage
-
+samps = ndimage.gaussian_filter1d(samps,1, axis = 1)    
 # %%
 samps = np.array(samps)
 samps = samps.mean(0)
@@ -106,7 +109,8 @@ mag, sus = samps
 # %% 
 fig, ax = plt.subplots()
 ax.scatter(temps, mag, color = 'orange', label = 'magnetization')
-idx = np.nanargmax(sus) 
+#idx = np.nanargmax(sus) 
+idx = np.argmin(abs(mag - .9 * mag.max()))
 tax = ax.twinx()
 tax.scatter(temps, sus, label = 'susceptibility')
 ax.legend(); tax.legend(loc = 'lower right')
@@ -116,7 +120,6 @@ fig.show()
 m.t = temps[idx]
 
 fig, ax = plt.subplots(); ax.scatter(temps, sus)
-assert 0
 # %%
 #assert 0 
 #m.t = 1
@@ -169,7 +172,7 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 30
+deltas = 500
 start = time.time()
 m.reset()
 snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
@@ -183,7 +186,7 @@ assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance, JS
 
 # %%
-NUDGE = 1
+NUDGE = -1
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
@@ -193,7 +196,7 @@ print(time.time() - start)
 # %%
 fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
-ax.set(ylabel = 'KL-divergence', xlabel = 'time[step]')
+ax.set(ylabel = 'KL-divergence' , xlabel = 'time[step]')
 idx = 5
 ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
 #ax.set_xlim(0, 10)

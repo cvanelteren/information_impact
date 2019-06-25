@@ -363,7 +363,7 @@ cpdef mutualInformation(dict conditional, \
     H += entropy(px)
     # H += np.nansum(px *  np.log2(px), -1)
     return px, H
-    
+
 cpdef entropy(np.ndarray p, ax = -1):
     """
     Computes entropy
@@ -371,6 +371,7 @@ cpdef entropy(np.ndarray p, ax = -1):
     Expect the states to be at axis= - 1
     """
     return -np.nansum((p * np.log2(p)), axis = ax)
+    
 cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = {}):
     """ wrapper to perform MC and MI"""
     cdef:
