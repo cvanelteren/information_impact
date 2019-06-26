@@ -72,6 +72,7 @@ n = 150
 #g = nx.erdos_renyi_graph(5, .4)
 #g = nx.watts_strogatz_graph(10, 3, .4)
 g = nx.duplication_divergence_graph(10, .25)
+#g = nx.erdos_renyi_graph(10, .3)
 #g = nx.grid_2d_graph(10, 10)
 #g = nx.complete_graph(10)
 
@@ -96,7 +97,7 @@ m = fastIsing.Ising(graph = g, \
 #m = potts.Potts(graph = g, agentStates = [1, 2])
 
 temps = np.logspace(-3, np.log10(g.number_of_nodes()), 50)
-temps = np.linspace(0, 10, 20)
+temps = np.linspace(0, 10, 50)
 samps = [m.matchMagnetization(temps, 1000) for i in range(1)]
 
 
@@ -110,7 +111,7 @@ mag, sus = samps
 fig, ax = plt.subplots()
 ax.scatter(temps, mag, color = 'orange', label = 'magnetization')
 #idx = np.nanargmax(sus) 
-idx = np.argmin(abs(mag - .9 * mag.max()))
+idx = np.argmin(abs(mag - .8 * mag.max()))
 tax = ax.twinx()
 tax.scatter(temps, sus, label = 'susceptibility')
 ax.legend(); tax.legend(loc = 'lower right')
@@ -172,12 +173,14 @@ N = 100
 # a, b = m.matchMagnetization(temps, N)
 
 from Toolbox import infcy
-deltas = 500
+deltas = 50
 start = time.time()
 m.reset()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
-repeats = int(1e3)
+snapshots    = infcy.getSnapShots(m, nSamples = int(3e4), steps = int(1e3),  nThreads = -1)
+repeats = int(1e4)
 #assert False
+
+#m.magSide = ''
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #
 
@@ -186,7 +189,7 @@ assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance, JS
 
 # %%
-NUDGE = -1
+NUDGE = -np.inf
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
@@ -201,6 +204,7 @@ idx = 5
 ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
+#ax.set_xscale('log')
 ax.legend(bbox_to_anchor = (1.05, 1))
 fig.show()
 
@@ -209,7 +213,7 @@ fig, ax = plt.subplots();
 #ax.set_xlim(0, 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
-#ax.set_xlim(0, idx)
+ax.set_xlim(0, idx)
 
 
 fig, ax = plt.subplots()
