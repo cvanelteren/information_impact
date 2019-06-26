@@ -37,7 +37,7 @@ h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
 #graph.add_edge(2,0)
 #graph[0][1]['weight'] = 10
 #attr = {}
-
+graph = nx.krackhardt_kite_graph()
 
 #for node, row in h.iterrows():
 #    attr[node] = dict(H = row['externalField'], nudges = 0)
@@ -50,35 +50,40 @@ mis = np.zeros((N, graph.number_of_nodes(), deltas))
 fig, ax = plt.subplots()
 tax = ax.twinx()
 
+
+modelsettings = dict(\
+                 graph = graph, \
+                 updateType = 'single', \
+                 nudgeType  = 'constant',\
+                 magSide = 'neg')
+m = fastIsing.Ising(\
+                **modelsettings)
+temps = np.logspace(-6, np.log10(20), 30)
+samps = [m.matchMagnetization(temps, 100) for i in range(1)]
+
+samps = np.array(samps)
+samps = gaussian_filter1d(samps, 3, axis = -1)
+samps = samps.mean(0)
+mag, sus = samps
+ax.plot(temps, mag)
+tax.plot(temps, sus)
+
+fig.show()
+IDX = np.argmin(abs(mag - .8 * mag.max()))
+#    IDX = np.argmax(sus)
+m.t = temps[IDX]
+mis[n] = mi.T
+
 storedTemperatures = []
 for n in range(N):
-    
-    modelsettings = dict(\
-                     graph = graph, \
-                     updateType = 'single', \
-                     nudgeType  = 'constant',\
-                     magSide = 'neg')
-    m = fastIsing.Ising(\
-                    **modelsettings)
-    temps = np.logspace(-6, np.log10(20), 30)
-    samps = [m.matchMagnetization(temps, 100) for i in range(1)]
-
-    samps = np.array(samps)
-    samps = gaussian_filter1d(samps, 3, axis = -1)
-    samps = samps.mean(0)
-    mag, sus = samps
-    ax.plot(temps, mag)
-    tax.plot(temps, sus)
     snapshots    = infcy.getSnapShots(m, \
                                   nSamples = int(1e4), steps = int(1e3), \
                                   nThreads = -1)
 
-    IDX = np.argmin(abs(mag - .8 * mag.max()))
-#    IDX = np.argmax(sus)
-    m.t = temps[IDX]
-    storedTemperatures.append(temps[IDX])
+
+#    storedTemperatures.append(temps[IDX])
     conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
-    mis[n] = mi.T
+
     auc = np.trapz(mi[deltas // 2 :, ], axis = 0)
     idx = np.argmax(auc)
     node = m.rmapping[idx]
