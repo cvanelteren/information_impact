@@ -37,7 +37,8 @@ h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
 #graph.add_edge(2,0)
 #graph[0][1]['weight'] = 10
 #attr = {}
-graph = nx.krackhardt_kite_graph()
+#graph = nx.krackhardt_kite_graph()
+graph = nx.erdos_renyi_graph(5, .3)
 
 #for node, row in h.iterrows():
 #    attr[node] = dict(H = row['externalField'], nudges = 0)
@@ -72,12 +73,11 @@ fig.show()
 IDX = np.argmin(abs(mag - .8 * mag.max()))
 #    IDX = np.argmax(sus)
 m.t = temps[IDX]
-mis[n] = mi.T
 
 storedTemperatures = []
 for n in range(N):
     snapshots    = infcy.getSnapShots(m, \
-                                  nSamples = int(1e4), steps = int(1e3), \
+                                  nSamples = int(3e4), steps = int(1e3), \
                                   nThreads = -1)
 
 
@@ -87,7 +87,8 @@ for n in range(N):
     auc = np.trapz(mi[deltas // 2 :, ], axis = 0)
     idx = np.argmax(auc)
     node = m.rmapping[idx]
-    
+    mis[n] = mi.T
+
     for nidx, nudge in enumerate(nudges):
         tmp = {node : nudge}
         m.nudges = tmp
