@@ -34,17 +34,17 @@ if __name__ == '__main__':
     step          = int(1e4)
     nSamples      = int(1e3)
     burninSamples = 0
-    pulseSizes    = [1, np.inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [-1, .5, 1, 1.5,  np.inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
     magSide       = 'neg'
-    updateType    = 'async'
-    CHECK         = [0.7] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = 'single'
+    CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
     tempres       = 100
     graphs = []
     N  = 50
-    
+
     for i in range(10):
         #g = nx.barabasi_albert_graph(N, 2)
         #g = nx.erdos_renyi_graph(N, .2)
@@ -53,11 +53,11 @@ if __name__ == '__main__':
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
         # g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
-        
+
         #for i, j in g.edges():
         #    g[i][j]['weight'] = np.random.rand() * 2 - 1
         graphs.append(g)
-         
+
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
 #       graphs.append(nx.barabasi_albert_graph(N, j))
