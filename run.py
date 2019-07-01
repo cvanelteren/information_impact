@@ -38,8 +38,8 @@ if __name__ == '__main__':
 
     nTrials       = 1
     magSide       = 'neg'
-    updateType    = 'single'
-    CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = 'async'
+    CHECK         = [0.5] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
     tempres       = 100
     graphs = []
