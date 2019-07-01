@@ -90,7 +90,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = 'single', \
+                    updateType = '0.8', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})

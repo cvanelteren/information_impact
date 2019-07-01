@@ -173,7 +173,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
 
 
     # init rng buffers
-    cdef int sampleSize = model.nNodes if model.updateType != 'single' else 1
+    cdef int sampleSize = model._sampleSize # model.nNodes if model.updateType != 'single' else 1
 
     cdef long[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
                                            dtype = long)
@@ -286,7 +286,7 @@ cpdef dict monteCarlo(\
         models_.push_back(PyObjectHolder(<PyObject *> threadModel))
 
 
-    cdef int sampleSize = model.nNodes if model.updateType != 'single' else 1
+    cdef int sampleSize = model._sampleSize # model.nNodes if model.updateType != 'single' else 1
 
     # pre-define rng matrix
     # cdef long[:, ::1] r = model.sampleNodes(states * deltas * repeats)
@@ -371,7 +371,7 @@ cpdef entropy(np.ndarray p, ax = -1):
     Expect the states to be at axis= - 1
     """
     return -np.nansum((p * np.log2(p)), axis = ax)
-    
+
 cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = {}):
     """ wrapper to perform MC and MI"""
     cdef:
