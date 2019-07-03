@@ -69,9 +69,10 @@ n = 150
 #for i, j in g.edges():
 #    g[i][j]['weight'] = np.random.rand()  * 2 - 1
     
-#g = nx.erdos_renyi_graph(5, .4)
-#g = nx.watts_strogatz_graph(10, 3, .4)
-g = nx.duplication_divergence_graph(10, .25)
+g = nx.erdos_renyi_graph(10, .2)
+#g = nx.watts_strogatz_graph(10, 3, .7)
+#g = nx.full_rary_tree(3, 10)
+#g = nx.duplication_divergence_graph(10, .25)
 #g = nx.erdos_renyi_graph(10, .3)
 #g = nx.grid_2d_graph(10, 10)
 #g = nx.complete_graph(10)
@@ -90,7 +91,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = '0.8', \
+                    updateType = '0.25', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
@@ -98,27 +99,37 @@ m = fastIsing.Ising(graph = g, \
 
 temps = np.logspace(-3, np.log10(g.number_of_nodes()), 50)
 temps = np.linspace(0, 10, 50)
-samps = [m.matchMagnetization(temps, 1000) for i in range(1)]
+samps = [m.matchMagnetization(temps, 100) for i in range(10)]
 
 
 from scipy import ndimage
-samps = ndimage.gaussian_filter1d(samps,1, axis = 1)    
+#samps = ndimage.gaussian_filter1d(samps,1, axis = 1)    
 # %%
-samps = np.array(samps)
-samps = samps.mean(0)
-mag, sus = samps
+tsamps = np.array(samps)
+tsamps = tsamps.mean(0)
+mag, sus = tsamps
 # %% 
+import scipy
 fig, ax = plt.subplots()
 ax.scatter(temps, mag, color = 'orange', label = 'magnetization')
+
+sig = lambda x, a, b, c, d:  c / (1 + np.exp(a *(x - b))) + d
+coeffs, _ = scipy.optimize.curve_fit(sig, temps, mag, maxfev = 10000)
+x0 = scipy.optimize.fmin(lambda x : abs(sig(x, *coeffs) - .9* mag.max()), .5)[0]
+
+
 #idx = np.nanargmax(sus) 
-idx = np.argmin(abs(mag - .8 * mag.max()))
+#idx = np.argmin(abs(mag - .9 * mag.max()))
 tax = ax.twinx()
 tax.scatter(temps, sus, label = 'susceptibility')
 ax.legend(); tax.legend(loc = 'lower right')
-ax.plot(temps[idx], mag[idx], 'r.')
+#ax.plot(temps[idx], mag[idx], 'r.')
+tx = np.linspace(0, 10)
+ax.plot(tx, sig(tx, *coeffs))
+ax.axvline(x0, color = 'red')
 ax.set(xlim = (0, 10))
 fig.show()
-m.t = temps[idx]
+m.t = x0
 
 fig, ax = plt.subplots(); ax.scatter(temps, sus)
 # %%
@@ -189,7 +200,8 @@ assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance, JS
 
 # %%
-NUDGE = -np.inf
+NUDGE = .6
+#NUDGE = .35
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
     m.nudges = {node : NUDGE}
@@ -201,7 +213,7 @@ fig, ax = plt.subplots()
 [ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
 ax.set(ylabel = 'KL-divergence' , xlabel = 'time[step]')
 idx = 5
-ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
+#ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
 #ax.set_xlim(0, 10)
 #ax.set_yscale('log')
 #ax.set_xscale('log')
@@ -213,13 +225,27 @@ fig, ax = plt.subplots();
 #ax.set_xlim(0, 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
-ax.set_xlim(0, idx)
+#ax.set_xlim(0, idx)
 
+from Utils.plotting import fit
+import scipy
+x = np.zeros((m.nNodes, 2))
 
+func = lambda x, a, b, c, d, e, f: a + np.exp(-b * (x - c)) + d * np.exp(- e * (x - f))
+
+params = dict(\
+             bounds = (0, np.inf),\
+             jac = 'cs', maxfev = 100000)
+for idx, i in enumerate([mi.T, out[:, deltas // 2 :-1]]):
+    coeffs, _ = fit(i, func, params = params)
+    for cidx, c in enumerate(coeffs):
+        x[cidx, idx], _ = scipy.integrate.quad(lambda x: func(x, *c) - c[0], 0, np.inf)
+        
 fig, ax = plt.subplots()
-x = np.trapz(mi[:deltas // 2 - 1, :], axis = 0)
-y = np.trapz(out[:, deltas // 2:], axis = -1)
-[ax.scatter(xi, yi, color = ci) for ci, xi, yi in zip(colors, x.T, y.T)]
+
+#x = np.trapz(mi[:deltas // 2 - 1, :], axis = 0)
+#y = np.trapz(out[:, deltas // 2:], axis = -1)
+[ax.scatter(*xy, color = ci) for ci,  xy in zip(colors, x)]
 fig.show()
 
 
