@@ -115,7 +115,7 @@ ax.scatter(temps, mag, color = 'orange', label = 'magnetization')
 
 sig = lambda x, a, b, c, d:  c / (1 + np.exp(a *(x - b))) + d
 coeffs, _ = scipy.optimize.curve_fit(sig, temps, mag, maxfev = 10000)
-x0 = scipy.optimize.fmin(lambda x : abs(sig(x, *coeffs) - .9* mag.max()), .5)[0]
+x0 = scipy.optimize.fmin(lambda x : abs(sig(x, *coeffs) - .8* mag.max()), .5)[0]
 
 
 #idx = np.nanargmax(sus) 
@@ -187,7 +187,7 @@ from Toolbox import infcy
 deltas = 50
 start = time.time()
 m.reset()
-snapshots    = infcy.getSnapShots(m, nSamples = int(3e4), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
 repeats = int(1e4)
 #assert False
 
@@ -200,7 +200,7 @@ assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance, JS
 
 # %%
-NUDGE = .6
+NUDGE = -np.inf
 #NUDGE = .35
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
@@ -209,19 +209,11 @@ for node, idx in m.mapping.items():
     out[idx, :] = KL(px, p).sum(-1)
 print(time.time() - start)
 # %%
-fig, ax = plt.subplots()
-[ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(out)]
-ax.set(ylabel = 'KL-divergence' , xlabel = 'time[step]')
-idx = 5
-#ax.set_xlim(deltas // 2 - 2, deltas//2 + idx)
-#ax.set_xlim(0, 10)
-#ax.set_yscale('log')
-#ax.set_xscale('log')
-ax.legend(bbox_to_anchor = (1.05, 1))
-fig.show()
+plt.close('all')
 
-fig, ax = plt.subplots(); 
-[ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
+
+fig, (ax, tax) = plt.subplots(1, 2); 
+#[ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
 #ax.set_xlim(0, 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
@@ -231,21 +223,34 @@ from Utils.plotting import fit
 import scipy
 x = np.zeros((m.nNodes, 2))
 
-func = lambda x, a, b, c, d, e, f: a + np.exp(-b * (x - c)) + d * np.exp(- e * (x - f))
+func = lambda x, a, b, c, d, e, f, g: a + b * np.exp(-c * (x - d)) + e * np.exp(- f * (x))
 
 params = dict(\
              bounds = (0, np.inf),\
-             jac = 'cs', maxfev = 100000)
-for idx, i in enumerate([mi.T, out[:, deltas // 2 :-1]]):
+#             jac = 'cs', \
+             maxfev = 100000)
+xx =  np.linspace(0, deltas//2)
+for idx, i in enumerate([mi.T, out[:, deltas // 2 + 1:-1]]):
     coeffs, _ = fit(i, func, params = params)
     for cidx, c in enumerate(coeffs):
+        print(cidx, c)
         x[cidx, idx], _ = scipy.integrate.quad(lambda x: func(x, *c) - c[0], 0, np.inf)
-        
+        if idx == 0:
+            ax.plot(xx, func(xx, *c), linestyle = 'dashed', color = colors[cidx])
+            ax.plot(mi[:, cidx], color = colors[cidx])
+        elif idx == 1:
+            tax.plot(xx, func(xx, *c), linestyle = 'dashed', color = colors[cidx])
+            tax.plot(i[cidx], color = colors[cidx])
+
+#lims = (-.3, 30)
+#ax.set(xlim = lims)
+#tax.set(xlim = lims)
 fig, ax = plt.subplots()
 
 #x = np.trapz(mi[:deltas // 2 - 1, :], axis = 0)
 #y = np.trapz(out[:, deltas // 2:], axis = -1)
 [ax.scatter(*xy, color = ci) for ci,  xy in zip(colors, x)]
+#ax.set(xscale = 'log')
 fig.show()
 
 

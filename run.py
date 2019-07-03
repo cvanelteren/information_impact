@@ -29,26 +29,27 @@ import networkx as nx, \
         time
 close('all')
 if __name__ == '__main__':
-    repeats       = int(1e3)
+    repeats       = int(1e4)
     deltas        = 30
-    step          = int(1e4)
-    nSamples      = int(1e3)
+    step          = int(1e3)
+    nSamples      = int(5e4)
     burninSamples = 0
-    pulseSizes    = [-1, .5, 1, 1.5,  np.inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [0.5, np.inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
     magSide       = 'neg'
-    updateType    = 'async'
-    CHECK         = [0.5] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+    updateType    = '0.25'
+    CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
     tempres       = 100
     graphs = []
-    N  = 50
+    N  = 10
 
     for i in range(10):
         #g = nx.barabasi_albert_graph(N, 2)
         #g = nx.erdos_renyi_graph(N, .2)
-        g = nx.duplication_divergence_graph(N, .25)
+        r = np.random.rand() * (1 - .2) + .2
+        g = nx.duplication_divergence_graph(N, r)
 #        graphs.append(g)
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
