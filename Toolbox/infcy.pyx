@@ -188,7 +188,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
 
         tid      = threadid()
         modelptr = models_[tid].ptr
-        r[tid] = (<Model> modelptr).sampleNodes(steps)
+        r[tid] = (<Model> modelptr)._sampleNodes(steps)
         # r[sample] = (<Model> models_[sample].ptr).sampleNodes(steps)
         # perform n steps
         for step in range(steps):
@@ -314,7 +314,7 @@ cpdef dict monteCarlo(\
             tid         = threadid()
             modelptr    = models_[tid].ptr
             out[tid]    = 0 # reset buffer
-            r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
+            r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)
             for repeat in range(repeats):
                 for node in range(nNodes):
                     (<Model> modelptr)._states[node] = s[state, node]

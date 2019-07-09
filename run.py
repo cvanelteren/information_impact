@@ -45,11 +45,11 @@ if __name__ == '__main__':
     graphs = []
     N  = 10
 
-    for i in range(10):
-        #g = nx.barabasi_albert_graph(N, 2)
-        #g = nx.erdos_renyi_graph(N, .2)
-        r = np.random.rand() * (1 - .2) + .2
-        g = nx.duplication_divergence_graph(N, r)
+#    for i in range(10):
+#        g = nx.barabasi_albert_graph(N, 2)
+#        g = nx.erdos_renyi_graph(N, .2)
+#        r = np.random.rand() * (1 - .2) + .2
+#        g = nx.duplication_divergence_graph(N, r)
 #        graphs.append(g)
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
         #for i, j in g.edges():
         #    g[i][j]['weight'] = np.random.rand() * 2 - 1
-        graphs.append(g)
+#        graphs.append(g)
 
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
@@ -68,16 +68,16 @@ if __name__ == '__main__':
     else:
         rootDirectory = f'{os.getcwd()}/Data/'
 # #    real = 1
- #        graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-    dataDir = 'Psycho' # relative path careful
+#         graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+    dataDir = 'Graphs' # relative path careful
     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-#    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-#    graph   = nx.from_pandas_adjacency(df)
-#    attr = {}
-#    for node, row in h.iterrows():
-#        attr[node] = dict(H = row['externalField'], nudges = 0)
-#    nx.set_node_attributes(graph, attr)
-#    graphs.append(graph)
+    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+    graph   = nx.from_pandas_adjacency(df)
+    attr = {}
+    for node, row in h.iterrows():
+        attr[node] = dict(H = row['externalField'], nudges = 0)
+    nx.set_node_attributes(graph, attr)
+    graphs.append(graph)
 
     start = datetime.datetime.now()
     targetDirectory = rootDirectory + f'{start.isoformat()}' # make default path

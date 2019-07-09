@@ -96,7 +96,7 @@ m = fastIsing.Ising(graph = g, \
                     nudgeType = 'constant',\
                     nudges = {})
 #m = potts.Potts(graph = g, agentStates = [1, 2])
-
+#assert 0 
 temps = np.logspace(-3, np.log10(g.number_of_nodes()), 50)
 temps = np.linspace(0, 10, 50)
 samps = [m.matchMagnetization(temps, 100) for i in range(10)]
@@ -190,7 +190,7 @@ m.reset()
 snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
 repeats = int(1e4)
 #assert False
-
+                
 #m.magSide = ''
 conditional, px, mi = infcy.runMC(m, snapshots, deltas, repeats)
 #

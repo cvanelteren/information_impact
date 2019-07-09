@@ -1521,7 +1521,8 @@ struct __pyx_vtabstruct_6Models_6models_Model {
   void (*construct)(struct __pyx_obj_6Models_6models_Model *, PyObject *, PyObject *, int __pyx_skip_dispatch);
   __Pyx_memviewslice (*updateState)(struct __pyx_obj_6Models_6models_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch);
   __Pyx_memviewslice (*_updateState)(struct __pyx_obj_6Models_6models_Model *, __Pyx_memviewslice);
-  __Pyx_memviewslice (*sampleNodes)(struct __pyx_obj_6Models_6models_Model *, long);
+  __Pyx_memviewslice (*_sampleNodes)(struct __pyx_obj_6Models_6models_Model *, long);
+  __Pyx_memviewslice (*sampleNodes)(struct __pyx_obj_6Models_6models_Model *, long, int __pyx_skip_dispatch);
   double (*rand)(struct __pyx_obj_6Models_6models_Model *);
   PyArrayObject *(*simulate)(struct __pyx_obj_6Models_6models_Model *, PY_LONG_LONG, int __pyx_skip_dispatch);
   void (*reset)(struct __pyx_obj_6Models_6models_Model *, int __pyx_skip_dispatch);
@@ -4119,7 +4120,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
  * 
  *         tid      = threadid()             # <<<<<<<<<<<<<<
  *         modelptr = models_[tid].ptr
- *         r[tid] = (<Model> modelptr).sampleNodes(steps)
+ *         r[tid] = (<Model> modelptr)._sampleNodes(steps)
  */
                             #ifdef _OPENMP
                             __pyx_t_13 = omp_get_thread_num();
@@ -4132,7 +4133,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
  * 
  *         tid      = threadid()
  *         modelptr = models_[tid].ptr             # <<<<<<<<<<<<<<
- *         r[tid] = (<Model> modelptr).sampleNodes(steps)
+ *         r[tid] = (<Model> modelptr)._sampleNodes(steps)
  *         # r[sample] = (<Model> models_[sample].ptr).sampleNodes(steps)
  */
                             __pyx_t_14 = (__pyx_v_models_[__pyx_v_tid]).ptr;
@@ -4141,11 +4142,11 @@ static PyObject *__pyx_f_7Toolbox_5infcy_getSnapShots(struct __pyx_obj_6Models_6
                             /* "Toolbox/infcy.pyx":191
  *         tid      = threadid()
  *         modelptr = models_[tid].ptr
- *         r[tid] = (<Model> modelptr).sampleNodes(steps)             # <<<<<<<<<<<<<<
+ *         r[tid] = (<Model> modelptr)._sampleNodes(steps)             # <<<<<<<<<<<<<<
  *         # r[sample] = (<Model> models_[sample].ptr).sampleNodes(steps)
  *         # perform n steps
  */
-                            __pyx_t_15 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->__pyx_vtab)->sampleNodes(((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr), __pyx_v_steps); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 191, __pyx_L18_error)
+                            __pyx_t_15 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->__pyx_vtab)->_sampleNodes(((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr), __pyx_v_steps); if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 191, __pyx_L18_error)
                             __pyx_t_16.data = __pyx_v_r.data;
                             __pyx_t_16.memview = __pyx_v_r.memview;
                             __PYX_INC_MEMVIEW(&__pyx_t_16, 0);
@@ -5676,7 +5677,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
  *             tid         = threadid()
  *             modelptr    = models_[tid].ptr             # <<<<<<<<<<<<<<
  *             out[tid]    = 0 # reset buffer
- *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
+ *             r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)
  */
                                 __pyx_t_21 = (__pyx_v_models_[__pyx_v_tid]).ptr;
                                 __pyx_v_modelptr = __pyx_t_21;
@@ -5685,7 +5686,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_monteCarlo(struct __pyx_obj_6Models_6mo
  *             tid         = threadid()
  *             modelptr    = models_[tid].ptr
  *             out[tid]    = 0 # reset buffer             # <<<<<<<<<<<<<<
- *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
+ *             r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)
  *             for repeat in range(repeats):
  */
                                 __pyx_t_22.data = __pyx_v_out.data;
@@ -5729,11 +5730,11 @@ __pyx_t_22.strides[2] = __pyx_v_out.strides[3];
                                 /* "Toolbox/infcy.pyx":317
  *             modelptr    = models_[tid].ptr
  *             out[tid]    = 0 # reset buffer
- *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)             # <<<<<<<<<<<<<<
+ *             r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)             # <<<<<<<<<<<<<<
  *             for repeat in range(repeats):
  *                 for node in range(nNodes):
  */
-                                __pyx_t_11 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->__pyx_vtab)->sampleNodes(((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr), __pyx_v_nTrial); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 317, __pyx_L26_error)
+                                __pyx_t_11 = ((struct __pyx_vtabstruct_6Models_6models_Model *)((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr)->__pyx_vtab)->_sampleNodes(((struct __pyx_obj_6Models_6models_Model *)__pyx_v_modelptr), __pyx_v_nTrial); if (unlikely(!__pyx_t_11.memview)) __PYX_ERR(0, 317, __pyx_L26_error)
                                 __pyx_t_23.data = __pyx_v_r.data;
                                 __pyx_t_23.memview = __pyx_v_r.memview;
                                 __PYX_INC_MEMVIEW(&__pyx_t_23, 0);
@@ -5762,7 +5763,7 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_11, __pyx_t_23, 2, 2, 0) < 0
 
                                 /* "Toolbox/infcy.pyx":318
  *             out[tid]    = 0 # reset buffer
- *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
+ *             r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)
  *             for repeat in range(repeats):             # <<<<<<<<<<<<<<
  *                 for node in range(nNodes):
  *                     (<Model> modelptr)._states[node] = s[state, node]
@@ -5773,7 +5774,7 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_11, __pyx_t_23, 2, 2, 0) < 0
                                   __pyx_v_repeat = __pyx_t_25;
 
                                   /* "Toolbox/infcy.pyx":319
- *             r[tid]      = (<Model> modelptr).sampleNodes(nTrial)
+ *             r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)
  *             for repeat in range(repeats):
  *                 for node in range(nNodes):             # <<<<<<<<<<<<<<
  *                     (<Model> modelptr)._states[node] = s[state, node]
