@@ -74,7 +74,7 @@ if __name__ == '__main__':
     
     if 'fs4' in os.uname().nodename or 'node' in os.uname().nodename:
         now = datetime.datetime.now().isoformat()
-        rootDirectory = f'/var/scratch/cveltere/{now}/' # data storage
+        rootDirectory = f'/var/scratch/cveltere/{now}' # data storage
     else:
         rootDirectory = f'{os.getcwd()}/Data/'
 # #    real = 1
@@ -82,14 +82,15 @@ if __name__ == '__main__':
     
 
     start = datetime.datetime.now()
-    targetDirectory = rootDirectory + f'{start.isoformat()}' # make default path
+    targetDirectory = os.path.join(\
+                       rootDirectory, \
+                       f'{start.isoformat()}'\
+                       )# make default path
     for graph in graphs:
         now =  datetime.datetime.now().isoformat()
         # if multiple graphs are tested; group them together
-        if len(graphs) > 1:
-            if not os.path.exists(rootDirectory):
-                os.mkdir(rootDirectory)
-            targetDirectory = rootDirectory + f'/{now}'
+        if not os.path.exists(rootDirectory):
+            os.mkdir(rootDirectory)
         os.mkdir(targetDirectory)
 
 
