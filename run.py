@@ -62,13 +62,6 @@ if __name__ == '__main__':
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
 #       graphs.append(nx.barabasi_albert_graph(N, j))
-    if 'fs4' in os.uname().nodename or 'node' in os.uname().nodename:
-        now = datetime.datetime.now().isoformat()
-        rootDirectory = f'/var/scratch/cveltere/{now}/' # data storage
-    else:
-        rootDirectory = f'{os.getcwd()}/Data/'
-# #    real = 1
-#         graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
     dataDir = 'Graphs' # relative path careful
     df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
     h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
@@ -78,6 +71,15 @@ if __name__ == '__main__':
         attr[node] = dict(H = row['externalField'], nudges = 0)
     nx.set_node_attributes(graph, attr)
     graphs.append(graph)
+    
+    if 'fs4' in os.uname().nodename or 'node' in os.uname().nodename:
+        now = datetime.datetime.now().isoformat()
+        rootDirectory = f'/var/scratch/cveltere/{now}/' # data storage
+    else:
+        rootDirectory = f'{os.getcwd()}/Data/'
+# #    real = 1
+#         graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
+    
 
     start = datetime.datetime.now()
     targetDirectory = rootDirectory + f'{start.isoformat()}' # make default path
