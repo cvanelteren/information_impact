@@ -381,3 +381,23 @@ cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = 
         np.ndarray px, mi
     px, mi = mutualInformation(conditional, snapshots)
     return conditional, px, mi
+
+
+cpdef testSeed(Model model, int N, int nSamples = 10):
+    from copy import deepcopy
+    cdef:
+        int i 
+        vector[PyObjectHolder] holder
+    
+    
+    cdef np.ndarray test = np.zeros((N, nSamples, model.sampleSize))
+    cdef Model tmp
+    for i in range(N):
+        tmp = deepcopy(model)
+        tmp.seed += i
+        print(tmp.seed)
+        test[i] = tmp._sampleNodes(nSamples)
+    return test
+
+    
+

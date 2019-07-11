@@ -41,9 +41,18 @@ nx.set_node_attributes(g, attr)
 #    if len(g) == 20:
 #        break
     
-    
+
+
+dataDir = 'Graphs' # relative path careful
+df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+g   = nx.from_pandas_adjacency(df)
+attr = {}
+for node, row in h.iterrows():
+    attr[node] = dict(H = row['externalField'], nudges = 0)
+nx.set_node_attributes(g, attr)    
 #g = nx.florentine_families_graph()
-n = 150
+
 #g = nx.grid_2d_graph(n, n)
 #from Models.percolation import Percolation
 #n
@@ -69,7 +78,7 @@ n = 150
 #for i, j in g.edges():
 #    g[i][j]['weight'] = np.random.rand()  * 2 - 1
     
-g = nx.erdos_renyi_graph(10, .2)
+#g = nx.erdos_renyi_graph(10, .2)
 #g = nx.watts_strogatz_graph(10, 3, .7)
 #g = nx.full_rary_tree(3, 10)
 #g = nx.duplication_divergence_graph(10, .25)
@@ -91,7 +100,7 @@ fig.show()
 # %%
 
 m = fastIsing.Ising(graph = g, \
-                    updateType = '0.25', \
+                    updateType = 'single', \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
@@ -103,7 +112,7 @@ samps = [m.matchMagnetization(temps, 100) for i in range(10)]
 
 
 from scipy import ndimage
-#samps = ndimage.gaussian_filter1d(samps,1, axis = 1)    
+samps = ndimage.gaussian_filter1d(samps,1, axis = 1)    
 # %%
 tsamps = np.array(samps)
 tsamps = tsamps.mean(0)
@@ -114,7 +123,7 @@ fig, ax = plt.subplots()
 ax.scatter(temps, mag, color = 'orange', label = 'magnetization')
 
 sig = lambda x, a, b, c, d:  c / (1 + np.exp(a *(x - b))) + d
-coeffs, _ = scipy.optimize.curve_fit(sig, temps, mag, maxfev = 10000)
+coeffs, _ = scipy.optimize.curve_fit(sig, temps, mag, bounds = (0, np.inf), maxfev = 10000)
 x0 = scipy.optimize.fmin(lambda x : abs(sig(x, *coeffs) - .8* mag.max()), .5)[0]
 
 
@@ -128,10 +137,13 @@ tx = np.linspace(0, 10)
 ax.plot(tx, sig(tx, *coeffs))
 ax.axvline(x0, color = 'red')
 ax.set(xlim = (0, 10))
+
+print(x0)
 fig.show()
 m.t = x0
 
 fig, ax = plt.subplots(); ax.scatter(temps, sus)
+
 # %%
 #assert 0 
 #m.t = 1
@@ -187,7 +199,7 @@ from Toolbox import infcy
 deltas = 50
 start = time.time()
 m.reset()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e4), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
 repeats = int(1e4)
 #assert False
                 
@@ -200,7 +212,7 @@ assert len(conditional) == len(snapshots)
 from Utils.stats import KL, hellingerDistance, JS
 
 # %%
-NUDGE = -np.inf
+NUDGE = .1 # np.inf
 #NUDGE = .35
 out = np.zeros((m.nNodes, deltas))
 for node, idx in m.mapping.items():
@@ -214,7 +226,7 @@ plt.close('all')
 
 fig, (ax, tax) = plt.subplots(1, 2); 
 #[ax.plot(i, color = colors[idx], label = m.rmapping[idx]) for idx, i in enumerate(mi.T)]
-#ax.set_xlim(0, 4)
+#ax.set_xlim(0,Q 4)
 ax.legend(bbox_to_anchor = (1.01, 1))
 ax.set(xlabel = 'time[step]', ylabel ='$I(s_i^{t_0 + t} : S^{t_0})$')
 #ax.set_xlim(0, idx)
