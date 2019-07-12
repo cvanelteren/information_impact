@@ -29,19 +29,19 @@ import networkx as nx, \
         time
 close('all')
 if __name__ == '__main__':
-    repeats       = int(1e5)
-    deltas        = 30
-    step          = int(1e3)
-    nSamples      = int(1e5)
+    repeats       = 1 #int(1e5)
+    deltas        = 1 # 30
+    step          = 1 # int(1e3)
+    nSamples      = 1 # int(1e5)
     burninSamples = 0
-    pulseSizes    = [0.5, np.inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = [0.5] #[0.5, np.inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 1
     magSide       = 'neg'
     updateType    = '0.25'
     CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
     nudgeType     = 'constant'
-    tempres       = 100
+    tempres       = 10 #100
     graphs = []
     N  = 10
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
     #    attr[node] = dict(H = row['externalField'], nudges = 0)
     #nx.set_node_attributes(graph, attr)
     #graphs.append(graph)
-    
+
     if 'fs4' in os.uname().nodename or 'node' in os.uname().nodename:
         now = datetime.datetime.now().isoformat()
         rootDirectory = f'/var/scratch/cveltere/{now}' # data storage
@@ -79,15 +79,12 @@ if __name__ == '__main__':
         rootDirectory = f'{os.getcwd()}/Data/'
 # #    real = 1
 #         graphs += [nx.barabasi_albert_graph(n, i) for i in linspace(2, n - 1, 3, dtype = int)]
-    
 
-    start = datetime.datetime.now()
-    targetDirectory = os.path.join(\
-                       rootDirectory, \
-                       f'{start.isoformat()}'\
-                       )# make default path
+
     for graph in graphs:
-        now =  datetime.datetime.now().isoformat()
+        start = datetime.datetime.now()
+        targetDirectory = os.path.join(rootDirectory, f'{start.isoformat()}')
+        now = datetime.datetime.now().isoformat()
         # if multiple graphs are tested; group them together
         if not os.path.exists(rootDirectory):
             os.mkdir(rootDirectory)
@@ -207,7 +204,6 @@ if __name__ == '__main__':
                 fileName = f"{tempDir}/control/{datetime.datetime.now().isoformat()}"
                 fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
                 fileName += f'_pulse={pulse}'
-                # fileName = f'{tempDir}/control/{datetime.datetime.now().isoformat()()}_nSamples={nSamples}_k={repeats}_deltas ={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                 sr       = SimulationResult(\
                                         mi          = mi,\
                                         conditional = conditional,\
@@ -217,7 +213,6 @@ if __name__ == '__main__':
                 IO.savePickle(fileName, sr)
 
 
-                ddddd = px.copy()
                 from Utils.stats import KL
                 for pulseSize in pulseSizes:
                     pulseDir = f'{tempDir}/{pulseSize}'
@@ -228,14 +223,12 @@ if __name__ == '__main__':
                         model.nudges = pulse
                         conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
 
-                        print(n, KL(ddddd[-deltas:], px[-deltas:]).sum(-1))
                         print(f'{datetime.datetime.now().isoformat()} Computing MI')
 
                         # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                         fileName = f"{pulseDir}/{datetime.datetime.now().isoformat()}"
                         fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
                         fileName += f'_pulse={pulse}'
-                        # fileName = f'{pulseDir}/{datetime.datetime.now().isoformat()()}_nSamples={nSamples}_k ={repeats}_deltas={deltas}_mode={updateType}_t={t}_n={model.nNodes}_pulse={pulse}.pickle'
                         sr       = SimulationResult(\
                                                 mi          = mi,\
                                                 conditional = conditional,\
@@ -243,14 +236,3 @@ if __name__ == '__main__':
                                                 px          = px,\
                                                 snapshots   = snapshots)
                         IO.savePickle(fileName, sr)
-
-                # estimate average energy
-                #     for i in range(model.nNodes):
-                #         nodei = model.rmapping[i]
-                #         e = 0
-                #         for nodej in model.graph.neighbors(nodei):
-                #             j = model.mapping[nodej]
-                #             e += state[j] * state[i] * model.graph[nodei][nodej]['weight']
-                #         pulses[nodei] = pulses.get(nodei, 0)  + e * v + state[i] * model.H[i]
-                # for k in pulses:
-                #     pulses[k] *= pulseSize
