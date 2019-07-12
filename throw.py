@@ -104,7 +104,8 @@ m = fastIsing.Ising(graph = g, \
                     magSide = 'neg', \
                     nudgeType = 'constant',\
                     nudges = {})
-#m = potts.Potts(graph = g, agentStates = [1, 2])
+
+m = potts.Potts(graph = g, agentStates = [1, 2])
 #assert 0 
 temps = np.logspace(-3, np.log10(g.number_of_nodes()), 50)
 temps = np.linspace(0, 10, 50)

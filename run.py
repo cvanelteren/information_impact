@@ -29,14 +29,14 @@ import networkx as nx, \
         time
 close('all')
 if __name__ == '__main__':
-    repeats       = int(1e5)
+    repeats       = int(1e4)
     deltas        = 30
     step          = int(1e3)
-    nSamples      = int(1e5)
+    nSamples      = int(1e4)
     burninSamples = 0
     pulseSizes    = [0.5, np.inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 1
+    nTrials       = 20
     magSide       = 'neg'
     updateType    = '0.25'
     CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
@@ -44,13 +44,17 @@ if __name__ == '__main__':
     tempres       = 10 #100
     graphs = []
     N  = 10
-
-    for i in range(10):
-        r = np.random.rand() # * (1 - .2) + .2
-        # g = nx.barabasi_albert_graph(N, 2)
-        g = nx.erdos_renyi_graph(N, r)
-        # g = nx.duplication_divergence_graph(N, r)
-        graphs.append(g)
+    loadGraph = 'crap_graph.pickle' 
+    if not loadGraph:
+        for i in range(10):
+            r = np.random.rand() # * (1 - .2) + .2
+            # g = nx.barabasi_albert_graph(N, 2)
+            g = nx.erdos_renyi_graph(N, r)
+            # g = nx.duplication_divergence_graph(N, r)
+            graphs.append(g)
+    else:
+        graph = IO.loadPickle(loadGraph)
+        graphs.append(graph)
        # w = nx.utils.powerlaw_sequence(N, 2)
        # g = nx.expected_degree_graph(w)
         # g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
