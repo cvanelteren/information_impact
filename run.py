@@ -44,7 +44,7 @@ if __name__ == '__main__':
     tempres       = 10 #100
     graphs = []
     N  = 10
-    loadGraph = 'crap_graph.pickle' 
+    loadGraph = 'craph_graph.pickle' 
     if not loadGraph:
         for i in range(10):
             r = np.random.rand() # * (1 - .2) + .2
@@ -53,6 +53,7 @@ if __name__ == '__main__':
             # g = nx.duplication_divergence_graph(N, r)
             graphs.append(g)
     else:
+        print('running craph graph')
         graph = IO.loadPickle(loadGraph)
         graphs.append(graph)
        # w = nx.utils.powerlaw_sequence(N, 2)
