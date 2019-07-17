@@ -200,7 +200,7 @@ from Toolbox import infcy
 deltas = 50
 start = time.time()
 m.reset()
-snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = -1)
+snapshots    = infcy.getSnapShots(m, nSamples = int(1e3), steps = int(1e3),  nThreads = 1)
 repeats = int(1e4)
 #assert False
                 

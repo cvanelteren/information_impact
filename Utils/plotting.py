@@ -7,7 +7,6 @@
 '''
 from numpy import *; from matplotlib.pyplot import *
 import time, scipy, networkx as nx
-from .stats import hellingerDistance
 import scipy.optimize, scipy.integrate
 # %%
 

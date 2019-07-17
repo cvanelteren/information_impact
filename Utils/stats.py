@@ -1,5 +1,20 @@
 import numpy as np
+from Utils.plotting import fit
 '''Dump file of statistical related functions'''
+
+def aucs(data, func, params = {},\
+        bounds = (0, np.inf)):
+    from scipy.integrate import quad
+    coeffs = fit(data, func, params = params)[0]
+    auc = np.zeros((data.shape[0]), dtype = float)
+    for node, c in enumerate(coeffs):
+        tmp = lambda x: func(x, *c)
+        auc[node] = quad(tmp, *bounds)[0]
+    return auc
+
+    
+
+
 def hellingerDistance(p1, p2):
     '''
     input:

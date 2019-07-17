@@ -11,6 +11,33 @@ from matplotlib.pyplot import *
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
 from collections import defaultdict, OrderedDict
+def loadSets(data : dict) -> list:
+    """
+    Load a set of data. Returns the settings and the loaded data
+    """
+    from multiprocessing.pool import ThreadPool
+    import multiprocessing as mp
+    settings   = {}
+    loadedData = {}
+    for idx, (k, v) in enumerate(data.items()):
+        # tmp = os.path.join(root, k)
+        setting = Settings(k)
+        
+        # setting = settings[k]
+            
+        tmp_worker = Worker(v, setting)
+        with ThreadPool(processes = mp.cpu_count()) as p:
+          p.map(tmp_worker, tmp_worker.idx)
+          v = np.frombuffer(tmp_worker.buff, dtype = np.float64).reshape(*tmp_worker.buffshape)    
+        del tmp_worker
+        s = v.shape
+        v = v.reshape(-1, setting.nNodes, setting.deltas // 2 - 1)
+        v = np.array([(i - i.min()) / (i.max() - i.min()) for i in v])
+        v = v.reshape(-1, s[-1])
+        setting.data = v.reshape(s)
+#        loadedData[k] = v.reshape(s)
+        settings[k] = setting
+    return settings
 class DataLoader(OrderedDict):
     def __init__(self, root = '', **kwargs):
      """
