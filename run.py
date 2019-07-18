@@ -29,12 +29,12 @@ import networkx as nx, \
         time
 close('all')
 if __name__ == '__main__':
-    repeats       = int(1e4)
+    repeats       = int(1e5)
     deltas        = 30
     step          = int(1e3)
     nSamples      = int(1e4)
     burninSamples = 0
-    pulseSizes    = [0.5, np.inf] #, -np.inf]# , .8, .7]
+    pulseSizes    = np.linspace(0.5, 5, 5) # [0.5,  np.inf] #, -np.inf]# , .8, .7]
 
     nTrials       = 20
     magSide       = 'neg'
