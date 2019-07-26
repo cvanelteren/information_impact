@@ -28,23 +28,24 @@ import networkx as nx, \
         scipy, \
         time
 close('all')
-if __name__ == '__main__':
-    repeats       = int(1e5)
-    deltas        = 30
-    step          = int(1e3)
-    nSamples      = int(1e4)
-    burninSamples = 0
-    pulseSizes    = np.linspace(0.5, 5, 5) # [0.5,  np.inf] #, -np.inf]# , .8, .7]
+repeats       = int(1e5)
+deltas        = 30
+step          = int(1e3)
+nSamples      = int(1e4)
+burninSamples = 0
+pulseSizes    = np.arange(0.5, 5, .5) # np.linspace(0.5, 5, 5).tolist() # [0.5,  np.inf] #, -np.inf]# , .8, .7]
 
-    nTrials       = 20
-    magSide       = 'neg'
-    updateType    = '0.25'
-    CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
-    nudgeType     = 'constant'
-    tempres       = 10 #100
+nTrials       = 20
+magSide       = 'neg'
+updateType    = '0.25'
+CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+nudgeType     = 'constant'
+tempres       = 10 #100
+
+loadGraph = ''
+if __name__ == '__main__':
     graphs = []
     N  = 10
-    loadGraph = 'craph_graph.pickle' 
     if not loadGraph:
         for i in range(10):
             r = np.random.rand() # * (1 - .2) + .2
@@ -200,6 +201,20 @@ if __name__ == '__main__':
                 # TODO: uggly, against DRY
                 # always perform control
                 conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
+
+                # hacked in nudge optimization
+                #from Utils.plotting import fit
+                #from Utils.stats import aucs
+                #dex = lambda x, a, b, c, d, e, f, g: a + b * np.exp(- c * (x - d)) + e * np.exp(- f*(x - g))
+                #areas = aucs(mi.T, dex, params = dict(maxfev = int(1e6), bounds = (0, np.inf)))[0]
+                #node = np.argmax(aucs)
+                #nudge = infcy.optimizeNudge(model, node, snapshots, deltas, repeats)
+                #pulseSizes = [nudge, np.inf]
+                #settings['pulseSizes'] = pulseSizes
+                #settingsObject = IO.Settings(settings)
+                #settingsObject.save(targetDirectory)
+
+
                 print(f'{datetime.datetime.now().isoformat()} Computing MI')
                 # snapshots, conditional, mi = infcy.reverseCalculation(nSamples, model, deltas, pulse)[-3:]
                 if not os.path.exists(f'{tempDir}/control/'):

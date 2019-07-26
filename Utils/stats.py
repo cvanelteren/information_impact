@@ -3,9 +3,9 @@ from Utils.plotting import fit
 '''Dump file of statistical related functions'''
 
 def aucs(data, func, params = {},\
-        bounds = (0, np.inf)):
+        bounds = (0, np.inf), **kwargs):
     from scipy.integrate import quad
-    coeffs = fit(data, func, params = params)[0]
+    coeffs = fit(data, func, params = params, **kwargs)[0]
     auc = np.zeros((data.shape[0]), dtype = float)
     for node, c in enumerate(coeffs):
         tmp = lambda x: func(x, *c)

@@ -386,10 +386,10 @@ cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = 
 cpdef testSeed(Model model, int N, int nSamples = 10):
     from copy import deepcopy
     cdef:
-        int i 
+        int i
         vector[PyObjectHolder] holder
-    
-    
+
+
     cdef np.ndarray test = np.zeros((N, nSamples, model.sampleSize))
     cdef Model tmp
     for i in range(N):
@@ -399,5 +399,54 @@ cpdef testSeed(Model model, int N, int nSamples = 10):
         test[i] = tmp._sampleNodes(nSamples)
     return test
 
-    
 
+# cpdef float sig(float x, float a, float b, float c, float d):
+cdef sig(x, a, b, c):
+    return a / (1 + np.exp(-b * (x - c) ))
+# cpdef float tsig(float x, float a, float b, float c, float d):\
+cdef tsig(x, a, b, c, d):
+    return abs(a / (1 + np.exp(-b * (x - c) )) + d)
+cpdef dict optimizeNudge(Model model,  str node, \
+                                    dict snapshots, \
+                                    long deltas, long repeats, \
+                                    np.ndarray px, \
+                                    np.ndarray nudges = np.logspace(-2, 1, 10),\
+                                    \
+):
+    """
+    Attempt to optimize nudge size -> finding proper level of description
+    """
+
+    cdef:
+        int i
+        dict nudge
+        np.ndarray output = np.zeros((nudges.size), dtype = float)
+        float KLD
+
+    from Utils.stats import KL
+    # nudge possible driver
+    for i in range(nudges.size):
+        nudge = {node : nudges[i]}
+        model.nudges = nudge
+        cicpx, cipx, cmi = runMC(model, snapshots, deltas, repeats)
+        KLD = np.nansum(KL(cipx[deltas // 2 + 1:],  px[:deltas // 2 - 1]))
+        output[i] = KLD
+
+    # fit sigmoid
+    output = (output - output.min())  / (output.max() - output.min())
+    output[np.isfinite(output) == False] = 0 # remove nans
+    from scipy import optimize
+    cdef:
+        np.ndarray coeffs, vars
+    coeffs, vars = optimize.curve_fit(sig, nudges, output)
+    cdef float theta = .5
+    x0 = optimize.fmin(tsig, 0, args = (*coeffs, -theta))
+
+    cdef dict kwargs = dict(\
+                                    x0 = x0, \
+                                    coeffs = coeffs,\
+                                    vars   = vars,\
+                                    nudges = nudges, \
+                                    output = output,\
+                                    )
+    return kwargs
