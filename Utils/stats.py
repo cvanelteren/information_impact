@@ -26,11 +26,13 @@ def hellingerDistance(p1, p2):
     '''
     return np.linalg.norm( p1 - p2, ord = 2, axis = -1) / np.sqrt(2)
 
-def KL(p1, p2):
+def KL(p1, p2, exclude = []):
     # p2[p2 == 0] = 1 # circumvent p = 0
     # p1[p1==0] = 1
     kl = np.nansum(p1 * (np.log(p1 / p2)), axis = -1)
     kl[np.isfinite(kl) == False] = 0 # remove x = 0
+    if exclude:
+        kl = np.array([i for idx, i in enumerate(kl) if idx not in exclude])
     return kl
 
 def panzeriTrevesCorrection(px, cpx, repeats):

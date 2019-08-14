@@ -3,8 +3,8 @@
 # __author__ = 'Casper van Elteren'
 
 # MODELS
-# from Models.models cimport Model
-from Models.models cimport Model
+# from Models.Models cimport Model
+from Models.Models cimport Model
 
 import numpy as np
 cimport numpy as np
@@ -220,7 +220,7 @@ cpdef dict monteCarlo(\
     """
     Monte-Carlo methods for estimating p(s_i^{t+\delta} | S).
     Input:
-        :model: using the basic framework from Models.models
+        :model: using the basic framework from Models.Models
         :snapshots: dict with keys containing the state idx and the value containing its probability
         :deltas: amount of time steps to simulate
         :repeats:  number of times to repeat the simulation;

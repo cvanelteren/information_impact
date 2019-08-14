@@ -14,7 +14,7 @@ from tqdm import tqdm
 from functools import partial
 
 
-from Models import fastIsing
+from Models import FastIsing
 from Toolbox import infcy
 from Utils import IO, plotting as plotz
 from Utils.IO import SimulationResult
@@ -33,10 +33,11 @@ deltas        = 30
 step          = int(1e3)
 nSamples      = int(1e4)
 burninSamples = 0
-pulseSizes    = np.arange(0.5, 5, .5) # np.linspace(0.5, 5, 5).tolist() # [0.5,  np.inf] #, -np.inf]# , .8, .7]
+pulseSizes    = np.linspace(.1, 1, 9).tolist()
+# pulseSizes    = np.arange(0.5, 5, .5) # np.linspace(0.5, 5, 5).tolist() # [0.5,  np.inf] #, -np.inf]# , .8, .7]
 
 nTrials       = 20
-magSide       = 'neg'
+magSide       = ''
 updateType    = '0.25'
 CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 nudgeType     = 'constant'
@@ -48,11 +49,12 @@ if __name__ == '__main__':
     N  = 10
     if not loadGraph:
         for i in range(10):
-            r = np.random.rand() # * (1 - .2) + .2
+
+            r = np.random.rand() * (1 - .2) + .2
             # g = nx.barabasi_albert_graph(N, 2)
-            g = nx.erdos_renyi_graph(N, r)
+            # g = nx.erdos_renyi_graph(N, r)
             # g = nx.duplication_divergence_graph(N, r)
-            graphs.append(g)
+            # graphs.append(g)
     else:
         print('running craph graph')
         graph = IO.loadPickle(loadGraph)
@@ -68,15 +70,15 @@ if __name__ == '__main__':
 #    graphs[0].add_edge(0,0)
 #    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
 #       graphs.append(nx.barabasi_albert_graph(N, j))
-    #dataDir = 'Graphs' # relative path careful
-    #df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
-    #h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
-    #graph   = nx.from_pandas_adjacency(df)
-    #attr = {}
-    #for node, row in h.iterrows():
-    #    attr[node] = dict(H = row['externalField'], nudges = 0)
-    #nx.set_node_attributes(graph, attr)
-    #graphs.append(graph)
+    dataDir = 'Graphs' # relative path careful
+    df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+    h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+    graph   = nx.from_pandas_adjacency(df)
+    attr = {}
+    for node, row in h.iterrows():
+        attr[node] = dict(H = row['externalField'], nudges = 0)
+    nx.set_node_attributes(graph, attr)
+    graphs.append(graph)
 
     if 'fs4' in os.uname().nodename or 'node' in os.uname().nodename:
         now = datetime.datetime.now().isoformat()
@@ -104,7 +106,7 @@ if __name__ == '__main__':
                              updateType  = updateType,\
                              magSide     = magSide,\
                              nudgeType   = nudgeType)
-        model = fastIsing.Ising(**modelSettings)
+        model = FastIsing.Ising(**modelSettings)
 #        print(model.mapping.items())
 #        assert 0
 
@@ -121,10 +123,10 @@ if __name__ == '__main__':
             magRange = array([CHECK]) if isinstance(CHECK, float) else array(CHECK)
 
             # magRange = array([.9, .2])
-            fitTemps = linspace(0, graph.number_of_nodes()//2, tempres)
+            fitTemps = linspace(0, graph.number_of_nodes() / 2, tempres)
             mag, sus = model.matchMagnetization(temps = fitTemps,\
              n = int(1e3), burninSamples = 0)
-
+            print('>>', mag,sus)
 
             func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
             # func = lambda x, a, b, c : a + b*exp(-c * x)
@@ -159,22 +161,22 @@ if __name__ == '__main__':
                        )
 
             settings = dict(
-                        repeats          = repeats,\
-                        deltas           = deltas,\
-                        nSamples         = nSamples,\
-                        step             = step,\
-                        burninSamples    = burninSamples,\
-                        pulseSizes       = pulseSizes,\
-                        updateType     = updateType,\
-                        nNodes           = graph.number_of_nodes(),\
-                        nTrials          = nTrials,\
+                        repeats       = repeats,\
+                        deltas        = deltas,\
+                        nSamples      = nSamples,\
+                        step          = step,\
+                        burninSamples = burninSamples,\
+                        pulseSizes    = pulseSizes,\
+                        updateType    = updateType,\
+                        nNodes        = graph.number_of_nodes(),\
+                        nTrials       = nTrials,\
                         # this is added
-                        graph            = nx.readwrite.json_graph.node_link_data(graph),\
-                        mapping          = model.mapping,\
-                        rmapping         = model.rmapping,\
-                        model            = type(model).__name__,\
-                        directory        = targetDirectory,\
-                        nudgeType        = nudgeType,\
+                        graph         = nx.readwrite.json_graph.node_link_data(graph),\
+                        mapping       = model.mapping,\
+                        rmapping      = model.rmapping,\
+                        model         = type(model).__name__,\
+                        directory     = targetDirectory,\
+                        nudgeType     = nudgeType,\
                         )
             settingsObject = IO.Settings(settings)
             settingsObject.save(targetDirectory)

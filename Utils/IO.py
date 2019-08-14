@@ -252,7 +252,7 @@ class Worker:
              # load nudge
             sample   = loadData(fileName)
             # impact = stats.KL(control.px, sample.px)
-            impact   = stats.KL(sample.px, control.px)
+            impact   = stats.KL(sample.px, control.px, exclude = nodeNames)
             # don't use +1 as the nudge has no effect at zero
             redIm    = np.nansum(impact[-self.deltas:], axis = -1).T
             # TODO: check if this works with tuples (not sure)

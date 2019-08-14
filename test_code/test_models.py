@@ -8,8 +8,8 @@ class TestIsing(unittest.TestCase):
     """
 
     def setUp(self):
-        from Models import fastIsing
-        from Models import potts
+        from Models import FastIsing
+        from Models import Potts
         import networkx as nx
 
         g = nx.path_graph(5)
@@ -47,8 +47,8 @@ class TestPotts(TestIsing):
     """
 
     def setUp(self):
-        from Models import potts
-        from Models import potts
+        from Models import Potts
+        from Models import Potts
         import networkx as nx
 
         g = nx.path_graph(5)
