@@ -30,6 +30,48 @@ tempres       = 10 #100
 
 
 genDataFile = lambda x : f'dataset{idx}''
+
+
+graphs = []
+N  = 10
+if not loadGraph:
+    for i in range(10):
+
+        r = np.random.rand() * (1 - .2) + .2
+        # g = nx.barabasi_albert_graph(N, 2)
+        # g = nx.erdos_renyi_graph(N, r)
+        # g = nx.duplication_divergence_graph(N, r)
+        # graphs.append(g)
+else:
+    print('running craph graph')
+    graph = IO.loadPickle(loadGraph)
+    graphs.append(graph)
+   # w = nx.utils.powerlaw_sequence(N, 2)
+   # g = nx.expected_degree_graph(w)
+    # g = sorted(nx.connected_component_subgraphs(g), key = lambda x: len(x))[-1]
+
+    #for i, j in g.edges():
+    #    g[i][j]['weight'] = np.random.rand() * 2 - 1
+#        graphs.append(g)
+
+#    graphs[0].add_edge(0,0)
+#    for j in np.int32(np.logspace(0, np.log10(N-1),  5)):
+#       graphs.append(nx.barabasi_albert_graph(N, j))
+dataDir = 'Graphs' # relative path careful
+df    = IO.readCSV(f'{dataDir}/Graph_min1_1.csv', header = 0, index_col = 0)
+h     = IO.readCSV(f'{dataDir}/External_min1_1.csv', header = 0, index_col = 0)
+graph   = nx.from_pandas_adjacency(df)
+attr = {}
+for node, row in h.iterrows():
+    attr[node] = dict(H = row['externalField'], nudges = 0)
+nx.set_node_attributes(graph, attr)
+graphs.append(graph)
+
+if 'fs4' in os.uname().nodename or 'node' in os.uname().nodename:
+    now = datetime.datetime.now().isoformat()
+    rootDirectory = f'/var/scratch/cveltere/{now}' # data storage
+else:
+    rootDirectory = f'{os.getcwd()}/Data/'
 for idx, graph in enumerate(graphs):
     start = datetime.datetime.now()
     targetDirectory = os.path.join(rootDirectory, f'{start.isoformat()}')
