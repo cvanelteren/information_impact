@@ -19,11 +19,11 @@ deltas        = 30
 step          = int(1e3)
 nSamples      = int(1e4)
 burninSamples = 0
-pulseSizes    = np.linspace(.1, 1, 9).tolist()
-# pulseSizes  = np.arange(0.5, 5, .5) # np.linspace(0.5, 5, 5).tolist() # [0.5, np.inf] #, -np.inf]# , .8, .7]
+# pulseSizes    = np.linspace(.1, 1, 9).tolist()
+pulseSizes  = np.arange(0.5, 5, .5).tolist() # np.linspace(0.5, 5, 5).tolist() # [0.5, np.inf] #, -np.inf]# , .8, .7]
 
 nTrials       = 20
-magSide       = ''
+magSide       = 'neg'
 updateType    = '0.25'
 CHECK         = [.5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 nudgeType     = 'constant'
