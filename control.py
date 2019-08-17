@@ -14,7 +14,7 @@ from Utils import IO
 
 
 
-repeats        = int(1e5)
+repeats        = int(1e4)
 deltas        = 30
 step          = int(1e3)
 nSamples      = int(1e4)
