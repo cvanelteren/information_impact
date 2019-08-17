@@ -107,7 +107,6 @@ for idx, graph in enumerate(graphs):
                     graph         = graph,\
                     mapping       = model.mapping,\
                     rmapping      = model.rmapping,\
-                    model         = model,\
                     directory     = targetDirectory,\
                     nudgeType     = nudgeType,\
                     CHECK = CHECK,\

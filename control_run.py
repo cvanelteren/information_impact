@@ -1,6 +1,7 @@
 from Utils import IO
 import numpy as np, scipy, os, matplotlib.pyplot as plt
 from Toolbox import infcy
+from Models import FastIsing
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -11,6 +12,14 @@ if __name__ == "__main__":
     runFile = args.file
     for k, v in IO.loadPickle(runFile).items():
         globals()[k] = v
+
+    modelSettings = dict(\
+                             graph       = graph,\
+                             temperature = 0,\
+                             updateType  = updateType,\
+                             magSide     = magSide,\
+                             nudgeType   = nudgeType)
+    model = FastIsing.Ising(**modelSettings)
     magRange = np.array([CHECK]).ravel()
 
     # magRange = array([.9, .2])
