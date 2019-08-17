@@ -27,7 +27,7 @@ if __name__ == "__main__":
     mag, sus = model.matchMagnetization(temps = fitTemps,\
      n = int(1e3), burninSamples = 0)
 
-    func = lambda x, a, b, c, d :  a / (1 + exp(b * (x - c))) + d # tanh(-a * x)* b + c
+    func = lambda x, a, b, c, d :  a / (1 + np.exp(b * (x - c))) + d # tanh(-a * x)* b + c
     # func = lambda x, a, b, c : a + b*exp(-c * x)
     fmag = scipy.ndimage.gaussian_filter1d(mag, .2)
     a, b = scipy.optimize.curve_fit(func, fitTemps, fmag.squeeze(), maxfev = 10000)
