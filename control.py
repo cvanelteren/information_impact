@@ -110,7 +110,8 @@ for idx, graph in enumerate(graphs):
                     model         = type(model).__name__,\
                     directory     = targetDirectory,\
                     nudgeType     = nudgeType,\
-                    CHECK = CHECK)
+                    CHECK = CHECK,\
+                    tempres = tempres)
     runFile = genDataFile(idx)
     IO.savePickle(runFile, settings)
 
