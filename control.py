@@ -104,7 +104,7 @@ for idx, graph in enumerate(graphs):
                     nNodes        = graph.number_of_nodes(),\
                     nTrials       = nTrials,\
                     # this is added
-                    graph         = nx.readwrite.json_graph.node_link_data(graph),\
+                    graph         = graph,\
                     mapping       = model.mapping,\
                     rmapping      = model.rmapping,\
                     model         = type(model).__name__,\
