@@ -9,7 +9,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args, args.file)
     runFile = args.file
-    for k, v in IO.loadPickle(runFile):
+    for k, v in IO.loadPickle(runFile).items():
         gloals()[k] = v
     magRange = np.array([CHECK]).ravel()
 
