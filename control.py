@@ -112,6 +112,9 @@ for idx, graph in enumerate(graphs):
                     CHECK = CHECK,\
                     tempres = tempres, \
                     magSide = magSide,\
+                    targetDirectory = targetDirectory,\
+                    start = start, \
+                    now = now,\
                     )
     runFile = genDataFile(idx)
     IO.savePickle(runFile, settings)
