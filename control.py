@@ -8,12 +8,13 @@ control.py: main control script. It stores temporary pickle files that the other
 general settings have to be setup here
 
 """
-import subprocess, datetime, numpy as np, networkx as nx
+import subprocess, datetime, numpy as np, networkx as nx, os
 from Models import FastIsing
+from Utils import IO
 
 
 
-epeats        = int(1e5)
+repeats        = int(1e5)
 deltas        = 30
 step          = int(1e3)
 nSamples      = int(1e4)
@@ -29,11 +30,12 @@ nudgeType     = 'constant'
 tempres       = 10 #100
 
 
-genDataFile = lambda x : f'dataset{idx}''
+genDataFile = lambda x : f'dataset{idx}'
 
 
 graphs = []
 N  = 10
+loadGraph = ''
 if not loadGraph:
     for i in range(10):
 
@@ -112,5 +114,5 @@ for idx, graph in enumerate(graphs):
     runFile = genDataFile(idx)
     IO.savePickle(runFile, settings)
 
-    cmd = f"sbatch control_run.sh {runFile}".split()
+    cmd = f"sbatch control_slurm.sh {runFile}".split()
     subprocess.call(cmd)
