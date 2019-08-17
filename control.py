@@ -25,9 +25,9 @@ pulseSizes    = np.linspace(.1, 1, 9).tolist()
 nTrials       = 20
 magSide       = ''
 updateType    = '0.25'
-CHECK         = [0.8] # , .5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+CHECK         = [.5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 nudgeType     = 'constant'
-tempres       = 10 #100
+tempres       = 100
 
 
 genDataFile = lambda x : f'dataset{idx}'

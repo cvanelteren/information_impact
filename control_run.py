@@ -1,6 +1,5 @@
 from Utils import IO
 import numpy as np, scipy, os, matplotlib.pyplot as plt
-import click
 from Toolbox import infcy
 import argparse
 

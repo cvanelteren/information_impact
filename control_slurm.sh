@@ -5,7 +5,8 @@
 #SBATCH -o outfile  # send stdout to outfile
 #SBATCH -e errfile  # send stderr to errfile
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
-source activate
+$file = $1
+source activate base
 cd $HOME/information_impact
 python compile.py build_ext --inplace
-srun python control_run.py --file $1
+srun python control_run.py --file $file
