@@ -111,6 +111,7 @@ for idx, graph in enumerate(graphs):
                     nudgeType     = nudgeType,\
                     CHECK = CHECK,\
                     tempres = tempres, \
+                    magSide = magSide,\
                     )
     runFile = genDataFile(idx)
     IO.savePickle(runFile, settings)
