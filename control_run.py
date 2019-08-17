@@ -10,7 +10,7 @@ if __name__ == "__main__":
     print(args, args.file)
     runFile = args.file
     for k, v in IO.loadPickle(runFile).items():
-        gloals()[k] = v
+        globals()[k] = v
     magRange = np.array([CHECK]).ravel()
 
     # magRange = array([.9, .2])
