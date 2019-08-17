@@ -107,12 +107,12 @@ for idx, graph in enumerate(graphs):
                     graph         = graph,\
                     mapping       = model.mapping,\
                     rmapping      = model.rmapping,\
-                    model         = type(model).__name__,\
+                    model         = model,\
                     directory     = targetDirectory,\
                     nudgeType     = nudgeType,\
                     CHECK = CHECK,\
                     tempres = tempres, \
-                    model = model)
+                    )
     runFile = genDataFile(idx)
     IO.savePickle(runFile, settings)
 
