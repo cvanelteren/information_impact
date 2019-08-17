@@ -11,7 +11,7 @@ from matplotlib.pyplot import *
 import pickle, pandas, os, re, json, datetime
 import networkx as nx
 from collections import defaultdict, OrderedDict
-def loadSets(data : dict) -> list:
+def loadSets(data : dict) -> dict:
     """
     Load a set of data. Returns the settings and the loaded data
     """
@@ -22,13 +22,13 @@ def loadSets(data : dict) -> list:
     for idx, (k, v) in enumerate(data.items()):
         # tmp = os.path.join(root, k)
         setting = Settings(k)
-        
+
         # setting = settings[k]
-            
+
         tmp_worker = Worker(v, setting)
         with ThreadPool(processes = mp.cpu_count()) as p:
           p.map(tmp_worker, tmp_worker.idx)
-          v = np.frombuffer(tmp_worker.buff, dtype = np.float64).reshape(*tmp_worker.buffshape)    
+          v = np.frombuffer(tmp_worker.buff, dtype = np.float64).reshape(*tmp_worker.buffshape)
         del tmp_worker
         s = v.shape
         v = v.reshape(-1, setting.nNodes, setting.deltas // 2 - 1)
@@ -70,24 +70,24 @@ class DataLoader(OrderedDict):
                      if fileName.endswith(extension):
                          files.append(os.path.join(root, fileName))
                          break # prevent possible doubles
-                         
+
          def tmp(x):
              x = x.split('/')[-1].split('_')[0]
              d = re.search(pattern, x)
              if d:
                  return d.group()
              else:
-                 return '' 
+                 return ''
          files = sorted(files, key = lambda x: \
                                     tmp(x))
-         
+
 #         common = ''
 #         for fs in zip(*files):
 #             fs = set(fs)
 #             if len(fs) == 1:
 #                 common += str(list(fs)[0])
-#             
-         
+#
+
          """
          Although dicts are ordered by default from >= py3.6
          Here I enforce the order as it matters for matching controls
@@ -96,11 +96,11 @@ class DataLoader(OrderedDict):
          # files still contains non-compliant pickle files, e.g. mags.pickle
          for file in files:
              # filter out non-compliant pickle files
-             
+
              try:
                  # look for t=
                  # temp = re.search('t=\d+\.[0-9]+', file).group
-                 
+
                  temp = file.split('/')[-3] # magnetization
                  root = file.split('/')[-4]
                  # deltas = re.search('deltas=\d+', file).group()
@@ -122,7 +122,7 @@ class DataLoader(OrderedDict):
          print('Done')
 
 
-    
+
 # class DataLoader:
     # def __init__(self):
         # self.data = {}
@@ -335,6 +335,9 @@ def renamed_loads(pickled_bytes):
 
 def loadPickle(fileName):
     import sys
+    # safeguard?
+    if not fileName.endswith('.pickle'):
+        fileName += '.pickle'
     with open(fileName, 'rb') as f:
         return renamed_load(f)
 
@@ -373,7 +376,7 @@ class Settings:
     nNodes        : int
     nTrials       : int
     pulseSizes    : list
-    
+
     nudgeType     : str
 
     # model properties
@@ -398,7 +401,7 @@ class Settings:
             If string it excpects a root folder which it will search for settings
             or emulate them
         """
-        self._use_old_format_ = False 
+        self._use_old_format_ = False
         # assign defaults
         for field in fields(self):
             if not any(isinstance(field.default, i) for i in [_MISSING_TYPE, property]):
@@ -447,7 +450,7 @@ class Settings:
         """
         # not dotted anymore need to look for a class name in the directory of
         # the models
-        
+
         # look for model name inside the module files
         for file in os.listdir('Models/'):
             if file.endswith('pyx'):
@@ -468,8 +471,8 @@ class Settings:
 #        m = self.model.split('.')
 #        mt = '.'.join(i for i in m[:-1]) # remove extension
 #        return getattr(importlib.import_module(mt), m[-1])(self.graph)
-    
-    
+
+
     # add simple check instead of sideways?
     @property
     def mapping(self):
