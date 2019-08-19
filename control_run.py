@@ -153,10 +153,10 @@ if __name__ == "__main__":
                     fileName += "".join(f"_{key}={settings.get(key, '')}" for key in props)
                     fileName += f'_pulse={pulse}'
                     sr       = SimulationResult(\
-                                            mi          = mi,\
-                                            conditional = conditional,\
+                                            mi          = [],\
+                                            conditional = [],\
         #                                                graph       = model.graph,\
                                             px          = px,\
-                                            snapshots   = snapshots)
+                                            snapshots   = [])
                     IO.savePickle(fileName, sr)
     os.remove(runFile) # remove th temporary file
