@@ -55,7 +55,7 @@ class DataLoader(OrderedDict):
      dataDir = root
      super(DataLoader, self).__init__(**kwargs)
 
-     allowedExtensions = "pickle h5".split()
+     allowedExtensions = "pickle ".split()
      #TODO :  make aggregate dataclass -> how to deal with multiple samples
      # current work around is bad imo
      pattern = '((\d+-\d+-\d+T\d+:\d+:)?(\d+\.\d+))'
@@ -70,7 +70,7 @@ class DataLoader(OrderedDict):
                      if fileName.endswith(extension):
                          files.append(os.path.join(root, fileName))
                          break # prevent possible doubles
-
+        print(f"Found {len(files)} of files")
          def tmp(x):
              x = x.split('/')[-1].split('_')[0]
              d = re.search(pattern, x)
