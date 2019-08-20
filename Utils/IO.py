@@ -70,7 +70,7 @@ class DataLoader(OrderedDict):
                      if fileName.endswith(extension):
                          files.append(os.path.join(root, fileName))
                          break # prevent possible doubles
-        print(f"Found {len(files)} of files")
+         print(f"Found {len(files)} of files")
          def tmp(x):
              x = x.split('/')[-1].split('_')[0]
              d = re.search(pattern, x)
