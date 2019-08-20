@@ -71,7 +71,11 @@ class DataLoader(OrderedDict):
                          files.append(os.path.join(root, fileName))
                          break # prevent possible doubles
          print(f"Found {len(files)} of files")
+         print(files[0]); assert 0
          def tmp(x):
+             """
+             Look for the time in order to sort the data properly
+             """
              x = x.split('/')[-1].split('_')[0]
              d = re.search(pattern, x)
              if d:
