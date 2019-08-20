@@ -102,9 +102,9 @@ class DataLoader(OrderedDict):
                  # temp = re.search('t=\d+\.[0-9]+', file).group
 
                  temp = file.split('/')[-3] # magnetization
-                 root = file.split('/')[-4]
+                 root = os.path.join(*list(file.split('/'))[:-3])
                  # root = os.path.join(*list(file.split('//'))[0:-3])
-                 print(root)
+                 # print(root)
                  # deltas = re.search('deltas=\d+', file).group()
                  # deltas = re.search('\d+', deltas).group()
                  # look for pulse
