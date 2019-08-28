@@ -12,7 +12,45 @@ def aucs(data, func, params = {},\
         auc[node] = quad(tmp, *bounds)[0]
     return auc
 
-    
+
+def determineDrivers(drivers, alpha = 0.05):
+    """
+    Iterative approach in determining  the driver-nodes
+
+    The test involves iteratively testing whether there exist i-driver nodes in the rank
+    using the success rate of a binomial distribution
+
+    Input:
+        :drivers: vector of nTrials long
+        :alpha: rejection alpha
+    """
+    from scipy.stats import binom
+    from collections import Counter # histogram symbolic
+    n = len(drivers) #.shape[0]
+    # bin the data
+    # get distribution over rank 1; start from highest
+    counts = sorted(Counter(drivers).items(), key = lambda x : x[1])[::-1]
+
+    nDrivers = len(counts)
+    # print(counts, drivers)
+    # iteratively test how many driver-nodes there are
+    # print(nDrivers)
+    if nDrivers == 1:
+        return 1, counts
+    else:
+        for nDriver in range(1, nDrivers):
+
+            driverSet = counts[:nDriver + 1]
+            # H_0 -> are there nDriver + 1 driver nodes?
+            p = 1  # assume the random choice
+            success = sum([count for node, count in driverSet])
+            pval = binom.pmf(success, n, p)
+
+            if pval  > alpha:
+                break
+            # return pval, driverSet
+    # print(driverSet)
+    return pval, driverSet
 
 
 def hellingerDistance(p1, p2):

@@ -19,8 +19,11 @@ def loadSets(data : dict) -> dict:
     import multiprocessing as mp
     settings   = {}
     loadedData = {}
+
+    pbar = pr.ProgBar(len(data))
     for idx, (k, v) in enumerate(data.items()):
         # tmp = os.path.join(root, k)
+        print(f'Loading sets {k}')
         setting = Settings(k)
 
         # setting = settings[k]
@@ -37,6 +40,7 @@ def loadSets(data : dict) -> dict:
         setting.data = v.reshape(s)
 #        loadedData[k] = v.reshape(s)
         settings[k] = setting
+        pbar.update()
     return settings
 class DataLoader(OrderedDict):
     def __init__(self, root = '', **kwargs):
@@ -106,6 +110,7 @@ class DataLoader(OrderedDict):
 
                  temp = file.split('/')[-3] # magnetization
                  root = os.path.join(*list(file.split('/'))[:-3])
+                 # print(root)
                  # root = os.path.join(*list(file.split('//'))[0:-3])
                  # print(root)
                  # deltas = re.search('deltas=\d+', file).group()
@@ -149,7 +154,7 @@ def flatLoader(root):
             files = sorted(files, key = lambda x:\
                        re.search(pattern, x).group())
             for file in files:
-                print(file)
+                print(f'Flatloader... Loading: {file}')
                 if file.endswith('pickle') and not file in data:
                     data.add(os.path.join(root, file))
         except:
@@ -160,6 +165,7 @@ def flatLoader(root):
 from Utils import misc, stats
 import multiprocessing as mp
 from tqdm import tqdm
+import pyprind as pr
 class Worker:
     def __init__(self , datadict, setting):
         self.setting = setting
@@ -210,9 +216,11 @@ class Worker:
         a, b = divmod(len(self.filenames), fullset)
         c = 1 if b else 0
         N = fullset * (a - c)
-        self.pbar = tqdm(total = N)
+        # self.pbar = tqdm(total = N)
+        self.pbar = pr.ProgBar(N)
         #    print(a, b, c, COND * NODES + 1 )
         self.idx = list(range(N))
+
     def __call__(self, fidx):
         """
         Temporary worker to load data files
@@ -263,7 +271,7 @@ class Worker:
             # TODO: check if this works with tuples (not sure)
             for name in nodeNames:
                 data[(node - 1) // setting.nNodes + 1, trial, temp, name,  :] = redIm.squeeze().T
-        self.pbar.update(1)
+        self.pbar.update()
 
 # TODO: careful
 def loadData(root):

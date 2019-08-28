@@ -1,0 +1,9 @@
+* Publication
+** TODOS
+  There is some work to do on the data. Preferably we want data to have a
+  little more trials so that the statistics will be easier. Currently,
+  implementation is written for extracting the driver-nodes but looks odd.
+  Still left to do:
+  - Test the driver-node method
+  - Obtain results for more samlpes?
+      

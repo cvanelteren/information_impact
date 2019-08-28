@@ -17,6 +17,7 @@ from cpython.ref cimport PyObject
 
 # progressbar
 from tqdm import tqdm   #progress bar
+import pyprind as pr
 
 # cython
 from libcpp.vector cimport vector
@@ -180,7 +181,8 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
     # cdef cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r    = 0
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
     cdef PyObject *modelptr
-    pbar = tqdm(total = nSamples)
+    # pbar = tqdm(total = nSamples)
+    pbar = pr.ProgBar(nSamples)
     cdef tuple state
     cdef int counter = 0
     for sample in prange(nSamples, nogil = True, \
@@ -300,7 +302,8 @@ cpdef dict monteCarlo(\
                                          sampleSize), dtype = long)
     # cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r = 0
 
-    pbar = tqdm(total = states) # init  progbar
+    # pbar = tqdm(total = states) # init  progbar
+    pbar = pr.ProgBar(states)
 
     cdef int tid  # init thread id
 

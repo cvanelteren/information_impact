@@ -35,7 +35,7 @@ genDataFile = lambda x : f'dataset{idx}'
 
 graphs = []
 N  = 10
-loadGraph = 'rerunthese.pickle'
+loadGraph = 'rerunthese.pickle2'
 if not loadGraph:
     for i in range(10):
         r = np.random.rand() * (1 - .2) + .2
