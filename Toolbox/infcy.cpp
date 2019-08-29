@@ -4510,7 +4510,7 @@ __pyx_t_20 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
  *             (<Model> modelptr).reset()
  *             pbar.update(1)             # <<<<<<<<<<<<<<
  *     print('done')
- *     pbar.close()
+ *     #pbar.close()()
  */
                                   __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_pbar, __pyx_n_s_update); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 202, __pyx_L25_error)
                                   __Pyx_GOTREF(__pyx_t_11);
@@ -4682,7 +4682,7 @@ __pyx_t_20 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
  *             (<Model> modelptr).reset()
  *             pbar.update(1)
  *     print('done')             # <<<<<<<<<<<<<<
- *     pbar.close()
+ *     #pbar.close()()
  *     print(f'Found {len(snapshots)} states')
  */
   __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 203, __pyx_L1_error)
@@ -4692,7 +4692,7 @@ __pyx_t_20 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
   /* "Toolbox/infcy.pyx":204
  *             pbar.update(1)
  *     print('done')
- *     pbar.close()             # <<<<<<<<<<<<<<
+ *     #pbar.close()()             # <<<<<<<<<<<<<<
  *     print(f'Found {len(snapshots)} states')
  *     print(f"Delta = {timer() - past: .2f} sec")
  */
@@ -4717,7 +4717,7 @@ __pyx_t_20 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
 
   /* "Toolbox/infcy.pyx":205
  *     print('done')
- *     pbar.close()
+ *     #pbar.close()()
  *     print(f'Found {len(snapshots)} states')             # <<<<<<<<<<<<<<
  *     print(f"Delta = {timer() - past: .2f} sec")
  *     return snapshots
@@ -4750,7 +4750,7 @@ __pyx_t_20 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "Toolbox/infcy.pyx":206
- *     pbar.close()
+ *     #pbar.close()()
  *     print(f'Found {len(snapshots)} states')
  *     print(f"Delta = {timer() - past: .2f} sec")             # <<<<<<<<<<<<<<
  *     return snapshots
@@ -6479,7 +6479,7 @@ __pyx_t_42 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
   /* "Toolbox/infcy.pyx":340
  *     #     conditional[tuple(s.base[idx])] = si
  * 
- *     pbar.close()             # <<<<<<<<<<<<<<
+ *     #pbar.close()()             # <<<<<<<<<<<<<<
  *     print(f"Delta = {timer() - past: .2f} sec")
  *     return conditional
  */
@@ -6504,7 +6504,7 @@ __pyx_t_42 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
 
   /* "Toolbox/infcy.pyx":341
  * 
- *     pbar.close()
+ *     #pbar.close()()
  *     print(f"Delta = {timer() - past: .2f} sec")             # <<<<<<<<<<<<<<
  *     return conditional
  * 
@@ -6561,7 +6561,7 @@ __pyx_t_42 = ((struct __pyx_vtabstruct_6Models_6Models_Model *)((struct __pyx_ob
   __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
 
   /* "Toolbox/infcy.pyx":342
- *     pbar.close()
+ *     #pbar.close()()
  *     print(f"Delta = {timer() - past: .2f} sec")
  *     return conditional             # <<<<<<<<<<<<<<
  * 
@@ -26069,7 +26069,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *             (<Model> modelptr).reset()
  *             pbar.update(1)
  *     print('done')             # <<<<<<<<<<<<<<
- *     pbar.close()
+ *     #pbar.close()()
  *     print(f'Found {len(snapshots)} states')
  */
   __pyx_tuple__3 = PyTuple_Pack(1, __pyx_n_u_done); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 203, __pyx_L1_error)
