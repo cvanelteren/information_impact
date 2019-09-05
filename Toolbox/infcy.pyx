@@ -340,7 +340,7 @@ cpdef dict monteCarlo(\
     # for idx, si in enumerate(out.base):
     #     conditional[tuple(s.base[idx])] = si
 
-    pbar.close()
+    # pbar.close()
     print(f"Delta = {timer() - past: .2f} sec")
     return conditional
 
