@@ -8,4 +8,4 @@
 source activate base
 cd $HOME/information_impact
 python compile.py build_ext --inplace
-srun python control_run.py --file $1
+srun python3 control_run.py --file $1

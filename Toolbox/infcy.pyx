@@ -181,8 +181,8 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
     # cdef cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r    = 0
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
     cdef PyObject *modelptr
-    # pbar = tqdm(total = nSamples)
-    pbar = pr.ProgBar(nSamples)
+    pbar = tqdm(total = nSamples)
+    # pbar = pr.ProgBar(nSamples)
     cdef tuple state
     cdef int counter = 0
     for sample in prange(nSamples, nogil = True, \
@@ -203,7 +203,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
             (<Model> modelptr).reset()
             pbar.update(1)
     print('done')
-    # pbar.close()
+    pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f"Delta = {timer() - past: .2f} sec")
     return snapshots
@@ -302,8 +302,8 @@ cpdef dict monteCarlo(\
                                          sampleSize), dtype = long)
     # cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r = 0
 
-    # pbar = tqdm(total = states) # init  progbar
-    pbar = pr.ProgBar(states)
+    pbar = tqdm(total = states) # init  progbar
+    # pbar = pr.ProgBar(states)
 
     cdef int tid  # init thread id
 
@@ -340,7 +340,7 @@ cpdef dict monteCarlo(\
     # for idx, si in enumerate(out.base):
     #     conditional[tuple(s.base[idx])] = si
 
-    # pbar.close()
+    pbar.close()
     print(f"Delta = {timer() - past: .2f} sec")
     return conditional
 
