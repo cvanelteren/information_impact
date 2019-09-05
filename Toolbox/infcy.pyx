@@ -203,7 +203,7 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
             (<Model> modelptr).reset()
             pbar.update(1)
     print('done')
-    pbar.close()
+    # pbar.close()
     print(f'Found {len(snapshots)} states')
     print(f"Delta = {timer() - past: .2f} sec")
     return snapshots
