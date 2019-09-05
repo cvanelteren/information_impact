@@ -22,10 +22,10 @@ burninSamples = 0
 # pulseSizes    = np.linspace(.1, 1, 9).tolist()
 pulseSizes  = np.arange(0.5, 5, .5).tolist() # np.linspace(0.5, 5, 5).tolist() # [0.5, np.inf] #, -np.inf]# , .8, .7]
 
-nTrials       = 20
+nTrials       = 50
 magSide       = 'neg'
 updateType    = '0.25'
-CHECK         = [.5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
+CHECK         = [.8, .7, .6] #.5, .2] # if real else [.9]  # match magnetiztion at 80 percent of max
 nudgeType     = 'constant'
 tempres       = 100
 
@@ -35,14 +35,15 @@ genDataFile = lambda x : f'dataset{idx}'
 
 graphs = []
 N  = 10
-loadGraph = 'rerunthese.pickle2'
+# loadGraph = 'rerunthese.pickle2'
+loadGraph = ''
 if not loadGraph:
     for i in range(10):
         r = np.random.rand() * (1 - .2) + .2
         # g = nx.barabasi_albert_graph(N, 2)
-        # g = nx.erdos_renyi_graph(N, r)
+        g = nx.erdos_renyi_graph(N, r)
         # g = nx.duplication_divergence_graph(N, r)
-        # graphs.append(g)
+        graphs.append(g)
 else:
     for graph in IO.loadPickle(loadGraph)['graphs']:
         graphs.append(graph)
