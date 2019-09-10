@@ -1,7 +1,7 @@
-from Models import FastIsing
 import numpy as np, networkx as nx, os, datetime
 from Utils import IO
 
+from Models import FastIsing
 """
 Things to do:
 I need a way for the simulations to be self-contained. Creating a
@@ -43,12 +43,12 @@ models = []
 
 for _ in range(10):
     g = nx.erdos_renyi_graph(10, np.random.uniform(0.2, .8))
-    m = settings.get('model')(graph = g)#, **settings.get('modelSettings'))
-    # m.equilibriate(magRatios, eqSettings)
-    print(m.simulate(10))
-    m.matchMagnetization(np.linspace(0, 1, 10))
+    m = settings.get('model')(graph = g, \
+                            **settings.get('modelSettings'))
+    m.equilibriate(magRatios, eqSettings)
+    print(m.matched['ratios'])
+    print(m.matched['ratios'].get(0.8))
     models.append(m)
-print(models)
 # control is over-counted
 interventions = [itertools.product(pulseSizes, m.graph.nodes()) for m in models]
 
@@ -60,6 +60,7 @@ if any([nodename in i for i in \
     rootDirectory = f'/var/scratch/cveltere/{now}'
 else:
     rootDirectory = f'{os.getcwd()}/Data'
+
 
 
 

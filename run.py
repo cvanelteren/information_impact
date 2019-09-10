@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
             # magRange = array([.9, .2])
             fitTemps = linspace(0, graph.number_of_nodes() / 2, tempres)
-            mag, sus = model.matchMagnetization(temps = fitTemps,\
+            mag, sus = model.matchMagnetization(temperatures = fitTemps,\
              n = int(1e3), burninSamples = 0)
             print('>>', mag,sus)
 
