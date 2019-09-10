@@ -33,7 +33,8 @@ for (root, dirs, files) in os.walk(baseDir):
                            sources            = sources, \
                            include_dirs       = [nums, '.'],\
                            extra_compile_args = ['-fopenmp',\
-                                                 '-ffast-math','-Ofast', \
+                                                 '-ffast-math',\
+                                                 '-Ofast', \
                                                  '-march=native',\
                                                  '-std=c++17',\
                                                 '-fno-wrapv',\

@@ -110,6 +110,8 @@ class DataLoader(OrderedDict):
 
                  temp = file.split('/')[-3] # magnetization
                  root = os.path.join(*list(file.split('/'))[:-3])
+                 # root = '/' + root
+                 # print(root)
                  # print(root)
                  # root = os.path.join(*list(file.split('//'))[0:-3])
                  # print(root)
