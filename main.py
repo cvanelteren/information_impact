@@ -53,7 +53,7 @@ if any([nodename in i for i in \
 'fs4 node'.split()]):
     now = datetime.datetime.now().isoformat()
     rootDirectory = f'/var/scratch/cveltere/{now}'
-    runCommand = 'sbach single_run.sh'
+    runCommand = 'sbatch single_run.sh'
 else:
     rootDirectory = f'{os.getcwd()}/Data'
     runCommand = 'python3 single_run.py'
