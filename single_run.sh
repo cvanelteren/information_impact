@@ -7,5 +7,7 @@
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
 source activate base
 cd $HOME/information_impact
+
+echo "starting { $1 }"
 srun python3 single_run.py --file $1
 echo "job finished"

@@ -117,7 +117,7 @@ for _ in range(10):
                 settings['pulse'] = intervention
                 settings['model'] = tmp
 
-                fn = createJob(tmp, settings, simulationRoot)
+                fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
                 IO.savePickle(fn, copy.deepcopy(settings))
                 call([*runCommand.split(), fn])
                 # call(f'sbatch single_run.sh {fn}'.split())
@@ -130,7 +130,6 @@ for _ in range(10):
             settings['pulse'] = {}
             settings['model'] = tmp
 
-            fn = createJob(tmp, settings, simulationRoot)
-            print(fn)
+            fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
             IO.savePickle(fn, copy.deepcopy(settings))
             call([*runCommand.split(), fn])
