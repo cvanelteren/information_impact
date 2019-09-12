@@ -108,6 +108,7 @@ for _ in range(10):
         settings['ratio'] = ratio
 
         if pulse:
+            pass
             for node in m.graph.nodes():
                 tmp = copy.deepcopy(m)
                 tmp.t = ratio[1]
