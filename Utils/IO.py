@@ -393,9 +393,10 @@ class Settings:
     pulseSizes    : list
 
     nudgeType     : str
+    modelSettings : dict
 
     # model properties
-    updateType  : str
+    # updateType  : str
     # legacy support needed of these
 
 

@@ -4,7 +4,6 @@
 
 # MODELS
 # from Models.Models cimport Model
-from Models.Models cimport Model
 
 import numpy as np
 cimport numpy as np
@@ -15,6 +14,7 @@ import multiprocessing as mp
 import copy
 from cpython.ref cimport PyObject
 
+from Models.Models cimport Model
 # progressbar
 from tqdm import tqdm   #progress bar
 import pyprind as pr

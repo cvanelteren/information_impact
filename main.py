@@ -1,6 +1,9 @@
-import numpy as np, networkx as nx, os, datetime
+import numpy as np, networkx as nx, os, datetime, itertools, copy
 from Utils import IO
 
+from subprocess import call, Popen
+# compile
+call('python compile.py build_ext --inplace'.split())
 from Models import FastIsing
 """
 Things to do:
@@ -11,6 +14,9 @@ I need a way for the simulations to be self-contained. Creating a
 
 Additionally, there is a need to setupt the nudges little more proper
 
+
+- Magnetization [x]
+- Add control to sims []
 """
 modelSettings = dict(\
     magSide       = 'neg',\
@@ -18,55 +24,111 @@ modelSettings = dict(\
     nudgeType     = 'constant',\
     )
 
+equilibrium   =  (\
+    np.array([.8, .7, .6]),\
+    dict(\
+        n = 100, \
+        temperatures = np.logspace(\
+                        -3, np.log10(10), 10)\
+                )
+        )
+
+
 settings = dict(\
     model         = FastIsing.Ising,\
     repeats       = int(1e4),\
     deltas        = 30,\
-    step          = int(1e3),\
+    steps         = int(1e3),\
     nSamples      = int(1e4),\
     burninSamples = 0,\
     nTrials       = 50,\
     modelSettings = modelSettings,\
     tempres       = 100,\
     )
-import itertools
-pulseSizes    = np.arange(0, 5, .5).tolist()
-nodes         = {}
 
-eqSettings =    dict(\
-                n = 100, \
-                temperatures = np.linspace(0, 10, 10)\
-                )
-magRatios = np.array([.8, .7, .6])
-
-models = []
-
-for _ in range(10):
-    g = nx.erdos_renyi_graph(10, np.random.uniform(0.2, .8))
-    m = settings.get('model')(graph = g, \
-                            **settings.get('modelSettings'))
-    m.equilibriate(magRatios, eqSettings)
-    print(m.matched['ratios'])
-    print(m.matched['ratios'].get(0.8))
-    models.append(m)
 # control is over-counted
-interventions = [itertools.product(pulseSizes, m.graph.nodes()) for m in models]
-
 # check if the file is running on das4
 nodename = os.uname().nodename
 if any([nodename in i for i in \
 'fs4 node'.split()]):
     now = datetime.datetime.now().isoformat()
     rootDirectory = f'/var/scratch/cveltere/{now}'
+    runCommand = 'sbach single_run.sh'
 else:
     rootDirectory = f'{os.getcwd()}/Data'
+    runCommand = 'python3 single_run.py'
 
 
+pulseSizes    = np.arange(0, 5, .5).tolist()
+models = []
+
+def createJob(model, settings, root = ''):
+    tmp                       = os.path.join(root, 'data')
+
+    os.makedirs(tmp, exist_ok = 1)
+
+    mag                       = settings.get('ratio')[0]
+    trial                     = settings.get('trial')
+    intervention              = settings.get('pulse')
+    now                       = datetime.datetime.now().isoformat()
+    fileName                  = f"trial={trial}_r={mag}_{intervention}.pickle"
+    fileName                  = os.path.join(tmp, fileName)
+    return fileName
+
+# init models
+for _ in range(10):
+    g = nx.erdos_renyi_graph(10, np.random.uniform(.2, .8))
+    m = settings.get('model')(graph = g, \
+                            **settings.get('modelSettings'), \
+                            equilibrium = equilibrium)
+    # m.equilibriate(magRatios, eqSettings)
+    combinations = itertools.product(\
+        m.matched['ratios'].items(),\
+        pulseSizes, \
+        range(settings.get('nTrials'))
+    )
 
 
+    # setup filepaths
+    now = datetime.datetime.now().isoformat()
+    simulationRoot = os.path.join(\
+                    rootDirectory, now)
 
+    os.makedirs(simulationRoot, exist_ok = 1)
 
+    settings['equilibrium'] = m.matched
+    IO.savePickle(os.path.join(simulationRoot, 'settings'),\
+    settings)
 
+    for (ratio, pulse, trial) in combinations:
 
-            # make file
-            # dispatch job
+        # tmp added properties
+        settings['trial'] = trial
+        settings['ratio'] = ratio
+
+        if pulse:
+            for node in m.graph.nodes():
+                tmp = copy.deepcopy(m)
+                tmp.t = ratio[1]
+                intervention = {node : pulse}
+                tmp.nudges = intervention
+
+                settings['pulse'] = intervention
+                settings['model'] = tmp
+
+                fn = createJob(tmp, settings, simulationRoot)
+                IO.savePickle(fn, settings)
+                Popen(f'{runCommand} --file {fn}'.split())
+                # call(f'sbatch single_run.sh {fn}'.split())
+                # print(fn)
+        else:
+            tmp = copy.deepcopy(m)
+            tmp.nudges = {}
+            tmp.t = ratio[1]
+
+            settings['pulse'] = {}
+            settings['model'] = tmp
+
+            fn = createJob(tmp, settings, simulationRoot)
+            IO.savePickle(fn, settings)
+            Popen(f'{runCommand} --file {fn}'.split())

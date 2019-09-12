@@ -1,13 +1,8 @@
-from Toolbox import infcy
-from Utils import IO
-import argparse
+import argparse, datetime, os
 
-def equilbriate(model: Model, \
-                nSamples: int,\
-                burnin : int,\
-                step: int,\
-                ) -> list:
-    return temperatures
+
+from Utils import IO
+from Toolbox import infcy
 # init arg parse
 parser = argparse.ArgumentParser()
 parser.add_argument('--file')
@@ -19,45 +14,49 @@ if __name__ == '__main__':
     runFile = args.file
 
     # load data to global
-    for k, v in IO.loadPickle(runFile).items():
-        print(f'Loaded {k}')
-        globals()[k] = v
+    settings = IO.loadPickle(runFile)
+    model    = settings.get('model')
+
 
     # init model
-    model = model(**modelSettings)
-    if equilbriate:
-        pass
+     # run experiment
+    if not settings.get('pulse'):
+        # run snapshots (cheap enough)
+        snaps = {k : settings.get(k) for\
+                k in 'nSamples burninSamples steps'.split()\
+                }
+        snapshots = infcy.getSnapShots(
+                            model, **snaps
+                            )
+    # load nudges
     else:
-         # run experiment
-        control = 1 if not pulse else 0
-        if control:
-            # run snapshots (cheap enough)
-            snapshots = infcy.getSnapShots(
-                                model, nSamples,\
-                                burninSamples = burninSamples,\
-                                steps = step\
-                                )
-            model.nudges = pulse
-        # load nudges
-        else:
-            snapshots = IO.loadSnapshots(fileName)
-            model.nudges = pulse
+        # think of something to extract the control
+        trial = settings.get('trial')
+        mag   = settings.get('ratio')[0]
+        root = os.path.join(*tuple(i for i in runFile.split('/')[:-1]))
+        root = '/' + root
+        control = os.path.join(root, \
+                    f"trial={trial}_r={mag}_{{}}.pickle"\
+                    )
+        snapshots = IO.loadPickle(control).snapshots
+    deltas, repeats = [settings.get(k) for k in 'deltas repeats'.split()]
+    conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
 
-            conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
+    # store the results
+    store = dict(\
+    mi          = mi, \
+    conditional = conditional,\
+    px          = px,\
+    snapshots   = snapshots,\
+    )
+    # reduce dataset size
+    # TODO: make nicer
+    if model.nudges:
+        store['mi']          = []
+        store['conditional'] = []
+        store['snapshots']   = []
+    sr = IO.SimulationResult(**store)
 
-        # store the results
-        store = dict(\
-        mi          = mi, \
-        conditional = conditional,\
-        px          = px,\
-        snapshots   = snapshots,\
-        )
-        # reduce dataset size
-        # TODO: make nicer
-        if not control:
-            store['mi']          = []
-            store['conditional'] = []
-            store['snapshots']   = []
-        sr = IO.SimulationResult(**store)
-        IO.savePickle(fileName, sr)
-    os.remove(fileName)
+    # TODO: remove
+
+    IO.savePickle(runFile, sr)
