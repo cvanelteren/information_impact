@@ -133,4 +133,4 @@ for _ in range(10):
 
             fn = createJob(tmp, settings, simulationRoot)
             IO.savePickle(fn, settings)
-            call(f'{runCommand} {fn}'.split())
+            call(f'sbatch --wait single_run.sh {fn}'.split())
