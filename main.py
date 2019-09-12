@@ -1,4 +1,5 @@
-import numpy as np, networkx as nx, os, datetime, itertools, copy
+import numpy as np, networkx as nx, os, datetime, itertools, \
+copy, time
 from Utils import IO
 
 from subprocess import call, Popen
@@ -119,6 +120,7 @@ for _ in range(10):
                 fn = createJob(tmp, settings, simulationRoot)
                 IO.savePickle(fn, settings)
                 Popen(f'{runCommand} {fn}'.split())
+                time.sleep(1)
                 # call(f'sbatch single_run.sh {fn}'.split())
                 # print(fn)
         else:
@@ -132,3 +134,4 @@ for _ in range(10):
             fn = createJob(tmp, settings, simulationRoot)
             IO.savePickle(fn, settings)
             Popen(f'{runCommand} --file {fn}'.split())
+            time.sleep(1)
