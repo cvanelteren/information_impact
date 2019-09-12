@@ -57,7 +57,7 @@ if any([nodename in i for i in \
     runCommand = 'sbatch single_run.sh'
 else:
     rootDirectory = f'{os.getcwd()}/Data'
-    runCommand = 'python3 single_run.py'
+    runCommand = 'python3 single_run.py --file'
 
 
 pulseSizes    = np.arange(0, 5, .5).tolist()
@@ -120,7 +120,7 @@ for _ in range(10):
                 fn = createJob(tmp, settings, simulationRoot)
                 IO.savePickle(fn, settings)
                 Popen(f'{runCommand} {fn}'.split())
-                time.sleep(1)
+                time.sleep(.2)
                 # call(f'sbatch single_run.sh {fn}'.split())
                 # print(fn)
         else:
@@ -133,5 +133,5 @@ for _ in range(10):
 
             fn = createJob(tmp, settings, simulationRoot)
             IO.savePickle(fn, settings)
-            Popen(f'{runCommand} --file {fn}'.split())
-            time.sleep(1)
+            call(f'{runCommand} {fn}'.split())
+            time.sleep(.2)
