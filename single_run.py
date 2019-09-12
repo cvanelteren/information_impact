@@ -14,6 +14,7 @@ if __name__ == '__main__':
     runFile = args.file
 
     # load data to global
+    print("IM AM IN RUNFILE", runFile)
     settings = IO.loadPickle(runFile)
     model    = settings.get('model')
 
@@ -51,7 +52,7 @@ if __name__ == '__main__':
     )
     # reduce dataset size
     # TODO: make nicer
-    if model.nudges:
+    if settings.get('pulse'):
         store['mi']          = []
         store['conditional'] = []
         store['snapshots']   = []
