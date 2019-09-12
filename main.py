@@ -118,7 +118,7 @@ for _ in range(10):
 
                 fn = createJob(tmp, settings, simulationRoot)
                 IO.savePickle(fn, settings)
-                Popen(f'{runCommand} --file {fn}'.split())
+                Popen(f'{runCommand} {fn}'.split())
                 # call(f'sbatch single_run.sh {fn}'.split())
                 # print(fn)
         else:
