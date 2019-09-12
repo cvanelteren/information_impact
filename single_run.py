@@ -39,10 +39,7 @@ if __name__ == '__main__':
         control = os.path.join(root, \
                     f"trial={trial}_r={mag}_{{}}.pickle"\
                     )
-        print(control)
-        snapshots = IO.loadPickle(control)
-        print(snapshots)
-        snapshots = snapshots.get('snapshots')
+        snapshots = IO.loadPickle(control).snapshots
     deltas, repeats = [settings.get(k) for k in 'deltas repeats'.split()]
     conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
 
