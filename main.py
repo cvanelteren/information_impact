@@ -42,7 +42,7 @@ settings = dict(\
     steps         = int(1e3),\
     nSamples      = int(1e4),\
     burninSamples = 0,\
-    nTrials       = 2,\
+    nTrials       = 50,\
     modelSettings = modelSettings,\
     tempres       = 100,\
     )
