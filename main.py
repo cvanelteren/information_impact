@@ -134,4 +134,4 @@ for _ in range(10):
             fn = createJob(tmp, settings, simulationRoot)
             IO.savePickle(fn, settings)
             call(f'{runCommand} {fn}'.split())
-            time.sleep(.2)
+            time.sleep(60)
