@@ -108,7 +108,6 @@ for _ in range(10):
         settings['ratio'] = ratio
 
         if pulse:
-            pass
             for node in m.graph.nodes():
                 tmp = copy.deepcopy(m)
                 tmp.t = ratio[1]
@@ -119,9 +118,8 @@ for _ in range(10):
                 settings['model'] = tmp
 
                 fn = createJob(tmp, settings, simulationRoot)
-                IO.savePickle(fn, settings)
+                IO.savePickle(fn, copy.deepcopy(settings))
                 Popen(f'{runCommand} {fn}'.split())
-                time.sleep(.2)
                 # call(f'sbatch single_run.sh {fn}'.split())
                 # print(fn)
         else:
@@ -133,5 +131,6 @@ for _ in range(10):
             settings['model'] = tmp
 
             fn = createJob(tmp, settings, simulationRoot)
-            IO.savePickle(fn, settings)
+            print(fn)
+            IO.savePickle(fn, copy.deepcopy(settings))
             call(f'sbatch single_run.sh {fn}'.split())
