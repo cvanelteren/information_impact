@@ -9,3 +9,5 @@ source activate base
 cd $HOME/information_impact
 python compile.py build_ext --inplace
 srun python3 single_run.py --file $1
+wait
+echo "job finished"
