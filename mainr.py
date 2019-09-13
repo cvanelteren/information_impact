@@ -17,7 +17,7 @@ print(os.getpid())
 import sys, time
 
 start = time.time()
-threshold = 10 * 60  + start
+threshold = 1 * 60  + start
 while files and time.time() < threshold:
     runFile = files[0].strip('\n')
     files.pop(0)
@@ -27,7 +27,7 @@ with open('simulations.txt', 'w') as f:
     f.writelines([i + '\n' for i in files])
     # call itself
 if files:
-    subprocess.Popen('python mainr.py'.split(), \
+    subprocess.Popen('nohup python mainr.py'.split(), \
             stdin = None, \
             stdout = None, \
             stderr = None)
