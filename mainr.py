@@ -22,7 +22,7 @@ while files and time.time() < threshold:
     runFile = files[0].strip('\n')
     files.pop(0)
     subprocess.Popen([*runCommand.split(), runFile])
-
+    time.sleep(.5)
 with open('simulations.txt', 'w') as f:
     f.writelines([i + '\n' for i in files])
     # call itself
