@@ -11,17 +11,21 @@ else:
     runCommand = 'python3 single_run.py --file'
 
 import subprocess
+import os
+import time
+print(os.getpid())
 if files:
     a = len(files)
     runFile = files[0].strip('\n')
     files.pop(0)
 
-    # Popen([*runCommand.split(), runFile],\
+    Popen([*runCommand.split(), runFile])
             #stdin = None, stdout = None,\
             # stderr = None)
     with open('simulations.txt', 'w') as f:
         f.writelines([i + '\n' for i in files])
     # call itself
+    time.sleep(1)
     print('calling myself')
     subprocess.Popen('python mainr.py'.split())
     print('new')
