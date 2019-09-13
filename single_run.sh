@@ -5,6 +5,7 @@
 #SBATCH -o outfile  # send stdout to outfile
 #SBATCH -e errfile  # send stderr to errfile
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
+#SBATCH --constraint=cpunode
 source activate base
 cd $HOME/information_impact
 

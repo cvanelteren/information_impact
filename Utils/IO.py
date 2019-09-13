@@ -356,12 +356,13 @@ def loadPickle(fileName):
     with open(fileName, 'rb') as f:
         return renamed_load(f)
 
-def savePickle(fileName, objects):
+def savePickle(fileName, objects, verbose = False):
     #TODO: warning; apparantly pickle <=3 cannot handle files
     # larger than 4 gb.
     if not fileName.endswith('.pickle'):
         fileName += '.pickle'
-    print(f'Saving {fileName}')
+    if verbose:
+        print(f'Saving {fileName}')
     with open(fileName, 'wb') as f:
         pickle.dump(objects, f, protocol = pickle.HIGHEST_PROTOCOL)
 

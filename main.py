@@ -78,7 +78,7 @@ def createJob(model, settings, root = ''):
 
 # init models
 for _ in range(10):
-    g = nx.erdos_renyi_graph(4, np.random.uniform(.2, .8))
+    g = nx.erdos_renyi_graph(10, np.random.uniform(.2, .8))
     m = settings.get('model')(graph = g, \
                             **settings.get('modelSettings'), \
                             equilibrium = equilibrium)
@@ -119,7 +119,7 @@ for _ in range(10):
 
                 fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
                 IO.savePickle(fn, copy.deepcopy(settings))
-                call([*runCommand.split(), fn])
+                Popen([*runCommand.split(), fn])
                 # call(f'sbatch single_run.sh {fn}'.split())
                 # print(fn)
         else:
