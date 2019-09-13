@@ -14,19 +14,21 @@ import subprocess
 import os
 import time
 print(os.getpid())
-if files:
-    a = len(files)
+import sys, time
+
+start = time.time()
+threshold = 10 * 60  + start
+while files and time.time() < threshold:
     runFile = files[0].strip('\n')
     files.pop(0)
+    subprocess.Popen([*runCommand.split(), runFile])
 
-    Popen([*runCommand.split(), runFile])
-            #stdin = None, stdout = None,\
-            # stderr = None)
-    with open('simulations.txt', 'w') as f:
-        f.writelines([i + '\n' for i in files])
+with open('simulations.txt', 'w') as f:
+    f.writelines([i + '\n' for i in files])
     # call itself
-    time.sleep(1)
-    print('calling myself')
-    subprocess.Popen('python mainr.py'.split())
-    print('new')
-    assert len(files) < a
+if files:
+    subprocess.Popen('python mainr.py'.split(), \
+            stdin = None, \
+            stdout = None, \
+            stderr = None)
+print('Done')
