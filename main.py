@@ -94,7 +94,7 @@ for _ in range(10):
     now = datetime.datetime.now().isoformat()
     simulationRoot = os.path.join(\
                     rootDirectory, now)
-
+    print(f"Making {simulationRoot}")
     os.makedirs(simulationRoot, exist_ok = 1)
 
     settings['equilibrium'] = m.matched
