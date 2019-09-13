@@ -78,9 +78,10 @@ def createJob(model, settings, root = ''):
 
 # init models
 fileNames = []
+M = settings.get('model')
 for _ in range(10):
     g = nx.erdos_renyi_graph(10, np.random.uniform(.2, .8))
-    m = settings.get('model')(graph = g, \
+    m = M(graph = g, \
                             **settings.get('modelSettings'), \
                             equilibrium = equilibrium)
     # m.equilibriate(magRatios, eqSettings)
@@ -90,7 +91,6 @@ for _ in range(10):
         range(settings.get('nTrials'))
     )
     settings['graph'] = g
-    # settings['model'] = m
     # setup filepaths
     now = datetime.datetime.now().isoformat()
     simulationRoot = os.path.join(\
@@ -116,7 +116,7 @@ for _ in range(10):
                 tmp.nudges = intervention
 
                 settings['pulse'] = intervention
-                # settings['model'] = tmp
+                settings['model'] = tmp
 
                 fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
                 IO.savePickle(fn, copy.deepcopy(settings))
@@ -131,7 +131,7 @@ for _ in range(10):
             tmp.t = ratio[1]
 
             settings['pulse'] = {}
-            # settings['model'] = tmp
+            settings['model'] = tmp
 
             fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
             IO.savePickle(fn, copy.deepcopy(settings))
