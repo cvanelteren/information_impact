@@ -31,6 +31,7 @@ if __name__ == '__main__':
                             )
     # load nudges
     else:
+
         # think of something to extract the control
         trial = settings.get('trial')
         mag   = settings.get('ratio')[0]
@@ -39,7 +40,12 @@ if __name__ == '__main__':
         control = os.path.join(root, \
                     f"trial={trial}_r={mag}_{{}}.pickle"\
                     )
-        snapshots = IO.loadPickle(control).snapshots
+        snaphots = {}
+        while not snapshots:
+            try:
+                snapshots = IO.loadPickle(control).snapshots
+            except:
+                time.sleep(1)
     deltas, repeats = [settings.get(k) for k in 'deltas repeats'.split()]
     conditional, px, mi = infcy.runMC(model, snapshots, deltas, repeats)
 
