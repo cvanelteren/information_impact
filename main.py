@@ -99,7 +99,7 @@ for _ in range(10):
 
     settings['equilibrium'] = m.matched
     IO.savePickle(os.path.join(simulationRoot, 'settings'),\
-    settings)
+                settings)
 
     for (ratio, pulse, trial) in combinations:
 
