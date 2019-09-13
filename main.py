@@ -77,6 +77,7 @@ def createJob(model, settings, root = ''):
     return fileName
 
 # init models
+fileNames = []
 for _ in range(10):
     g = nx.erdos_renyi_graph(10, np.random.uniform(.2, .8))
     m = settings.get('model')(graph = g, \
@@ -89,7 +90,7 @@ for _ in range(10):
         range(settings.get('nTrials'))
     )
     settings['graph'] = g
-    settings['model'] = m
+    # settings['model'] = m
     # setup filepaths
     now = datetime.datetime.now().isoformat()
     simulationRoot = os.path.join(\
@@ -115,12 +116,13 @@ for _ in range(10):
                 tmp.nudges = intervention
 
                 settings['pulse'] = intervention
-                settings['model'] = tmp
+                # settings['model'] = tmp
 
                 fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
                 IO.savePickle(fn, copy.deepcopy(settings))
-                Popen([*runCommand.split(), fn])
-                time.sleep(.1)
+                fileNames.append(fn)
+                # Popen([*runCommand.split(), fn])
+                # time.sleep(.1)
                 # call(f'sbatch single_run.sh {fn}'.split())
                 # print(fn)
         else:
@@ -129,9 +131,13 @@ for _ in range(10):
             tmp.t = ratio[1]
 
             settings['pulse'] = {}
-            settings['model'] = tmp
+            # settings['model'] = tmp
 
             fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
             IO.savePickle(fn, copy.deepcopy(settings))
-            Popen([*runCommand.split(), fn])
-            time.sleep(.1)
+
+            fileNames.append(fn)
+            # Popen([*runCommand.split(), fn])
+            # time.sleep(.1)
+with open('simulations.txt', 'w') as f:
+    f.writelines([i + '\n' for i in fileNames])
