@@ -27,7 +27,7 @@ with open('simulations.txt', 'w') as f:
     f.writelines([i + '\n' for i in files])
     # call itself
 if files:
-    subprocess.Popen('nohup python mainr.py'.split(), \
+    subprocess.Popen('python mainr.py'.split(), \
             stdin = None, \
             stdout = None, \
             stderr = None)
