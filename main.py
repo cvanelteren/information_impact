@@ -88,8 +88,8 @@ for _ in range(10):
         pulseSizes, \
         range(settings.get('nTrials'))
     )
-
-
+    settings['graph'] = g
+    settings['model'] = m
     # setup filepaths
     now = datetime.datetime.now().isoformat()
     simulationRoot = os.path.join(\
