@@ -15,7 +15,7 @@ if files:
     runFile = files[0].strip('\n')
     files.pop(0)
     Popen([*runCommand.split(), runFile])
-    with open('simulations.txt') as f:
+    with open('simulations.txt', 'w') as f:
         f.writelines([i + '\n' for i in files])
     # call itself
-    call('python mainr.py'.split())
+    Popen('python mainr.py'.split())
