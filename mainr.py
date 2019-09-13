@@ -18,4 +18,4 @@ if files:
     with open('simulations.txt', 'w') as f:
         f.writelines([i + '\n' for i in files])
     # call itself
-    Popen('python mainr.py'.split())
+    Popen('python mainr.py'.split(), stdin=None, stdout=None, stderr=None, close_fds=True)
