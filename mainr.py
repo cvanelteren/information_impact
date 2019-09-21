@@ -8,7 +8,7 @@ if any([nodename in i for i in \
     now = datetime.datetime.now().isoformat()
     runCommand = 'sbatch single_run.sh'
 else:
-    runCommand = 'python3 single_run.py --file'
+    runCommand = 'python single_run.py --file'
 
 import subprocess
 import os
@@ -21,6 +21,7 @@ threshold = 1 * 60  + start
 while files and time.time() < threshold:
     runFile = files[0].strip('\n')
     files.pop(0)
+    print(runFile, runCommand)
     subprocess.Popen([*runCommand.split(), runFile])
     time.sleep(.5)
 with open('simulations.txt', 'w') as f:
