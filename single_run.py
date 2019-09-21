@@ -40,7 +40,7 @@ if __name__ == '__main__':
         control = os.path.join(root, \
                     f"trial={trial}_r={mag}_{{}}.pickle"\
                     )
-        snaphots = {}
+        snapshots = {}
         while not snapshots:
             try:
                 snapshots = IO.loadPickle(control).snapshots
