@@ -35,6 +35,7 @@ equilibrium   =  (\
         )
 
 
+pulseSizes    = np.arange(0, 5, .5).tolist()
 settings = dict(\
     model         = FastIsing.Ising,\
     repeats       = int(1e4),\
@@ -42,9 +43,10 @@ settings = dict(\
     steps         = int(1e3),\
     nSamples      = int(1e4),\
     burninSamples = 0,\
-    nTrials       = 50,\
+    nTrials       = 10,\
     modelSettings = modelSettings,\
     tempres       = 100,\
+    pulseSizes    = pulseSizes\
     )
 
 # control is over-counted
@@ -60,7 +62,6 @@ else:
     runCommand = 'python3 single_run.py --file'
 
 
-pulseSizes    = np.arange(0, 5, .5).tolist()
 models = []
 
 def createJob(model, settings, root = ''):
