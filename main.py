@@ -79,7 +79,7 @@ def createJob(model, settings, root = ''):
 # init models
 fileNames = []
 M = settings.get('model')
-for _ in range(10):
+for _ in range(1):
     g = nx.erdos_renyi_graph(10, np.random.uniform(.2, .8))
     m = M(graph = g, \
                             **settings.get('modelSettings'), \
