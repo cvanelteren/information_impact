@@ -6,7 +6,7 @@ from Toolbox import infcy
 # init arg parse
 parser = argparse.ArgumentParser()
 parser.add_argument('--file')
-
+import time
 if __name__ == '__main__':
     # load settings
     # parse input
