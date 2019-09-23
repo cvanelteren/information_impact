@@ -43,7 +43,7 @@ settings = dict(\
     steps         = int(1e3),\
     nSamples      = int(1e4),\
     burninSamples = 0,\
-    nTrials       = 10,\
+    nTrials       = 50,\
     modelSettings = modelSettings,\
     tempres       = 100,\
     pulseSizes    = pulseSizes\
@@ -75,12 +75,13 @@ def createJob(model, settings, root = ''):
     now                       = datetime.datetime.now().isoformat()
     fileName                  = f"trial={trial}_r={mag}_{intervention}.pickle"
     fileName                  = os.path.join(tmp, fileName)
+    fileName = fileName.replace(' ', '')
     return fileName
 
 # init models
 fileNames = []
 M = settings.get('model')
-for _ in range(1):
+for _ in range(10):
     g = nx.erdos_renyi_graph(10, np.random.uniform(.2, .8))
     m = M(graph = g, \
                             **settings.get('modelSettings'), \
@@ -119,7 +120,7 @@ for _ in range(1):
                 settings['pulse'] = intervention
                 settings['model'] = tmp
 
-                fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
+                fn = createJob(tmp, settings, simulationRoot)
                 IO.savePickle(fn, copy.deepcopy(settings))
                 fileNames.append(fn)
                 # Popen([*runCommand.split(), fn])
@@ -134,7 +135,7 @@ for _ in range(1):
             settings['pulse'] = {}
             settings['model'] = tmp
 
-            fn = createJob(tmp, settings, simulationRoot).replace(' ', '')
+            fn = createJob(tmp, settings, simulationRoot)
             IO.savePickle(fn, copy.deepcopy(settings))
 
             fileNames.append(fn)
@@ -142,3 +143,5 @@ for _ in range(1):
             # time.sleep(.1)
 with open('simulations.txt', 'w') as f:
     f.writelines([i + '\n' for i in fileNames])
+from subprocess import call, Popen
+Popen('python mainr.py &'.split(), stderr = None, stdin = None, stdout = None)

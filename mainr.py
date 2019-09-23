@@ -18,17 +18,33 @@ import sys, time
 
 start = time.time()
 threshold = 1 * 60  + start
-while files and time.time() < threshold:
+# set limit of jobs 
+LIMIT = 10
+
+counts = int(\
+subprocess.run('squeue | grep cveltere | wc -l' , shell = 1, \
+capture_output = 1).stdout.strip()\
+)
+
+REST = LIMIT - counts 
+if REST < 0:
+    REST = 0
+for count in range(REST):
     runFile = files[0].strip('\n')
     files.pop(0)
-    print(runFile, runCommand)
     subprocess.Popen([*runCommand.split(), runFile])
+    time.sleep(0.1)
+    if time.time() > threshold:
+        break
+
 with open('simulations.txt', 'w') as f:
-    f.writelines([i + '\n' for i in files])
+    f.writelines([i for i in files])
     # call itself
+time.sleep(60)
 if files:
     subprocess.Popen('python mainr.py'.split(), \
             stdin = None, \
             stdout = None, \
             stderr = None)
+
 print('Done')
