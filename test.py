@@ -1,14 +1,11 @@
-import multiprocessing as mp, numpy as np
-m = mp.Manager()
+import argparse
 
-N = 5
-# settings = [[] for i in range(N)] 
-settings = m.list()
-def f(x, settings):
-    settings += [x] 
-    print(np.random.get_state())
-if __name__ == "__main__":
-    from functools import partial
-    tmp = partial(f, settings = settings)
-    with mp.Pool(mp.cpu_count()) as p:
-        p.map(tmp, range(N))
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--file')
+parser.add_argument('--id')
+if __name__ == '__main__':
+    args = parser.parse_args()
+    
+    print(args.file)
+    print(args.id)
