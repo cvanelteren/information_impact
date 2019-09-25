@@ -40,7 +40,7 @@ for count in range(REST):
 with open('simulations.txt', 'w') as f:
     f.writelines([i for i in files])
     # call itself
-time.sleep(60)
+# time.sleep(30)
 if files:
     subprocess.Popen('python mainr.py'.split(), \
             stdin = None, \
