@@ -1,5 +1,5 @@
 import numpy as np, os, re
-from Utils import stats
+from Utils import stats, IO
 
 ROOT = '/var/scratch/cveltere/2019-09-22T12:04:44.952513'
 
