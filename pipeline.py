@@ -85,7 +85,7 @@ def loadDataFiles(x , settings):
             simData = np.nansum(stats.KL2(lData.px, cpx), axis = -1)[deltas // 2 + 1:]
         data[k][nodeidx, trialidx, pulseidx, tempidx, :] = simData
 
-import multiproccesing as mp
+import multiprocessing as mp
 from functools import partial
 func  = partial(loadDataFiles, settings  = settings)
 with mp.Pool(mp.cpu_count()) as p:
