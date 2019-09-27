@@ -149,7 +149,8 @@ if __name__ == "__main__":
                 )
 
         settings['graph'] = g
-
+        settings['model'] = M
+        
         # setup filepaths
         nodename = os.uname().nodename
         if any([nodename in i for i in 'fs4 node'.split()]):
@@ -175,7 +176,6 @@ if __name__ == "__main__":
         for k, v in IO.loadPickle(file).items():
             if k != 'file':
                 globals()[k] = v
-        import sys
         os.remove(f'{file}')
 
 
