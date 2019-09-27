@@ -38,7 +38,7 @@ import ast
 def loadDataFiles(x , settings):
     k, v  = x
     path         = os.path.join(k, 'data')
-    settings     = settings.get(k)
+    setting     = settings.get(k)
     model        = setting.get('model')
     repeats      = setting.get('repeats')
     pulses       = setting.get('pulseSizes')
