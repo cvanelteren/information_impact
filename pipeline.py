@@ -35,7 +35,8 @@ from tqdm import tqdm_notebook as tqdm
 from Utils import stats
 import ast
 
-def loadDataFiles((k, v), settings):
+def loadDataFiles(x , settings):
+    k, v  = x
     path         = os.path.join(k, 'data')
     settings     = settings.get(k)
     model        = setting.get('model')
