@@ -49,7 +49,7 @@ def loadDataFiles(x , settings):
     tmpTemps  = {i: idx for idx, i in enumerate(temperatures)}
 
     deltas = setting.get('deltas')
-    for file in tqdm(os.listdir(path)):
+    for file in os.listdir(path):
 
         # load data
         lData = IO.loadPickle(os.path.join(path, file))
