@@ -8,5 +8,5 @@
 #SBATCH --constraint=cpunode
 
 source activate base
-cd #HOME/information_impact
+cd $HOME/information_impact
 srun python pipeline.py
