@@ -34,7 +34,7 @@ settings = dict(\
     steps         = int(1e3),\
     nSamples      = int(1e4),\
     burninSamples = 0,\
-    nTrials       = 50,\
+    nTrials       = 1,\
     modelSettings = modelSettings,\
     tempres       = 100,\
     pulseSizes    = pulseSizes\
@@ -45,7 +45,7 @@ parser.add_argument('--file', default = None, type = str)
 parser.add_argument('--id')
 combinations = None
 # deadline is 3600 * 48
-THRESHOLD = time.time() + 3600 * 46
+THRESHOLD = time.time() + 10 # 3600 * 46
 # THRESHOLD = time.time() + 10
 def createJob(model, settings, root = ''):
     tmp                       = os.path.join(root, 'data')
@@ -74,8 +74,8 @@ def checkTime():
         for k, v in globals().copy().items():
             if not inspect.ismodule(v) and not isinstance(v, argparse.ArgumentParser):
                 globs[k] = v
-        # if PID is None:
-        # PID = 1234
+        if PID is None:
+            PID = 1234
         simFile = f'sim-{PID}'
         IO.savePickle(simFile, globs)
         sys.exit()
@@ -89,15 +89,15 @@ def runJob(model, settings, simulationRoot):
         trial = settings.get('trial')
         mag   = settings.get('ratio')[0]
 
-        control = f'trial={trial}_r={mag}_{{}}.pickle'
-        control = os.path.join(rootDirectory, control)
+        control = f'data/trial={trial}_r={mag}_{{}}.pickle'
+        control = os.path.join(simulationRoot, control)
 
         snapshots = {}
         # try to load the snapshots
         # redundant check if run on separate process
         while not snapshots:
             try:
-                snapshots = IO.loadPickle(conrol).snapshots
+                snapshots = IO.loadPickle(control).snapshots
             except:
                 time.sleep(1)
 
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     print(file, PID)
     # this should only be run once per call
     if not file:
-        g = nx.erdos_renyi_graph(10, np.random.uniform(0, 1))
+        g = nx.erdos_renyi_graph(3, np.random.uniform(0, 1))
         m = M(graph = g, \
             **settings.get('modelSettings'), \
             equilibrium = equilibrium)
@@ -153,13 +153,12 @@ if __name__ == "__main__":
         
         # setup filepaths
         nodename = os.uname().nodename
+        now = datetime.datetime.now().isoformat()
         if any([i in nodename for i in 'fs4 node'.split()]):
-            now = datetime.datetime.now().isoformat()
             rootDirectory = f'/var/scratch/cveltere/{now}'
         else:
-            rootDirectory = f'{os.getcwd()}/Data'
+            rootDirectory = f'{os.getcwd()}/Data/{now}'
 
-        now = datetime.datetime.now().isoformat()
         simulationRoot = os.path.join(\
                     rootDirectory, now)
 
