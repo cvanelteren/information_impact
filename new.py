@@ -41,12 +41,12 @@ settings = dict(\
     )
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--file')
+parser.add_argument('--file', default = None, type = str)
 parser.add_argument('--id')
 combinations = None
 # deadline is 3600 * 48
-# THRESHOLD = time.time() + 3600 * 46
-THRESHOLD = time.time() + 10
+THRESHOLD = time.time() + 3600 * 46
+# THRESHOLD = time.time() + 10
 def createJob(model, settings, root = ''):
     tmp                       = os.path.join(root, 'data')
 
@@ -120,7 +120,7 @@ def runJob(model, settings, simulationRoot):
             store[i] = []
     fn = createJob(model, settings, simulationRoot)
     sr = IO.SimulationResult(**store)
-    IO.savePickle(fn, sr)
+    IO.savePickle(fn, sr, verbose = 1)
     checkTime()
 
  # init models
@@ -128,10 +128,10 @@ if __name__ == "__main__":
     M    = settings.get('model')
     args = parser.parse_args()
     file, PID = args.file, args.id
-
+    print(file, PID)
     # this should only be run once per call
     if not file:
-        g = nx.erdos_renyi_graph(10, np.random.uniform(.2, .8))
+        g = nx.erdos_renyi_graph(10, np.random.uniform(0, 1))
         m = M(graph = g, \
             **settings.get('modelSettings'), \
             equilibrium = equilibrium)
@@ -153,9 +153,9 @@ if __name__ == "__main__":
         
         # setup filepaths
         nodename = os.uname().nodename
-        if any([nodename in i for i in 'fs4 node'.split()]):
+        if any([i in nodename for i in 'fs4 node'.split()]):
             now = datetime.datetime.now().isoformat()
-            rootDirectory = f'var/scratch/cveltere/{now}'
+            rootDirectory = f'/var/scratch/cveltere/{now}'
         else:
             rootDirectory = f'{os.getcwd()}/Data'
 

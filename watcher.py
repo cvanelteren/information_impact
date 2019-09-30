@@ -6,13 +6,13 @@ Idiot script to fool the fileserver
 from subprocess import call, Popen
 import time, os, re, sys
 call('python compile.py build_ext --inplace'.split())
-TIMELIMIT = time.time() + 120
+TIMELIMIT = time.time() + 60 * 5
 
 nodename = os.uname().nodename
 for i in 'fs4 node'.split():
     runCommand = 'python new.py --file'
     if nodename in i:
-        runCommand = 'sbatch new_single.sh'
+        runCommand = 'sbatch new_run.sh'
         break
 SCRIPT = os.path.realpath(__file__)
 ROOT   = os.path.dirname(SCRIPT)

@@ -4,3 +4,4 @@ echo "Number of simulations to do "
 cat simulations.txt | wc -l 
 
 squeue | grep cveltere
+
