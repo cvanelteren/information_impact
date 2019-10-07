@@ -34,7 +34,7 @@ settings = dict(\
     steps         = int(1e3),\
     nSamples      = int(1e4),\
     burninSamples = 0,\
-    nTrials       = 1,\
+    nTrials       = 30,\
     modelSettings = modelSettings,\
     tempres       = 100,\
     pulseSizes    = pulseSizes\
@@ -45,7 +45,7 @@ parser.add_argument('--file', default = None, type = str)
 parser.add_argument('--id')
 combinations = None
 # deadline is 3600 * 48
-THRESHOLD = time.time() + 10 # 3600 * 46
+THRESHOLD = time.time() + 3600 * 46
 # THRESHOLD = time.time() + 10
 def createJob(model, settings, root = ''):
     tmp                       = os.path.join(root, 'data')
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     print(file, PID)
     # this should only be run once per call
     if not file:
-        g = nx.erdos_renyi_graph(3, np.random.uniform(0, 1))
+        g = nx.erdos_renyi_graph(10, np.random.uniform(0, 1))
         m = M(graph = g, \
             **settings.get('modelSettings'), \
             equilibrium = equilibrium)

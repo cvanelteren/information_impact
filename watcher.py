@@ -32,4 +32,4 @@ if __name__ == '__main__':
             Popen(f'python {SCRIPT}'.split())
             sys.exit()
         print('.', end = '')
-        time.sleep(1)
+        time.sleep(10)
