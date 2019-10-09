@@ -12,6 +12,57 @@ def aucs(data, func, params = {},\
         auc[node] = quad(tmp, *bounds)[0]
     return auc
 
+from statsmodels.stats.proportion import proportion_confint
+
+def pci(ranks, alpha = .05):
+    """
+    Compute confidence interval on binomial successes
+    with willson correction
+    """
+    from collections import Counter
+    hist = Counter(ranks)
+
+#     pvals = {}
+    from scipy.stats import norm, multinomial, chi2_contingency
+#     z = norm.ppf(1 - alpha / 2)
+#     n = len(hist)
+    n = len(ranks)
+
+    hist = dict(sorted(hist.items(), key = lambda x : x[1])[::-1])
+
+    candidates = [i for i in hist.keys()]
+    success = [i for i in hist.values()]
+
+#     print(success)
+    for ni in range(len(hist)):
+        p = multinomial.pmf(success[:ni + 1], n = n, p = np.ones(ni + 1) * 1/(ni + 1))
+#         chi2, p, dof, expected = chi2_contingency(t,  correction = 0)
+#         print(chi2, p, dof, expected)
+        driverset = set(candidates[:ni + 1])
+        if p >= alpha:
+#             print(driverset, hist)
+            break
+
+    return driverset
+
+
+def driverNodeEstimate(ranks, alpha = .01):
+    from collections import Counter
+    from statsmodels.stats.proportion import multinomial_proportions_confint as mpci
+
+    hist = Counter(ranks)
+    hist = dict(sorted(hist.items(), key = lambda x : x[1])[::-1])
+    candidates = list(hist.keys())
+#     print(candidates, hist)
+    if len(candidates) > 1:
+        intervals = mpci(list(hist.values()), alpha = alpha)
+        driverSet = set([candidates[0]])
+        for idx, (lower, upper) in enumerate(intervals[1:]):
+            if upper >= intervals[0, 0]:
+                driverSet.add(candidates[idx + 1])
+        return driverSet
+    else:
+        return set(candidates)
 
 def determineDrivers(drivers, alpha = 0.05):
     """
