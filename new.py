@@ -27,7 +27,6 @@ equilibrium   =  (\
 
 pulseSizes    = np.linspace(.5, 5, 9).tolist()
 pulseSizes.append(np.inf)
-pulseSizes = [0, .1, 1, 2]
 
 settings = dict(\
     model         = FastIsing.Ising,\
@@ -36,7 +35,7 @@ settings = dict(\
     steps         = int(1e3),\
     nSamples      = int(1e4),\
     burninSamples = 0,\
-    nTrials       = 3,\
+    nTrials       = 30,\
     modelSettings = modelSettings,\
     tempres       = 100,\
     pulseSizes    = pulseSizes,\
