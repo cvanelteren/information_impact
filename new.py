@@ -223,7 +223,7 @@ if __name__ == "__main__":
         g      = settings['graph']
         m      = settings['model']
         if not hasattr(m, 'graph'):
-            m = m(g)
+            m = m(g, **settings.get('modelSettings'))
 
         pulses = list(\
                 itertools.product(pulseSizes, \
