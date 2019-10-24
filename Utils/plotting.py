@@ -176,7 +176,7 @@ def addGraphPretty(graph, ax, \
     # arrow style for drawing
     arrowsprops = dict(\
                    arrowstyle = '-|>' if graph.is_directed() else '<|-|>' ,\
-                   mutation_scale = 15.0,\
+                   mutation_scale = 5.0,\
                    lw = 2,\
                    alpha = 1,\
                    )

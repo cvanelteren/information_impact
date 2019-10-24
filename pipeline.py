@@ -42,12 +42,12 @@ def loadDataFilesSingle(fileName, **kwargs):
     pulses       = setting.get('pulseSizes')
     temperatures = setting.get('equilibrium').get('ratios')
 
+
     # extract a mapper to be consistent [is this across datasets as well]
     # add 1 if zero is in the setting file, zero corresponds to a control
     tmpPulses = {i: idx + 1 if 0 not in pulses else idx for idx, i in enumerate(pulses)}
     # print(pulses, 0 in pulses); assert 0
     tmpTemps  = {i: idx for idx, i in enumerate(temperatures)}
-
     deltas = setting.get('deltas')
 
     # load data
@@ -61,7 +61,12 @@ def loadDataFilesSingle(fileName, **kwargs):
     trialidx = int(trial.split('=')[-1])
     tempidx  = tmpTemps[float(mag.split('=')[-1])]
 
+    # work around for the inf index
+    pulse = pulse.replace('inf', 'None')
+
+    # literal_eval will crash with inf
     intervention = ast.literal_eval(pulse)
+
     # control
     if not intervention:
         nodeidx = np.arange(setting.get('graph').number_of_nodes())
@@ -74,9 +79,13 @@ def loadDataFilesSingle(fileName, **kwargs):
     else:
         try:
             node = next(iter(intervention))
-            nodeidx = int(node)
 
+            model   = settings.get('model')
+            nodeidx = model.rmapping[node]
+            # nodeidx = int(node)
             pulseSize = intervention[node]
+            if pulseSize == None:
+                pulseSize = np.inf
 
             pulseidx = tmpPulses[pulseSize]
             # assert pulseidx != 0
@@ -91,7 +100,7 @@ def loadDataFilesSingle(fileName, **kwargs):
             # print(simData)
         # missing data
         except Exception as e:
-            print(e, lData.px, IO.loadPickle(os.path.join(path, controlFile)))
+            print('>', e)
             simData = np.NaN
     s = (nodeidx, trialidx, pulseidx, tempidx)
     return (fileName, s, simData)

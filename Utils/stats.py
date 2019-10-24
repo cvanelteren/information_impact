@@ -45,20 +45,46 @@ def pci(ranks, alpha = .05):
 
     return driverset
 
+def driverNodeEstimateSEM(ranks, alpha = .01):
+    """
+    Use all the trials for all the nodes to determine the driver node
+    :ranks: should be node x trials
+    """
+
+    # get number of standard deviations
+    from scipy.stats import norm, sem
+    zdx = norm.ppf(1 - alpha / 2)
+    nodes, trials = ranks.shape
+
+    means = ranks.mean(1)
+    sems  = sem(ranks, axis = 1) * zdx
+
+    driver = means.argmax()
+
+    candidates = set([driver])
+    for i in range(nodes):
+        if i != driver:
+            if means[i] + sems[i] >= means[driver] - sems[driver]:
+                candidates.add(i)
+    return candidates
+
+
+
 
 def driverNodeEstimate(ranks, alpha = .01):
     from collections import Counter
     from statsmodels.stats.proportion import multinomial_proportions_confint as mpci
 
     hist = Counter(ranks)
-    hist = dict(sorted(hist.items(), key = lambda x : x[1])[::-1])
-    candidates = list(hist.keys())
+    hist = sorted(hist.items(), key = lambda x : x[1])[::-1]
+    candidates = [i[0] for i in hist]
 #     print(candidates, hist)
     if len(candidates) > 1:
-        intervals = mpci(list(hist.values()), alpha = alpha)
+        intervals = mpci([i[1] for i in hist], alpha = alpha)
         driverSet = set([candidates[0]])
+        # print(intervals)
         for idx, (lower, upper) in enumerate(intervals[1:]):
-            if upper >= intervals[0, 0]:
+            if upper > intervals[0, 0]:
                 driverSet.add(candidates[idx + 1])
         return driverSet
     else:
