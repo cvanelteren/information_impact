@@ -80,8 +80,15 @@ def loadDataFilesSingle(fileName, **kwargs):
         try:
             node = next(iter(intervention))
 
-            model   = settings.get('model')
-            nodeidx = model.rmapping[node]
+            model   = setting.get('model')
+            try:
+                nodeidx = model.mapping[node]
+            except Exception as e:
+                # print(e)
+                g     = setting.get('graph')
+                model = model(g)
+                nodeidx = model.mapping[node]
+
             # nodeidx = int(node)
             pulseSize = intervention[node]
             if pulseSize == None:
