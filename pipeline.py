@@ -1,8 +1,38 @@
 import numpy as np, os, re
+import tqdm.tqdm as tqdm, itertools, scipy, multiprocessing as mp
+from Utils import plotting as plotz
+ROOT = '/var/scratch/cveltere/tester'
+
+def worker(sample):
+
+    sidx, sample = sample
+    # tmp workaround
+    if len(sample.shape) == 1:
+        sample = sample.reshape(-1, 1).T
+    auc = np.zeros((len(sample), 2))
+    x = np.arange(sample.shape[-1])
+    
+    tmp = np.arange(x.max() * 100, x.max() * 150, 3)
+    
+    x = np.concatenate((x, tmp))
+    padded = np.zeros(tmp.size)
+    
+    sample = np.array([\
+                       np.concatenate((i, padded)) for i in sample\
+                      ])
+    coeffs, errors = plotz.fit(sample, func, x = x, params = fitParam)
+    for nodei, c in enumerate(coeffs):
+        tmp = 0
+        F      = lambda x: func(x, *c)
+        tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
+        auc[nodei, 0] = tmp
+        auc[nodei, 1] = errors[nodei]
+        if errors[nodei] > .1:
+            print('error large')
+    auc[auc < np.finfo(auc.dtype).eps ] = 0
+    return (sidx, auc[:, 0]), coeffs
+
 from Utils import stats, IO
-
-ROOT = '/var/scratch/cveltere/2019-09-22T12:04:44.952513'
-
 
 def loadSettings(root):
     settings = {}
@@ -12,6 +42,13 @@ def loadSettings(root):
                 path = os.path.join(r, file)
                 settings[r] = IO.loadPickle(path)
     return settings
+
+def norm(x):
+    s = x.shape
+    x = x.reshape(-1)
+    x = (x - np.nanmin(x)) / (np.nanmax(x) - np.nanmin(x))
+    return x.reshape(s)
+
 
 
 # setup data
@@ -181,66 +218,74 @@ def loadDataFiles(fileName):
                 simData = np.NaN
         data[nodeidx, trialidx, pulseidx, tempidx, :] = simData
     return datasetname, data
-if __name__ == "__main__":
-    import multiprocessing as mp
-    from functools import partial
-    func  = partial(loadDataFiles, settings  = settings)
+
+
+def main():
+    # setup files to read
+    settings = {}
+    fileNames = []
+    for (root, dirs, files) in os.walk(ROOT):
+        for file in files:
+            if file.endswith('.pickle') and 'setting' not in file:
+                settting = settings.get(root, {})
+                if not setting:
+                    path = os.path.join(root, 'settings.pickle')
+                    setting = IO.loadPickle(path)
+                    m = setting.get('model')
+                    g = setting.get('graph')
+                    try:
+                        m.graph
+                    except:
+                        m = m(g)
+                    setting['model'] = m
+                    settings[root] = setting
+                tmp = (os.path.join(root, file), setting)
+                fileNames.append(tmp)
+    # setup data vector
+    data = {}
+    for root, setting in settings.items():
+        if setting.get('modelSettings').get('magSide'):
+            eq = setting.get('equilibrium')
+            nTemps = len(eq.get('ratios'))
+            nTrials = setting.get('nTrials')
+            nPulse = len(setting.get('pulseSizes'))
+            nPulse = nPulse + 1 if 0 not in setting.get('pulseSizes') else nPulse
+
+            deltas = setting.get('deltas')
+            nNodes = setting.get('model').nNodes
+
+            s = (nNodes, nTrials, nPulse, nTemps,\
+                    deltas // 2 - 1)
+            data[k] = np.zeros(s, dtype = float)
+        else:
+            print(f'SOMETHING WENT WRONG {root}')
+    
+    pbar = tqdm(total = len(fileNames))
     with mp.Pool(mp.cpu_count()) as p:
-        p.map(func, data.items())
+        for (path, s, d) in p.imap(loadDataFilesSingle, fileNames):
+            fn = '/'.join(i for i in path.split('/'))[:-2]
+            if np.all(np.isnan(d)):
+                assert False
+            data[fn][s] = d
+            pbar.update(1)
+    pbar.close()
 
-
-    # normalize data
-
-    def norm(x):
-        s = x.shape
-        x = x.reshape(-1)
-        x = (x - np.nanmin(x)) / (np.nanmax(x) - np.nanmin(x))
-        return x.reshape(s)
-
-    import itertools
-    for k, v in data.items():
+   # normalize data
+    rdata = {}
+    l = list(data.keys())
+    for key in l:
+        v = data[key]
+#       print(v)
         nodes, trials, pulses, temps, deltas = v.shape
         for (i, j, k) in itertools.product(*[range(i) for i in v.shape[1:-1]]):
-            v[:, i, j, k] = norm(v[:, i, j,k])
+        tmp = norm(v[:, i, j,k])
+        if np.all(np.isnan(tmp)):
+            print(i, j, k)
+        v[:, i, j, k] = tmp
+        rdata[key] = v 
 
-
-
-    def worker(sample):
-        # tmp workaround
-        if len(sample.shape) == 1:
-            sample = sample.reshape(-1, 1).T
-        auc = np.zeros((len(sample), 2))
-        x = np.arange(sample.shape[-1])
-
-        tmp = np.arange(x.max() * 100, x.max() * 150, 3)
-
-        x = np.concatenate((x, tmp))
-        padded = np.zeros(tmp.size)
-
-        sample = np.array([\
-                           np.concatenate((i, padded)) for i in sample\
-                          ])
-        coeffs, errors = plotz.fit(sample, func, x = x, params = fitParam)
-        for nodei, c in enumerate(coeffs):
-            tmp = 0
-            F      = lambda x: func(x, *c)
-            tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
-            auc[nodei, 0] = tmp
-            auc[nodei, 1] = errors[nodei]
-            if errors[nodei] > .1:
-                print('error large')
-        auc[auc < np.finfo(auc.dtype).eps ] = 0
-        return auc[:, 0]
-    from tqdm import tqdm
-
-    double = lambda x, b, c, d, e, f, g: b * np.exp(-c*(x - g)) + d * np.exp(- e * (x-f))
-
-    double_= lambda x, b, c, d, e, f, g:b * np.exp(-c*(x - g)) + d * np.exp(- e * (x - f ))
-    single = lambda x, a, b, c : a + b * np.exp(-c * x)
-    single_= lambda x, a, b, c : a + b * np.exp(-c * x)
-    special= lambda x, a, b, c, d: a  + b * np.exp(- (x)**c - d)
-
-    func        = double
+    double = lambda x, a, b, c, d, e, f: a * np.exp(-b * ( x - c ) ) + d * np.exp(-e * ( x - f )) 
+    func = double
     p0          = np.ones((func.__code__.co_argcount - 1)); # p0[0] = 0
     fitParam    = dict(\
                        maxfev = int(1e6), \
@@ -248,18 +293,33 @@ if __name__ == "__main__":
                        jac = 'cs', \
                       )
     aucs = {}
-    for k, v in data.items():
+    coeffs = {}
+    for k, v in rdata.items():
         setting = settings[k]
-
+        
         LIMIT = np.inf
         s = v.shape
         v = v.reshape(-1, s[-1])
-
+        print(v.shape)
+        
         with mp.Pool(mp.cpu_count()) as p:
             auc = np.zeros(len(v))
-            for idx, i in enumerate(p.imap(worker, tqdm(v))):
+            v = [(idx, i) for idx, i in enumerate(v)]
+            pbar = tqdm(total = len(v)) 
+            
+            tmp = []
+            for (idx, i), coeff in p.imap(worker, v):
                 auc[idx] = i
+                tmp.append(coeff)
+                pbar.update(1)
+        tmp = np.array(tmp).squeeze()
+        
         auc = auc.reshape(s[:-1])
         aucs[k] = auc
+        coeffs[k] =  tmp.reshape(*s[:-1], tmp.shape[-1])
 
-    IO.savePickle('all_data', dict(aucs = aucs, data = data, settings = settings))
+    IO.savePickle('tester.pickle', dict(aucs = aucs, data = data, \
+                                              rata = rdata, settings = settings,\
+                                   coeffs = coeffs))
+if __name__ == "__main__":
+    main()
