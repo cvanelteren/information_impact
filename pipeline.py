@@ -3,7 +3,7 @@ import itertools, scipy, multiprocessing as mp
 from tqdm import tqdm
 from Utils import plotting as plotz
 ROOT = '/var/scratch/cveltere/tester'
-
+ROOT = 'Data/tester'
 def worker(sample):
 
     sidx, sample = sample
@@ -51,25 +51,6 @@ def norm(x):
     return x.reshape(s)
 
 
-
-# setup data
-settings = loadSettings(ROOT)
-
-data = {}
-for k, v in settings.items():
-    print(v)
-    eq      = v.get('equilibrium')
-    nTemps  = len(eq.get('ratios'))
-    nTrials = v.get('nTrials')
-    nPulse  = len(v.get('pulseSizes'))# v.get('graph').number_of_nodes() + 1
-    deltas  = v.get('deltas')
-    nNodes  = v.get('graph').number_of_nodes()
-
-    s =  (nNodes, nTrials, nPulse, nTemps, deltas // 2 - 1)
-    data[k] = np.zeros(s)
-
-
-from tqdm import tqdm_notebook as tqdm
 from Utils import stats
 import ast
 
@@ -225,12 +206,17 @@ def main():
     # setup files to read
     settings = {}
     fileNames = []
+
+    print("Finding files and settings")
     for (root, dirs, files) in os.walk(ROOT):
         for file in files:
             if file.endswith('.pickle') and 'setting' not in file:
-                settting = settings.get(root, {})
+                settingRoot = '/'.join(i for i in root.split('/')[:-1])
+                
+                setting = settings.get(settingRoot, {})
                 if not setting:
-                    path = os.path.join(root, 'settings.pickle')
+                    print(settingRoot)
+                    path = os.path.join(settingRoot, 'settings.pickle')
                     setting = IO.loadPickle(path)
                     m = setting.get('model')
                     g = setting.get('graph')
@@ -239,11 +225,13 @@ def main():
                     except:
                         m = m(g)
                     setting['model'] = m
-                    settings[root] = setting
+                
+                settings[settingRoot] = setting
                 tmp = (os.path.join(root, file), setting)
                 fileNames.append(tmp)
     # setup data vector
     data = {}
+    print("setting up data")
     for root, setting in settings.items():
         if setting.get('modelSettings').get('magSide'):
             eq = setting.get('equilibrium')
@@ -257,14 +245,14 @@ def main():
 
             s = (nNodes, nTrials, nPulse, nTemps,\
                     deltas // 2 - 1)
-            data[k] = np.zeros(s, dtype = float)
+            data[root] = np.zeros(s, dtype = float)
         else:
             print(f'SOMETHING WENT WRONG {root}')
-    
+    print("Loading data") 
     pbar = tqdm(total = len(fileNames))
     with mp.Pool(mp.cpu_count()) as p:
         for (path, s, d) in p.imap(loadDataFilesSingle, fileNames):
-            fn = '/'.join(i for i in path.split('/'))[:-2]
+            fn = '/'.join(i for i in path.split('/')[:-2])
             if np.all(np.isnan(d)):
                 assert False
             data[fn][s] = d
@@ -274,9 +262,9 @@ def main():
    # normalize data
     rdata = {}
     l = list(data.keys())
+    print("Normalizing")
     for key in l:
         v = data[key]
-#       print(v)
         nodes, trials, pulses, temps, deltas = v.shape
         for (i, j, k) in itertools.product(*[range(i) for i in v.shape[1:-1]]):
             tmp = norm(v[:, i, j,k])
@@ -295,13 +283,13 @@ def main():
                       )
     aucs = {}
     coeffs = {}
+    print("Computing area under the curve")
     for k, v in rdata.items():
         setting = settings[k]
         
         LIMIT = np.inf
         s = v.shape
         v = v.reshape(-1, s[-1])
-        print(v.shape)
         
         with mp.Pool(mp.cpu_count()) as p:
             auc = np.zeros(len(v))
