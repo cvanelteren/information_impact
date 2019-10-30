@@ -266,6 +266,7 @@ def main():
     for key in l:
         v = data[key]
         nodes, trials, pulses, temps, deltas = v.shape
+        print(key)
         for (i, j, k) in itertools.product(*[range(i) for i in v.shape[1:-1]]):
             tmp = norm(v[:, i, j,k])
             if np.all(np.isnan(tmp)):
