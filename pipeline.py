@@ -1,5 +1,6 @@
 import numpy as np, os, re
-import tqdm.tqdm as tqdm, itertools, scipy, multiprocessing as mp
+import itertools, scipy, multiprocessing as mp
+from tqdm import tqdm
 from Utils import plotting as plotz
 ROOT = '/var/scratch/cveltere/tester'
 
@@ -278,10 +279,10 @@ def main():
 #       print(v)
         nodes, trials, pulses, temps, deltas = v.shape
         for (i, j, k) in itertools.product(*[range(i) for i in v.shape[1:-1]]):
-        tmp = norm(v[:, i, j,k])
-        if np.all(np.isnan(tmp)):
-            print(i, j, k)
-        v[:, i, j, k] = tmp
+            tmp = norm(v[:, i, j,k])
+            if np.all(np.isnan(tmp)):
+                print(i, j, k)
+            v[:, i, j, k] = tmp
         rdata[key] = v 
 
     double = lambda x, a, b, c, d, e, f: a * np.exp(-b * ( x - c ) ) + d * np.exp(-e * ( x - f )) 

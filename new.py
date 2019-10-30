@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
         print('>', m.matched)
         settings['graph'] = g
-        settings['model'] = M
+        settings['model'] = m
 
         # setup filepaths
         nodename = os.uname().nodename
