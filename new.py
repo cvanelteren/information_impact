@@ -1,6 +1,6 @@
 import numpy as np, networkx as nx, \
         os, datetime, itertools, \
-        copy, time, argparse
+        copy, time, argparse, sys
 
 from Toolbox import infcy
 from Utils import IO
@@ -66,7 +66,7 @@ def checkTime():
     """
     Save state on exit
     """
-    import inspect, sys
+    import inspect 
 
     global PID
     if time.time() > THRESHOLD:
@@ -250,7 +250,9 @@ if __name__ == "__main__":
 
     ccombinations = copy.deepcopy(combinations)
     combinations = list(combinations)
-
+    if not combinations:
+        sys.exit()
+    print(f'Combinations left {len(combinations)}')
     for (ratio, (pulse, node), trial) in ccombinations:
         # tmp added properties
         settings['trial'] = trial
