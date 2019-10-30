@@ -120,6 +120,7 @@ def loadDataFilesSingle(fileName, **kwargs):
             path = os.path.join(*fileName.split('/')[:-1])
             # print('>', path)
             # print('>>', controlFile)
+            print(path)
             cpx = IO.loadPickle(os.path.join(path, controlFile)).px
 
             simData = np.nansum(stats.KL2(lData.px, cpx), axis = -1)[deltas // 2 + 1:]
@@ -254,6 +255,7 @@ def main():
         for (path, s, d) in p.imap(loadDataFilesSingle, fileNames):
             fn = '/'.join(i for i in path.split('/')[:-2])
             if np.all(np.isnan(d)):
+                print(fileName, path)
                 assert False
             data[fn][s] = d
             pbar.update(1)
