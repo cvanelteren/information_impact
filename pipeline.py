@@ -6,7 +6,7 @@ ROOT = '/var/scratch/cveltere/tester'
 ROOT = 'Data/tester'
 def worker(sample):
 
-    sidx, sample = sample
+    sidx, sample, func = sample
     # tmp workaround
     if len(sample.shape) == 1:
         sample = sample.reshape(-1, 1).T
@@ -294,11 +294,11 @@ def main():
         
         with mp.Pool(mp.cpu_count()) as p:
             auc = np.zeros(len(v))
-            v = [(idx, i) for idx, i in enumerate(v)]
+            v = [(idx, i, func) for idx, i in enumerate(v)]
             pbar = tqdm(total = len(v)) 
             
             tmp = []
-            for (idx, i), coeff in p.imap(worker, v):
+            for (idx, i), coeff in p.imap( worker, v):
                 auc[idx] = i
                 tmp.append(coeff)
                 pbar.update(1)
