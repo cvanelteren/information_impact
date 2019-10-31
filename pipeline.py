@@ -3,7 +3,7 @@ import itertools, scipy, multiprocessing as mp
 from tqdm import tqdm
 from Utils import plotting as plotz
 ROOT = '/var/scratch/cveltere/tester'
-# ROOT = 'Data/tester'
+ROOT = 'Data/tester'
 def worker(sample):
 
     sidx, sample, func = sample

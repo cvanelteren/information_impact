@@ -139,15 +139,24 @@ if __name__ == "__main__":
     print(file, PID)
     # this should only be run once per call
     if not file:
-
         g = nx.erdos_renyi_graph(3, np.random.uniform(0, 1))
+        PSYCHO = True
+        if PSYCHO:
+            df = IO.readCSV('Graphs/Graph_min1_1.csv', header = 0,\
+                    index_col = 0)
+            h = IO.readCSV('Graphs/External_min1_1.csv', header = 0,\
+                    index_col = 0)
+            g = nx.from_pandas_adjacency(df)
+            attr = {node : dict(H = row['externalField']) for node, row in h.iterrows()}
+            nx.set_node_attributes(g, attr)
+            modelSettings['magSide'] = ''
+            settings['modelSettings'] = modelSettings
+
         m = M(graph = g, \
             **settings.get('modelSettings'), \
             equilibrium = equilibrium)
         matched = m.matched
 
-
-        print('>', m.matched)
         settings['graph'] = g
         settings['model'] = m
 
