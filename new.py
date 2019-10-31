@@ -247,7 +247,7 @@ if __name__ == "__main__":
     else:
         print('Resuming process')
         for k, v in IO.loadPickle(file).items():
-            if k != 'file':
+            if k is not in 'file THRESHOLD'.split():
                 globals()[k] = v
         os.remove(f'{file}')
 
