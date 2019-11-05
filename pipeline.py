@@ -2,7 +2,7 @@ import numpy as np, os, re
 import itertools, scipy, multiprocessing as mp
 from tqdm import tqdm
 from Utils import plotting as plotz
-ROOT = '/var/scratch/cveltere/tester'
+ROOT = '/var/scratch/cveltere/2019-10-31T14:33:34.823116/'
 ROOT = 'Data/tester'
 def worker(sample):
 
@@ -176,21 +176,17 @@ def main():
     data = {}
     print("setting up data")
     for root, setting in settings.items():
-        if setting.get('modelSettings').get('magSide'):
-            eq = setting.get('equilibrium')
-            nTemps = len(eq.get('ratios'))
-            nTrials = setting.get('nTrials')
-            nPulse = len(setting.get('pulseSizes'))
-            nPulse = nPulse + 1 if 0 not in setting.get('pulseSizes') else nPulse
+        eq = setting.get('equilibrium')
+        nTemps = len(eq.get('ratios'))
+        nTrials = setting.get('nTrials')
+        nPulse = len(setting.get('pulseSizes'))
+        nPulse = nPulse + 1 if 0 not in setting.get('pulseSizes') else nPulse
 
-            deltas = setting.get('deltas')
-            nNodes = setting.get('model').nNodes
-
-            s = (nNodes, nTrials, nPulse, nTemps,\
+        deltas = setting.get('deltas')
+        nNodes = setting.get('model').nNodes
+        s = (nNodes, nTrials, nPulse, nTemps,\
                     deltas // 2 - 1)
-            data[root] = np.zeros(s, dtype = float)
-        else:
-            print(f'SOMETHING WENT WRONG {root}')
+        data[root] = np.zeros(s, dtype = float)
     print("Loading data") 
     pbar = tqdm(total = len(fileNames))
     with mp.Pool(mp.cpu_count()) as p:
