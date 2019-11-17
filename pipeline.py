@@ -3,7 +3,8 @@ import itertools, scipy, multiprocessing as mp
 from tqdm import tqdm
 from Utils import plotting as plotz
 ROOT = '/var/scratch/cveltere/tester'
-ROOT = 'Data/tester'
+ROOT = '/var/scratch/cveltere/psycho/'
+# ROOT = 'Data/tester'
 def worker(sample):
 
     sidx, sample, func = sample
@@ -176,26 +177,24 @@ def main():
     data = {}
     print("setting up data")
     for root, setting in settings.items():
-        if setting.get('modelSettings').get('magSide'):
-            eq = setting.get('equilibrium')
-            nTemps = len(eq.get('ratios'))
-            nTrials = setting.get('nTrials')
-            nPulse = len(setting.get('pulseSizes'))
-            nPulse = nPulse + 1 if 0 not in setting.get('pulseSizes') else nPulse
+        eq = setting.get('equilibrium')
+        nTemps = len(eq.get('ratios'))
+        nTrials = setting.get('nTrials')
+        nPulse = len(setting.get('pulseSizes'))
+        nPulse = nPulse + 1 if 0 not in setting.get('pulseSizes') else nPulse
 
-            deltas = setting.get('deltas')
-            nNodes = setting.get('model').nNodes
+        deltas = setting.get('deltas')
+        nNodes = setting.get('model').nNodes
 
-            s = (nNodes, nTrials, nPulse, nTemps,\
+        s = (nNodes, nTrials, nPulse, nTemps,\
                     deltas // 2 - 1)
-            data[root] = np.zeros(s, dtype = float)
-        else:
-            print(f'SOMETHING WENT WRONG {root}')
+        data[root] = np.zeros(s, dtype = float)
     print("Loading data") 
     pbar = tqdm(total = len(fileNames))
     with mp.Pool(mp.cpu_count()) as p:
         for (path, s, d) in p.imap(loadDataFilesSingle, fileNames):
             fn = '/'.join(i for i in path.split('/')[:-2])
+            print(fn)
             if np.all(np.isnan(d)):
                 print(path)
                 assert False
@@ -241,8 +240,8 @@ def main():
         auc = auc.reshape(s[:-1])
         aucs[k] = auc
         coeffs[k] =  tmp.reshape(*s[:-1], tmp.shape[-1])
-
-    IO.savePickle('tester.pickle', dict(aucs = aucs, data = data, \
+    import datetime 
+    IO.savePickle(f'data{datetime.datetime.now().isoformat()}.pickle', dict(aucs = aucs, data = data, \
                                               rata = rdata, settings = settings,\
                                    coeffs = coeffs))
 if __name__ == "__main__":
