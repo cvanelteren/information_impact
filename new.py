@@ -11,21 +11,22 @@ from Models import FastIsing
 
 modelSettings = dict(\
     magSide       = 'neg',\
-    updateType    = '0.25',\
+    updateType    = '0.5',\
     nudgeType     = 'constant',\
     )
 
 equilibrium   =  (\
-    np.array([.8, .7, .6]),\
+    np.array([.9, .85, .8]),\
     dict(\
-        n = 100, \
-        temperatures = np.logspace(\
-                        -3, np.log10(10), 10)\
+        n = 10000, \
+        temperatures = np.geomspace(\
+                        -.001, 10, 30)\
                 )
         )
 
 
 pulseSizes    = np.linspace(.5, 5, 9).tolist()
+pulseSizes   = [.1, .2, .3] #*pulseSizes]
 pulseSizes.append(np.inf)
 
 settings = dict(\
@@ -33,9 +34,9 @@ settings = dict(\
     repeats       = int(1e4),\
     deltas        = 30,\
     steps         = int(1e3),\
-    nSamples      = int(1e4),\
+    nSamples      = int(1e2),\
     burninSamples = 0,\
-    nTrials       = 30,\
+    nTrials       = 20,\
     modelSettings = modelSettings,\
     tempres       = 100,\
     pulseSizes    = pulseSizes,\
@@ -201,12 +202,15 @@ if __name__ == "__main__":
         # if root in settings
 
         # read settings
+        oldSettings= None
         for (root, dir, files) in os.walk(file):
             for f in files:
                 fn = os.path.join(root, f)
                 if f.endswith('settings.pickle'):
                     oldSettings = fn
                     break
+        if not oldSettings:
+            oldSettings = os.path.join(file.replace('data', ''), 'settings.pickle')
 
         # TODO: change
         rootDirectory = simulationRoot = file
@@ -220,14 +224,15 @@ if __name__ == "__main__":
             if not newValue:
                 print(f'Overwriting {k} : {oldValue}')
                 settings[k] = oldValue
+        IO.savePickle(oldSettings + f"{datetime.datetime.now().isoformat()}.bk", s, verbose = 1)        
+
         newSettings = oldSettings # for clarity
         IO.savePickle(newSettings, settings)
+        
+        
+        
 
-        IO.savePickle(oldSettings +\
-             f'{datetime.datetime.now().isoformat()}.bk',\
-            s)
-
-
+        print(settings)
         matched = settings.get('equilibrium')
         g      = settings['graph']
         m      = settings['model']
@@ -247,7 +252,7 @@ if __name__ == "__main__":
     else:
         print('Resuming process')
         for k, v in IO.loadPickle(file).items():
-            if k is not in 'file THRESHOLD'.split():
+            if k not in 'file THRESHOLD'.split():
                 globals()[k] = v
         os.remove(f'{file}')
 

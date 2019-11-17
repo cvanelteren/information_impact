@@ -1,8 +1,6 @@
 import os, subprocess
 
-root = '/var/scratch/cveltere/tester'
-root = 'Data/tester/'
-# root = 'Data/2019-09-29T14:33:58.112218'
+root = '/var/scratch/cveltere/stupid/'
 
 if __name__ == '__main__':
     for dir in os.listdir(root):

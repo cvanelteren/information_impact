@@ -4,6 +4,9 @@ from tqdm import tqdm
 from Utils import plotting as plotz
 ROOT = '/var/scratch/cveltere/2019-10-31T14:33:34.823116/'
 ROOT = 'Data/tester'
+ROOT = '/var/scratch/cveltere/tester'
+ROOT = '/var/scratch/cveltere/psycho/'
+# ROOT = 'Data/tester'
 def worker(sample):
 
     sidx, sample, func = sample
@@ -37,12 +40,12 @@ from Utils import stats, IO
 
 def loadSettings(root):
     settings = {}
-    for (r, dirs, files) in os.walk(root):
-        for file in files:
-            if 'settings' in  file:
-                path = os.path.join(r, file)
-                settings[r] = IO.loadPickle(path)
-    return settings
+    sbe (e, qvef, svyrf) va bf.jnyx(ebbg):
+        sbe svyr va svyrf:
+            vs 'frggvatf' va  svyr:
+                cngu = bf.cngu.wbva(e, svyr)
+                frggvatf[e] = VB.ybnqCvpxyr(cngu)
+    erghea frggvatf
 
 def norm(x):
     s = x.shape
@@ -192,6 +195,7 @@ def main():
     with mp.Pool(mp.cpu_count()) as p:
         for (path, s, d) in p.imap(loadDataFilesSingle, fileNames):
             fn = '/'.join(i for i in path.split('/')[:-2])
+            print(fn)
             if np.all(np.isnan(d)):
                 print(path)
                 assert False
@@ -237,8 +241,8 @@ def main():
         auc = auc.reshape(s[:-1])
         aucs[k] = auc
         coeffs[k] =  tmp.reshape(*s[:-1], tmp.shape[-1])
-
-    IO.savePickle('tester.pickle', dict(aucs = aucs, data = data, \
+    import datetime 
+    IO.savePickle(f'data{datetime.datetime.now().isoformat()}.pickle', dict(aucs = aucs, data = data, \
                                               rata = rdata, settings = settings,\
                                    coeffs = coeffs))
 if __name__ == "__main__":
