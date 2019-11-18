@@ -244,7 +244,7 @@ def main():
         coeffs[k] =  tmp.reshape(*s[:-1], tmp.shape[-1])
     import datetime 
     IO.savePickle(f'data{datetime.datetime.now().isoformat()}.pickle', dict(aucs = aucs, data = data, \
-                                              rata = rdata, settings = settings,\
+                                              rdata = rdata, settings = settings,\
                                    coeffs = coeffs))
 if __name__ == "__main__":
     main()

@@ -84,7 +84,7 @@ def bootStrapDrivers(bootStrapData,\
     a normal distribution is fit an tested with overlap for the other nodes in the data at :alpha: level
 
     """
-    trials, nodes = bootStrapData.shape
+    trials, nodes = bootStrapData.shape[:2]
     # create bootstrap distribution
     #boots = bootStrap(data, func = returnX, total = total, batch = batch)
     #boots = boots.mean(1)
@@ -94,12 +94,15 @@ def bootStrapDrivers(bootStrapData,\
     
     drivers = {driver: (driverDist.mean, driverDist.variance)}
     options = np.delete(np.arange(nodes), driver)
+
+    allnodes = {k: v for k, v in drivers.items()}
     for node in options:
         # fit distribution
         otherDist = NormalDist().from_samples(bootStrapData[..., node])
         if  driverDist.overlap(otherDist) > alpha:
             drivers[node] = (otherDist.mean, otherDist.variance)
-    return drivers
+        allnodes[node] = (otherDist.mean, otherDist.variance)
+    return drivers, allnodes
 
 def bootStrapDriversThresholds(boots,\
         alphas):
@@ -112,18 +115,60 @@ def bootStrapDriversThresholds(boots,\
         driversPerAlpha[alpha] = bootStrapDrivers(boots, alpha = alpha)
     return driversPerAlpha
 
+from itertools import product
+def bootStrapAll(data, func, total, batch, alpha):
+    conditions, temps = data.shape[-2:]
+    boots = bootStrap(data, func, total, batch)
+    
+    tmp = (boots[..., i, j] for (i, j) in product(*map(range, (conditions, temps))))
+    from functools import partial
+    F = partial(bootStrapDrivers, alpha = alpha) 
+    with mp.Pool(mp.cpu_count()) as p:
+        drivers = np.array(p.map(F, tmp), dtype = list).reshape(conditions, temps, -1)
+    return drivers
+
+def jaccard(a, b):
+    return len(a.intersection(b)) / len(a.union(b))
+def computeMatchScore(drivers: np.ndarray) -> np.ndarray:
+    """
+    Computes the overlap of the driver-node estimates with ground truth
+    """
+    s = drivers.shape # should be conditions x temps
+    overlaps = np.zeros(s, dtype = float)
+
+    for (condition, pulse, temp) in product(*map(range, s)):
+        pred = drivers[condition, pulse, temp]
+        if isinstance(pred, int):
+            pred = set([pred])
+        else:
+            pred = set(pred)
+        
+        control = drivers[0, pulse, temp]
+        if isinstance(control, int):
+            control = set([control])
+        else:
+            control = set(control)
+        # print(pred, control)
+        overlaps[condition, pulse, temp] = jaccard(pred, control)
+    return overlaps
 
 # boostrap samples
-def minibootstrap(x):
+
+def minibootstrap(x, statistic = np.mean):
     data, func, batch = x
-    idx = np.random.randint(0, len(data), batch)
-    return func(data[idx])
+    idx = np.random.randint(0, len(data), size = batch)
+
+    d = data[idx]
+    stat = func(data[idx, ...])
+
+    return statistic(stat, axis = 0)
 def bootStrap(data, func, total, batch):
     # create generate
     tmp = ((data, func, batch) for i in range(total))
     # multiprocess the shit out of this
     with mp.Pool(mp.cpu_count()) as p:
-        return np.asarray(p.map(minibootstrap, tmp))
+        boots = np.array(p.map(minibootstrap, tmp))
+    return boots
 
 
 def driverNodeEstimate(ranks, alpha = .01):
