@@ -1,5 +1,7 @@
-import numpy as np
+import numpy as np, multiprocessing as mp, scipy
 from Utils.plotting import fit
+from statistics import NormalDist
+
 '''Dump file of statistical related functions'''
 
 def aucs(data, func, params = {},\
@@ -68,7 +70,60 @@ def driverNodeEstimateSEM(ranks, alpha = .01):
                 candidates.add(i)
     return candidates
 
+# boostrap functions
+def returnX(x):
+    return x
 
+def ratio(x):
+    return x[0] / x[1:]
+def bootStrapDrivers(bootStrapData,\
+        alpha = .05):
+    """
+    Determines driver-nodes through the boostrap distribution
+    It consists as an iterative procedure that takes the max value in the data, then 
+    a normal distribution is fit an tested with overlap for the other nodes in the data at :alpha: level
+
+    """
+    trials, nodes = bootStrapData.shape
+    # create bootstrap distribution
+    #boots = bootStrap(data, func = returnX, total = total, batch = batch)
+    #boots = boots.mean(1)
+    driver = bootStrapData.mean(0).argmax()
+
+    driverDist = NormalDist().from_samples(bootStrapData[..., driver])
+    
+    drivers = {driver: (driverDist.mean, driverDist.variance)}
+    options = np.delete(np.arange(nodes), driver)
+    for node in options:
+        # fit distribution
+        otherDist = NormalDist().from_samples(bootStrapData[..., node])
+        if  driverDist.overlap(otherDist) > alpha:
+            drivers[node] = (otherDist.mean, otherDist.variance)
+    return drivers
+
+def bootStrapDriversThresholds(boots,\
+        alphas):
+    """
+    Wrapper around :bootStrapDrivers:
+    """
+    # boots = bootStrap(data, func, total, batch)
+    driversPerAlpha = {}
+    for alphai, alpha in enumerate(alphas):
+        driversPerAlpha[alpha] = bootStrapDrivers(boots, alpha = alpha)
+    return driversPerAlpha
+
+
+# boostrap samples
+def minibootstrap(x):
+    data, func, batch = x
+    idx = np.random.randint(0, len(data), batch)
+    return func(data[idx])
+def bootStrap(data, func, total, batch):
+    # create generate
+    tmp = ((data, func, batch) for i in range(total))
+    # multiprocess the shit out of this
+    with mp.Pool(mp.cpu_count()) as p:
+        return np.asarray(p.map(minibootstrap, tmp))
 
 
 def driverNodeEstimate(ranks, alpha = .01):

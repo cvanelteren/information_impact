@@ -6,6 +6,7 @@ ROOT = '/var/scratch/cveltere/2019-10-31T14:33:34.823116/'
 ROOT = 'Data/tester'
 ROOT = '/var/scratch/cveltere/tester'
 ROOT = '/var/scratch/cveltere/psycho/'
+ROOT = 'Data/psycho'
 # ROOT = 'Data/tester'
 def worker(sample):
 
@@ -40,12 +41,12 @@ from Utils import stats, IO
 
 def loadSettings(root):
     settings = {}
-    sbe (e, qvef, svyrf) va bf.jnyx(ebbg):
-        sbe svyr va svyrf:
-            vs 'frggvatf' va  svyr:
-                cngu = bf.cngu.wbva(e, svyr)
-                frggvatf[e] = VB.ybnqCvpxyr(cngu)
-    erghea frggvatf
+    for (r, dirs, files) in os.walk(root):
+        for file in files:
+            if 'settings' in  file:
+                path = os.path.join(r, file)
+                settings[r] = IO.loadPickle(path)
+    return settings
 
 def norm(x):
     s = x.shape
