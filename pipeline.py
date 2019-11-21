@@ -11,12 +11,21 @@ ROOT = 'Data/psycho'
 def worker(sample):
 
     sidx, sample, func = sample
+    
+     # tmp threshold added
+    threshold = abs(np.diff(sample))
+    idx = np.argwhere(threshold < .1) 
+    if len(idx):
+        sample[idx]  = 0
+ # end tmp 
     # tmp workaround
     if len(sample.shape) == 1:
         sample = sample.reshape(-1, 1).T
     auc = np.zeros((len(sample), 2))
     x = np.arange(sample.shape[-1])
     
+
+
     tmp = np.arange(x.max() * 100, x.max() * 150, 3)
     
     x = np.concatenate((x, tmp))
@@ -25,10 +34,18 @@ def worker(sample):
     sample = np.array([\
                        np.concatenate((i, padded)) for i in sample\
                       ])
+
+   
+   
+   
+   
+   
+   
+   
     coeffs, errors = plotz.fit(sample, func, x = x, params = fitParam)
     for nodei, c in enumerate(coeffs):
         tmp = 0
-        F      = lambda x: func(x, *c)
+        F      = lambda x: func(x, *c) - c[0]
         tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
         auc[nodei, 0] = tmp
         auc[nodei, 1] = errors[nodei]
@@ -139,6 +156,8 @@ def loadDataFilesSingle(fileName, **kwargs):
 
 def func(x, a, b, c, d, e, f):
     return a * np.exp(-b * ( x - c ) ) + d * np.exp(-e * ( x - f )) 
+def func(x, a, b, c, d, e, f, g):
+    return a + b * np.exp(-c * (x - d)) + e * np.exp( - f * (x - g))
 p0          = np.ones((func.__code__.co_argcount - 1)); # p0[0] = 0
 fitParam    = dict(\
                        maxfev = int(1e6), \
@@ -196,7 +215,7 @@ def main():
     with mp.Pool(mp.cpu_count()) as p:
         for (path, s, d) in p.imap(loadDataFilesSingle, fileNames):
             fn = '/'.join(i for i in path.split('/')[:-2])
-            print(fn)
+            # print(fn)
             if np.all(np.isnan(d)):
                 print(path)
                 assert False
@@ -245,6 +264,6 @@ def main():
     import datetime 
     IO.savePickle(f'data{datetime.datetime.now().isoformat()}.pickle', dict(aucs = aucs, data = data, \
                                               rdata = rdata, settings = settings,\
-                                   coeffs = coeffs))
+                                   coeffs = coeffs), verbose = 1)
 if __name__ == "__main__":
     main()

@@ -75,7 +75,7 @@ def returnX(x):
     return x
 
 def ratio(x):
-    return x[0] / x[1:]
+    return x[...,[0]] / x[..., 1:]
 def bootStrapDrivers(bootStrapData,\
         alpha = .05):
     """
@@ -121,7 +121,9 @@ def bootStrapAll(data, func, total, batch, alpha):
     boots = bootStrap(data, func, total, batch)
     
     tmp = (boots[..., i, j] for (i, j) in product(*map(range, (conditions, temps))))
+    #tmp = (bootStrap(data[..., i, j], func, total, batch) for (i,j) in product(*map(range,(conditions, temps)))) 
     from functools import partial
+
     F = partial(bootStrapDrivers, alpha = alpha) 
     with mp.Pool(mp.cpu_count()) as p:
         drivers = np.array(p.map(F, tmp), dtype = list).reshape(conditions, temps, -1)
