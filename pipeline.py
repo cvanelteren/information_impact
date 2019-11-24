@@ -6,7 +6,7 @@ ROOT = '/var/scratch/cveltere/2019-10-31T14:33:34.823116/'
 ROOT = 'Data/tester'
 ROOT = '/var/scratch/cveltere/tester'
 ROOT = '/var/scratch/cveltere/psycho/'
-ROOT = 'Data/psycho'
+ROOT = 'Data/stupid'
 # ROOT = 'Data/tester'
 def worker(sample):
 

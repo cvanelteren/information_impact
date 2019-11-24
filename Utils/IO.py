@@ -333,6 +333,8 @@ import io
 class RenameUnpickler(pickle.Unpickler):
     # overwrite defaults
     def find_class(self, module, name):
+        if "Models" in module and not "PlexSim" in module:
+            module = "PlexSim." + module
         renamed_module = module
         # replace the name with module struct
         if module == "IO":
@@ -469,9 +471,9 @@ class Settings:
         # the models
 
         # look for model name inside the module files
-        for file in os.listdir('Models/'):
+        for file in os.listdir('PlexSim/Models/'):
             if file.endswith('pyx'):
-                tmp = importlib.import_module(f'Models.{file.split(".")[0]}')
+                tmp = importlib.import_module(f'PlexSim.Models.{file.split(".")[0]}')
                 if getattr(tmp, self.model, None):
                     # returned init model
                     # backward compatibility

@@ -14,7 +14,7 @@ import multiprocessing as mp
 import copy
 from cpython.ref cimport PyObject
 
-from Models.Models cimport Model
+from PlexSim.Models.Models cimport Model
 # progressbar
 from tqdm import tqdm   #progress bar
 import pyprind as pr
