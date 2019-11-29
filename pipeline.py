@@ -6,17 +6,21 @@ ROOT = '/var/scratch/cveltere/2019-10-31T14:33:34.823116/'
 ROOT = 'Data/tester'
 ROOT = '/var/scratch/cveltere/tester'
 ROOT = '/var/scratch/cveltere/psycho/'
-ROOT = 'Data/stupid'
+ROOT = 'Data/psycho'
+
+print(f'DATA ROOT IS {ROOT}')
 # ROOT = 'Data/tester'
 def worker(sample):
 
     sidx, sample, func = sample
     
      # tmp threshold added
-    threshold = abs(np.diff(sample))
-    idx = np.argwhere(threshold < .1) 
-    if len(idx):
-        sample[idx]  = 0
+#    threshold = abs(np.diff(sample))
+    if sample[0] < .05:
+        sample[:] = 0
+#    idx = np.argwhere(threshold < .01) 
+    #if len(idx):
+     #   sample[idx]  = 0
  # end tmp 
     # tmp workaround
     if len(sample.shape) == 1:
@@ -36,16 +40,10 @@ def worker(sample):
                       ])
 
    
-   
-   
-   
-   
-   
-   
     coeffs, errors = plotz.fit(sample, func, x = x, params = fitParam)
     for nodei, c in enumerate(coeffs):
         tmp = 0
-        F      = lambda x: func(x, *c) - c[0]
+        F      = lambda x: func(x, *c) 
         tmp, _ = scipy.integrate.quad(F, 0, LIMIT)
         auc[nodei, 0] = tmp
         auc[nodei, 1] = errors[nodei]
@@ -87,7 +85,7 @@ def loadDataFilesSingle(fileName, **kwargs):
     # add 1 if zero is in the setting file, zero corresponds to a control
     tmpPulses = {i: idx + 1 if 0 not in pulses else idx for idx, i in enumerate(pulses)}
     # print(pulses, 0 in pulses); assert 0
-    tmpTemps  = {i: idx for idx, i in enumerate(temperatures)}
+    tmpTemps  = {float(i): idx for idx, i in enumerate(temperatures)}
     deltas = setting.get('deltas')
 
     # load data
@@ -117,6 +115,7 @@ def loadDataFilesSingle(fileName, **kwargs):
         pulseidx = 0
     # intervention
     else:
+        # get the correct index
         try:
             node = next(iter(intervention))
 
@@ -156,7 +155,7 @@ def loadDataFilesSingle(fileName, **kwargs):
 
 def func(x, a, b, c, d, e, f):
     return a * np.exp(-b * ( x - c ) ) + d * np.exp(-e * ( x - f )) 
-def func(x, a, b, c, d, e, f, g):
+#  def func(x, a, b, c, d, e, f, g):
     return a + b * np.exp(-c * (x - d)) + e * np.exp( - f * (x - g))
 p0          = np.ones((func.__code__.co_argcount - 1)); # p0[0] = 0
 fitParam    = dict(\
@@ -164,7 +163,7 @@ fitParam    = dict(\
                        bounds = (0, np.inf), p0 = p0,\
                        jac = 'cs', \
                       )
-LIMIT = np.inf
+LIMIT = 50
 
 
 
@@ -178,11 +177,12 @@ def main():
         for file in files:
             if file.endswith('.pickle') and 'setting' not in file:
                 settingRoot = '/'.join(i for i in root.split('/')[:-1])
+                #settingRoot = '/'.join(i for i in root.split('/'))
                 setting = settings.get(settingRoot, {})
                 if not setting:
-                    print(settingRoot)
                     path = os.path.join(settingRoot, 'settings.pickle')
                     setting = IO.loadPickle(path)
+                    #print('>', setting)
                     m = setting.get('model')
                     g = setting.get('graph')
                     try:
@@ -192,6 +192,7 @@ def main():
                     setting['model'] = m
                 
                 settings[settingRoot] = setting
+                #print('settings', setting)
                 tmp = (os.path.join(root, file), setting)
                 # print('>>', tmp[0])
                 fileNames.append(tmp)
@@ -209,6 +210,7 @@ def main():
         nNodes = setting.get('model').nNodes
         s = (nNodes, nTrials, nPulse, nTemps,\
                     deltas // 2 - 1)
+        print('Datashape', s)
         data[root] = np.zeros(s, dtype = float)
     print("Loading data") 
     pbar = tqdm(total = len(fileNames))

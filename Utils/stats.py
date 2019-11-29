@@ -77,7 +77,7 @@ def returnX(x):
 def ratio(x):
     return x[...,[0]] / x[..., 1:]
 def bootStrapDrivers(bootStrapData,\
-        alpha = .05):
+        alpha = .5):
     """
     Determines driver-nodes through the boostrap distribution
     It consists as an iterative procedure that takes the max value in the data, then 
@@ -89,7 +89,7 @@ def bootStrapDrivers(bootStrapData,\
     #boots = bootStrap(data, func = returnX, total = total, batch = batch)
     #boots = boots.mean(1)
     driver = bootStrapData.mean(0).argmax()
-
+    bootStrapData += np.random.rand(*bootStrapData.shape)  * 1e-16
     driverDist = NormalDist().from_samples(bootStrapData[..., driver])
     
     drivers = {driver: (driverDist.mean, driverDist.variance)}
@@ -99,7 +99,11 @@ def bootStrapDrivers(bootStrapData,\
     for node in options:
         # fit distribution
         otherDist = NormalDist().from_samples(bootStrapData[..., node])
-        if  driverDist.overlap(otherDist) > alpha:
+
+        overlap = driverDist.overlap(otherDist)
+        # statisticserror -> sigma = 0
+
+        if  overlap > alpha:
             drivers[node] = (otherDist.mean, otherDist.variance)
         allnodes[node] = (otherDist.mean, otherDist.variance)
     return drivers, allnodes
