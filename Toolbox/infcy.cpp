@@ -4,8 +4,8 @@
 {
     "distutils": {
         "depends": [
-            "/home/casper/miniconda3/envs/py38/lib/python3.8/site-packages/numpy/core/include/numpy/arrayobject.h",
-            "/home/casper/miniconda3/envs/py38/lib/python3.8/site-packages/numpy/core/include/numpy/ufuncobject.h"
+            "/home/casper/.local/lib/python3.8/site-packages/numpy/core/include/numpy/arrayobject.h",
+            "/home/casper/.local/lib/python3.8/site-packages/numpy/core/include/numpy/ufuncobject.h"
         ],
         "extra_compile_args": [
             "-fopenmp",
@@ -21,7 +21,7 @@
             "-lomp"
         ],
         "include_dirs": [
-            "/home/casper/miniconda3/envs/py38/lib/python3.8/site-packages/numpy/core/include",
+            "/home/casper/.local/lib/python3.8/site-packages/numpy/core/include",
             "."
         ],
         "language": "c++",
@@ -1566,6 +1566,8 @@ static struct __pyx_vtabstruct_array *__pyx_vtabptr_array;
 struct __pyx_vtabstruct_7PlexSim_6Models_6Models_Model {
   void (*construct)(struct __pyx_obj_7PlexSim_6Models_6Models_Model *, PyObject *, PyObject *, int __pyx_skip_dispatch);
   __Pyx_memviewslice (*updateState)(struct __pyx_obj_7PlexSim_6Models_6Models_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch);
+  void (*_hebbianUpdate)(struct __pyx_obj_7PlexSim_6Models_6Models_Model *);
+  double (*_learningFunction)(struct __pyx_obj_7PlexSim_6Models_6Models_Model *, int, int);
   __Pyx_memviewslice (*_updateState)(struct __pyx_obj_7PlexSim_6Models_6Models_Model *, __Pyx_memviewslice);
   __Pyx_memviewslice (*_sampleNodes)(struct __pyx_obj_7PlexSim_6Models_6Models_Model *, int);
   __Pyx_memviewslice (*sampleNodes)(struct __pyx_obj_7PlexSim_6Models_6Models_Model *, int, int __pyx_skip_dispatch);
