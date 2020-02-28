@@ -4,6 +4,12 @@
 
 # MODELS
 # from Models.Models cimport Model
+# cython: infer_types=True
+# distutils: language=c++
+# __author__ = 'Casper van Elteren'
+
+# MODELS
+# from Models.Models cimport Model
 
 import numpy as np
 cimport numpy as np
@@ -33,9 +39,7 @@ cdef extern from *:
     """
     #include <Python.h>
     #include <mutex>
-
     std::mutex ref_mutex;
-
     class PyObjectHolder{
     public:
         PyObject *ptr;
@@ -59,7 +63,6 @@ cdef extern from *:
                 Py_XINCREF(ptr);
             }
             return *this;
-
         }
     };
     """

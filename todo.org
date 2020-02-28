@@ -6,4 +6,11 @@
   Still left to do:
   - Test the driver-node method
   - Obtain results for more samlpes?
+  
+
+* Code cleanup
+The import shananingans needs to be looked at carefully. Currently it is getting really messy how the import with submodules work. Preferably I would not need to redefine a bunch of standard imports everytime I need them in files. These include
+- Cython
+- numpy
+- Other generaly functions, e.g. cosine etc
       
