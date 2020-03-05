@@ -13,4 +13,7 @@ The import shananingans needs to be looked at carefully. Currently it is getting
 - Cython
 - numpy
 - Other generaly functions, e.g. cosine etc
-      
+
+
+In addition figure out the discrepancy between Ising and Potts model.
+
