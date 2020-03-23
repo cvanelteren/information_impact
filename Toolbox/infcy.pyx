@@ -243,7 +243,7 @@ cpdef dict monteCarlo(\
         float past = timer()
     # pre-declaration
         double Z              = <double> repeats
-        double[::1] copyNudge = model.nudges.base.copy()
+        unordered_map[long, double]  copyNudge = model.nudges
         bint reset            = True
         # loop stuff
         # extract startstates
@@ -334,7 +334,7 @@ cpdef dict monteCarlo(\
                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
                     if nudgeType == 'pulse' or \
                     nudgeType    == 'constant' and delta >= half:
-                        (<Model> modelptr)._nudges[:] = 0
+                        (<Model> modelptr)._nudges.clear()
             # TODO: replace this with   a concurrent unordered_map
             with gil:
                 # note: copy method is required otherwise zeros will appear
@@ -388,6 +388,13 @@ cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = 
     px, mi = mutualInformation(conditional, snapshots)
     return conditional, px, mi
 
+cpdef reverseMC(Model, model, int nSteps = 1000, int window = 10):
+    cdef:
+        int step
+    assert nSteps > window, "Size of nSteps need to be bigger than window size"
+    for step in range(nSteps):
+        return 0
+        
 
 cpdef testSeed(Model model, int N, int nSamples = 10):
     from copy import deepcopy

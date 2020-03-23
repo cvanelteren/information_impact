@@ -1,11 +1,5 @@
-import argparse
+import unittest
 
-parser = argparse.ArgumentParser()
+class TestBaseModel(unittest.TestCase):
 
-parser.add_argument('--file')
-parser.add_argument('--id')
-if __name__ == '__main__':
-    args = parser.parse_args()
-    
-    print(args.file)
-    print(args.id)
+    def 

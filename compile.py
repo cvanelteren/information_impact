@@ -8,12 +8,15 @@ import re, os
 from subprocess import run
 add = []
 try:
-    clangCheck = run("clang --version".split(), capture_output= True)
+    compiler = 'zapcc++'
+    clangCheck = run(f"{compiler} --version".split(), capture_output= True)
     if not clangCheck.returncode and 'fs4' not in os.uname().nodename:
-        os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -fast-math -Ofast -std=c++11 -march=native"
-        os.environ['CC']       = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -ffast-math -Ofast -std=c++11 -march=native"
+        print("Using default")
+        os.environ['CXXFLAGS'] = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 -march=native"
+        os.environ['CC']       = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 -march=native"
         add.append('-lomp') # clang openmp stuff
-except:
+except Exception as e:
+    print(e)
     pass
 # collect pyx files
 exts = []
@@ -33,8 +36,6 @@ for (root, dirs, files) in os.walk(baseDir):
                            sources            = sources, \
                            include_dirs       = [nums, '.'],\
                            extra_compile_args = ['-fopenmp',\
-                                                 '-ffast-math',\
-                                                 '-Ofast', \
                                                  '-march=native',\
                                                  '-std=c++17',\
                                                 '-fno-wrapv',\
@@ -67,25 +68,3 @@ setup(\
 # gdb_debug =True,
 )
 
-
-# setup(\
-#     name            = __name__,\
-#     author          = __author__,\
-#     version         = __version__,\
-#     author_email    = __email__,\
-#     python_requires = __python__requires__,\
-#     zip_safe        = False,\
-#     ext_modules = cythonize(\
-#             exts,\
-#             # annotate            = True,\ # set to true for performance html
-#             language_level      = 3,\
-#             compiler_directives = dict(\
-#                                     fast_gil       = True,\
-#                                     # binding      = True,\
-#                                     # embedsignature = True,\
-#                                     ),\
-#             # source must be pickable
-#             nthreads            = mp.cpu_count(),\
-#             ),\
-# # gdb_debug =True,
-# )

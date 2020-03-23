@@ -5,3 +5,6 @@ matplotlib>=3.0.2
 tqdm>=4.3.1
 cython>=0.28.2
 scikit-learn>=0.20.2
+pandas>=1.0.1
+statsmodels>=0.11.1
+ipympl>=0.5.3
