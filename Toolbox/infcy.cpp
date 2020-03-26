@@ -4,8 +4,8 @@
 {
     "distutils": {
         "depends": [
-            "/home/casper/.local/lib/python3.8/site-packages/numpy/core/include/numpy/arrayobject.h",
-            "/home/casper/.local/lib/python3.8/site-packages/numpy/core/include/numpy/ufuncobject.h"
+            "/home/casper/miniconda3/envs/p38/lib/python3.8/site-packages/numpy/core/include/numpy/arrayobject.h",
+            "/home/casper/miniconda3/envs/p38/lib/python3.8/site-packages/numpy/core/include/numpy/ufuncobject.h"
         ],
         "extra_compile_args": [
             "-fopenmp",
@@ -19,7 +19,7 @@
             "-lomp"
         ],
         "include_dirs": [
-            "/home/casper/.local/lib/python3.8/site-packages/numpy/core/include",
+            "/home/casper/miniconda3/envs/p38/lib/python3.8/site-packages/numpy/core/include",
             "."
         ],
         "language": "c++",
