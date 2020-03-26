@@ -43,7 +43,7 @@ class TestBaseModel(ut.TestCase):
 class TestIsing(TestBaseModel):
     def setUp(self):
         from PlexSim.Models.FastIsing import Ising
-        g = nx.path_graph(3)
+        g = nx.path_graph(1)
         self.m = Ising(graph = g)
         self.updateTypes = "single async sync".split()
     def test_updateState(self):
