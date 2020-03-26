@@ -14,6 +14,9 @@ class TestBaseModel(ut.TestCase):
         for sample in samples.base.flat:
             self.assertTrue(0 <= sample <= self.m.nNodes)
         return samples
+    def test_init(self):
+        for updateType in self.updateTypes:
+            m = Model(graph = nx.path_graph(1), updateType = updateType)
     def test_updateTypes_sampling(self):
         """
         Test all the sampling methods
@@ -36,9 +39,10 @@ class TestBaseModel(ut.TestCase):
             update = self.m.updateState(self.m.sampleNodes(1)[0])
             # look for output
             self.assertTrue(update)
-from PlexSim.Models.FastIsing import Ising
+#@ut.skip("N")
 class TestIsing(TestBaseModel):
     def setUp(self):
+        from PlexSim.Models.FastIsing import Ising
         g = nx.path_graph(3)
         self.m = Ising(graph = g)
         self.updateTypes = "single async sync".split()
@@ -54,13 +58,14 @@ class TestIsing(TestBaseModel):
             # store the before
             before = self.m.states.base.copy()
             # update
-            after  = self.m.updateState(self.m.sampleNodes(1)[0])
-            after  = self.m.updateState(self.m.sampleNodes(1)[0])
+            for i in self.m.sampleNodes(1):
+                after = self.m.updateState(i)
             # logics
             if temp == 0:
                 self.assertTrue(all(before == after), f"{temp}")
             else:
-                self.assertTrue(all(before != after), f"{temp}\nbefore:{before}\nAfter: {after.base}")
+                self.assertTrue(any(before != after), f"{temp}\nbefore:{before}\nAfter: {after.base}")
             print(after.base, before)
+
 if __name__ == "__main__":
     ut.main()

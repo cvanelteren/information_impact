@@ -58,7 +58,12 @@ setup(\
             # annotate            = True,\ # set to true for performance html
             language_level      = 3,\
             compiler_directives = dict(\
-                                    fast_gil       = True,\
+                                       fast_gil       = True,\
+                                       boundscheck    = False,\
+                                       cdivision   = True,\
+                                       initializedcheck = False,\
+                                       overflowcheck = False,\
+                                       nonecheck = False,\
                                     # binding      = True,\
                                     # embedsignature = True,\
                                     ),\
