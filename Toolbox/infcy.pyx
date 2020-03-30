@@ -20,7 +20,7 @@ import multiprocessing as mp
 import copy
 from cpython.ref cimport PyObject
 
-from PlexSim.Models.Models cimport Model
+from PlexSim.plexsim.models cimport Model
 # progressbar
 from tqdm import tqdm   #progress bar
 import pyprind as pr
@@ -388,13 +388,39 @@ cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = 
     px, mi = mutualInformation(conditional, snapshots)
     return conditional, px, mi
 
-cpdef reverseMC(Model, model, int nSteps = 1000, int window = 10):
+cpdef reverseMC(Model model, int nSteps = 1000, int window = 10):
+    print(model, nSteps, window)
+    assert nSteps > window, "Size of nSteps need to be bigger than window size"
     cdef:
         int step
-    assert nSteps > window, "Size of nSteps need to be bigger than window size"
-    for step in range(nSteps):
-        return 0
-        
+        long[:, ::1] windowData = np.zeros((window, model.nNodes),\
+                                           dtype = long)
+        dict binned = {}
+        dict mapper = {i : idx for idx, i in enumerate(model.agentStates)}
+        dict binnedc = {}
+    from itertools import product
+    while nSteps > 0:
+       windowData = model.simulate(window)
+       combinations = product(*map(range, [window, model.nNodes]))
+       target = tuple(windowData[window - 1])
+       buffer = binned.get(target,\
+                           np.zeros((window, model.nNodes, model.nStates)),\
+                           )
+       for t, node in  combinations:
+           buffer[t, node, mapper[windowData[t, node]]] += 1
+       binnedc[target] = binnedc.get(target, 0 ) + 1
+       binned[target] = binned.get(target, buffer)
+
+       nSteps -= window
+       # reset window in case of non-divisors
+       if nSteps < window:
+           window = nSteps
+    # normalize
+    z = sum(binnedc.values())
+    for k, v in binned.items():
+        binned[k] = v / binnedc.get(k) 
+        binnedc[k] /= z
+    return binned, binnedc
 
 cpdef testSeed(Model model, int N, int nSamples = 10):
     from copy import deepcopy

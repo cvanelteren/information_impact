@@ -40,32 +40,51 @@ class TestBaseModel(ut.TestCase):
             # look for output
             self.assertTrue(update)
 #@ut.skip("N")
+from PlexSim.Models.FastIsing import Ising
 class TestIsing(TestBaseModel):
     def setUp(self):
-        from PlexSim.Models.FastIsing import Ising
         g = nx.path_graph(1)
+        g.add_edge(0,0)
         self.m = Ising(graph = g)
+        #self.m = Potts(graph = g)
         self.updateTypes = "single async sync".split()
     def test_updateState(self):
         # force update to be independent
         # update all the nodes
         self.m.updateType = 'sync'
-        for temp in [0, np.inf]:
+        temps = [0, np.inf]
+        targs = [1, 0]
+        for temp, target in zip(temps, targs) :
+            # set temp
+            self.m.t = temp
+            # assign all states to be the same
+            self.m.states = 1
+            print(self.m.states.base, self.m.newstates.base)
+            # store the before
+            res = self.m.simulate(100000).mean()
+            self.assertAlmostEqual(res, target, places = 1)
+from PlexSim.Models.Potts import Potts
+@ut.skip("Ising is doing weird things")
+class TestPotts(TestIsing):
+    def setUp(self):
+        g = nx.path_graph(1)
+        g.add_edge(0,0)
+        self.m = Potts(graph = g)
+        self.updateTypes = "single async sync".split()
+    def test_updateState(self):
+        # force update to be independent
+        # update all the nodes
+        self.m.updateType = 'sync'
+        temps = [0, np.inf]
+        targs = [1, 0.5]
+        for temp, target in zip(temps, targs) :
             # set temp
             self.m.t = temp
             # assign all states to be the same
             self.m.states = 1
             # store the before
-            before = self.m.states.base.copy()
-            # update
-            for i in self.m.sampleNodes(1):
-                after = self.m.updateState(i)
-            # logics
-            if temp == 0:
-                self.assertTrue(all(before == after), f"{temp}")
-            else:
-                self.assertTrue(any(before != after), f"{temp}\nbefore:{before}\nAfter: {after.base}")
-            print(after.base, before)
+            res = self.m.simulate(10000).mean()
+            self.assertAlmostEqual(res, target)
 
 if __name__ == "__main__":
     ut.main()
