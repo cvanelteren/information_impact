@@ -20,11 +20,11 @@ import multiprocessing as mp
 import copy
 from cpython.ref cimport PyObject
 
-from PlexSim.plexsim.models cimport Model
+from PlexSim.plexsim.models cimport *
 # progressbar
 from tqdm import tqdm   #progress bar
-import pyprind as pr
 
+from pyprind import ProgBar
 # cython
 from libcpp.vector cimport vector
 from libc.stdlib cimport srand
@@ -131,8 +131,11 @@ cpdef vector[long] decodeState(int dec, int N) nogil:
 @cython.nonecheck(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
-                   int burninSamples = int(1e3), int nThreads = -1):
+cpdef dict getSnapShots(Model model, int nSamples, \
+                        int steps = 1,\
+                        int burninSamples = int(1e3), \
+                        int nThreads = -1,\
+                        verbose = False):
     """
     Determines the state distribution of the :model: in parallel. The model is reset
     to random state and simulated for :step: + :burninSamples: steps after which
@@ -179,12 +182,14 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
     # init rng buffers
     cdef int sampleSize = model._sampleSize # model.nNodes if model.updateType != 'single' else 1
 
-    cdef long[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
+    cdef NODEID[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
                                            dtype = long)
     # cdef cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r    = 0
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
     cdef PyObject *modelptr
-    pbar = tqdm(total = nSamples)
+    if verbose:
+        pbar = ProgBar(nSamples)
+    #pbar = tqdm(total = nSamples)
     # pbar = pr.ProgBar(nSamples)
     cdef tuple state
     cdef int counter = 0
@@ -204,11 +209,12 @@ cpdef dict getSnapShots(Model model, int nSamples, int steps = 1,\
             state = tuple((<Model> modelptr)._states.base)
             snapshots[state] = snapshots.get(state, 0) + 1 / Z
             (<Model> modelptr).reset()
-            pbar.update(1)
-    print('done')
-    pbar.close()
-    print(f'Found {len(snapshots)} states')
-    print(f"Delta = {timer() - past: .2f} sec")
+            if verbose:
+                pbar.update(1)
+    if verbose:
+        print('done')
+        print(f'Found {len(snapshots)} states')
+        print(f"Delta = {timer() - past: .2f} sec")
     return snapshots
 
 
@@ -237,19 +243,19 @@ cpdef dict monteCarlo(\
     # TODO: solve the memory issues;  currently way too much is ofloaded to the memory
     # one idea would be to have the buffers inside the for loop. However prange is not possible
     # if that is used.
-    print("Decoding..")
+    # print("Decoding..")
     # setup
     cdef:
         float past = timer()
     # pre-declaration
         double Z              = <double> repeats
-        unordered_map[long, double]  copyNudge = model.nudges
+        unordered_map[NODEID, NUDGE]  copyNudge = model.nudges
         bint reset            = True
         # loop stuff
         # extract startstates
         # list comprehension is slower than true loops cython
         # long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in tqdm(snapshots)])
-        long[:, ::1] s = np.array([i for i in tqdm(snapshots)])
+        NODE[:, ::1] s = np.array([i for i in snapshots])
         # long[:, ::1] s   = np.array([msnapshots[i] for i in tqdm(snapshots)])
         int states       = len(snapshots)
         # vector[int] kdxs = list(snapshots.keys()) # extra mapping idx
@@ -259,7 +265,7 @@ cpdef dict monteCarlo(\
         int repeat, delta, node, statei, half = deltas // 2, state
         dict conditional = {}
         # unordered_map[int, double *] conditional
-        long[::1] startState
+        NODE[::1] startState
         int jdx
 
         # long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)
@@ -301,11 +307,11 @@ cpdef dict monteCarlo(\
     cdef double[:, :, :, ::1] out = np.zeros((nThreads     , deltas, \
                                               model._nNodes, model._nStates))
     cdef int nTrial = deltas * repeats
-    cdef long[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
+    cdef NODEID[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
                                          sampleSize), dtype = long)
     # cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r = 0
 
-    pbar = tqdm(total = states) # init  progbar
+    #pbar = tqdm(total = states) # init  progbar
     # pbar = pr.ProgBar(states)
 
     cdef int tid  # init thread id
@@ -313,7 +319,7 @@ cpdef dict monteCarlo(\
     cdef double ZZ
 
     cdef Model t
-    print('starting runs')
+    #print('starting runs')
     # cdef double ZZ
     with nogil, parallel(num_threads = nThreads):
         for state in prange(states, schedule = 'static'):
@@ -323,12 +329,12 @@ cpdef dict monteCarlo(\
             r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)
             for repeat in range(repeats):
                 for node in range(nNodes):
-                    (<Model> modelptr)._states[node] = s[state, node]
+                    (<Model> modelptr)._states_ptr[node] = s[state, node]
                     (<Model> modelptr)._nudges[node] = copyNudge[node]
 
                 for delta in range(deltas):
                     for node in range(nNodes):
-                        jdx = idxer[(<Model> modelptr)._states[node]]
+                        jdx = idxer[(<Model> modelptr)._states_ptr[node]]
                         out[tid, delta, node, jdx] += 1 / Z
                     jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
                     (<Model> modelptr)._updateState(r[tid, jdx - 1])
@@ -339,12 +345,12 @@ cpdef dict monteCarlo(\
             with gil:
                 # note: copy method is required otherwise zeros will appear
                 conditional[tuple(s.base[state])] = out.base[tid].copy()
-                pbar.update(1)
+                #pbar.update(1)
     # for idx, si in enumerate(out.base):
     #     conditional[tuple(s.base[idx])] = si
 
-    pbar.close()
-    print(f"Delta = {timer() - past: .2f} sec")
+    #pbar.close()
+    #print(f"Delta = {timer() - past: .2f} sec")
     return conditional
 
 @cython.boundscheck(False) # compiler directive
@@ -388,39 +394,52 @@ cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = 
     px, mi = mutualInformation(conditional, snapshots)
     return conditional, px, mi
 
-cpdef reverseMC(Model model, int nSteps = 1000, int window = 10):
-    print(model, nSteps, window)
+cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
+                bint center = 0):
+    # TODO: add sample size function
     assert nSteps > window, "Size of nSteps need to be bigger than window size"
     cdef:
         int step
-        long[:, ::1] windowData = np.zeros((window, model.nNodes),\
+        int window_time
+        int node
+        int stateIdx
+        NODE[:, ::1] windowData = np.zeros((window, model.nNodes),\
                                            dtype = long)
-        dict binned = {}
+        tuple target
+        double[:,:, ::1] buffer = np.zeros (( window, model._nNodes, model._nStates))
+        dict cpx = {}
         dict mapper = {i : idx for idx, i in enumerate(model.agentStates)}
-        dict binnedc = {}
-    from itertools import product
-    while nSteps > 0:
-       windowData = model.simulate(window)
-       combinations = product(*map(range, [window, model.nNodes]))
-       target = tuple(windowData[window - 1])
-       buffer = binned.get(target,\
-                           np.zeros((window, model.nNodes, model.nStates)),\
-                           )
-       for t, node in  combinations:
-           buffer[t, node, mapper[windowData[t, node]]] += 1
-       binnedc[target] = binnedc.get(target, 0 ) + 1
-       binned[target] = binned.get(target, buffer)
+        dict snapshots = {}
+        long targetIdx 
+    if center:
+        targetIdx = window // 2
+    else:
+        targetIdx = window - 1
+    for step in range(nSteps):
+        tmp = step // window
+        if step % window == 0 and step > window:
+            # obtain target
+            target = tuple(windowData[targetIdx])
+            # obtain buffer, new copy
+            buffer = cpx.get( target , buffer.copy())
+            #buffer = cpx.get( target , np.zeros((window, model._nNodes, model._nStates)))
+            for window_time in range(window):
+                for node in range(model._nNodes):
+                    stateIdx = mapper[windowData[window_time, node]]
+                    buffer[window_time, node, stateIdx] += 1
+                    # update counters
+            cpx[target] = cpx.get(target, buffer)
+            snapshots[target] = snapshots.get(target, 0) + 1
+        windowData[step  % window, :] = model._updateState(model._sampleNodes(1)[0])
 
-       nSteps -= window
-       # reset window in case of non-divisors
-       if nSteps < window:
-           window = nSteps
     # normalize
-    z = sum(binnedc.values())
-    for k, v in binned.items():
-        binned[k] = v / binnedc.get(k) 
-        binnedc[k] /= z
-    return binned, binnedc
+    
+    z = sum(snapshots.values())
+    for k, v in cpx.items():
+        cpx[k] = np.array(v.base) / <double> snapshots.get(k) 
+        snapshots[k] /= <double> z
+    px, mi = mutualInformation(cpx, snapshots)
+    return snapshots, px, cpx, mi
 
 cpdef testSeed(Model model, int N, int nSamples = 10):
     from copy import deepcopy

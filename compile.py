@@ -9,11 +9,12 @@ from subprocess import run
 add = []
 try:
     compiler = 'zapcc++'
+    OPTIMIZATION = '-O2'
     clangCheck = run(f"{compiler} --version".split(), capture_output= True)
     if not clangCheck.returncode and 'fs4' not in os.uname().nodename:
         print("Using default")
-        os.environ['CXXFLAGS'] = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 -march=native"
-        os.environ['CC']       = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 -march=native"
+        os.environ['CXXFLAGS'] = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 {OPTIMIZATION} -march=native"
+        os.environ['CC']       = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 {OPTIMIZATION}  -march=native"
         add.append('-lomp') # clang openmp stuff
 except Exception as e:
     print(e)
@@ -39,6 +40,7 @@ for (root, dirs, files) in os.walk(baseDir):
                                                  '-march=native',\
                                                  '-std=c++17',\
                                                 '-fno-wrapv',\
+                                                 OPTIMIZATION,\
                                                 # '-g',\
                                                 ],\
                            extra_link_args = ['-fopenmp',\
@@ -54,22 +56,23 @@ for (root, dirs, files) in os.walk(baseDir):
 setup(\
     zip_safe        = False,\
     ext_modules = cythonize(\
-            exts,\
-            # annotate            = True,\ # set to true for performance html
-            language_level      = 3,\
-            compiler_directives = dict(\
-                                       fast_gil       = True,\
-                                       boundscheck    = False,\
-                                       cdivision   = True,\
-                                       initializedcheck = False,\
-                                       overflowcheck = False,\
-                                       nonecheck = False,\
-                                    # binding      = True,\
-                                    # embedsignature = True,\
-                                    ),\
-            # source must be pickable
-            nthreads            = mp.cpu_count(),\
-            ),\
+                            exts,\
+                            # annotate            = True,\ # set to true for performance html
+                            language_level      = 3,\
+                            compiler_directives = dict(\
+                                         fast_gil       = True,\
+                                         boundscheck    = False,\
+                                         cdivision      = True,\
+                                         initializedcheck = False,\
+                                         overflowcheck  = False,\
+                                         nonecheck      = False,\
+                                         binding        = False,\
+                                         # binding      = True,\
+                                         # embedsignature = True,\
+              ),\
+                            # source must be pickable
+                            nthreads            = mp.cpu_count(),\
+    ),\
 # gdb_debug =True,
 )
 
