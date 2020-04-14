@@ -35,40 +35,6 @@ from cython.view cimport array as cvarray
 from timeit import default_timer as timer
 from cython.operator cimport dereference as deref, preincrement as prec
 from cpython cimport PyObject, Py_XINCREF, Py_XDECREF
-cdef extern from *:
-    """
-    #include <Python.h>
-    #include <mutex>
-    std::mutex ref_mutex;
-    class PyObjectHolder{
-    public:
-        PyObject *ptr;
-        PyObjectHolder():ptr(nullptr){}
-        PyObjectHolder(PyObject *o):ptr(o){
-            std::lock_guard<std::mutex> guard(ref_mutex);
-            Py_XINCREF(ptr);
-        }
-        //rule of 3
-        ~PyObjectHolder(){
-            std::lock_guard<std::mutex> guard(ref_mutex);
-            Py_XDECREF(ptr);
-        }
-        PyObjectHolder(const PyObjectHolder &h):
-            PyObjectHolder(h.ptr){}
-        PyObjectHolder& operator=(const PyObjectHolder &other){
-            {
-                std::lock_guard<std::mutex> guard(ref_mutex);
-                Py_XDECREF(ptr);
-                ptr=other.ptr;
-                Py_XINCREF(ptr);
-            }
-            return *this;
-        }
-    };
-    """
-    cdef cppclass PyObjectHolder:
-        PyObject *ptr
-        PyObjectHolder(PyObject *o) nogil
 
 # print gil stuff; no mp used currently so ....useless
 def checkDistribution():
@@ -85,7 +51,7 @@ checkDistribution() # print it only once
 @cython.nonecheck(False)
 @cython.cdivision(True)
 @cython.initializedcheck(False)
-cpdef int encodeState(long[::1] state) nogil:
+cpdef int encodeState(long[::1] state) :
     """
     Maps state to decimal number.
 
@@ -108,7 +74,7 @@ cpdef int encodeState(long[::1] state) nogil:
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cpdef vector[long] decodeState(int dec, int N) nogil:
+cpdef vector[long] decodeState(int dec, int N) :
     """
     Decodes decimal number to state.
 
@@ -160,25 +126,25 @@ cpdef dict getSnapShots(Model model, int nSamples, \
         unordered_map[int, vector[int]].iterator got
         double past    = timer()
         list modelsPy  = []
-        vector[PyObjectHolder] models_
         Model tmp
         cdef int tid,
 
     nThreads = mp.cpu_count() if nThreads == -1 else nThreads
     # threadsafe model access; can be reduces to n_threads
-    for sample in range(nThreads):
-        tmp = copy.deepcopy(model)
-        tmp.reset()
+    # for sample in range(nThreads):
+        # tmp = copy.deepcopy(model)
+        # tmp.reset()
         # TODO: remove this
-        try:
-            tmp.burnin(burninSamples)
-        except:
-            pass
-        tmp.seed += sample # enforce different seeds
+        # try:
+            # tmp.burnin(burninSamples)
+        # except:
+            # pass
+        # tmp.seed += sample # enforce different seeds
         # modelsPy.append(tmp)
-        models_.push_back(PyObjectHolder(<PyObject *> tmp))
+        # models_.push_back(PyObjectHolder(<PyObject *> tmp))
 
 
+    cdef SpawnVec models_ = model._spawn(nThreads)
     # init rng buffers
     cdef int sampleSize = model._sampleSize # model.nNodes if model.updateType != 'single' else 1
 
@@ -193,22 +159,18 @@ cpdef dict getSnapShots(Model model, int nSamples, \
     # pbar = pr.ProgBar(nSamples)
     cdef tuple state
     cdef int counter = 0
+    # for sample in range(nSamples):
     for sample in prange(nSamples, nogil = True, \
-                         schedule = 'static', num_threads = nThreads):
-
+                         schedule = 'dynamic', num_threads = nThreads):
         tid      = threadid()
         modelptr = models_[tid].ptr
         r[tid] = (<Model> modelptr)._sampleNodes(steps)
-        # r[sample] = (<Model> models_[sample].ptr).sampleNodes(steps)
         # perform n steps
         for step in range(steps):
-            (<Model> modelptr)._updateState(\
-                                                    r[tid, step]
-                                                        )
+            (<Model> modelptr)._updateState(r[tid, step])
         with gil:
-            state = tuple((<Model> modelptr)._states.base)
+            state = tuple((<Model> modelptr).states)
             snapshots[state] = snapshots.get(state, 0) + 1 / Z
-            (<Model> modelptr).reset()
             if verbose:
                 pbar.update(1)
     if verbose:
@@ -421,8 +383,8 @@ cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
             # obtain target
             target = tuple(windowData[targetIdx])
             # obtain buffer, new copy
-            buffer = cpx.get( target , buffer.copy())
-            #buffer = cpx.get( target , np.zeros((window, model._nNodes, model._nStates)))
+            # buffer = cpx.get( target , buffer.copy())
+            buffer = cpx.get( target , np.zeros((window, model._nNodes, model._nStates)))
             for window_time in range(window):
                 for node in range(model._nNodes):
                     stateIdx = mapper[windowData[window_time, node]]
@@ -431,12 +393,10 @@ cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
             cpx[target] = cpx.get(target, buffer)
             snapshots[target] = snapshots.get(target, 0) + 1
         windowData[step  % window, :] = model._updateState(model._sampleNodes(1)[0])
-
     # normalize
-    
     z = sum(snapshots.values())
     for k, v in cpx.items():
-        cpx[k] = np.array(v.base) / <double> snapshots.get(k) 
+        cpx[k] = np.asarray(v.base) / <double> snapshots.get(k) 
         snapshots[k] /= <double> z
     px, mi = mutualInformation(cpx, snapshots)
     return snapshots, px, cpx, mi

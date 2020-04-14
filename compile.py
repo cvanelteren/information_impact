@@ -9,13 +9,14 @@ from subprocess import run
 add = []
 try:
     compiler = 'zapcc++'
-    OPTIMIZATION = '-O2'
+    OPTIMIZATION = '-Ofast'
     clangCheck = run(f"{compiler} --version".split(), capture_output= True)
     if not clangCheck.returncode and 'fs4' not in os.uname().nodename:
         print("Using default")
-        os.environ['CXXFLAGS'] = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 {OPTIMIZATION} -march=native"
-        os.environ['CC']       = f"{compiler} -Xclang -fopenmp -Wall -fno-wrapv -std=c++11 {OPTIMIZATION}  -march=native"
-        add.append('-lomp') # clang openmp stuff
+        # flags = f"{compiler} -Xclang -fopenmp -Wall  -fno-wrapv -std=c++17 {OPTIMIZATION} -march=native "
+        # os.environ['CXXFLAGS'] =  flags
+        # os.environ['CC']       =  flags
+        # add.append('-lomp') # c
 except Exception as e:
     print(e)
     pass
@@ -39,8 +40,12 @@ for (root, dirs, files) in os.walk(baseDir):
                            extra_compile_args = ['-fopenmp',\
                                                  '-march=native',\
                                                  '-std=c++17',\
-                                                '-fno-wrapv',\
+                                                 #'-flto',\
+                                                 #'-frename-registers',\
+                                                 #'-funroll-loops',\
+                                                 '-D_GLIBCXX_PARALLEL',\
                                                  OPTIMIZATION,\
+                                                 '-fopenmp-simd',\
                                                 # '-g',\
                                                 ],\
                            extra_link_args = ['-fopenmp',\
@@ -52,24 +57,25 @@ for (root, dirs, files) in os.walk(baseDir):
 # # compile
 # with open('requirements.txt', 'r') as f:
 #     install_dependencies = [i.strip() for i in f.readlines()]
-#
+
+cdirectives =  dict(\
+                    fast_gil         = True,\
+                    boundscheck      = False,\
+                    cdivision        = True,\
+                    initializedcheck = False,\
+                    overflowcheck    = False,\
+                    nonecheck        = False,\
+                    binding          = True,\
+                    # embedsignature = True,\
+                    )
+
 setup(\
     zip_safe        = False,\
     ext_modules = cythonize(\
                             exts,\
                             # annotate            = True,\ # set to true for performance html
                             language_level      = 3,\
-                            compiler_directives = dict(\
-                                         fast_gil       = True,\
-                                         boundscheck    = False,\
-                                         cdivision      = True,\
-                                         initializedcheck = False,\
-                                         overflowcheck  = False,\
-                                         nonecheck      = False,\
-                                         binding        = False,\
-                                         # binding      = True,\
-                                         # embedsignature = True,\
-              ),\
+                            compiler_directives = cdirectives,\
                             # source must be pickable
                             nthreads            = mp.cpu_count(),\
     ),\
