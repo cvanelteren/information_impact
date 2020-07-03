@@ -2,14 +2,6 @@
 # distutils: language=c++
 # __author__ = 'Casper van Elteren'
 
-# MODELS
-# from Models.Models cimport Model
-# cython: infer_types=True
-# distutils: language=c++
-# __author__ = 'Casper van Elteren'
-
-# MODELS
-# from Models.Models cimport Model
 
 import numpy as np
 cimport numpy as np
@@ -20,7 +12,10 @@ import multiprocessing as mp
 import copy
 from cpython.ref cimport PyObject
 
-from PlexSim.plexsim.models cimport *
+
+cimport plexsim.models
+from plexsim cimport models
+from plexsim.models cimport *
 # progressbar
 from tqdm import tqdm   #progress bar
 
@@ -45,12 +40,87 @@ def checkDistribution():
               ' when using multi-core functions')
 checkDistribution() # print it only once
 
+cdef class Simulator:
+    def __init__(self, Model m):
+        self.model = m
+
+        self.hist_map = {idx : i for idx, i in enumerate(m.agentStates)}
+
+    cpdef dict snapshots(self, size_t n_samples,\
+                         size_t step = 1):
+
+        cdef dict snapshots = {}
+
+        cdef state_t[::1] states
+        cdef double z = 1 / <double> n_samples
+        cdef tuple tmp
+        for i in range(n_samples):
+            states = self.model.simulate(step + 1)[-1]
+            tmp = tuple(states.base)
+            snapshots[tmp] = snapshots.get(tmp, 0) + z
+        return snapshots
+
+    cpdef dict running(self, size_t n_samples,
+                       size_t time_steps = 10,
+                       size_t steps      = 1,
+                       bint center       = False):
+
+        # setup buffer
+        cdef:
+            tuple shape = (time_steps, self.model.nNodes, self.model.nStates)
+            double[:, :, ::1] bin_buffer = np.zeros(shape)
+            state_t[:, ::1]   buff     = np.zeros(shape[:2], dtype = long)
+
+        assert n_samples > time_steps, "time_steps needs to be bigger than number of samples"
+        # setup targets
+        cdef:
+            state_t[::1] target
+            size_t target_idx =  time_steps // 2 if center else time_steps - 1
+
+        cdef conditional = {}
+        cdef dict snapshots = {}
+        # start binning
+        # init sample
+        for sample in range(n_samples):
+            target = buff[target_idx]
+            # obtain buffer or empty
+            bin_buffer = conditional.get(tuple(target), np.zeros(shape))
+            self.bin_data(buff, target, bin_buffer)
+            conditional[tuple(target)] = conditional.get(tuple(target), bin_buffer.base) 
+            snapshots[tuple(target)] = snapshots.get(tuple(target), 0) + 1.
+
+            # roll buffers
+            buff = self.model.simulate(time_steps * steps)
+            
+
+
+        # normalize the probs
+        cdef double z = 1 / <double> sum(snapshots.values())
+        for k, v in conditional.items():
+            conditional[k] = v / snapshots.get(k)
+            snapshots[k]  *= z
+        return dict(conditional = conditional,\
+                    snapshots   = snapshots)
+
+
+    cdef void bin_data(self, \
+                       state_t[:, ::1] buff,\
+                       state_t[::1] target,\
+                       double[:, :, ::1] bin_buffer):
+
+        # reset
+        cdef size_t idx
+        # bin
+        for t in range(buff.shape[0]):
+            for node in range(buff.shape[1]):
+                idx = self.hist_map[buff[t, node]]
+                bin_buffer[t, node, idx] += 1
+        return
+
+
+
+
 # TODO rework this to include agentStates
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.nonecheck(False)
-@cython.cdivision(True)
-@cython.initializedcheck(False)
 cpdef int encodeState(long[::1] state) :
     """
     Maps state to decimal number.
@@ -70,10 +140,6 @@ cpdef int encodeState(long[::1] state) :
     return dec
 
 # TODO rework this to include agentStates
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.nonecheck(False)
-@cython.cdivision(True)
 cpdef vector[long] decodeState(int dec, int N) :
     """
     Decodes decimal number to state.
@@ -92,11 +158,7 @@ cpdef vector[long] decodeState(int dec, int N) :
         dec = dec // 2
     return buffer
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-@cython.nonecheck(False)
-@cython.cdivision(True)
-@cython.initializedcheck(False)
+
 cpdef dict getSnapShots(Model model, int nSamples, \
                         int steps = 1,\
                         int burninSamples = int(1e3), \
@@ -121,7 +183,7 @@ cpdef dict getSnapShots(Model model, int nSamples, \
         int step, sample
         int N          = nSamples * steps
         # long[:, ::1] r = model.sampleNodes(N)
-        double Z       = <double> nSamples
+        double Z       = 1 / <double> nSamples
         int idx # deprc?
         unordered_map[int, vector[int]].iterator got
         double past    = timer()
@@ -148,7 +210,7 @@ cpdef dict getSnapShots(Model model, int nSamples, \
     # init rng buffers
     cdef int sampleSize = model._sampleSize # model.nNodes if model.updateType != 'single' else 1
 
-    cdef NODEID[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
+    cdef node_id_t[:, :, ::1] r    = np.ndarray((nThreads, steps, sampleSize), \
                                            dtype = long)
     # cdef cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r    = 0
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
@@ -160,19 +222,20 @@ cpdef dict getSnapShots(Model model, int nSamples, \
     cdef tuple state
     cdef int counter = 0
     # for sample in range(nSamples):
-    for sample in prange(nSamples, nogil = True, \
-                         schedule = 'dynamic', num_threads = nThreads):
+    # for sample in prange(nSamples, nogil = True, \
+                         # schedule = 'static', num_threads = nThreads):
+    for sample in range(nSamples):
         tid      = threadid()
         modelptr = models_[tid].ptr
         r[tid] = (<Model> modelptr)._sampleNodes(steps)
         # perform n steps
         for step in range(steps):
             (<Model> modelptr)._updateState(r[tid, step])
-        with gil:
-            state = tuple((<Model> modelptr).states)
-            snapshots[state] = snapshots.get(state, 0) + 1 / Z
-            if verbose:
-                pbar.update(1)
+        # with gil:
+        state = tuple((<Model> modelptr).states)
+        snapshots[state] = snapshots.get(state, 0) + Z 
+        if verbose:
+            pbar.update(1)
     if verbose:
         print('done')
         print(f'Found {len(snapshots)} states')
@@ -181,11 +244,6 @@ cpdef dict getSnapShots(Model model, int nSamples, \
 
 
 cimport openmp
-@cython.boundscheck(False) # compiler directive
-@cython.wraparound(False) # compiler directive
-@cython.nonecheck(False)
-@cython.cdivision(True)
-@cython.initializedcheck(False)
 cpdef dict monteCarlo(\
                Model model, dict snapshots,\
                int deltas = 10,  int repeats = 11,
@@ -211,13 +269,13 @@ cpdef dict monteCarlo(\
         float past = timer()
     # pre-declaration
         double Z              = <double> repeats
-        unordered_map[NODEID, NUDGE]  copyNudge = model.nudges
+        unordered_map[node_id_t, nudge_t]  copyNudge = model.nudges
         bint reset            = True
         # loop stuff
         # extract startstates
         # list comprehension is slower than true loops cython
         # long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in tqdm(snapshots)])
-        NODE[:, ::1] s = np.array([i for i in snapshots])
+        state_t[:, ::1] s = np.array([i for i in snapshots])
         # long[:, ::1] s   = np.array([msnapshots[i] for i in tqdm(snapshots)])
         int states       = len(snapshots)
         # vector[int] kdxs = list(snapshots.keys()) # extra mapping idx
@@ -227,7 +285,7 @@ cpdef dict monteCarlo(\
         int repeat, delta, node, statei, half = deltas // 2, state
         dict conditional = {}
         # unordered_map[int, double *] conditional
-        NODE[::1] startState
+        state_t[::1] startState
         int jdx
 
         # long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)
@@ -269,7 +327,7 @@ cpdef dict monteCarlo(\
     cdef double[:, :, :, ::1] out = np.zeros((nThreads     , deltas, \
                                               model._nNodes, model._nStates))
     cdef int nTrial = deltas * repeats
-    cdef NODEID[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
+    cdef node_id_t[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
                                          sampleSize), dtype = long)
     # cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r = 0
 
@@ -350,14 +408,26 @@ cpdef runMC(Model model, dict snapshots, int deltas, int repeats, dict kwargs = 
     """ wrapper to perform MC and MI"""
     cdef:
         dict conditional = monteCarlo(model = model, snapshots = snapshots,\
-                        deltas = deltas, repeats = repeats,\
+                deltas = deltas, repeats = repeats,\
                         **kwargs)
         np.ndarray px, mi
     px, mi = mutualInformation(conditional, snapshots)
     return conditional, px, mi
 
-cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
-                bint center = 0):
+def KL(p1, p2):
+    # p2[p2 == 0] = 1 # circumvent p = 0
+    # p1[p1==0] = 1
+    tmp = np.log(p1) - np.log(p2)
+    kl = np.nansum( np.multiply(p1, tmp )\
+                   , axis = -1)
+    kl[np.isfinite(kl) == False] = 0 # remove x = 0
+    return kl
+
+cpdef reverseMC(Model model, int nSteps = 1000, \
+                int window = 10,\
+                int nSamples = 1000,\
+                bint reverse = 0,\
+                bint center = 0) :
     # TODO: add sample size function
     assert nSteps > window, "Size of nSteps need to be bigger than window size"
     cdef:
@@ -365,7 +435,7 @@ cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
         int window_time
         int node
         int stateIdx
-        NODE[:, ::1] windowData = np.zeros((window, model.nNodes),\
+        state_t[:, ::1] windowData = np.zeros((window, model.nNodes),\
                                            dtype = long)
         tuple target
         double[:,:, ::1] buffer = np.zeros (( window, model._nNodes, model._nStates))
@@ -373,12 +443,9 @@ cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
         dict mapper = {i : idx for idx, i in enumerate(model.agentStates)}
         dict snapshots = {}
         long targetIdx 
-    if center:
-        targetIdx = window // 2
-    else:
-        targetIdx = window - 1
+
+    targetIdx = window // 2 if center else window  -1
     for step in range(nSteps):
-        tmp = step // window
         if step % window == 0 and step > window:
             # obtain target
             target = tuple(windowData[targetIdx])
@@ -392,7 +459,8 @@ cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
                     # update counters
             cpx[target] = cpx.get(target, buffer)
             snapshots[target] = snapshots.get(target, 0) + 1
-        windowData[step  % window, :] = model._updateState(model._sampleNodes(1)[0])
+        windowData = model.simulate(window)
+        # windowData[step  % window, :] = model._updateState(model._sampleNodes(1)[0])
     # normalize
     z = sum(snapshots.values())
     for k, v in cpx.items():
@@ -401,70 +469,100 @@ cpdef reverseMC(Model model, int nSteps = 1000, int window = 10,\
     px, mi = mutualInformation(cpx, snapshots)
     return snapshots, px, cpx, mi
 
-cpdef testSeed(Model model, int N, int nSamples = 10):
-    from copy import deepcopy
-    cdef:
-        int i
-        vector[PyObjectHolder] holder
+cpdef  dict doTrial(Model m,\
+                   int nTrials,\
+                   np.ndarray[double] nudgeSizes,\
+                   int repeats  = 1000,\
+                   int nSamples = 1000,\
+                   int deltas   = 10,\
+                   int center  = 1,\
+                   int reverse = 1):
+     
+     cdef:
+         SpawnVec models_ = m._spawn(mp.cpu_count())
+        
+     cdef:
+         str node
+         node_id_t idx
+         int trial
+         int tid
+         dict trialNudges = {}
+         dict trialNudge
+         PyObject* ptr
+         Model tmp
+         double nudgeSize_
 
+     cdef int nNudges = len(nudgeSizes)
 
-    cdef np.ndarray test = np.zeros((N, nSamples, model.sampleSize))
-    cdef Model tmp
-    for i in range(N):
-        tmp = deepcopy(model)
-        tmp.seed += i
-        print(tmp.seed)
-        test[i] = tmp._sampleNodes(nSamples)
-    return test
+     cdef int N = nTrials *nNudges;
+     pbar = ProgBar(N)
+     # for trial in prange(nTrials * nNudges, nogil = 1, \
+                         # num_threads = models_.size(), schedule = 'static'):
+     print("Starting trials")
+     for trial in range(N):
+         tid = threadid()
+         ptr = models_[tid].ptr
+         pbar.update(1)
+         nudgeSize_ = nudgeSizes[trial // nTrials]
+         nudgeSize_, trialNudge = _doTrial(ptr, nSamples = nSamples,\
+                                          deltas = deltas, \
+                                          reverse = reverse,\
+                                          center = center,\
+                                          repeats = repeats,\
+                                          nudgeSize = nudgeSize_,\
+                                                               )
+         trialNudges[nudgeSize_] = trialNudges.get(nudgeSize_, {})
+         for k, v in trialNudge.items():
+             trialNudges[nudgeSize_][k] = trialNudges[nudgeSize_].get(k, []) + [v]
+     return trialNudges
 
+cdef tuple _doTrial(PyObject* ptr,\
+              int nSamples,\
+              int deltas, \
+              int reverse,\
+              int center,\
+              int repeats,\
+              double nudgeSize,\
+              ):
 
-# cpdef float sig(float x, float a, float b, float c, float d):
-cdef sig(x, a, b, c):
-    return a / (1 + np.exp(-b * (x - c) ))
-# cpdef float tsig(float x, float a, float b, float c, float d):\
-cdef tsig(x, a, b, c, d):
-    return abs(a / (1 + np.exp(-b * (x - c) )) + d)
-cpdef dict optimizeNudge(Model model,  str node, \
-                                    dict snapshots, \
-                                    long deltas, long repeats, \
-                                    np.ndarray px, \
-                                    np.ndarray nudges = np.logspace(-2, 1, 10),\
-                                    \
-):
-    """
-    Attempt to optimize nudge size -> finding proper level of description
-    """
+    cdef Model m = (<Model> ptr)
+    cdef dict snapshots
+    m.nudges = { }
+    cdef dict trialNudge = {}
+    m.reset()
+    if reverse:
+        snapshots, px, cpx, mi = reverseMC(m,\
+                                              nSteps = nSamples,\
+                                              window = deltas,\
+                                              center = center)
+    else:
+        snapshots = getSnapShots(m,\
+                                   nSamples = nSamples)
+        cpx, px, mi = runMC(m, \
+                      snapshots = snapshots,\
+                      deltas = deltas,\
+                      repeats = repeats)
 
-    cdef:
-        int i
-        dict nudge
-        np.ndarray output = np.zeros((nudges.size), dtype = float)
-        float KLD
+    cpx_ = np.array([i for i in cpx.values()])
+    trialNudge["control"] = dict(snapshots = snapshots, cpx = cpx,\
+                                 px = px, mi = mi)
+    for node, idx in m.mapping.items():
+        m.nudges = {node : nudgeSize}
+        if reverse:
+            cpxn = reverseMC(m,\
+                                 nSteps = nSamples,\
+                                 window = deltas,\
+                                 center = center)[2]
+        else:
+            cpxn = runMC(m, \
+                            snapshots = snapshots,\
+                            deltas = deltas,\
+                            repeats = repeats)[0]
+        cpxn_ = np.zeros(cpx_.shape)
+        for jdx, (k, v) in enumerate(cpx.items()):
+            cpxn_[jdx] = cpxn.get(k, 0)
+            nudge_impact = KL(cpx_, cpxn_)
+        trialNudge[node] = trialNudge.get(node, nudge_impact) 
+    return nudgeSize, trialNudge
 
-    from Utils.stats import KL
-    # nudge possible driver
-    for i in range(nudges.size):
-        nudge = {node : nudges[i]}
-        model.nudges = nudge
-        cicpx, cipx, cmi = runMC(model, snapshots, deltas, repeats)
-        KLD = np.nansum(KL(cipx[deltas // 2 + 1:],  px[:deltas // 2 - 1]))
-        output[i] = KLD
-
-    # fit sigmoid
-    output = (output - output.min())  / (output.max() - output.min())
-    output[np.isfinite(output) == False] = 0 # remove nans
-    from scipy import optimize
-    cdef:
-        np.ndarray coeffs, vars
-    coeffs, vars = optimize.curve_fit(sig, nudges, output)
-    cdef float theta = .5
-    x0 = optimize.fmin(tsig, 0, args = (*coeffs, -theta))
-
-    cdef dict kwargs = dict(\
-                                    x0 = x0, \
-                                    coeffs = coeffs,\
-                                    vars   = vars,\
-                                    nudges = nudges, \
-                                    output = output,\
-                                    )
-    return kwargs
+    
