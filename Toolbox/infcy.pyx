@@ -60,16 +60,19 @@ cdef class Simulator:
             snapshots[tmp] = snapshots.get(tmp, 0) + z
         return snapshots
 
-    cpdef dict running(self, size_t n_samples,
+    cpdef dict running(self, \
+                       size_t n_samples,
                        size_t time_steps = 10,
                        size_t steps      = 1,
                        bint center       = False):
 
         # setup buffer
         cdef:
-            tuple shape = (time_steps, self.model.nNodes, self.model.nStates)
+            tuple shape                  = (time_steps, \
+                                            self.model._nNodes,\
+                                            self.model._nStates)
             double[:, :, ::1] bin_buffer = np.zeros(shape)
-            state_t[:, ::1]   buff     = np.zeros(shape[:2], dtype = long)
+            state_t[:, ::1] buff       = np.zeros(shape[:2], dtype = long)
 
         assert n_samples > time_steps, "time_steps needs to be bigger than number of samples"
         # setup targets
@@ -77,46 +80,120 @@ cdef class Simulator:
             state_t[::1] target
             size_t target_idx =  time_steps // 2 if center else time_steps - 1
 
-        cdef conditional = {}
-        cdef dict snapshots = {}
+        cdef dict conditional = {}, snapshots = {}
         # start binning
         # init sample
+        cdef size_t sample
         for sample in range(n_samples):
             target = buff[target_idx]
             # obtain buffer or empty
             bin_buffer = conditional.get(tuple(target), np.zeros(shape))
-            self.bin_data(buff, target, bin_buffer)
-            conditional[tuple(target)] = conditional.get(tuple(target), bin_buffer.base) 
+            self.bin_data(buff, target, bin_buffer, time_steps)
+
+            conditional[tuple(target)] = conditional.get(tuple(target), bin_buffer.base.copy()) 
             snapshots[tuple(target)] = snapshots.get(tuple(target), 0) + 1.
 
             # roll buffers
-            buff = self.model.simulate(time_steps * steps)
-            
+            buff = self.model.simulate(time_steps * steps)[time_steps * steps - time_steps:, :]
+
+        return self.normalize(conditional, snapshots)
 
 
+    cpdef dict normalize(self, dict conditional, dict snapshots, bint counted = True):
         # normalize the probs
         cdef double z = 1 / <double> sum(snapshots.values())
+        cdef tuple k
+        cdef np.ndarray v
         for k, v in conditional.items():
-            conditional[k] = v / snapshots.get(k)
-            snapshots[k]  *= z
-        return dict(conditional = conditional,\
-                    snapshots   = snapshots)
+            if counted:
+                conditional[k] = v / snapshots.get(k)
+                snapshots[k]  *= z
+            else:
+                conditional[k] = v / v[0, 0].sum()# * snapshots.get(k)
+
+        return dict(snapshots = snapshots, \
+                    conditional = conditional)
 
 
     cdef void bin_data(self, \
                        state_t[:, ::1] buff,\
                        state_t[::1] target,\
-                       double[:, :, ::1] bin_buffer):
+                       double[:, :, ::1] bin_buffer,\
+                       size_t time_steps) nogil:
 
         # reset
         cdef size_t idx
         # bin
-        for t in range(buff.shape[0]):
-            for node in range(buff.shape[1]):
+        for t in range(time_steps):
+            for node in range(self.model._nNodes):
                 idx = self.hist_map[buff[t, node]]
                 bin_buffer[t, node, idx] += 1
         return
 
+    cpdef dict forward(self, \
+                       size_t n_samples  = 100,\
+                       size_t repeats    = 10,\
+                       size_t time_steps = 10):
+       cdef:
+          size_t cpus    = mp.cpu_count()
+          dict snapshots = self.snapshots(n_samples, step = 1)
+
+          state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
+                                                      self.model._nNodes), \
+                                                      dtype = long)
+
+          state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), dtype = long)
+
+          state_t[:, ::1] states = np.array([i for i in snapshots.keys()], dtype = long)
+
+          size_t nStates = len(states)
+          SpawnVec models = self.model._spawn(cpus)
+
+          # shape of buffer
+          tuple shape = (time_steps, self.model.nNodes, self.model.nStates)
+          dict conditional = {}
+
+
+
+    
+       print(nStates, len(states))
+       # private variables
+       cdef:
+          PyObject* ptr
+          size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes
+          tuple tuple_start_state
+          double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
+
+       pbar = ProgBar(nStates)
+       # for state_idx in prange(nStates, nogil = True):
+       for state_idx in range(nStates):
+           tid              = threadid()
+           start_state[tid] = states[state_idx]
+
+           bin_buffer.base[tid] = conditional.get(tuple(start_state[tid]), np.zeros(shape))
+
+           for trial in range(repeats):
+               # reset buffer
+               for node in range(NODES):
+                   (<Model> models[tid].ptr)._states_ptr[node] = start_state[tid, node]
+
+               thread_state[tid, 0] = start_state[tid]
+               for step in range(1, time_steps):
+                   thread_state[tid, step] = (<Model> models[tid].ptr)._updateState(\
+                            (<Model> models[tid].ptr)._sampleNodes(1)[0])
+
+               # bin buffer
+               self.bin_data(thread_state[tid], start_state[tid], \
+                                 bin_buffer[tid], time_steps)
+
+               # with gil:
+
+           conditional[tuple(start_state[tid])] = conditional.get(\
+           tuple(start_state[tid]),  bin_buffer.base[tid])
+           pbar.update(1)
+
+       return self.normalize(conditional, snapshots, counted = False)
+        
 
 
 
@@ -214,7 +291,7 @@ cpdef dict getSnapShots(Model model, int nSamples, \
                                            dtype = long)
     # cdef cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r    = 0
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
-    cdef PyObject *modelptr
+    cdef PyObject *modelpt r
     if verbose:
         pbar = ProgBar(nSamples)
     #pbar = tqdm(total = nSamples)

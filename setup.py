@@ -8,7 +8,7 @@ import re, os
 from subprocess import run
 add = []
 compiler = 'g++'
-optFlag = '-O3'
+optFlag = '-Ofast'
 cppv    = '17'
 
 flags = f'{optFlag} -march=native -std=c++{cppv} -flto '\
