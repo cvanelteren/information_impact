@@ -13,8 +13,6 @@ import copy
 from cpython.ref cimport PyObject
 
 
-cimport plexsim.models
-from plexsim cimport models
 from plexsim.models cimport *
 # progressbar
 from tqdm import tqdm   #progress bar
@@ -52,12 +50,12 @@ cdef class Simulator:
         cdef dict snapshots = {}
 
         cdef state_t[::1] states
-        cdef double z = 1 / <double> n_samples
+        # cdef double z = 1 # / <double> n_samples
         cdef tuple tmp
         for i in range(n_samples):
             states = self.model.simulate(step + 1)[-1]
             tmp = tuple(states.base)
-            snapshots[tmp] = snapshots.get(tmp, 0) + z
+            snapshots[tmp] = snapshots.get(tmp, 0) + 1
         return snapshots
 
     cpdef dict running(self, \
@@ -99,17 +97,19 @@ cdef class Simulator:
         return self.normalize(conditional, snapshots)
 
 
-    cpdef dict normalize(self, dict conditional, dict snapshots, bint counted = True):
+    cpdef dict normalize(self, dict conditional, \
+                         dict snapshots, \
+                         bint running = True):
         # normalize the probs
         cdef double z = 1 / <double> sum(snapshots.values())
+        cdef double Z = Z
         cdef tuple k
         cdef np.ndarray v
         for k, v in conditional.items():
-            if counted:
-                conditional[k] = v / snapshots.get(k)
-                snapshots[k]  *= z
-            else:
-                conditional[k] = v / v[0, 0].sum()# * snapshots.get(k)
+            Z = snapshots.get(k) * z
+            if running:
+                conditional[k] = v * Z 
+            snapshots[k]   = Z
 
         return dict(snapshots = snapshots, \
                     conditional = conditional)
@@ -119,7 +119,8 @@ cdef class Simulator:
                        state_t[:, ::1] buff,\
                        state_t[::1] target,\
                        double[:, :, ::1] bin_buffer,\
-                       size_t time_steps) nogil:
+                       size_t time_steps,\
+                       double Z = 1) nogil:
 
         # reset
         cdef size_t idx
@@ -127,7 +128,7 @@ cdef class Simulator:
         for t in range(time_steps):
             for node in range(self.model._nNodes):
                 idx = self.hist_map[buff[t, node]]
-                bin_buffer[t, node, idx] += 1
+                bin_buffer[t, node, idx] += Z
         return
 
     cpdef dict forward(self, \
@@ -163,6 +164,7 @@ cdef class Simulator:
           size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes
           tuple tuple_start_state
           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
+          double Z = 1  / <double> (repeats)
 
        pbar = ProgBar(nStates)
        # for state_idx in prange(nStates, nogil = True):
@@ -177,22 +179,23 @@ cdef class Simulator:
                for node in range(NODES):
                    (<Model> models[tid].ptr)._states_ptr[node] = start_state[tid, node]
 
-               thread_state[tid, 0] = start_state[tid]
+                   thread_state[tid, 0, node] = start_state[tid, node]
                for step in range(1, time_steps):
                    thread_state[tid, step] = (<Model> models[tid].ptr)._updateState(\
                             (<Model> models[tid].ptr)._sampleNodes(1)[0])
 
                # bin buffer
                self.bin_data(thread_state[tid], start_state[tid], \
-                                 bin_buffer[tid], time_steps)
+                                 bin_buffer[tid], time_steps, Z)
 
                # with gil:
 
            conditional[tuple(start_state[tid])] = conditional.get(\
-           tuple(start_state[tid]),  bin_buffer.base[tid])
+                                                                  tuple(start_state[tid]),  bin_buffer.base[tid].copy())
            pbar.update(1)
-
-       return self.normalize(conditional, snapshots, counted = False)
+       print("sanity check 3")
+       # return dict(conditional = conditional, snapshots = snapshots)
+       return self.normalize(conditional, snapshots, False)
         
 
 
@@ -291,7 +294,7 @@ cpdef dict getSnapShots(Model model, int nSamples, \
                                            dtype = long)
     # cdef cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r    = 0
     # cdef long[:, :, ::1] r = np.ndarray((nThreds, steps, sampleSize), dtype = long)
-    cdef PyObject *modelpt r
+    cdef PyObject *modelptr
     if verbose:
         pbar = ProgBar(nSamples)
     #pbar = tqdm(total = nSamples)
@@ -369,10 +372,10 @@ cpdef dict monteCarlo(\
         # list m = []
 
         int nNodes = model._nNodes, nStates = model._nStates
-        long[::1] agentStates = np.asarray(model.agentStates)
+        state_t[::1] agentStates = np.asarray(model.agentStates)
         str nudgeType = model._nudgeType
 
-        unordered_map[int, int] idxer = {state : idx for idx, state in enumerate(agentStates)}
+        unordered_map[state_t, size_t] idxer = {state : idx for idx, state in enumerate(agentStates)}
 
         list modelsPy = []
         vector[PyObjectHolder] models_
@@ -405,7 +408,7 @@ cpdef dict monteCarlo(\
                                               model._nNodes, model._nStates))
     cdef int nTrial = deltas * repeats
     cdef node_id_t[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
-                                         sampleSize), dtype = long)
+                                              sampleSize), dtype = np.uintp)
     # cdef vector[vector[vector[int][sampleSize]][nTrial]][nThreads] r = 0
 
     #pbar = tqdm(total = states) # init  progbar
@@ -416,7 +419,7 @@ cpdef dict monteCarlo(\
     cdef double ZZ
 
     cdef Model t
-    #print('starting runs')
+    print('starting runs')
     # cdef double ZZ
     with nogil, parallel(num_threads = nThreads):
         for state in prange(states, schedule = 'static'):

@@ -18,7 +18,9 @@ cdef class Simulator:
     cdef void bin_data(self, state_t[:, ::1] buffer,\
                        state_t[::1] target,\
                        double[:, :, ::1] bin_buffer, \
-                       size_t time_steps) nogil
+                       size_t time_steps,\
+                       double Z = *
+    ) nogil
 
     cpdef dict forward(self,\
                       size_t n_samples =*,\
@@ -27,6 +29,8 @@ cdef class Simulator:
                       )
     cpdef dict normalize(self,\
                          dict conditional,\
-                         dict snapshots, bint counted =*)
+                         dict snapshots,\
+                         bint running =*
+                         )
     
 

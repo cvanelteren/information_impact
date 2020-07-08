@@ -62,7 +62,14 @@ cdirectives =  dict(\
                     # embedsignature = True,\
                     )
 
+__version__ = 1.0
 setup(\
+
+    name = "infcy",\
+    version = __version__,\
+    author  = "Casper van Elteren",\
+    author_email = "caspervanelteren@gmail.com",\
+    url  = "cvanelteren.github.io",\
     zip_safe        = False,\
     ext_modules = cythonize(\
                             exts,\
