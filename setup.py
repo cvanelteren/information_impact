@@ -27,12 +27,13 @@ except Exception as e:
 # collect pyx files
 exts = []
 baseDir =  os.getcwd() + os.path.sep
+
 nums = numpy.get_include()
 
 for (root, dirs, files) in os.walk(baseDir):
     for file in files:
         fileName = os.path.join(root, file)
-        if file.endswith('.pyx'):
+        if file.endswith('.pyx') and 'Toolbox' in fileName:
             # some cython shenanigans
             extPath  = fileName.replace(baseDir, '') # make relative
             extName  = extPath.split('.')[0].replace(os.path.sep, '.') # remove extension
@@ -47,6 +48,7 @@ for (root, dirs, files) in os.walk(baseDir):
                                               ] + add,\
             )
             exts.append(ex)
+print(exts)
 # # compile
 # with open('requirements.txt', 'r') as f:
 #     install_dependencies = [i.strip() for i in f.readlines()]
@@ -62,15 +64,14 @@ cdirectives =  dict(\
                     # embedsignature = True,\
                     )
 
-__version__ = 1.0
+__version__ = 1.1
 setup(\
-
-    name = "infcy",\
-    version = __version__,\
-    author  = "Casper van Elteren",\
-    author_email = "caspervanelteren@gmail.com",\
-    url  = "cvanelteren.github.io",\
-    zip_safe        = False,\
+    name          = 'infcy',\
+    version       = __version__,\
+    author        = "Casper van Elteren",\
+    author_email  = "caspervanelteren@gmail.com",\
+    url           = "cvanelteren.github.io",\
+    zip_safe      = False,\
     ext_modules = cythonize(\
                             exts,\
                             # annotate            = True,\ # set to true for performance html

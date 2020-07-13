@@ -6,7 +6,7 @@ from libcpp.unordered_map cimport unordered_map
 cdef class Simulator:
     cdef:
         Model model
-        unordered_map[size_t, size_t] hist_map
+        unordered_map[state_t, size_t] hist_map
         dict __dict__
     cpdef dict snapshots(self, size_t n_samples, size_t step=*)
     cpdef dict running (self, size_t n_samples,\
