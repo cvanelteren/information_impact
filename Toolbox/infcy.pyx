@@ -20,6 +20,7 @@ from tqdm import tqdm   #progress bar
 from pyprind import ProgBar
 # cython
 from libcpp.vector cimport vector
+from libcpp.string cimport string
 from libc.stdlib cimport srand
 from libcpp.unordered_map cimport unordered_map
 from libc.stdio cimport printf
@@ -45,13 +46,18 @@ cdef class Simulator:
         self.hist_map = {idx : i for idx, i in enumerate(m.agentStates)}
 
     cpdef dict snapshots(self, size_t n_samples,\
-                         size_t step = 1):
+                         size_t step = 0):
 
-        cdef dict snapshots = {}
 
         cdef state_t[::1] states
         # cdef double z = 1 # / <double> n_samples
+        # cdef tuple tmp
+
         cdef tuple tmp
+        # need to add has function to unordered_map to access
+        # make the loop below fully nogil. 
+        cdef dict snapshots = {}
+        # cdef unordered_map[string, double] snapshots
         for i in range(n_samples):
             states = self.model.simulate(step + 1)[-1]
             tmp = tuple(states.base)
@@ -63,6 +69,11 @@ cdef class Simulator:
                        size_t time_steps = 10,
                        size_t steps      = 1,
                        bint center       = False):
+        """
+        Performs running window over :time_steps: for :n_samples: times separated with
+        :steps:.
+        :center: controls whether the buffer is centered, Default is that the last time index is the target state of the buffer.
+        """
 
         # setup buffer
         cdef:
@@ -106,6 +117,7 @@ cdef class Simulator:
         cdef double Z = Z
         cdef tuple k
         cdef np.ndarray v
+
         for k, v in conditional.items():
             Z = snapshots.get(k) * z
             if running:
@@ -132,14 +144,13 @@ cdef class Simulator:
                 bin_buffer[t, node, idx] += Z
         return
 
-    cpdef dict forward(self, \
-                       size_t n_samples  = 100,\
+    cpdef dict forward2(self, \
+                       dict snapshots,\
                        size_t repeats    = 10,\
-                       size_t time_steps = 10):
-       print('testing this')
+                       size_t time_steps = 10,\
+                       ):
        cdef:
           size_t cpus    = mp.cpu_count()
-          dict snapshots = self.snapshots(n_samples, step = 1)
 
           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
                                                       self.model._nNodes), \
@@ -166,18 +177,16 @@ cdef class Simulator:
           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
           double Z = 1  / <double> (repeats)
 
-       pbar = ProgBar(nStates)
        # for state_idx in prange(nStates, nogil = True):
-       for state_idx in range(nStates):
+       for state_idx in prange(nStates, nogil = True):
            tid              = threadid()
            start_state[tid] = states[state_idx]
 
-           bin_buffer.base[tid] = conditional.get(tuple(start_state[tid]), np.zeros(shape))
 
            for trial in range(repeats):
                # reset buffer
                for node in range(NODES):
-                   (<Model> models[tid].ptr)._states_ptr[node] = start_state[tid, node]
+                   (<Model> models[tid].ptr)._states[node] = start_state[tid, node]
 
                    thread_state[tid, 0, node] = start_state[tid, node]
                for step in range(1, time_steps):
@@ -189,10 +198,69 @@ cdef class Simulator:
                                  bin_buffer[tid], time_steps, Z)
 
                # with gil:
+       # print("sanity check 2")
+       # return dict(conditional = conditional, snapshots = snapshots)
+       return self.normalize(conditional, snapshots, False)
+    cpdef dict forward(self, \
+                       dict snapshots,\
+                       size_t repeats    = 10,\
+                       size_t time_steps = 10,\
+                       ):
+       cdef:
+          size_t cpus    = mp.cpu_count()
 
-           conditional[tuple(start_state[tid])] = conditional.get(\
+          state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
+                                                      self.model._nNodes), \
+                                                      dtype = np.double)
+
+          state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), \
+                                                 dtype = np.double)
+
+          state_t[:, ::1] states = np.array([i for i in snapshots.keys()], \
+                                            dtype = np.double)
+
+          size_t nStates = len(states)
+          SpawnVec models = self.model._spawn(cpus)
+
+          # shape of buffer
+          tuple shape = (time_steps, self.model.nNodes, self.model.nStates)
+          dict conditional = {}
+       # private variables
+       cdef:
+          PyObject* ptr
+          size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes
+          tuple tuple_start_state
+          double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
+          double Z = 1  / <double> (repeats)
+
+       pbar = ProgBar(nStates)
+       # for state_idx in prange(nStates, nogil = True):
+       for state_idx in prange(nStates, nogil = True):
+           tid              = threadid()
+           start_state[tid] = states[state_idx]
+
+           with gil:
+               bin_buffer.base[tid] = conditional.get(tuple(start_state[tid]), np.zeros(shape))
+
+           for trial in range(repeats):
+               # reset buffer
+               for node in range(NODES):
+                   (<Model> models[tid].ptr)._states[node] = start_state[tid, node]
+
+                   thread_state[tid, 0, node] = start_state[tid, node]
+               for step in range(1, time_steps):
+                   thread_state[tid, step] = (<Model> models[tid].ptr)._updateState(\
+                            (<Model> models[tid].ptr)._sampleNodes(1)[0])
+
+               # bin buffer
+               self.bin_data(thread_state[tid], start_state[tid], \
+                                 bin_buffer[tid], time_steps, Z)
+
+               # with gil:
+           with gil:
+               conditional[tuple(start_state[tid])] = conditional.get(\
                             tuple(start_state[tid]),  bin_buffer.base[tid].copy())
-           pbar.update(1)
+               pbar.update(1)
        # print("sanity check 2")
        # return dict(conditional = conditional, snapshots = snapshots)
        return self.normalize(conditional, snapshots, False)
@@ -231,6 +299,9 @@ cpdef entropy(np.ndarray p, ax = -1):
     return -np.nansum((p * np.log2(p)), axis = ax)
 
 def KL(p1, p2):
+    """
+    KL-divergence between p1 and p2. P1 here is the true distribution and P2 is the proposal.
+    """
     # p2[p2 == 0] = 1 # circumvent p = 0
     # p1[p1==0] = 1
     tmp = np.log(p1) - np.log(p2)
@@ -469,12 +540,12 @@ def KL(p1, p2):
     #         r[tid]      = (<Model> modelptr)._sampleNodes(nTrial)
     #         for repeat in range(repeats):
     #             for node in range(nNodes):
-    #                 (<Model> modelptr)._states_ptr[node] = s[state, node]
+    #                 (<Model> modelptr)._states[node] = s[state, node]
     #                 (<Model> modelptr)._nudges[node] = copyNudge[node]
 
     #             for delta in range(deltas):
     #                 for node in range(nNodes):
-    #                     jdx = idxer[(<Model> modelptr)._states_ptr[node]]
+    #                     jdx = idxer[(<Model> modelptr)._states[node]]
     #                     out[tid, delta, node, jdx] += 1 / Z
     #                 jdx = (delta + 1) * (repeat + 1)#  * (state + 1)
     #                 (<Model> modelptr)._updateState(r[tid, jdx - 1])

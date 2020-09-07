@@ -9,7 +9,8 @@ cdef class Simulator:
         unordered_map[state_t, size_t] hist_map
         dict __dict__
     cpdef dict snapshots(self, size_t n_samples, size_t step=*)
-    cpdef dict running (self, size_t n_samples,\
+    cpdef dict running (self, \
+                        size_t n_samples,\
                         size_t time_steps =*,\
                         size_t steps = *,\
                         bint center =*
@@ -23,10 +24,19 @@ cdef class Simulator:
     ) nogil
 
     cpdef dict forward(self,\
-                      size_t n_samples =*,\
+                      # size_t n_samples =*,\
+                       dict snapshots,\
                       size_t repeats =*,\
                       size_t time_steps =*,\
                       )
+
+
+    cpdef dict forward2(self,\
+                       # size_t n_samples =*,\
+                       dict snapshots,\
+                       size_t repeats =*,\
+                       size_t time_steps =*,\
+                       )
     cpdef dict normalize(self,\
                          dict conditional,\
                          dict snapshots,\
