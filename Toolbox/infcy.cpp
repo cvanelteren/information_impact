@@ -1499,7 +1499,7 @@ typedef double __pyx_t_7plexsim_6models_weight_t;
  * ctypedef double weight_t
  * ctypedef double nudge_t             # <<<<<<<<<<<<<<
  * ctypedef double state_t
- * 
+ * ctypedef pair[bint, pair[state_t, double]] rule_t
  */
 typedef double __pyx_t_7plexsim_6models_nudge_t;
 
@@ -1507,8 +1507,8 @@ typedef double __pyx_t_7plexsim_6models_nudge_t;
  * ctypedef double weight_t
  * ctypedef double nudge_t
  * ctypedef double state_t             # <<<<<<<<<<<<<<
+ * ctypedef pair[bint, pair[state_t, double]] rule_t
  * 
- * # # TODO: move to structs?
  */
 typedef double __pyx_t_7plexsim_6models_state_t;
 /* #### Code section: complex_type_declarations ### */
@@ -1540,6 +1540,8 @@ static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(do
 
 /*--- Type declarations ---*/
 struct __pyx_obj_7plexsim_6models_MCMC;
+struct __pyx_obj_7plexsim_6models_Rules;
+struct __pyx_obj_7plexsim_6models_Adjacency;
 struct __pyx_obj_7plexsim_6models_Model;
 struct __pyx_obj_7plexsim_6models_Logmap;
 struct __pyx_obj_7plexsim_6models_Potts;
@@ -1600,7 +1602,16 @@ struct __pyx_opt_args_7plexsim_6models_5Model_reset;
 struct __pyx_opt_args_7plexsim_6models_5Potts_magnetize;
 struct __pyx_opt_args_7plexsim_6models_4SIRS_init_random;
 
-/* "plexsim/models.pxd":26
+/* "plexsim/models.pxd":20
+ * ctypedef double nudge_t
+ * ctypedef double state_t
+ * ctypedef pair[bint, pair[state_t, double]] rule_t             # <<<<<<<<<<<<<<
+ * 
+ * # # TODO: move to structs?
+ */
+typedef std::pair<int,std::pair<__pyx_t_7plexsim_6models_state_t,double> >  __pyx_t_7plexsim_6models_rule_t;
+
+/* "plexsim/models.pxd":27
  * 
  * # nudges hash map
  * ctypedef unordered_map[node_id_t, nudge_t] Nudges             # <<<<<<<<<<<<<<
@@ -1609,7 +1620,7 @@ struct __pyx_opt_args_7plexsim_6models_4SIRS_init_random;
  */
 typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,__pyx_t_7plexsim_6models_nudge_t>  __pyx_t_7plexsim_6models_Nudges;
 
-/* "plexsim/models.pxd":28
+/* "plexsim/models.pxd":29
  * ctypedef unordered_map[node_id_t, nudge_t] Nudges
  * 
  * cdef struct NodeBackup:             # <<<<<<<<<<<<<<
@@ -1621,7 +1632,7 @@ struct __pyx_t_7plexsim_6models_NodeBackup {
   __pyx_t_7plexsim_6models_weight_t weight;
 };
 
-/* "plexsim/models.pxd":33
+/* "plexsim/models.pxd":34
  * 
  * # nudge temporaries
  * ctypedef unordered_map[node_id_t, NodeBackup] NudgesBackup             # <<<<<<<<<<<<<<
@@ -1630,7 +1641,7 @@ struct __pyx_t_7plexsim_6models_NodeBackup {
  */
 typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,struct __pyx_t_7plexsim_6models_NodeBackup>  __pyx_t_7plexsim_6models_NudgesBackup;
 
-/* "plexsim/models.pxd":36
+/* "plexsim/models.pxd":37
  * 
  * # container for parallel spawning model
  * ctypedef vector[PyObjectHolder] SpawnVec             # <<<<<<<<<<<<<<
@@ -1639,7 +1650,7 @@ typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,struct __pyx_t_7pl
  */
 typedef std::vector<PyObjectHolder>  __pyx_t_7plexsim_6models_SpawnVec;
 
-/* "plexsim/models.pxd":39
+/* "plexsim/models.pxd":40
  * 
  * 
  * ctypedef unordered_map[node_id_t, weight_t] Neighbors             # <<<<<<<<<<<<<<
@@ -1648,7 +1659,7 @@ typedef std::vector<PyObjectHolder>  __pyx_t_7plexsim_6models_SpawnVec;
  */
 typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,__pyx_t_7plexsim_6models_weight_t>  __pyx_t_7plexsim_6models_Neighbors;
 
-/* "plexsim/models.pxd":40
+/* "plexsim/models.pxd":41
  * 
  * ctypedef unordered_map[node_id_t, weight_t] Neighbors
  * cdef struct Connection:             # <<<<<<<<<<<<<<
@@ -1659,7 +1670,7 @@ struct __pyx_t_7plexsim_6models_Connection {
   __pyx_t_7plexsim_6models_Neighbors neighbors;
 };
 
-/* "plexsim/models.pxd":44
+/* "plexsim/models.pxd":45
  *     Neighbors neighbors
  *     # Weights  weights
  * ctypedef unordered_map[node_id_t, Connection] Connections             # <<<<<<<<<<<<<<
@@ -1668,7 +1679,7 @@ struct __pyx_t_7plexsim_6models_Connection {
  */
 typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,struct __pyx_t_7plexsim_6models_Connection>  __pyx_t_7plexsim_6models_Connections;
 
-/* "plexsim/models.pxd":91
+/* "plexsim/models.pxd":92
  * from libcpp.unordered_set cimport unordered_set
  * # ctypedef unordered_set[state_t] MemoizeUnit
  * ctypedef pair[state_t, state_t] MemoizeUnit             # <<<<<<<<<<<<<<
@@ -1677,7 +1688,7 @@ typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,struct __pyx_t_7pl
  */
 typedef std::pair<__pyx_t_7plexsim_6models_state_t,__pyx_t_7plexsim_6models_state_t>  __pyx_t_7plexsim_6models_MemoizeUnit;
 
-/* "plexsim/models.pxd":146
+/* "plexsim/models.pxd":147
  * 
  * 
  * ctypedef double (*prob_func_t)(state_t, node_id_t) nogil             # <<<<<<<<<<<<<<
@@ -1686,7 +1697,7 @@ typedef std::pair<__pyx_t_7plexsim_6models_state_t,__pyx_t_7plexsim_6models_stat
  */
 typedef double (*__pyx_t_7plexsim_6models_prob_func_t)(__pyx_t_7plexsim_6models_state_t, __pyx_t_7plexsim_6models_node_id_t);
 
-/* "plexsim/models.pxd":268
+/* "plexsim/models.pxd":296
  *     cpdef np.ndarray simulate(self, size_t samples)
  * 
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)             # <<<<<<<<<<<<<<
@@ -1698,7 +1709,7 @@ struct __pyx_opt_args_7plexsim_6models_5Model__spawn {
   size_t nThreads;
 };
 
-/* "plexsim/models.pxd":270
+/* "plexsim/models.pxd":298
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)
  * 
  *     cpdef void reset(self, p =*)             # <<<<<<<<<<<<<<
@@ -1710,7 +1721,7 @@ struct __pyx_opt_args_7plexsim_6models_5Model_reset {
   PyObject *p;
 };
 
-/* "plexsim/models.pxd":307
+/* "plexsim/models.pxd":333
  *     cdef double _hamiltonian(self, state_t x, state_t  y) nogil
  * 
  *     cpdef  np.ndarray magnetize(self,\             # <<<<<<<<<<<<<<
@@ -1725,7 +1736,7 @@ struct __pyx_opt_args_7plexsim_6models_5Potts_magnetize {
   double match;
 };
 
-/* "plexsim/models.pxd":356
+/* "plexsim/models.pxd":382
  *     cdef float _checkNeighbors(self,  node_id_t node) nogil
  * 
  *     cpdef void init_random(self, node =*)             # <<<<<<<<<<<<<<
@@ -1832,7 +1843,7 @@ struct __pyx_opt_args_7Toolbox_5infcy_entropy {
   PyObject *ax;
 };
 
-/* "plexsim/models.pxd":148
+/* "plexsim/models.pxd":149
  * ctypedef double (*prob_func_t)(state_t, node_id_t) nogil
  * 
  * cdef class MCMC:             # <<<<<<<<<<<<<<
@@ -1847,17 +1858,46 @@ struct __pyx_obj_7plexsim_6models_MCMC {
   std::uniform_real_distribution<double>  _dist;
   double _p_recomb;
   __Pyx_memviewslice _MCMC__states;
-  struct __pyx_obj_7plexsim_6models_Model *model;
   PyObject *__dict__;
 };
 
 
-/* "plexsim/models.pxd":187
- *     cdef state_t sample_proposal(self) nogil
+/* "plexsim/models.pxd":188
+ * 
+ * 
+ * cdef class Rules:             # <<<<<<<<<<<<<<
+ *     """
+ * Special type of overriding dynamics in a model.
+ */
+struct __pyx_obj_7plexsim_6models_Rules {
+  PyObject_HEAD
+  struct __pyx_vtabstruct_7plexsim_6models_Rules *__pyx_vtab;
+  std::multimap<__pyx_t_7plexsim_6models_state_t,std::pair<__pyx_t_7plexsim_6models_state_t,double> >  _rules;
+};
+
+
+/* "plexsim/models.pxd":203
+ * 
+ * 
+ * cdef class Adjacency:             # <<<<<<<<<<<<<<
+ *     """
+ *     Converts networkx graph to unordered_map
+ */
+struct __pyx_obj_7plexsim_6models_Adjacency {
+  PyObject_HEAD
+  __pyx_t_7plexsim_6models_Connections _adj;
+  __Pyx_memviewslice _nodeids;
+  size_t _nNodes;
+  PyObject *__dict__;
+};
+
+
+/* "plexsim/models.pxd":214
+ * 
  * 
  * cdef class Model:             # <<<<<<<<<<<<<<
- *     cdef:
- *         # public
+ *     """
+ *     Interface for the models and serves a top of the hierarchy in the
  */
 struct __pyx_obj_7plexsim_6models_Model {
   PyObject_HEAD
@@ -1867,29 +1907,25 @@ struct __pyx_obj_7plexsim_6models_Model {
   __Pyx_memviewslice _Model__newstates;
   __pyx_t_7plexsim_6models_state_t *_newstates;
   int _last_written;
-  __Pyx_memviewslice _nodeids;
   __Pyx_memviewslice _agentStates;
   __Pyx_memviewslice _memory;
   size_t _memorySize;
-  struct __pyx_obj_7plexsim_6models_MCMC *_mcmc;
-  std::mt19937 _gen;
-  size_t _seed;
-  std::uniform_real_distribution<double>  _dist;
   size_t _memento;
-  size_t _nNodes;
   PyObject *_updateType;
   PyObject *_nudgeType;
   size_t _sampleSize;
   __pyx_t_7plexsim_6models_Nudges _nudges;
   double _kNudges;
-  __pyx_t_7plexsim_6models_Connections _adj;
   size_t _nStates;
   double _z;
+  struct __pyx_obj_7plexsim_6models_Rules *_rules;
+  struct __pyx_obj_7plexsim_6models_Adjacency *adj;
+  struct __pyx_obj_7plexsim_6models_MCMC *_mcmc;
   PyObject *__dict__;
 };
 
 
-/* "plexsim/models.pxd":280
+/* "plexsim/models.pxd":309
  * 
  * 
  * cdef class Logmap(Model):             # <<<<<<<<<<<<<<
@@ -1903,7 +1939,7 @@ struct __pyx_obj_7plexsim_6models_Logmap {
 };
 
 
-/* "plexsim/models.pxd":284
+/* "plexsim/models.pxd":313
  *     cdef double _alpha
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
@@ -1915,11 +1951,10 @@ struct __pyx_obj_7plexsim_6models_Potts {
   __Pyx_memviewslice _H;
   double _beta;
   double _delta;
-  std::multimap<__pyx_t_7plexsim_6models_state_t,std::pair<__pyx_t_7plexsim_6models_state_t,double> >  _rules;
 };
 
 
-/* "plexsim/models.pxd":316
+/* "plexsim/models.pxd":342
  * 
  * 
  * cdef class AB(Model):             # <<<<<<<<<<<<<<
@@ -1932,7 +1967,7 @@ struct __pyx_obj_7plexsim_6models_AB {
 };
 
 
-/* "plexsim/models.pxd":321
+/* "plexsim/models.pxd":347
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
@@ -1946,7 +1981,7 @@ struct __pyx_obj_7plexsim_6models_Pottsis {
 };
 
 
-/* "plexsim/models.pxd":327
+/* "plexsim/models.pxd":353
  *     cdef double*  _energy(self, node_id_t  node) nogil
  * 
  * cdef class Ising(Potts):             # <<<<<<<<<<<<<<
@@ -1958,7 +1993,7 @@ struct __pyx_obj_7plexsim_6models_Ising {
 };
 
 
-/* "plexsim/models.pxd":332
+/* "plexsim/models.pxd":358
  * 
  * 
  * cdef class Bornholdt(Ising):             # <<<<<<<<<<<<<<
@@ -1975,7 +2010,7 @@ struct __pyx_obj_7plexsim_6models_Bornholdt {
 };
 
 
-/* "plexsim/models.pxd":345
+/* "plexsim/models.pxd":371
  *      cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
@@ -1991,7 +2026,7 @@ struct __pyx_obj_7plexsim_6models_SIRS {
 };
 
 
-/* "plexsim/models.pxd":358
+/* "plexsim/models.pxd":384
  *     cpdef void init_random(self, node =*)
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
@@ -2005,7 +2040,7 @@ struct __pyx_obj_7plexsim_6models_Bonabeau {
 };
 
 
-/* "plexsim/models.pxd":365
+/* "plexsim/models.pxd":391
  *     cdef double _hamiltonian(self, double x, double y) nogil
  * 
  * cdef class RBN(Model):             # <<<<<<<<<<<<<<
@@ -2015,11 +2050,11 @@ struct __pyx_obj_7plexsim_6models_Bonabeau {
 struct __pyx_obj_7plexsim_6models_RBN {
   struct __pyx_obj_7plexsim_6models_Model __pyx_base;
   double _delta;
-  std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,std::vector<__pyx_t_7plexsim_6models_state_t> >  _rules;
+  std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,std::vector<__pyx_t_7plexsim_6models_state_t> >  _evolve_rules;
 };
 
 
-/* "plexsim/models.pxd":375
+/* "plexsim/models.pxd":401
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class Percolation(Model):             # <<<<<<<<<<<<<<
@@ -2032,7 +2067,7 @@ struct __pyx_obj_7plexsim_6models_Percolation {
 };
 
 
-/* "plexsim/models.pxd":381
+/* "plexsim/models.pxd":407
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
@@ -2153,7 +2188,7 @@ struct __pyx_vtabstruct_array {
 static struct __pyx_vtabstruct_array *__pyx_vtabptr_array;
 
 
-/* "plexsim/models.pxd":148
+/* "plexsim/models.pxd":149
  * ctypedef double (*prob_func_t)(state_t, node_id_t) nogil
  * 
  * cdef class MCMC:             # <<<<<<<<<<<<<<
@@ -2162,26 +2197,41 @@ static struct __pyx_vtabstruct_array *__pyx_vtabptr_array;
  */
 
 struct __pyx_vtabstruct_7plexsim_6models_MCMC {
-  void (*recombination)(struct __pyx_obj_7plexsim_6models_MCMC *, __Pyx_memviewslice, __pyx_t_7plexsim_6models_state_t *, __pyx_t_7plexsim_6models_state_t *);
-  void (*gibbs)(struct __pyx_obj_7plexsim_6models_MCMC *, __Pyx_memviewslice, __pyx_t_7plexsim_6models_state_t *, __pyx_t_7plexsim_6models_state_t *);
+  void (*recombination)(struct __pyx_obj_7plexsim_6models_MCMC *, __Pyx_memviewslice, PyObject *);
+  void (*gibbs)(struct __pyx_obj_7plexsim_6models_MCMC *, __Pyx_memviewslice, PyObject *);
   double (*_rand)(struct __pyx_obj_7plexsim_6models_MCMC *);
   double (*rand)(struct __pyx_obj_7plexsim_6models_MCMC *, int __pyx_skip_dispatch);
-  void (*step)(struct __pyx_obj_7plexsim_6models_MCMC *, __Pyx_memviewslice, __pyx_t_7plexsim_6models_state_t *, __pyx_t_7plexsim_6models_state_t *);
-  __pyx_t_7plexsim_6models_state_t (*sample_proposal)(struct __pyx_obj_7plexsim_6models_MCMC *);
+  void (*step)(struct __pyx_obj_7plexsim_6models_MCMC *, __Pyx_memviewslice, PyObject *);
+  __pyx_t_7plexsim_6models_state_t (*sample_proposal)(struct __pyx_obj_7plexsim_6models_MCMC *, PyObject *);
+  void (*fisher_yates)(struct __pyx_obj_7plexsim_6models_MCMC *, __pyx_t_7plexsim_6models_node_id_t *, size_t, size_t);
 };
 static struct __pyx_vtabstruct_7plexsim_6models_MCMC *__pyx_vtabptr_7plexsim_6models_MCMC;
 
 
-/* "plexsim/models.pxd":187
- *     cdef state_t sample_proposal(self) nogil
+/* "plexsim/models.pxd":188
+ * 
+ * 
+ * cdef class Rules:             # <<<<<<<<<<<<<<
+ *     """
+ * Special type of overriding dynamics in a model.
+ */
+
+struct __pyx_vtabstruct_7plexsim_6models_Rules {
+  __pyx_t_7plexsim_6models_rule_t (*_check_rules)(struct __pyx_obj_7plexsim_6models_Rules *, __pyx_t_7plexsim_6models_state_t, __pyx_t_7plexsim_6models_state_t);
+  void (*construct_rules)(struct __pyx_obj_7plexsim_6models_Rules *, PyObject *, int __pyx_skip_dispatch);
+};
+static struct __pyx_vtabstruct_7plexsim_6models_Rules *__pyx_vtabptr_7plexsim_6models_Rules;
+
+
+/* "plexsim/models.pxd":214
+ * 
  * 
  * cdef class Model:             # <<<<<<<<<<<<<<
- *     cdef:
- *         # public
+ *     """
+ *     Interface for the models and serves a top of the hierarchy in the
  */
 
 struct __pyx_vtabstruct_7plexsim_6models_Model {
-  void (*construct)(struct __pyx_obj_7plexsim_6models_Model *, PyObject *, __Pyx_memviewslice, int __pyx_skip_dispatch);
   __Pyx_memviewslice (*updateState)(struct __pyx_obj_7plexsim_6models_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch);
   __Pyx_memviewslice (*_updateState)(struct __pyx_obj_7plexsim_6models_Model *, __Pyx_memviewslice);
   double (*probability)(struct __pyx_obj_7plexsim_6models_Model *, __pyx_t_7plexsim_6models_state_t, __pyx_t_7plexsim_6models_node_id_t);
@@ -2194,7 +2244,6 @@ struct __pyx_vtabstruct_7plexsim_6models_Model {
   double (*_learningFunction)(struct __pyx_obj_7plexsim_6models_Model *, __pyx_t_7plexsim_6models_node_id_t, __pyx_t_7plexsim_6models_node_id_t);
   __Pyx_memviewslice (*_sampleNodes)(struct __pyx_obj_7plexsim_6models_Model *, size_t);
   __Pyx_memviewslice (*sampleNodes)(struct __pyx_obj_7plexsim_6models_Model *, size_t, int __pyx_skip_dispatch);
-  double (*_rand)(struct __pyx_obj_7plexsim_6models_Model *);
   PyArrayObject *(*simulate)(struct __pyx_obj_7plexsim_6models_Model *, size_t, int __pyx_skip_dispatch);
   __pyx_t_7plexsim_6models_SpawnVec (*_spawn)(struct __pyx_obj_7plexsim_6models_Model *, struct __pyx_opt_args_7plexsim_6models_5Model__spawn *__pyx_optional_args);
   void (*reset)(struct __pyx_obj_7plexsim_6models_Model *, int __pyx_skip_dispatch, struct __pyx_opt_args_7plexsim_6models_5Model_reset *__pyx_optional_args);
@@ -2205,7 +2254,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Model {
 static struct __pyx_vtabstruct_7plexsim_6models_Model *__pyx_vtabptr_7plexsim_6models_Model;
 
 
-/* "plexsim/models.pxd":280
+/* "plexsim/models.pxd":309
  * 
  * 
  * cdef class Logmap(Model):             # <<<<<<<<<<<<<<
@@ -2219,7 +2268,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Logmap {
 static struct __pyx_vtabstruct_7plexsim_6models_Logmap *__pyx_vtabptr_7plexsim_6models_Logmap;
 
 
-/* "plexsim/models.pxd":284
+/* "plexsim/models.pxd":313
  *     cdef double _alpha
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
@@ -2229,8 +2278,6 @@ static struct __pyx_vtabstruct_7plexsim_6models_Logmap *__pyx_vtabptr_7plexsim_6
 
 struct __pyx_vtabstruct_7plexsim_6models_Potts {
   struct __pyx_vtabstruct_7plexsim_6models_Model __pyx_base;
-  std::pair<int,std::pair<__pyx_t_7plexsim_6models_state_t,double> >  (*_checkRules)(struct __pyx_obj_7plexsim_6models_Potts *, __pyx_t_7plexsim_6models_state_t, __pyx_t_7plexsim_6models_state_t);
-  void (*constructRules)(struct __pyx_obj_7plexsim_6models_Potts *, PyObject *, int __pyx_skip_dispatch);
   double *(*_energy)(struct __pyx_obj_7plexsim_6models_Potts *, __pyx_t_7plexsim_6models_node_id_t);
   PyArrayObject *(*node_energy)(struct __pyx_obj_7plexsim_6models_Potts *, __Pyx_memviewslice, int __pyx_skip_dispatch);
   double (*_hamiltonian)(struct __pyx_obj_7plexsim_6models_Potts *, __pyx_t_7plexsim_6models_state_t, __pyx_t_7plexsim_6models_state_t);
@@ -2240,7 +2287,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Potts {
 static struct __pyx_vtabstruct_7plexsim_6models_Potts *__pyx_vtabptr_7plexsim_6models_Potts;
 
 
-/* "plexsim/models.pxd":316
+/* "plexsim/models.pxd":342
  * 
  * 
  * cdef class AB(Model):             # <<<<<<<<<<<<<<
@@ -2254,7 +2301,7 @@ struct __pyx_vtabstruct_7plexsim_6models_AB {
 static struct __pyx_vtabstruct_7plexsim_6models_AB *__pyx_vtabptr_7plexsim_6models_AB;
 
 
-/* "plexsim/models.pxd":321
+/* "plexsim/models.pxd":347
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
@@ -2268,7 +2315,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Pottsis {
 static struct __pyx_vtabstruct_7plexsim_6models_Pottsis *__pyx_vtabptr_7plexsim_6models_Pottsis;
 
 
-/* "plexsim/models.pxd":327
+/* "plexsim/models.pxd":353
  *     cdef double*  _energy(self, node_id_t  node) nogil
  * 
  * cdef class Ising(Potts):             # <<<<<<<<<<<<<<
@@ -2282,7 +2329,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Ising {
 static struct __pyx_vtabstruct_7plexsim_6models_Ising *__pyx_vtabptr_7plexsim_6models_Ising;
 
 
-/* "plexsim/models.pxd":332
+/* "plexsim/models.pxd":358
  * 
  * 
  * cdef class Bornholdt(Ising):             # <<<<<<<<<<<<<<
@@ -2296,7 +2343,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Bornholdt {
 static struct __pyx_vtabstruct_7plexsim_6models_Bornholdt *__pyx_vtabptr_7plexsim_6models_Bornholdt;
 
 
-/* "plexsim/models.pxd":345
+/* "plexsim/models.pxd":371
  *      cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
@@ -2312,7 +2359,7 @@ struct __pyx_vtabstruct_7plexsim_6models_SIRS {
 static struct __pyx_vtabstruct_7plexsim_6models_SIRS *__pyx_vtabptr_7plexsim_6models_SIRS;
 
 
-/* "plexsim/models.pxd":358
+/* "plexsim/models.pxd":384
  *     cpdef void init_random(self, node =*)
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
@@ -2327,7 +2374,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Bonabeau {
 static struct __pyx_vtabstruct_7plexsim_6models_Bonabeau *__pyx_vtabptr_7plexsim_6models_Bonabeau;
 
 
-/* "plexsim/models.pxd":365
+/* "plexsim/models.pxd":391
  *     cdef double _hamiltonian(self, double x, double y) nogil
  * 
  * cdef class RBN(Model):             # <<<<<<<<<<<<<<
@@ -2341,7 +2388,7 @@ struct __pyx_vtabstruct_7plexsim_6models_RBN {
 static struct __pyx_vtabstruct_7plexsim_6models_RBN *__pyx_vtabptr_7plexsim_6models_RBN;
 
 
-/* "plexsim/models.pxd":375
+/* "plexsim/models.pxd":401
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class Percolation(Model):             # <<<<<<<<<<<<<<
@@ -2355,7 +2402,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Percolation {
 static struct __pyx_vtabstruct_7plexsim_6models_Percolation *__pyx_vtabptr_7plexsim_6models_Percolation;
 
 
-/* "plexsim/models.pxd":381
+/* "plexsim/models.pxd":407
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
@@ -3693,6 +3740,8 @@ static CYTHON_INLINE char *__pyx_f_5numpy__util_dtypestring(PyArray_Descr *, cha
 /* Module declarations from "plexsim.models" */
 #if !CYTHON_COMPILING_IN_LIMITED_API
 static PyTypeObject *__pyx_ptype_7plexsim_6models_MCMC = 0;
+static PyTypeObject *__pyx_ptype_7plexsim_6models_Rules = 0;
+static PyTypeObject *__pyx_ptype_7plexsim_6models_Adjacency = 0;
 static PyTypeObject *__pyx_ptype_7plexsim_6models_Model = 0;
 static PyTypeObject *__pyx_ptype_7plexsim_6models_Logmap = 0;
 static PyTypeObject *__pyx_ptype_7plexsim_6models_Potts = 0;
@@ -4379,6 +4428,8 @@ typedef struct {
   PyTypeObject *__pyx_ptype_5numpy_ndarray;
   PyTypeObject *__pyx_ptype_5numpy_ufunc;
   PyTypeObject *__pyx_ptype_7plexsim_6models_MCMC;
+  PyTypeObject *__pyx_ptype_7plexsim_6models_Rules;
+  PyTypeObject *__pyx_ptype_7plexsim_6models_Adjacency;
   PyTypeObject *__pyx_ptype_7plexsim_6models_Model;
   PyTypeObject *__pyx_ptype_7plexsim_6models_Logmap;
   PyTypeObject *__pyx_ptype_7plexsim_6models_Potts;
@@ -4732,6 +4783,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_ptype_5numpy_ndarray);
   Py_CLEAR(clear_module_state->__pyx_ptype_5numpy_ufunc);
   Py_CLEAR(clear_module_state->__pyx_ptype_7plexsim_6models_MCMC);
+  Py_CLEAR(clear_module_state->__pyx_ptype_7plexsim_6models_Rules);
+  Py_CLEAR(clear_module_state->__pyx_ptype_7plexsim_6models_Adjacency);
   Py_CLEAR(clear_module_state->__pyx_ptype_7plexsim_6models_Model);
   Py_CLEAR(clear_module_state->__pyx_ptype_7plexsim_6models_Logmap);
   Py_CLEAR(clear_module_state->__pyx_ptype_7plexsim_6models_Potts);
@@ -5072,6 +5125,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_ptype_5numpy_ndarray);
   Py_VISIT(traverse_module_state->__pyx_ptype_5numpy_ufunc);
   Py_VISIT(traverse_module_state->__pyx_ptype_7plexsim_6models_MCMC);
+  Py_VISIT(traverse_module_state->__pyx_ptype_7plexsim_6models_Rules);
+  Py_VISIT(traverse_module_state->__pyx_ptype_7plexsim_6models_Adjacency);
   Py_VISIT(traverse_module_state->__pyx_ptype_7plexsim_6models_Model);
   Py_VISIT(traverse_module_state->__pyx_ptype_7plexsim_6models_Logmap);
   Py_VISIT(traverse_module_state->__pyx_ptype_7plexsim_6models_Potts);
@@ -5409,6 +5464,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_ptype_5numpy_ndarray __pyx_mstate_global->__pyx_ptype_5numpy_ndarray
 #define __pyx_ptype_5numpy_ufunc __pyx_mstate_global->__pyx_ptype_5numpy_ufunc
 #define __pyx_ptype_7plexsim_6models_MCMC __pyx_mstate_global->__pyx_ptype_7plexsim_6models_MCMC
+#define __pyx_ptype_7plexsim_6models_Rules __pyx_mstate_global->__pyx_ptype_7plexsim_6models_Rules
+#define __pyx_ptype_7plexsim_6models_Adjacency __pyx_mstate_global->__pyx_ptype_7plexsim_6models_Adjacency
 #define __pyx_ptype_7plexsim_6models_Model __pyx_mstate_global->__pyx_ptype_7plexsim_6models_Model
 #define __pyx_ptype_7plexsim_6models_Logmap __pyx_mstate_global->__pyx_ptype_7plexsim_6models_Logmap
 #define __pyx_ptype_7plexsim_6models_Potts __pyx_mstate_global->__pyx_ptype_7plexsim_6models_Potts
@@ -6585,7 +6642,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_running(struct __pyx_obj_7To
  *         # setup buffer
  *         cdef:
  *             tuple shape                  = (time_steps, \             # <<<<<<<<<<<<<<
- *                                             self.model._nNodes,\
+ *                                             self.model.adj._nNodes,\
  *                                             self.model._nStates)
  */
   __pyx_t_1 = __Pyx_PyInt_FromSize_t(__pyx_v_time_steps); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
@@ -6594,16 +6651,16 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_running(struct __pyx_obj_7To
   /* "Toolbox/infcy.pyx":81
  *         cdef:
  *             tuple shape                  = (time_steps, \
- *                                             self.model._nNodes,\             # <<<<<<<<<<<<<<
+ *                                             self.model.adj._nNodes,\             # <<<<<<<<<<<<<<
  *                                             self.model._nStates)
  *             double[:, :, ::1] bin_buffer = np.zeros(shape)
  */
-  __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_self->model->_nNodes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_FromSize_t(__pyx_v_self->model->adj->_nNodes); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
 
   /* "Toolbox/infcy.pyx":82
  *             tuple shape                  = (time_steps, \
- *                                             self.model._nNodes,\
+ *                                             self.model.adj._nNodes,\
  *                                             self.model._nStates)             # <<<<<<<<<<<<<<
  *             double[:, :, ::1] bin_buffer = np.zeros(shape)
  *             state_t[:, ::1] buff       = np.zeros(shape[:2], dtype = np.double)
@@ -6615,7 +6672,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_running(struct __pyx_obj_7To
  *         # setup buffer
  *         cdef:
  *             tuple shape                  = (time_steps, \             # <<<<<<<<<<<<<<
- *                                             self.model._nNodes,\
+ *                                             self.model.adj._nNodes,\
  *                                             self.model._nStates)
  */
   __pyx_t_6 = PyTuple_New(3); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 80, __pyx_L1_error)
@@ -6633,7 +6690,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_running(struct __pyx_obj_7To
   __pyx_t_6 = 0;
 
   /* "Toolbox/infcy.pyx":83
- *                                             self.model._nNodes,\
+ *                                             self.model.adj._nNodes,\
  *                                             self.model._nStates)
  *             double[:, :, ::1] bin_buffer = np.zeros(shape)             # <<<<<<<<<<<<<<
  *             state_t[:, ::1] buff       = np.zeros(shape[:2], dtype = np.double)
@@ -7694,7 +7751,7 @@ static void __pyx_f_7Toolbox_5infcy_9Simulator_bin_data(struct __pyx_obj_7Toolbo
  *         cdef size_t idx
  *         # bin
  *         for t in range(time_steps):             # <<<<<<<<<<<<<<
- *             for node in range(self.model._nNodes):
+ *             for node in range(self.model.adj._nNodes):
  *                 idx = self.hist_map[buff[t, node]]
  */
   __pyx_t_1 = __pyx_v_time_steps;
@@ -7705,18 +7762,18 @@ static void __pyx_f_7Toolbox_5infcy_9Simulator_bin_data(struct __pyx_obj_7Toolbo
     /* "Toolbox/infcy.pyx":142
  *         # bin
  *         for t in range(time_steps):
- *             for node in range(self.model._nNodes):             # <<<<<<<<<<<<<<
+ *             for node in range(self.model.adj._nNodes):             # <<<<<<<<<<<<<<
  *                 idx = self.hist_map[buff[t, node]]
  *                 bin_buffer[t, node, idx] += Z
  */
-    __pyx_t_4 = __pyx_v_self->model->_nNodes;
+    __pyx_t_4 = __pyx_v_self->model->adj->_nNodes;
     __pyx_t_5 = __pyx_t_4;
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_node = __pyx_t_6;
 
       /* "Toolbox/infcy.pyx":143
  *         for t in range(time_steps):
- *             for node in range(self.model._nNodes):
+ *             for node in range(self.model.adj._nNodes):
  *                 idx = self.hist_map[buff[t, node]]             # <<<<<<<<<<<<<<
  *                 bin_buffer[t, node, idx] += Z
  *         return
@@ -7726,7 +7783,7 @@ static void __pyx_f_7Toolbox_5infcy_9Simulator_bin_data(struct __pyx_obj_7Toolbo
       __pyx_v_idx = (__pyx_v_self->hist_map[(*((__pyx_t_7plexsim_6models_state_t *) ( /* dim=1 */ ((char *) (((__pyx_t_7plexsim_6models_state_t *) ( /* dim=0 */ (__pyx_v_buff.data + __pyx_t_7 * __pyx_v_buff.strides[0]) )) + __pyx_t_8)) )))]);
 
       /* "Toolbox/infcy.pyx":144
- *             for node in range(self.model._nNodes):
+ *             for node in range(self.model.adj._nNodes):
  *                 idx = self.hist_map[buff[t, node]]
  *                 bin_buffer[t, node, idx] += Z             # <<<<<<<<<<<<<<
  *         return
@@ -7947,7 +8004,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward2(struct __pyx_obj_7T
  *           size_t cpus    = mp.cpu_count()
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\             # <<<<<<<<<<<<<<
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
@@ -7963,18 +8020,18 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward2(struct __pyx_obj_7T
   /* "Toolbox/infcy.pyx":156
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
- *                                                       self.model._nNodes), \             # <<<<<<<<<<<<<<
+ *                                                       self.model.adj._nNodes), \             # <<<<<<<<<<<<<<
  *                                                       dtype = np.double)
  * 
  */
-  __pyx_t_4 = __Pyx_PyInt_FromSize_t(__pyx_v_self->model->_nNodes); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 156, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_FromSize_t(__pyx_v_self->model->adj->_nNodes); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 156, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
 
   /* "Toolbox/infcy.pyx":155
  *           size_t cpus    = mp.cpu_count()
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\             # <<<<<<<<<<<<<<
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)
  */
   __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 155, __pyx_L1_error)
@@ -7996,7 +8053,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward2(struct __pyx_obj_7T
 
   /* "Toolbox/infcy.pyx":157
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)             # <<<<<<<<<<<<<<
  * 
  *           state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), \
@@ -8015,7 +8072,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward2(struct __pyx_obj_7T
  *           size_t cpus    = mp.cpu_count()
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\             # <<<<<<<<<<<<<<
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)
  */
   __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
@@ -8266,15 +8323,15 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward2(struct __pyx_obj_7T
   /* "Toolbox/infcy.pyx":175
  *        cdef:
  *           PyObject* ptr
- *           size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes             # <<<<<<<<<<<<<<
+ *           size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes             # <<<<<<<<<<<<<<
  *           tuple tuple_start_state
  *           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
  */
-  __pyx_t_8 = __pyx_v_self->model->_nNodes;
+  __pyx_t_8 = __pyx_v_self->model->adj->_nNodes;
   __pyx_v_NODES = __pyx_t_8;
 
   /* "Toolbox/infcy.pyx":177
- *           size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes
+ *           size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes
  *           tuple tuple_start_state
  *           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))             # <<<<<<<<<<<<<<
  *           double Z = 1  / <double> (repeats)
@@ -9217,7 +9274,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward(struct __pyx_obj_7To
  *           size_t cpus    = mp.cpu_count()
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\             # <<<<<<<<<<<<<<
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)
  */
   __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
@@ -9233,18 +9290,18 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward(struct __pyx_obj_7To
   /* "Toolbox/infcy.pyx":213
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
- *                                                       self.model._nNodes), \             # <<<<<<<<<<<<<<
+ *                                                       self.model.adj._nNodes), \             # <<<<<<<<<<<<<<
  *                                                       dtype = np.double)
  * 
  */
-  __pyx_t_4 = __Pyx_PyInt_FromSize_t(__pyx_v_self->model->_nNodes); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 213, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyInt_FromSize_t(__pyx_v_self->model->adj->_nNodes); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 213, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
 
   /* "Toolbox/infcy.pyx":212
  *           size_t cpus    = mp.cpu_count()
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\             # <<<<<<<<<<<<<<
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)
  */
   __pyx_t_3 = PyTuple_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 212, __pyx_L1_error)
@@ -9266,7 +9323,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward(struct __pyx_obj_7To
 
   /* "Toolbox/infcy.pyx":214
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)             # <<<<<<<<<<<<<<
  * 
  *           state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), \
@@ -9285,7 +9342,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward(struct __pyx_obj_7To
  *           size_t cpus    = mp.cpu_count()
  * 
  *           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\             # <<<<<<<<<<<<<<
- *                                                       self.model._nNodes), \
+ *                                                       self.model.adj._nNodes), \
  *                                                       dtype = np.double)
  */
   __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
@@ -9511,15 +9568,15 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_forward(struct __pyx_obj_7To
   /* "Toolbox/infcy.pyx":231
  *        cdef:
  *           PyObject* ptr
- *           size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes             # <<<<<<<<<<<<<<
+ *           size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes             # <<<<<<<<<<<<<<
  *           tuple tuple_start_state
  *           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
  */
-  __pyx_t_8 = __pyx_v_self->model->_nNodes;
+  __pyx_t_8 = __pyx_v_self->model->adj->_nNodes;
   __pyx_v_NODES = __pyx_t_8;
 
   /* "Toolbox/infcy.pyx":233
- *           size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes
+ *           size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes
  *           tuple tuple_start_state
  *           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))             # <<<<<<<<<<<<<<
  *           double Z = 1  / <double> (repeats)
@@ -29982,47 +30039,52 @@ static int __Pyx_modinit_type_import_code(void) {
   __pyx_ptype_5numpy_ufunc = __Pyx_ImportType(__pyx_t_1, "numpy", "ufunc", sizeof(PyUFuncObject), __Pyx_ImportType_CheckSize_Ignore);
    if (!__pyx_ptype_5numpy_ufunc) __PYX_ERR(2, 839, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyImport_ImportModule("plexsim.models"); if (unlikely(!__pyx_t_1)) __PYX_ERR(6, 148, __pyx_L1_error)
+  __pyx_t_1 = PyImport_ImportModule("plexsim.models"); if (unlikely(!__pyx_t_1)) __PYX_ERR(6, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_ptype_7plexsim_6models_MCMC = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "MCMC", sizeof(struct __pyx_obj_7plexsim_6models_MCMC), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_MCMC) __PYX_ERR(6, 148, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_MCMC = (struct __pyx_vtabstruct_7plexsim_6models_MCMC*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_MCMC); if (unlikely(!__pyx_vtabptr_7plexsim_6models_MCMC)) __PYX_ERR(6, 148, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_MCMC) __PYX_ERR(6, 149, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_MCMC = (struct __pyx_vtabstruct_7plexsim_6models_MCMC*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_MCMC); if (unlikely(!__pyx_vtabptr_7plexsim_6models_MCMC)) __PYX_ERR(6, 149, __pyx_L1_error)
+  __pyx_ptype_7plexsim_6models_Rules = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Rules", sizeof(struct __pyx_obj_7plexsim_6models_Rules), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_7plexsim_6models_Rules) __PYX_ERR(6, 188, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Rules = (struct __pyx_vtabstruct_7plexsim_6models_Rules*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Rules); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Rules)) __PYX_ERR(6, 188, __pyx_L1_error)
+  __pyx_ptype_7plexsim_6models_Adjacency = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Adjacency", sizeof(struct __pyx_obj_7plexsim_6models_Adjacency), __Pyx_ImportType_CheckSize_Warn);
+   if (!__pyx_ptype_7plexsim_6models_Adjacency) __PYX_ERR(6, 203, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Model = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Model", sizeof(struct __pyx_obj_7plexsim_6models_Model), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Model) __PYX_ERR(6, 187, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Model = (struct __pyx_vtabstruct_7plexsim_6models_Model*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Model); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Model)) __PYX_ERR(6, 187, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Model) __PYX_ERR(6, 214, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Model = (struct __pyx_vtabstruct_7plexsim_6models_Model*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Model); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Model)) __PYX_ERR(6, 214, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Logmap = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Logmap", sizeof(struct __pyx_obj_7plexsim_6models_Logmap), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Logmap) __PYX_ERR(6, 280, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Logmap = (struct __pyx_vtabstruct_7plexsim_6models_Logmap*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Logmap); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Logmap)) __PYX_ERR(6, 280, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Logmap) __PYX_ERR(6, 309, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Logmap = (struct __pyx_vtabstruct_7plexsim_6models_Logmap*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Logmap); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Logmap)) __PYX_ERR(6, 309, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Potts = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Potts", sizeof(struct __pyx_obj_7plexsim_6models_Potts), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Potts) __PYX_ERR(6, 284, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Potts = (struct __pyx_vtabstruct_7plexsim_6models_Potts*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Potts); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Potts)) __PYX_ERR(6, 284, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Potts) __PYX_ERR(6, 313, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Potts = (struct __pyx_vtabstruct_7plexsim_6models_Potts*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Potts); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Potts)) __PYX_ERR(6, 313, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_AB = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "AB", sizeof(struct __pyx_obj_7plexsim_6models_AB), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_AB) __PYX_ERR(6, 316, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_AB = (struct __pyx_vtabstruct_7plexsim_6models_AB*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_AB); if (unlikely(!__pyx_vtabptr_7plexsim_6models_AB)) __PYX_ERR(6, 316, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_AB) __PYX_ERR(6, 342, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_AB = (struct __pyx_vtabstruct_7plexsim_6models_AB*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_AB); if (unlikely(!__pyx_vtabptr_7plexsim_6models_AB)) __PYX_ERR(6, 342, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Pottsis = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Pottsis", sizeof(struct __pyx_obj_7plexsim_6models_Pottsis), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Pottsis) __PYX_ERR(6, 321, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Pottsis = (struct __pyx_vtabstruct_7plexsim_6models_Pottsis*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Pottsis); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Pottsis)) __PYX_ERR(6, 321, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Pottsis) __PYX_ERR(6, 347, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Pottsis = (struct __pyx_vtabstruct_7plexsim_6models_Pottsis*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Pottsis); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Pottsis)) __PYX_ERR(6, 347, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Ising = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Ising", sizeof(struct __pyx_obj_7plexsim_6models_Ising), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Ising) __PYX_ERR(6, 327, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Ising = (struct __pyx_vtabstruct_7plexsim_6models_Ising*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Ising); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Ising)) __PYX_ERR(6, 327, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Ising) __PYX_ERR(6, 353, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Ising = (struct __pyx_vtabstruct_7plexsim_6models_Ising*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Ising); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Ising)) __PYX_ERR(6, 353, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Bornholdt = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Bornholdt", sizeof(struct __pyx_obj_7plexsim_6models_Bornholdt), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Bornholdt) __PYX_ERR(6, 332, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Bornholdt = (struct __pyx_vtabstruct_7plexsim_6models_Bornholdt*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bornholdt); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bornholdt)) __PYX_ERR(6, 332, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Bornholdt) __PYX_ERR(6, 358, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Bornholdt = (struct __pyx_vtabstruct_7plexsim_6models_Bornholdt*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bornholdt); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bornholdt)) __PYX_ERR(6, 358, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_SIRS = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "SIRS", sizeof(struct __pyx_obj_7plexsim_6models_SIRS), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_SIRS) __PYX_ERR(6, 345, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_SIRS = (struct __pyx_vtabstruct_7plexsim_6models_SIRS*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_SIRS); if (unlikely(!__pyx_vtabptr_7plexsim_6models_SIRS)) __PYX_ERR(6, 345, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_SIRS) __PYX_ERR(6, 371, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_SIRS = (struct __pyx_vtabstruct_7plexsim_6models_SIRS*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_SIRS); if (unlikely(!__pyx_vtabptr_7plexsim_6models_SIRS)) __PYX_ERR(6, 371, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Bonabeau = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Bonabeau", sizeof(struct __pyx_obj_7plexsim_6models_Bonabeau), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Bonabeau) __PYX_ERR(6, 358, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Bonabeau = (struct __pyx_vtabstruct_7plexsim_6models_Bonabeau*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bonabeau); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bonabeau)) __PYX_ERR(6, 358, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Bonabeau) __PYX_ERR(6, 384, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Bonabeau = (struct __pyx_vtabstruct_7plexsim_6models_Bonabeau*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bonabeau); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bonabeau)) __PYX_ERR(6, 384, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_RBN = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "RBN", sizeof(struct __pyx_obj_7plexsim_6models_RBN), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_RBN) __PYX_ERR(6, 365, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_RBN = (struct __pyx_vtabstruct_7plexsim_6models_RBN*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_RBN); if (unlikely(!__pyx_vtabptr_7plexsim_6models_RBN)) __PYX_ERR(6, 365, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_RBN) __PYX_ERR(6, 391, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_RBN = (struct __pyx_vtabstruct_7plexsim_6models_RBN*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_RBN); if (unlikely(!__pyx_vtabptr_7plexsim_6models_RBN)) __PYX_ERR(6, 391, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Percolation = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Percolation", sizeof(struct __pyx_obj_7plexsim_6models_Percolation), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Percolation) __PYX_ERR(6, 375, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Percolation = (struct __pyx_vtabstruct_7plexsim_6models_Percolation*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Percolation); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Percolation)) __PYX_ERR(6, 375, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Percolation) __PYX_ERR(6, 401, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Percolation = (struct __pyx_vtabstruct_7plexsim_6models_Percolation*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Percolation); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Percolation)) __PYX_ERR(6, 401, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_CCA = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "CCA", sizeof(struct __pyx_obj_7plexsim_6models_CCA), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_CCA) __PYX_ERR(6, 381, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_CCA = (struct __pyx_vtabstruct_7plexsim_6models_CCA*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_CCA); if (unlikely(!__pyx_vtabptr_7plexsim_6models_CCA)) __PYX_ERR(6, 381, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_CCA) __PYX_ERR(6, 407, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_CCA = (struct __pyx_vtabstruct_7plexsim_6models_CCA*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_CCA); if (unlikely(!__pyx_vtabptr_7plexsim_6models_CCA)) __PYX_ERR(6, 407, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;

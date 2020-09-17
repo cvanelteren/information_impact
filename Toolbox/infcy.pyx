@@ -78,7 +78,7 @@ cdef class Simulator:
         # setup buffer
         cdef:
             tuple shape                  = (time_steps, \
-                                            self.model._nNodes,\
+                                            self.model.adj._nNodes,\
                                             self.model._nStates)
             double[:, :, ::1] bin_buffer = np.zeros(shape)
             state_t[:, ::1] buff       = np.zeros(shape[:2], dtype = np.double)
@@ -139,7 +139,7 @@ cdef class Simulator:
         cdef size_t idx
         # bin
         for t in range(time_steps):
-            for node in range(self.model._nNodes):
+            for node in range(self.model.adj._nNodes):
                 idx = self.hist_map[buff[t, node]]
                 bin_buffer[t, node, idx] += Z
         return
@@ -153,7 +153,7 @@ cdef class Simulator:
           size_t cpus    = mp.cpu_count()
 
           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
-                                                      self.model._nNodes), \
+                                                      self.model.adj._nNodes), \
                                                       dtype = np.double)
 
           state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), \
@@ -172,7 +172,7 @@ cdef class Simulator:
        # private variables
        cdef:
           PyObject* ptr
-          size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes
+          size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes
           tuple tuple_start_state
           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
           double Z = 1  / <double> (repeats)
@@ -210,7 +210,7 @@ cdef class Simulator:
           size_t cpus    = mp.cpu_count()
 
           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
-                                                      self.model._nNodes), \
+                                                      self.model.adj._nNodes), \
                                                       dtype = np.double)
 
           state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), \
@@ -228,7 +228,7 @@ cdef class Simulator:
        # private variables
        cdef:
           PyObject* ptr
-          size_t state_idx, trial, step, tid, node, NODES = self.model._nNodes
+          size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes
           tuple tuple_start_state
           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
           double Z = 1  / <double> (repeats)
@@ -465,7 +465,7 @@ def KL(p1, p2):
 #         # loop stuff
 #         # extract startstates
 #         # list comprehension is slower than true loops cython
-#         # long[:, ::1] s = np.array([decodeState(i, model._nNodes) for i in tqdm(snapshots)])
+#         # long[:, ::1] s = np.array([decodeState(i, model.adj._nNodes) for i in tqdm(snapshots)])
 #         state_t[:, ::1] s = np.array([i for i in snapshots])
 #         # long[:, ::1] s   = np.array([msnapshots[i] for i in tqdm(snapshots)])
 #         int states       = len(snapshots)
@@ -482,7 +482,7 @@ def KL(p1, p2):
     #     # long[  :,       ::1] r       = model.sampleNodes( states * (deltas) * repeats)
     #     # list m = []
 
-    #     int nNodes = model._nNodes, nStates = model._nStates
+    #     int nNodes = model.adj._nNodes, nStates = model._nStates
     #     state_t[::1] agentStates = np.asarray(model.agentStates)
     #     str nudgeType = model._nudgeType
 
@@ -516,7 +516,7 @@ def KL(p1, p2):
     # # bin matrix
     # # TODO: check the output array; threading cant be performed here; susspicious of overwriting
     # cdef double[:, :, :, ::1] out = np.zeros((nThreads     , deltas, \
-    #                                           model._nNodes, model._nStates))
+    #                                           model.adj._nNodes, model._nStates))
     # cdef int nTrial = deltas * repeats
     # cdef node_id_t[:, :, ::1] r = np.ndarray((nThreads, nTrial,\
     #                                           sampleSize), dtype = np.uintp)
@@ -591,7 +591,7 @@ def KL(p1, p2):
 # #         state_t[:, ::1] windowData = np.zeros((window, model.nNodes),\
 # #                                            dtype = long)
 # #         tuple target
-# #         double[:,:, ::1] buffer = np.zeros (( window, model._nNodes, model._nStates))
+# #         double[:,:, ::1] buffer = np.zeros (( window, model.adj._nNodes, model._nStates))
 # #         dict cpx = {}
 # #         dict mapper = {i : idx for idx, i in enumerate(model.agentStates)}
 # #         dict snapshots = {}
@@ -604,9 +604,9 @@ def KL(p1, p2):
 #             target = tuple(windowData[targetIdx])
 #             # obtain buffer, new copy
 #             # buffer = cpx.get( target , buffer.copy())
-#             buffer = cpx.get( target , np.zeros((window, model._nNodes, model._nStates)))
+#             buffer = cpx.get( target , np.zeros((window, model.adj._nNodes, model._nStates)))
 #             for window_time in range(window):
-#                 for node in range(model._nNodes):
+#                 for node in range(model.adj._nNodes):
 #                     stateIdx = mapper[windowData[window_time, node]]
 #                     buffer[window_time, node, stateIdx] += 1
 #                     # update counters
