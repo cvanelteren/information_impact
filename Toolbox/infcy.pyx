@@ -266,6 +266,68 @@ cdef class Simulator:
        return self.normalize(conditional, snapshots, False)
         
 
+cpdef double kpn_entropy(double[:, ::1] x, size_t k, size_t p):
+    """KPN entropy Lombardi et al.  (2016)"""
+    assert p >= k, "P needs to be bigger or equal to p"
+    assert x.ndim == 2, "x needs to be nsamples x nfeatures"
+    cdef:
+        size_t n = x.shape[0]
+        size_t s = x.shape[1]
+
+
+    from sklearn.neighbors import NearestNeighbors
+    import scipy as sp
+
+    # get nearest neighbors p, and k
+    cdef double[:, ::1] pNN_distances, kNN_distances
+    cdef size_t[:, ::1] pNN_indices
+
+    cdef object NN = NearestNeighbors(n_neighbors = p, metric = "chebyshev")
+    NN.fit(x)
+
+    pNN_distances= NN.kneighbors()[0]
+    pNN_indices  = np.asarray(NN.kneighbors()[1], dtype = np.uintp)
+
+    cdef object multi_normal = sp.stats.multivariate_normal
+
+    # start estimation
+    cdef:
+        double H = sp.special.digamma(n) - sp.special.digamma(k)
+        double Gi, gxi, z = 1/<double> n
+        # tmp storage
+        # double[:, ::1] mean, cov
+        # cdef size_t[::1] idx
+        # integration range
+        # double[::1] a = np.zeros(s)
+        # double[::1] b = np.zeros(s)
+    for ni in range(n):
+        # reset buffers
+        # a[:] = 0
+        # b[:] = 0
+        # get indices
+        idx  = pNN_indices[ni]
+        mean = x.base[idx].mean(0)
+        cov  = np.cov(x.base[idx].T)
+        gxi  = multi_normal.pdf(x.base[ni], mean = mean, cov = cov)
+
+        a = x.base[ni] - pNN_distances[ni][k]
+        b = x.base[ni] + pNN_distances[ni][k]
+
+        # for jdx in range(s):
+        #     a[jdx] = x[ni, jdx] - pNN_distances[ni][p - k - 1]
+        #     b[jdx] = x[ni, jdx] + pNN_distances[ni][p - k - 1]
+
+        Gi   = multi_normal.cdf(b,\
+                               mean = mean, cov = cov,\
+                               allow_singular = True) - \
+                        multi_normal.cdf(a, mean = mean, cov = cov,\
+                        allow_singular = True)
+        H += z * (np.log(Gi) - np.log(gxi))
+    return H
+       
+
+
+
 
 @cython.boundscheck(False) # compiler directive
 @cython.wraparound(False) # compiler directive
