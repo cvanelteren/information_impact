@@ -21,6 +21,7 @@ cpdef find_tipping(Model m, \
                    size_t buffer_size = int(1e4),\
                    sigma = 100):
 
+    from scipy import signal as ssignal
     # storage for sims
     cdef state_t[:, ::1] buffer_
     # getting the swap points
@@ -32,10 +33,22 @@ cpdef find_tipping(Model m, \
 
     # start
     cdef size_t ni = 0
+    cdef long[::1] swap_
     for ni in range(n):
         buffer_ = m.simulate(buffer_size)
-        swap    = np.sign(gaussian_filter(np.mean(buffer_, axis = 1).round(), sigma))
-        kronecker_deltas = buffer_.base[np.where(swap)]
+        # swap    = np.gradient(ssignal.detrend(gaussian_filter(np.mean(buffer_, axis = 1), sigma)))
+        swap    = gaussian_filter(np.mean(mean, axis = 1))
+        swap_    = np.where((abs(swap - .5).round(1)) == 0)[0]
+        swap_    =  swap_.base[np.where(np.diff(np.insert(swap_, 0, -1)) > 1)[0] + 1]
+
+        # swap    = (swap.base - swap.base.min()) / (swap.base.max() - swap.base.min())
+        # swap_    = ssignal.find_peaks(np.abs(swap), \
+        #                               height = .3 * swap.base.max(),\
+                                      # distance = 2 * sigma)[0]
+
+        # for idx in range(swap_.base.shape[0]):
+
+        kronecker_deltas = buffer_.base[swap_]
         dist    = build_dist(kronecker_deltas, dist)
         # ni      = len(dist)
 

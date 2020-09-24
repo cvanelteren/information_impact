@@ -236,9 +236,9 @@ def addGraphPretty(graph, ax, \
                                 connectionstyle = f'arc3,rad={rad}',
                                 **arrowsprops)
 
+            ax.add_patch(e)
 
         seen[(u,v)]=rad
-        ax.add_patch(e)
     ax.autoscale()
     ax.set_aspect('equal')
     return ax
