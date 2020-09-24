@@ -37,8 +37,8 @@ cpdef find_tipping(Model m, \
     for ni in range(n):
         buffer_ = m.simulate(buffer_size)
         # swap    = np.gradient(ssignal.detrend(gaussian_filter(np.mean(buffer_, axis = 1), sigma)))
-        swap    = gaussian_filter(np.mean(mean, axis = 1))
-        swap_    = np.where((abs(swap - .5).round(1)) == 0)[0]
+        swap    = gaussian_filter(np.mean(buffer_, axis = 1))
+        swap_    = np.where((np.abs(swap.base - .5).round(1)) == 0)[0]
         swap_    =  swap_.base[np.where(np.diff(np.insert(swap_, 0, -1)) > 1)[0] + 1]
 
         # swap    = (swap.base - swap.base.min()) / (swap.base.max() - swap.base.min())
