@@ -29,3 +29,4 @@ with open('Data/{fn}') as f:
      o = dict(model = m, output = output, mi = mi, px = px)
      pickle.dump(f, o)
 
+print('exited')

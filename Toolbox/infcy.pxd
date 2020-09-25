@@ -31,12 +31,6 @@ cdef class Simulator:
                       )
 
 
-    cpdef dict forward2(self,\
-                       # size_t n_samples =*,\
-                       dict snapshots,\
-                       size_t repeats =*,\
-                       size_t time_steps =*,\
-                       )
     cpdef dict normalize(self,\
                          dict conditional,\
                          dict snapshots,\
