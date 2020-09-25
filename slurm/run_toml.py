@@ -1,5 +1,7 @@
 from plexsim.models import *
 import toml
+import sys; sys.path.insert(0, '../')
+from Utils.graph import *
 
 class toml_reader:
     def __init__(self, fn):
