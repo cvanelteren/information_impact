@@ -6364,7 +6364,7 @@ static int __pyx_pf_7Toolbox_5infcy_9Simulator___init__(struct __pyx_obj_7Toolbo
  *         self.hist_map = {idx : i for idx, i in enumerate(m.agentStates)}
  * 
  *     cpdef dict snapshots(self, size_t n_samples,\             # <<<<<<<<<<<<<<
- *                          size_t step = 0):
+ *                          size_t step = 1):
  * 
  */
 
@@ -6376,7 +6376,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
 static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_snapshots(struct __pyx_obj_7Toolbox_5infcy_Simulator *__pyx_v_self, size_t __pyx_v_n_samples, int __pyx_skip_dispatch, struct __pyx_opt_args_7Toolbox_5infcy_9Simulator_snapshots *__pyx_optional_args) {
-  size_t __pyx_v_step = ((size_t)0);
+  size_t __pyx_v_step = ((size_t)1);
   __Pyx_memviewslice __pyx_v_states = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_tmp = 0;
   PyObject *__pyx_v_snapshots = 0;
@@ -6555,7 +6555,7 @@ static PyObject *__pyx_f_7Toolbox_5infcy_9Simulator_snapshots(struct __pyx_obj_7
  *         self.hist_map = {idx : i for idx, i in enumerate(m.agentStates)}
  * 
  *     cpdef dict snapshots(self, size_t n_samples,\             # <<<<<<<<<<<<<<
- *                          size_t step = 0):
+ *                          size_t step = 1):
  * 
  */
 
@@ -6655,7 +6655,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     if (values[1]) {
       __pyx_v_step = __Pyx_PyInt_As_size_t(values[1]); if (unlikely((__pyx_v_step == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 49, __pyx_L3_error)
     } else {
-      __pyx_v_step = ((size_t)0);
+      __pyx_v_step = ((size_t)1);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
@@ -30465,7 +30465,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         self.hist_map = {idx : i for idx, i in enumerate(m.agentStates)}
  * 
  *     cpdef dict snapshots(self, size_t n_samples,\             # <<<<<<<<<<<<<<
- *                          size_t step = 0):
+ *                          size_t step = 1):
  * 
  */
   __pyx_tuple__32 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_n_samples, __pyx_n_s_step); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 48, __pyx_L1_error)
@@ -31871,7 +31871,7 @@ if (!__Pyx_RefNanny) {
  *         self.hist_map = {idx : i for idx, i in enumerate(m.agentStates)}
  * 
  *     cpdef dict snapshots(self, size_t n_samples,\             # <<<<<<<<<<<<<<
- *                          size_t step = 0):
+ *                          size_t step = 1):
  * 
  */
     #if CYTHON_COMPILING_IN_LIMITED_API

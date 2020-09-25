@@ -23,3 +23,22 @@ def bfs_iso(graph, discovered, tree = nx.DiGraph()):
 
 def construct_iso_tree(nodes, graph):
     return [bfs_iso(graph, {i:[None]}, nx.DiGraph()) for i in nodes]
+
+
+
+def recursive_tree(r, jump = 0):
+    g = nx.Graph()
+    g.add_node(0)
+    sources = [0]
+    n = len(g)
+    while r > 0:
+        newsources = []
+        for source in sources:
+            for ri in range(r):
+                n += 1
+                g.add_edge(source, n)
+                newsources.append(n)
+#         print(newsources)
+        r -= 2 + jump
+        sources = newsources
+    return g

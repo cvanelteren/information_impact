@@ -46,7 +46,7 @@ cdef class Simulator:
         self.hist_map = {idx : i for idx, i in enumerate(m.agentStates)}
 
     cpdef dict snapshots(self, size_t n_samples,\
-                         size_t step = 0):
+                         size_t step = 1):
 
 
         cdef state_t[::1] states
@@ -144,63 +144,6 @@ cdef class Simulator:
                 bin_buffer[t, node, idx] += Z
         return
 
-    cpdef dict forward2(self, \
-                       dict snapshots,\
-                       size_t repeats    = 10,\
-                       size_t time_steps = 10,\
-                       ):
-       cdef:
-          size_t cpus    = mp.cpu_count()
-
-          state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
-                                                      self.model.adj._nNodes), \
-                                                      dtype = np.double)
-
-          state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), \
-                                                 dtype = np.double)
-
-          state_t[:, ::1] states = np.array([i for i in snapshots.keys()], \
-                                            dtype = np.double)
-
-          size_t nStates = len(states)
-          SpawnVec models = self.model._spawn(cpus)
-
-          # shape of buffer
-          tuple shape = (time_steps, self.model.nNodes, self.model.nStates)
-          dict conditional = {}
-       print(nStates, len(states))
-       # private variables
-       cdef:
-          PyObject* ptr
-          size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes
-          tuple tuple_start_state
-          double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
-          double Z = 1  / <double> (repeats)
-
-       # for state_idx in prange(nStates, nogil = True):
-       for state_idx in prange(nStates, nogil = True):
-           tid              = threadid()
-           start_state[tid] = states[state_idx]
-
-
-           for trial in range(repeats):
-               # reset buffer
-               for node in range(NODES):
-                   (<Model> models[tid].ptr)._states[node] = start_state[tid, node]
-
-                   thread_state[tid, 0, node] = start_state[tid, node]
-               for step in range(1, time_steps):
-                   thread_state[tid, step] = (<Model> models[tid].ptr)._updateState(\
-                            (<Model> models[tid].ptr)._sampleNodes(1)[0])
-
-               # bin buffer
-               self.bin_data(thread_state[tid], start_state[tid], \
-                                 bin_buffer[tid], time_steps, Z)
-
-               # with gil:
-       # print("sanity check 2")
-       # return dict(conditional = conditional, snapshots = snapshots)
-       return self.normalize(conditional, snapshots, False)
     cpdef dict forward(self, \
                        dict snapshots,\
                        size_t repeats    = 10,\

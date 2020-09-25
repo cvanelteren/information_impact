@@ -67,7 +67,8 @@ def saveAllFigures(useLabels = False, path = '../Figures'):
         print('saving at {}'.format(saveStr))
         savefig(saveStr)
 
-def addGraphPretty(graph, ax, \
+def addGraphPretty(graph, \
+                   ax, \
                    positions = None, \
                    cmap      = cm.tab20, \
                    mapping   = None,\
