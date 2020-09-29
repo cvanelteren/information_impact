@@ -162,6 +162,8 @@ cdef class Simulator:
           state_t[:, ::1] states = np.array([i for i in snapshots.keys()], \
                                             dtype = np.double)
 
+
+          node_id_t[:, :, ::1] r = np.zeros((cpus, repeats * time_steps, self.model.sampleSize), dtype = np.uintp)
           size_t nStates = len(states)
           SpawnVec models = self.model._spawn(cpus)
 
@@ -184,6 +186,7 @@ cdef class Simulator:
 
            with gil:
                bin_buffer.base[tid] = conditional.get(tuple(start_state[tid]), np.zeros(shape))
+               r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(repeats * time_steps)
 
            for trial in range(repeats):
                # reset buffer
@@ -192,8 +195,7 @@ cdef class Simulator:
 
                    thread_state[tid, 0, node] = start_state[tid, node]
                for step in range(1, time_steps):
-                   thread_state[tid, step] = (<Model> models[tid].ptr)._updateState(\
-                            (<Model> models[tid].ptr)._sampleNodes(1)[0])
+                   thread_state[tid, step] = (<Model> models[tid].ptr)._updateState(r[tid, trial*step + step])
 
                # bin buffer
                self.bin_data(thread_state[tid], start_state[tid], \
