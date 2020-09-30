@@ -14,8 +14,6 @@ def setup_model(model) -> list :
 
 
     # setup settings
-    model.sampleSize = 1
-
     temps = np.linspace(0, 10, 30); #temps[-1] = 10000
     out   = model.magnetize(temps, n = int(1e5))
 
