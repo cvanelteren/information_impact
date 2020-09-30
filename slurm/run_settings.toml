@@ -4,20 +4,21 @@ name = "tipping_points"
 
 [model]
     name       = "Potts"
-    sampleSize = 1
+    [model.settings]
+        sampleSize = 1
     [model.graph]
         name     = "recursive_tree"
-        settings = {r = 4, jump = 0}
+        settings = {r = 10, jump = 0}
 
 [simulation]
     trials = 10
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 10
-        buffer_size = 10
-        surround    = 1
+        n_samples   = 100
+        buffer_size = 100000000
+        surround    = 1000
         sigma       = 100
 
     [simulation.conditional]
         repeats    = 10000
-        time_steps = 10
+        time_steps = 400
