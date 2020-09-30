@@ -1,15 +1,29 @@
 from plexsim.models import *
-import toml, pickl
+import toml, pickle, os
 import sys; sys.path.insert(0, '../')
 from Utils.graph import *
 from Toolbox import infcy
+import importlib
 
 class toml_reader:
     def __init__(self, fn):
         self.settings = toml.load(fn)
         self.sim_settings = self.settings.get('simulation')
-    
-    def setup_model(self):
+
+    def experiment_run(self, f, opt_settings = {}):
+        """
+        calls the run_model method from the experimental script
+        """
+        fn = self.settings.get("experiment_run").replace("/", ".").replace(".py", '')
+        print("-" * 13 + f"{f}" + "-" * 13)
+        run = importlib.import_module(fn)
+        return getattr(run, f)(**opt_settings)
+   
+    def load_model(self):
+        """
+        load the model
+        - primarily used to set up the graph structure, the actual model settings need to be defined in setup_model
+        """
         model_settings = self.settings.get('model')
         name = model_settings.get('name', '')
         settings = model_settings.get('settings', {})
@@ -20,16 +34,39 @@ class toml_reader:
         m = globals()[name](g, **settings)
         return m
 
-reader = toml_reader('run_settings.toml')
-m = reader.setup_model()
-SIM = infcy.Simulator(m)
-snapshots = SIM.snapshots(**reader.sim_settings.get('snapshots'))
-output = SIM.forward(snapshots, **reader.sim_settings.get('conditional'))
-px, mi = infcy.mutualInformation(output.get('conditional'), output.get('snapshots'))
 
-fn = 'testing.pickle'
-with open('data/{fn}') as f:
-     o = dict(model = m, output = output, mi = mi, px = px)
-     pickle.dump(f, o)
 
-print('exited')
+
+#
+# TODO: iterate over those
+if __name__ == "__main__":
+
+    # load toml settings
+    reader = toml_reader('run_settings.toml')
+    # make local directory if exists
+    output_directory = reader.settings.get("output_directory")
+    os.makedirs(output_directory, exist_ok = True)
+
+    trials = reader.settings.get("trial_runs", 1)
+    run_name = reader.settings.get('name', 'experiment')
+    # run experiments
+    from pyprind import prog_bar
+    for trial in prog_bar(range(trials)):
+        for idx, experiment in enumerate(reader.experiment_run("setup_model", dict(model = reader.load_model()))):
+            # run the actual experiment
+            assert experiment['model'].sampleSize == 1
+            fn       = f'{run_name}-{idx}-{trial}.pickle'
+            settings = dict(
+                model    = experiment["model"],
+                settings = reader.settings.get("simulation", {})
+            )
+            results  = reader.experiment_run("run_experiment", settings)
+
+
+            #write data
+            path = os.path.join(output_directory, fn)
+            with open(path, "wb") as f:
+                o = dict(results = results,
+                         settings = experiment)
+                pickle.dump(o, f)
+    print('exited')

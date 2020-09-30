@@ -1,17 +1,23 @@
+output_directory = "experiments_test"
+experiment_run   = "experiment_configs/Potts_recursion1.py"
+name = "tipping_points"
+
 [model]
-    name    = "Ising"
-
+    name       = "Potts"
+    sampleSize = 1
     [model.graph]
-    name   = "recursive_tree"
-    settings = {r = 3, jump = 0}
-
-
-
+        name     = "recursive_tree"
+        settings = {r = 4, jump = 0}
 
 [simulation]
-    [simulation.snapshots]
-        n_samples = 100
+    trials = 10
+    # simulations parameters
+    [simulation.tipping]
+        n_samples   = 10
+        buffer_size = 10
+        surround    = 1
+        sigma       = 100
 
     [simulation.conditional]
-        repeats = 1000
-        time_steps = 2
+        repeats    = 10000
+        time_steps = 10

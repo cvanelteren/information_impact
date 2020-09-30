@@ -149,6 +149,8 @@ cdef class Simulator:
                        size_t repeats    = 10,\
                        size_t time_steps = 10,\
                        ):
+
+       #setup buffers
        cdef:
           size_t cpus    = mp.cpu_count()
 
@@ -165,6 +167,8 @@ cdef class Simulator:
 
           node_id_t[:, :, ::1] r = np.zeros((cpus, repeats * time_steps, self.model.sampleSize), dtype = np.uintp)
           size_t nStates = len(states)
+
+          # spawn models parallely
           SpawnVec models = self.model._spawn(cpus)
 
           # shape of buffer
@@ -185,9 +189,11 @@ cdef class Simulator:
            start_state[tid] = states[state_idx]
 
            with gil:
+               # get or reset buffer
                bin_buffer.base[tid] = conditional.get(tuple(start_state[tid]), np.zeros(shape))
                r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(repeats * time_steps)
 
+           # start binning
            for trial in range(repeats):
                # reset buffer
                for node in range(NODES):
