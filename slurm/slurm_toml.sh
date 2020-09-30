@@ -1,10 +1,11 @@
 #!/bin/bash
-#SBATCH -N 1      # nodes requested
-#SBATCH -n 1      # tasks requested
-#SBATCH -c 16      # cores requested
-#SBATCH -o outfile  # send stdout to outfile
-#SBATCH -e errfile  # send stderr to errfile
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -c 16
+#SBATCH -o %x-%j.out  # send stdout to outfile
+#SBATCH -e %x-%j.err  # send stderr to errfile
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
+#SBATCH --constraint=cpunode
 source activate
 cd $HOME/information_impact
 python setup.py build_ext --inplace
