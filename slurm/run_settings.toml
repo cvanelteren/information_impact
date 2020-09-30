@@ -1,4 +1,4 @@
-output_directory = "experiments_test"
+output_directory = "/var/scratch/cveltere/"
 experiment_run   = "experiment_configs/Potts_recursion1.py"
 name = "tipping_points"
 
