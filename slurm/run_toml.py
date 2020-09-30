@@ -42,7 +42,7 @@ class toml_reader:
 if __name__ == "__main__":
 
     # load toml settings
-    reader = toml_reader('run_settings.toml')
+    reader = toml_reader('settings.toml')
     # make local directory if exists
     output_directory = reader.settings.get("output_directory")
     os.makedirs(output_directory, exist_ok = True)
