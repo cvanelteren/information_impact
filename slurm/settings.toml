@@ -16,10 +16,10 @@ name = "tipping_points"
     # simulations parameters
     [simulation.tipping]
         n_samples   = 100
-        buffer_size = 10
-        surround    = 1
+        buffer_size = 10000000
+        surround    = 1000
         sigma       = 100
 
     [simulation.conditional]
-        repeats    = 100
-        time_steps = 40
+        repeats    = 10000
+        time_steps = 400
