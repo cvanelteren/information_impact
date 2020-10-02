@@ -37,14 +37,14 @@ class toml_reader:
 
 
 
-#
+import datetime
 # TODO: iterate over those
 if __name__ == "__main__":
 
     # load toml settings
     reader = toml_reader('settings.toml')
     # make local directory if exists
-    output_directory = reader.settings.get("output_directory")
+    output_directory = reader.settings.get("output_directory") + datetime.datetime.now().isoformat()
     os.makedirs(output_directory, exist_ok = True)
 
     trials = reader.settings.get("trial_runs", 1)
