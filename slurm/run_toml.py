@@ -44,11 +44,14 @@ if __name__ == "__main__":
     # load toml settings
     reader = toml_reader('settings.toml')
     # make local directory if exists
-    output_directory = reader.settings.get("output_directory") + datetime.datetime.now().isoformat()
-    os.makedirs(output_directory, exist_ok = True)
+    date = datetime.datetime.now().isoformat()
 
     trials = reader.settings.get("trial_runs", 1)
-    run_name = reader.settings.get('name', 'experiment')
+    run_name = reader.settings.get('name', 'experiment') + date
+
+    output_directory = reader.settings.get("output_directory") + "_" + run_name
+
+    os.makedirs(output_directory, exist_ok = True)
     # run experiments
     from pyprind import prog_bar
     for trial in prog_bar(range(trials)):
