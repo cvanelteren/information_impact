@@ -53,14 +53,14 @@ def run_experiment(model, settings = {}) -> dict:
     cs  = {}
     for k, v in snapshots.items():
         try:
-            s, c = sim.forward(v, **conditional)
+            s, c = sim.forward(v, **conditional).values()
             px, mi = incy.mutualInformation(c, s)
             mis[k] = mi
             cs[k]  = c
             pxs[k] = px
         # no states found
-        except:
-            continue
+        except Exception as e :
+            print(e)
     print("-" * 13 + "Tipping points" + "-" * 13)
     for k, v in snapshots.items():
         print(f"{len(v)} \t at {k}")
