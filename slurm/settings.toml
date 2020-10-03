@@ -1,4 +1,5 @@
-output_directory = "/var/scratch/cveltere/"
+# output_directory = "/var/scratch/cveltere/"
+output_directory = "data/"
 experiment_run   = "experiment_configs/Potts_recursion1.py"
 name             = "tipping_points"
 
@@ -8,17 +9,17 @@ name             = "tipping_points"
         sampleSize = 1
     [model.graph]
         name     = "recursive_tree"
-        settings = {r = 5, jump = 0}
+        settings = {r = 3, jump = 0}
 
 [simulation]
     trials = 10
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 100
-        buffer_size = 10000000
+        n_samples   = 10
+        buffer_size = 10000
         surround    = 1000
-        sigma       = 100
+        sigma       = 10
 
     [simulation.conditional]
-        repeats    = 10000
-        time_steps = 400
+        repeats    = 10
+        time_steps = 40

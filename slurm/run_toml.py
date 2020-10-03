@@ -52,6 +52,7 @@ if __name__ == "__main__":
     output_directory = reader.settings.get("output_directory") + "_" + run_name
 
     os.makedirs(output_directory, exist_ok = True)
+    print(f"created {output_directory}")
     # run experiments
     from pyprind import prog_bar
     for trial in prog_bar(range(trials)):
