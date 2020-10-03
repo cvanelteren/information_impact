@@ -54,7 +54,7 @@ def run_experiment(model, settings = {}) -> dict:
     for k, v in snapshots.items():
         try:
             s, c = sim.forward(v, **conditional).values()
-            px, mi = incy.mutualInformation(c, s)
+            px, mi = infcy.mutualInformation(c, s)
             mis[k] = mi
             cs[k]  = c
             pxs[k] = px
