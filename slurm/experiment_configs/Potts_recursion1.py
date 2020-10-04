@@ -33,7 +33,7 @@ def setup_model(model) -> list :
                                 )
         model.t = res.x
         n = copy.deepcopy(model)
-        settings = dict(model = n, t = n.t)
+        settings = dict(model = n, t = n.t, mag = res.x)
         run_settings.append(settings)
     return run_settings
 

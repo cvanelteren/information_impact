@@ -46,7 +46,7 @@ if __name__ == "__main__":
     # make local directory if exists
     date = datetime.datetime.now().isoformat()
 
-    trials = reader.settings.get("trial_runs", 1)
+    trials = reader.settings.get("trials", 1)
     run_name = reader.settings.get('name', 'experiment') + date
 
     output_directory = reader.settings.get("output_directory") + "_" + run_name
@@ -58,15 +58,12 @@ if __name__ == "__main__":
     for trial in prog_bar(range(trials)):
         for idx, experiment in enumerate(reader.experiment_run("setup_model", dict(model = reader.load_model()))):
             # run the actual experiment
-            assert experiment['model'].sampleSize == 1
             fn       = f'{run_name}-{idx}-{trial}.pickle'
             settings = dict(
                 model    = experiment["model"],
                 settings = reader.settings.get("simulation", {})
             )
             results  = reader.experiment_run("run_experiment", settings)
-
-
             #write data
             path = os.path.join(output_directory, fn)
             with open(path, "wb") as f:

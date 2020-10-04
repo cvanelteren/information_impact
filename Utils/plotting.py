@@ -10,6 +10,12 @@ import time, scipy, networkx as nx
 import scipy.optimize, scipy.integrate
 # %%
 
+def get_shells(graph):
+    shells = {}
+    for k, v in dict(graph.degree()).items():
+        shells[v] = shells.get(v, []) + [k]
+    return dict(sorted(shells.items(), key = lambda x: x[0])[::-1])
+
 def colorbar(mappable, **kwargs):
     from mpl_toolkits.axes_grid1 import make_axes_locatable
     """Aligns colorbar with axis height"""

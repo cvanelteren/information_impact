@@ -4,6 +4,7 @@ from statistics import NormalDist
 
 '''Dump file of statistical related functions'''
 
+
 def aucs(data, func, params = {},\
         bounds = (0, np.inf), **kwargs):
     from scipy.integrate import quad
