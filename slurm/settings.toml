@@ -1,7 +1,6 @@
 # output_directory = "/var/scratch/cveltere/"
 output_directory = "/var/scratch/cveltere/"
 experiment_run   = "experiment_configs/Potts_recursion1.py"
-name             = "tipping_points"
 
 trials = 100
 [model]
