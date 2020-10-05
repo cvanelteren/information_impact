@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     # get the run script
     run_name = os.path.basename(reader.settings.get("experiment_run", "experiment")) # remove path
-    run_name = os.path.spitext(run_name)[0] # remove extensions
+    run_name = os.path.splitext(run_name)[0] # remove extensions
 
     # create the output directory
     output_directory = reader.settings.get("output_directory") + "_" + run_name
