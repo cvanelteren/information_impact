@@ -47,7 +47,7 @@ if __name__ == "__main__":
     date = datetime.datetime.now().isoformat()
 
     trials = reader.settings.get("trials", 1)
-    run_name = reader.settings.get('name', 'experiment') + date
+    run_name = reader.settings.get('experiment_run', 'experiment').replace('.py', '') + date
 
     output_directory = reader.settings.get("output_directory") + "_" + run_name
 
