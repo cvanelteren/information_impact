@@ -22,6 +22,11 @@ def get_shells(graph):
         shells[v] = shells.get(v, []) + [k]
     return dict(sorted(shells.items(), key = lambda x: x[0])[::-1])
 
+def get_shell_layout(graph, **kwargs):
+    shells = get_shells(graph)
+    return nx.shell_layout(graph, nlist = list(shells.values()), **kwargs)
+
+
 def colorbar(mappable, **kwargs):
     from mpl_toolkits.axes_grid1 import make_axes_locatable
     """Aligns colorbar with axis height"""
