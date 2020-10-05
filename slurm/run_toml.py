@@ -46,17 +46,21 @@ if __name__ == "__main__":
     # make local directory if exists
     date = datetime.datetime.now().isoformat()
 
-    trials = reader.settings.get("trials", 1)
-    run_name = reader.settings.get('experiment_run', 'experiment').replace('.py', '') + date
+    # get the run script
+    run_name = os.path.basename(reader.settings.get("experiment_run", "experiment")) # remove path
+    run_name = os.path.spitext(run_name)[0] # remove extensions
 
+    # create the output directory
     output_directory = reader.settings.get("output_directory") + "_" + run_name
 
     os.makedirs(output_directory, exist_ok = True)
     print(f"created {output_directory}")
     # run experiments
     from pyprind import prog_bar
+    trials = reader.settings.get("trials", 1)
     for trial in prog_bar(range(trials)):
-        for idx, experiment in enumerate(reader.experiment_run("setup_model", dict(model = reader.load_model()))):
+        for idx, experiment in enumerate(reader.experiment_run("setup_model",
+                                    dict(model = reader.load_model()))):
             # run the actual experiment
             fn       = f'{run_name}-{idx}-{trial}.pickle'
             settings = dict(
