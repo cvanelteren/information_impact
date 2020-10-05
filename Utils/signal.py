@@ -6,6 +6,7 @@ def find_peaks(m,
                surround,
                bins = np.linspace(0, .5, 10),
                sigma = 500,\
+               target = None,
                ):
     """
     Will attempt to find peaks for the Potts model with states 0, 1
@@ -23,9 +24,13 @@ def find_peaks(m,
         m.states = m.agentStates[0]
         # simulate filter and get tipping values
         sim = m.simulate(buffer_size)
-        filtered = ndimage.gaussian_filter(sim.mean(1), sigma = sigma)
-        scores = np.abs(np.gradient(np.sign(filtered * 2 - 1)))
-        idx = np.where(scores)[0]
+        if target == None:
+            filtered = ndimage.gaussian_filter(sim.mean(1), sigma = sigma)
+            scores = np.abs(np.gradient(np.sign(filtered * 2 - 1)))
+            idx = np.where(scores)[0]
+        else:
+            scores = np.abs(np.gradient(np.sign(sim[:, target] * 2 - 1)))
+            idx = np.where(scores)[0]
 
         # for every tipping point...
         for number, i in enumerate(idx):

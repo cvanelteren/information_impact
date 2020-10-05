@@ -5,10 +5,16 @@
             - Mutual information over time
             - IDT [relative absolute] && Area under the curve
 '''
-from numpy import *; from matplotlib.pyplot import *
+import numpy as np;
+import matplotlib.pyplot as plt
 import time, scipy, networkx as nx
 import scipy.optimize, scipy.integrate
 # %%
+def get_linear_cmap(n, name = 'nipy_spectral'):
+    import matplotlib.pyplot as plt
+    cmap = plt.cm.get_cmap(name)
+    idx = np.linspace(0, 256, n, dtype = int)
+    return cmap(idx)
 
 def get_shells(graph):
     shells = {}
@@ -42,10 +48,10 @@ def fit(y, func, x = None,\
     '''
     #TODO; parallize; problem : lambda -> use pathos or multiprocessing?
     nNodes, nDelta = y.shape
-    x   = arange(nDelta) if x is None else x # add a
-    idt = zeros( (nNodes, 2) ) # store idt, rate [width at maximum height],  area under the curve, and sum squared error (SSE)
-    coefficients = zeros( (nNodes, func.__code__.co_argcount - 1) )  # absolute and relatives idt
-    errors       = zeros((nNodes))
+    x   = np.arange(nDelta) if x is None else x # add a
+    idt = np.zeros( (nNodes, 2) ) # store idt, rate [width at maximum height],  area under the curve, and sum squared error (SSE)
+    coefficients = np.zeros( (nNodes, func.__code__.co_argcount - 1) )  # absolute and relatives idt
+    errors       = np.zeros((nNodes))
     for idx, yi in enumerate(y):
         coeffs, coeffs_var = scipy.optimize.curve_fit(func, x, yi, \
                                                       **params)
@@ -76,7 +82,7 @@ def saveAllFigures(useLabels = False, path = '../Figures'):
 def addGraphPretty(graph, \
                    ax, \
                    positions = None, \
-                   cmap      = cm.tab20, \
+                   cmap      = plt.cm.tab20, \
                    mapping   = None,\
                    **kwargs):
     """Short summary.
@@ -105,8 +111,8 @@ def addGraphPretty(graph, \
 # colors  = cm.get_cmap('tab20')(arange(model.nNodes))
     from matplotlib import colors
     if isinstance(cmap, colors.Colormap):
-        colors = cmap(arange(graph.number_of_nodes()))
-    elif isinstance(cmap, ndarray):
+        colors = cmap(np.arange(graph.number_of_nodes()))
+    elif isinstance(cmap, np.ndarray):
         colors = cmap
     else:
         raise ValueError('Input not recognized')
@@ -123,7 +129,7 @@ def addGraphPretty(graph, \
     if s:
         positions = {i : array(j) * s for i, j in positions.items()}
     from scipy.spatial.distance import pdist, squareform
-    tmp = array(list(positions.values()), dtype = float)
+    tmp = np.array(list(positions.values()), dtype = float)
     s   = pdist(tmp).min() * .40 # magic numbers galore!
     circlekwargs = dict(\
                              radius    = s, \
@@ -207,7 +213,7 @@ def addGraphPretty(graph, \
             rad = ( rad + np.sign(rad) *0.1 ) * -1
 
         # set properties of the edge
-        alphaEdge = clip(abs(d), .2, 1)
+        alphaEdge = np.clip(abs(d), .2, 1)
         arrowsprops['color'] = 'green' if d > 0 else 'red'
 #        arrowsprops['alpha'] = alphaEdge
         if maxWeight != minWeight:
