@@ -2,6 +2,7 @@
 output_directory = "/var/scratch/cveltere/"
 experiment_run   = "experiment_configs/Potts_recursion_center_focus.py"
 
+trials = 10
 [model]
     name       = "Potts"
     [model.settings]
