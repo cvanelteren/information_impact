@@ -14,11 +14,11 @@ trials = 10
 [simulation]
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 50
-        buffer_size = 1000000
+        n_samples   = 100
+        buffer_size = 10000000
         surround    = 1000
         sigma       = 100
 
     [simulation.conditional]
-        repeats    = 1000
-        time_steps = 400
+        repeats    = 10000
+        time_steps = 1000
