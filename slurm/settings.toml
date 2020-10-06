@@ -10,7 +10,7 @@ trials = 10
         sampleSize = 1
     [model.graph]
         name     = "recursive_tree"
-        rettings = {r = 6, jump = 0}
+        settings = {r = 6, jump = 0}
 
 [simulation]
     # simulations parameters
