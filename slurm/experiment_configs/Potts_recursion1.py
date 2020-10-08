@@ -42,8 +42,11 @@ def run_experiment(model, settings = {}) -> dict:
     peak_settings =  settings['tipping']
 
     # find peaks
+    #
+    bins = np.linspace(0.01, 1, 20)
+    bins = np.asarray([*-bins[::-1], *bins])
     snapshots = find_peaks(model,
-                           bins = np.linspace(.05, 1, 10),
+                           bins = bins,
                            **peak_settings)
     sim = infcy.Simulator(model)
 

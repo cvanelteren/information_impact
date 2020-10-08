@@ -71,6 +71,7 @@ if __name__ == "__main__":
             results  = reader.experiment_run("run_experiment", settings)
             #write data
             path = os.path.join(output_directory, fn)
+            print(f"Saving {path}")
             with open(path, "wb") as f:
                 o = dict(results = results,
                          settings = experiment)

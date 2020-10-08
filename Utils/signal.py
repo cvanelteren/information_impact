@@ -7,6 +7,7 @@ def find_peaks(m,
                bins = np.linspace(0, .5, 10),
                sigma = 500,\
                target = None,
+               start = 1,
                ):
     """
     Will attempt to find peaks for the Potts model with states 0, 1
@@ -14,11 +15,14 @@ def find_peaks(m,
     """
     from pyprind import prog_bar as pb
     # setup output dicts
-    dist = {'tipping': {}}
+    dist = {0: {}}
     for b in bins:
         dist[b] = {}
-
+  
     # setup state
+    assert surround > start
+    start = m.nNodes * start
+    surround = surround * m.nNodes
     for ni in pb(range(n_samples)):
         # reset state
         m.states = m.agentStates[0]
@@ -29,28 +33,38 @@ def find_peaks(m,
             scores = np.abs(np.gradient(np.sign(filtered * 2 - 1)))
             idx = np.where(scores)[0]
         else:
-            scores = np.abs(np.gradient(np.sign(sim[:, target] * 2 - 1)))
+            s = sim[:, target]
+            # remove spurious connections
+            s = ndimage.gaussian_filter(s, sigma)
+            scores = np.abs(np.gradient(np.sign(s * 2 - 1)))
             idx = np.where(scores)[0]
 
+
         # for every tipping point...
+        if len(idx):
+            if idx.max() + surround > sim.shape[0]:
+                sim = np.concatenate((sim, m.simulate(surround)), axis = 0)
+
         for number, i in enumerate(idx):
+            window = np.asarray([*np.arange(i - surround, i - start), *np.arange(i + start, i + surround)])
+            # np.delete(window, i)
             # convert for key
             state = tuple(sim[i])
             # get tippign value
             tipp  = np.mean(state)
             # setup the target
-            dist["tipping"][state] = dist["tipping"].get(state, 0 ) + 1
+            dist[0][state] = dist[0].get(state, 0 ) + 1
 
             # get distance around window
             # bin window as distance to window
-            mag = sim[i - surround : i].mean(1)
-            distance = abs(mag - tipp)
+            mag      = sim[window].mean(1)
+            distance = mag - tipp
             jdx = np.digitize(distance, bins[:-1])
-            for idx, s in enumerate(sim[i - surround:i, :]):
+            for idx, s in enumerate(sim[window]):
                 b = bins[jdx[idx]]
                 # sample only on one side of the tipping point
-                if s.mean() > .5:
-                    s = s.astype(int)^1
+                # if s.mean() > .5:
+                    # s = s.astype(int)^1
                 s = tuple(s)
                 dist[b][s]= dist[b].get(s, 0) + 1
     # normalize counts
