@@ -1,2 +1,0 @@
-'requests', 'fleep', 'ifaddr', 'netifaces', 'Pillow',
-                      'requests_toolbelt', 'ctypescrypto', 'libarchive-c
