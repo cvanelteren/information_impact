@@ -9,3 +9,4 @@ Data/*
 *.err
 Results/*
 *.ipynb
+*.pickle

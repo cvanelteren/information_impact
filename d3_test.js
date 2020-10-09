@@ -1,5 +1,0 @@
-d3.create("span")
-    .style("color", "white")
-    .style("background-color", "black")
-    .html("Hello, world!")
-    .node()
