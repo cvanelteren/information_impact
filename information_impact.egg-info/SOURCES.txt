@@ -1,8 +1,0 @@
-setup.py
-information_impact.egg-info/PKG-INFO
-information_impact.egg-info/SOURCES.txt
-information_impact.egg-info/dependency_links.txt
-information_impact.egg-info/not-zip-safe
-information_impact.egg-info/top_level.txt
-information_impact/Toolbox/infcy.cpp
-information_impact/Toolbox/signal.cpp
