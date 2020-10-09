@@ -35,11 +35,15 @@ nums = numpy.get_include()
 for (root, dirs, files) in os.walk(BASE):
     for file in files:
         fileName = os.path.join(root, file)
-        if file.endswith('.pyx') and not "test" in fileName:
+        if file.endswith('.pyx'):
             # some cython shenanigans
             # extPath  = fileName.replace(baseDir, '') # make relative
             extPath = os.path.join(root, file)
-            extName, exension  = os.path.splitext(extPath.replace(os.path.sep, '.'))# remove extension
+            extName, extension  = os.path.splitext(extPath.replace(os.path.sep, '.'))# remove extension
+
+            # extName = extName.replace("core.", '')
+
+            print(extPath, extName, extension)
             sources  = [extPath]
             ex = Extension(extName, \
                            sources            = sources, \
@@ -52,6 +56,7 @@ for (root, dirs, files) in os.walk(BASE):
                             define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
             )
             exts.append(ex)
+# assert 0
 cdirectives =  dict(\
                     fast_gil         = True,\
                     boundscheck      = False,\
@@ -66,8 +71,11 @@ cdirectives =  dict(\
 from setuptools import find_packages, find_namespace_packages
 
 __version__ = 2.0
-packages     = find_packages(where = BASE,
-                             include = ["utils*"])
+pbase = "imi/imi"
+packages     = find_packages(where = pbase,
+                             include = ["utils*"], exclude = ["core*"])
+
+print(packages)
 # assert 0
 setup(\
         name         = 'imi',
@@ -76,9 +84,9 @@ setup(\
         author_email = "caspervanelteren@gmail.com",
         url          = "cvanelteren.github.io",
         zip_safe     = False,
-        package_dir  = {"" : BASE},
+        package_dir  = {"" : pbase},
         package_data = dict(infcy = '*.pxd'.split()),\
-        cmdclass = {'build_ext': Build.build_ext},
+        # cmdclass = {'build_ext': Build.build_ext},
         ext_modules  = cythonize(
                 exts,
                 language_level      = 3,

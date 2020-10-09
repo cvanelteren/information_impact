@@ -1,0 +1,8 @@
+setup.py
+imi.egg-info/PKG-INFO
+imi.egg-info/SOURCES.txt
+imi.egg-info/dependency_links.txt
+imi.egg-info/not-zip-safe
+imi.egg-info/top_level.txt
+imi/core/infcy.cpp
+imi/core/signal.cpp
