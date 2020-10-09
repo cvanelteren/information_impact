@@ -1,12 +1,8 @@
 setup.py
-PlexSim/plexsim/models.cpp
-PlexSim/plexsim/tests/cy_tests.cpp
-PlexSim/plexsim/tests/cy_tests_memory.cpp
-PlexSim/plexsim/tests/test_memoryptr.cpp
-PlexSim/plexsim/tests/test_pickle.c
-Toolbox/infcy.cpp
 information_impact.egg-info/PKG-INFO
 information_impact.egg-info/SOURCES.txt
 information_impact.egg-info/dependency_links.txt
 information_impact.egg-info/not-zip-safe
 information_impact.egg-info/top_level.txt
+information_impact/Toolbox/infcy.cpp
+information_impact/Toolbox/signal.cpp

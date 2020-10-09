@@ -66,12 +66,13 @@ cdirectives =  dict(\
 
 __version__ = 1.1
 setup(\
-    name          = 'infcy',\
+    name          = 'information_impact',\
     version       = __version__,\
     author        = "Casper van Elteren",\
     author_email  = "caspervanelteren@gmail.com",\
     url           = "cvanelteren.github.io",\
     zip_safe      = False,\
+    package_data = dict(it = '*.pxd'.split()),\
     ext_modules = cythonize(\
                             exts,\
                             # annotate            = True,\ # set to true for performance html
