@@ -94,6 +94,8 @@ cdef class Simulator:
         # init sample
         cdef size_t sample
         cdef double z = 1/<double> n_samples
+        # init buffer
+        buff = m.simulate(n_time_steps)
         for sample in range(n_samples):
             target = buff[target_idx]
             # obtain buffer or empty

@@ -14,7 +14,7 @@ def setup_model(model) -> list :
 
 
     # setup settings
-    temps = np.linspace(0, 10, 30); #temps[-1] = 10000
+    temps = np.linspace(0, 10, 100); #temps[-1] = 10000
     out   = model.magnetize(temps, n = int(1e5))
 
     from scipy import optimize
@@ -23,7 +23,7 @@ def setup_model(model) -> list :
     opts, cov = optimize.curve_fit(sig, xdata = temps, ydata = out[0],\
                       maxfev = 100_000)
 
-    thetas = [.9, .8, .7] # match_temperatures
+    thetas = [.9, .5, .1] # match_temperatures
 
     # bounds = optimize.Bounds(0, np.inf)
     for theta in thetas:

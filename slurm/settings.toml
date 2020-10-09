@@ -1,16 +1,16 @@
-# output_directory = "/var/scratch/cveltere/"
+# output_directory = "data/"
 output_directory = "/var/scratch/cveltere/"
 # experiment_run   = "experiment_configs/Potts_recursion_center_focus.py"
 experiment_run = 'experiment_configs/Potts_recursion1.py'
 
-trials = 1
+trials = 10
 [model]
     name       = "Potts"
     [model.settings]
         sampleSize = 1
     [model.graph]
         name     = "recursive_tree"
-        settings = {r = 6, jump = 0}
+        settings = {r = 5, jump = 0}
 
 [simulation]
     # simulations parameters
