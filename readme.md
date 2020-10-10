@@ -5,6 +5,8 @@ Information toolbox for analyzing complex dynamical systems. The goal of the pac
 # Installation
 
 `conda update env --file requirements.txt`
+
+
 `python setup.py install` 
 
 # license
