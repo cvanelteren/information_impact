@@ -41,7 +41,7 @@ for (root, dirs, files) in os.walk(BASE):
             extPath = os.path.join(root, file)
             extName, extension  = os.path.splitext(extPath.replace(os.path.sep, '.'))# remove extension
 
-            # extName = extName.replace("core.", '')
+            extName = extName.replace("core.", '')
 
             print(extPath, extName, extension)
             sources  = [extPath]
@@ -56,7 +56,6 @@ for (root, dirs, files) in os.walk(BASE):
                             define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
             )
             exts.append(ex)
-# assert 0
 cdirectives =  dict(\
                     fast_gil         = True,\
                     boundscheck      = False,\
@@ -71,12 +70,11 @@ cdirectives =  dict(\
 from setuptools import find_packages, find_namespace_packages
 
 __version__ = 2.0
-pbase = "imi/imi"
+pbase = "imi"
 packages     = find_packages(where = pbase,
                              include = ["utils*"], exclude = ["core*"])
 
 print(packages)
-# assert 0
 setup(\
         name         = 'imi',
         version      = __version__,
