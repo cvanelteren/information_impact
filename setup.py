@@ -31,7 +31,9 @@ exts = []
 
 BASE = "imi"
 nums = numpy.get_include()
-
+import plexsim
+pls = plexsim.__path__[0]
+print(pls)
 for (root, dirs, files) in os.walk(BASE):
     for file in files:
         fileName = os.path.join(root, file)
@@ -41,13 +43,13 @@ for (root, dirs, files) in os.walk(BASE):
             extPath = os.path.join(root, file)
             extName, extension  = os.path.splitext(extPath.replace(os.path.sep, '.'))# remove extension
 
-            extName = extName.replace("core.", '')
+            # extName = extName.replace("core.", '')
 
             print(extPath, extName, extension)
             sources  = [extPath]
             ex = Extension(extName, \
                            sources            = sources, \
-                           include_dirs       = [nums, '.'],\
+                           include_dirs       = [pls, nums, '.'],\
                            extra_compile_args = flags.split(),\
                            extra_link_args = ['-fopenmp',\
                                               f'-std=c++{cppv}',\
@@ -72,14 +74,11 @@ from setuptools import find_packages, find_namespace_packages
 __version__ = 2.0
 pbase = "imi"
 # todo: make prettier
-namespaces   = find_namespace_packages(include = ["imi.*"]
-                                       )
 
-package_data = {"": "*.pxd *.pyx".split(),
-                "imi.core":  "*.pxd *.pyx".split()}
-# print(packages)
-print(namespaces)
-print(package_data)
+package_data = {"" : "*.pxd *.pyx".split(),
+                "imi.core" : "*.pxd *.pyx".split()}
+packages = find_packages()
+print(packages)
 setup(\
         name         = 'imi',
         version      = __version__,
@@ -87,11 +86,11 @@ setup(\
         author_email = "caspervanelteren@gmail.com",
         url          = "cvanelteren.github.io",
         zip_safe     = False,
-        namespace_packages     = namespaces,
-        pacakge_data = package_data,\
+        # namespace_packages     = namespaces,
+        package_data = package_data,\
+        packages = packages,
         ext_modules  = cythonize(
                 exts,
-                language_level      = 3,
                 compiler_directives = cdirectives,
                 nthreads            = mp.cpu_count(),
                 ),\
