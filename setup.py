@@ -75,7 +75,8 @@ pbase = "imi"
 namespaces   = find_namespace_packages(include = ["imi.*"]
                                        )
 
-package_data = {"": "*.pxd *.pyx".split()}
+package_data = {"": "*.pxd *.pyx".split(),
+                "imi.core":  "*.pxd *.pyx".split()}
 # print(packages)
 print(namespaces)
 print(package_data)
@@ -87,6 +88,7 @@ setup(\
         url          = "cvanelteren.github.io",
         zip_safe     = False,
         namespace_packages     = namespaces,
+        pacakge_data = package_data,\
         ext_modules  = cythonize(
                 exts,
                 language_level      = 3,
