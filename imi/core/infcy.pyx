@@ -142,7 +142,8 @@ cdef class Simulator:
         # bin
         for t in range(time_steps):
             for node in range(self.model.adj._nNodes):
-                idx = self.hist_map[buff[t, node]]
+                with gil:
+                    idx = self.hist_map[buff[t, node]]
                 bin_buffer[t, node, idx] += Z
         return
 

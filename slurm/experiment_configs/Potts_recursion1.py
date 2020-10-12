@@ -1,10 +1,9 @@
 from scipy import optimize
 import numpy as np, copy
 
-import sys; sys.path.insert(0, '../../')
 from plexsim.models import *
 
-from Toolbox import infcy
+from imi import infcy
 # TODO: write general setup step for model
 #
 MODEL = Ising
@@ -38,7 +37,7 @@ def setup_model(model) -> list :
     return run_settings
 
 def run_experiment(model, settings = {}) -> dict:
-    from Utils.signal import find_peaks
+    from imi.utils.signal import find_peaks
     peak_settings =  settings['tipping']
 
     # find peaks

@@ -10,6 +10,12 @@ import matplotlib.pyplot as plt
 import time, scipy, networkx as nx
 import scipy.optimize, scipy.integrate
 # %%
+def gen_main(fig, position = (1,1,1)):
+    mx = fig.add_subplot(*position, frameon = 0,\
+                         xticks = [],\
+                         yticks = []
+                )
+    return mx
 def get_linear_cmap(n, name = 'nipy_spectral'):
     import matplotlib.pyplot as plt
     cmap = plt.cm.get_cmap(name)

@@ -8,6 +8,7 @@ def find_peaks(m,
                sigma = 500,\
                target = None,
                start = 1,
+               reset = False
                ):
     """
     Will attempt to find peaks for the Potts model with states 0, 1
@@ -25,7 +26,8 @@ def find_peaks(m,
     surround = surround * m.nNodes
     for ni in pb(range(n_samples)):
         # reset state
-        m.states = m.agentStates[0]
+        if reset:
+            m.states = m.agentStates[0]
         # simulate filter and get tipping values
         sim = m.simulate(buffer_size)
         if target == None:
@@ -72,4 +74,5 @@ def find_peaks(m,
         z = sum(num.values())
         for k, v in num.items():
             num[k] = v/z
+    dist = dict(sorted(dist.items(), key = lambda x : x[0]))
     return dist

@@ -1,8 +1,7 @@
 from plexsim.models import *
 import toml, pickle, os
-import sys; sys.path.insert(0, '../')
-from Utils.graph import *
-from Toolbox import infcy
+from imi.utils.graph import *
+from imi import infcy
 import importlib
 
 class toml_reader:
@@ -33,9 +32,6 @@ class toml_reader:
         g          = globals()[g_name](**g_settings)
         m          = globals()[name](g, **settings)
         return m
-
-
-
 
 import datetime
 # TODO: iterate over those

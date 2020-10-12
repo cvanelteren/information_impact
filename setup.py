@@ -14,7 +14,7 @@ cppv    = '17'
 
 flags = f'{optFlag} -march=native -std=c++{cppv} -flto '\
         '-frename-registers -funroll-loops -fno-wrapv '\
-        '-fopenmp-simd -fopenmp'
+        '-fopenmp-simd -fopenmp -Wfatal-errors'
 try:
     clangCheck = run(f"{compiler} --version".split(), capture_output= True)
     if not clangCheck.returncode and 'fs4' not in os.uname().nodename:
@@ -71,10 +71,14 @@ from setuptools import find_packages, find_namespace_packages
 
 __version__ = 2.0
 pbase = "imi"
-packages     = find_packages(where = pbase,
-                             include = ["utils*"], exclude = ["core*"])
+# todo: make prettier
+namespaces   = find_namespace_packages(include = ["imi.*"]
+                                       )
 
-print(packages)
+package_data = {"": "*.pxd *.pyx".split()}
+# print(packages)
+print(namespaces)
+print(package_data)
 setup(\
         name         = 'imi',
         version      = __version__,
@@ -82,9 +86,7 @@ setup(\
         author_email = "caspervanelteren@gmail.com",
         url          = "cvanelteren.github.io",
         zip_safe     = False,
-        package_dir  = {"" : pbase},
-        package_data = dict(infcy = '*.pxd'.split()),\
-        # cmdclass = {'build_ext': Build.build_ext},
+        namespace_packages     = namespaces,
         ext_modules  = cythonize(
                 exts,
                 language_level      = 3,
