@@ -8,6 +8,6 @@
 #SBATCH --constraint=cpunode
 source activate
 cd /var/scratch/cveltere/information_impact
-python setup.py build_ext --inplace
+python setup.py install
 cd slurm
 srun python run_toml.py
