@@ -1,6 +1,11 @@
 setup.py
+imi/__init__.pxd
+imi/__init__.py
 imi/infcy.cpp
+imi/infcy.pxd
+imi/infcy.pyx
 imi/signal.cpp
+imi/signal.pyx
 imi.egg-info/PKG-INFO
 imi.egg-info/SOURCES.txt
 imi.egg-info/dependency_links.txt

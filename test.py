@@ -1,16 +1,8 @@
-try:
-    from imi.core import infcy
-    print(infcy)
-except Exception as e:
-    print(e)
-try:
-    from imi import infcy
-    print(infcy)
-except Exception as e:
-    print(e)
-try:
-    from imi.utils import plotting
-    print(plotting)
-except Exception as e:
-    print(e)
+import sys; sys.path.pop(0)
+from imi import utils
+print(utils)
 
+from imi.utils import plotting
+from imi import utils
+print(utils.plotting)
+print(plotting)

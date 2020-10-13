@@ -49,7 +49,7 @@ for (root, dirs, files) in os.walk(BASE):
             sources  = [extPath]
             ex = Extension(extName, \
                            sources            = sources, \
-                           include_dirs       = [pls, nums, '.'],\
+                           include_dirs       = [nums, '.'],\
                            extra_compile_args = flags.split(),\
                            extra_link_args = ['-fopenmp',\
                                               f'-std=c++{cppv}',\
@@ -76,7 +76,8 @@ pbase = "imi"
 # todo: make prettier
 
 package_data = {"" : "*.pxd *.pyx".split(),
-                "imi.core" : "*.pxd *.pyx".split()}
+                # "imi.core" : "*.pxd *.pyx".split(),
+                }
 packages = find_packages()
 print(packages)
 setup(\
@@ -87,8 +88,9 @@ setup(\
         url          = "cvanelteren.github.io",
         zip_safe     = False,
         # namespace_packages     = namespaces,
+        # package_dir = {"" : "imi"},
         package_data = package_data,\
-        packages = packages,
+        packages     = packages,
         ext_modules  = cythonize(
                 exts,
                 compiler_directives = cdirectives,
