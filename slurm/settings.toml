@@ -18,9 +18,9 @@ trials = 1
         n_samples   = 1000
         buffer_size = 1000000
         surround    = 10
-        start       = 3
+        start       = 5
         sigma       = 1000
 
     [simulation.conditional]
         repeats    = 10000
-        time_steps = 1000
+        time_steps = 5000
