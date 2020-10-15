@@ -2,6 +2,7 @@
 from scipy import optimize
 import numpy as np, copy
 
+from imi.utils import signal
 from plexsim.models import *
 
 from imi import infcy
@@ -38,14 +39,13 @@ def setup_model(model) -> list :
     return run_settings
 
 def run_experiment(model, settings = {}) -> dict:
-    from imi.utils.signal import find_peaks
     peak_settings =  settings['tipping']
 
     # find peaks
     #
     bins = np.linspace(0.01, 1, 20)
     bins = np.asarray([*-bins[::-1], *bins])
-    snapshots = find_peaks_single(model,
+    snapshots = signal.find_peaks_single(model,
                            bins = bins,
                            **peak_settings)
     sim = infcy.Simulator(model)
