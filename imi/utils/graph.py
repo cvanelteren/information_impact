@@ -1,4 +1,4 @@
-import networkx as nx
+import networkx as nx, numpy as np
 __author__ = 'Casper van Elteren'
 __email__  = "caspervanelteren@gmail.com"
 def bfs_iso(graph, discovered, tree = nx.DiGraph()):
@@ -25,6 +25,14 @@ def construct_iso_tree(nodes, graph):
     return [bfs_iso(graph, {i:[None]}, nx.DiGraph()) for i in nodes]
 
 
+def powerlaw_graph(n, gamma = 1, base = nx.Graph):
+    deg = np.arange(1, n) ** -float(gamma)
+    deg = np.asarray(deg * n, dtype = int)
+    deg[deg == 0] = 1
+    if deg.sum() % 2:
+        deg[np.random.randint(deg.size)] += 1
+
+    return nx.configuration_model(deg, base())
 
 def recursive_tree(r, jump = 0):
     g = nx.Graph()

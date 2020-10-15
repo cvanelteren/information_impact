@@ -138,7 +138,7 @@ def addGraphPretty(graph, \
     layout = kwargs.get('layout', {})
     s      = layout.get('scale', None)
     if s:
-        positions = {i : array(j) * s for i, j in positions.items()}
+        positions = {i : np.array(j) * s for i, j in positions.items()}
     from scipy.spatial.distance import pdist, squareform
     tmp = np.array(list(positions.values()), dtype = float)
     s   = pdist(tmp).min() * .40 # magic numbers galore!
@@ -243,7 +243,7 @@ def addGraphPretty(graph, \
             # n2.center = array(n2.center) + corner2
             # e = FancyArrowPatch(n2.center, n1.center, **arrowsprops)
 
-            offset = array(n1.center, dtype = float)
+            offset = np.array(n1.center, dtype = float)
 
             # add * for self-edges
             offset[0] +=  1.05 * n1.radius
@@ -251,7 +251,7 @@ def addGraphPretty(graph, \
                 ax.annotate('*', offset, fontsize = 30)
 #            n1.center = (n1.center[0] + r, n1.center[1] )
 #            n2.center = (n2.center[0] - r, n2.center[1])
-            rad = radians(135) # trial and error
+            rad = np.radians(135) # trial and error
 
             # add edge
             # e.set_arrowstyle(head_length = head_length)

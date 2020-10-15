@@ -30,7 +30,6 @@
             "-std=c++17"
         ],
         "include_dirs": [
-            "/home/casper/miniconda3/lib/python3.8/site-packages/plexsim-1.9.0-py3.8-linux-x86_64.egg/plexsim",
             "/home/casper/miniconda3/lib/python3.8/site-packages/numpy/core/include",
             "."
         ],

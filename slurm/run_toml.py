@@ -1,4 +1,5 @@
 from plexsim.models import *
+import networkx as nx
 import toml, pickle, os
 from imi.utils.graph import *
 from imi import infcy
@@ -29,12 +30,20 @@ class toml_reader:
         
         g_name     = model_settings.get('graph').get('name')
         g_settings = model_settings.get('graph').get('settings', {})
-        g          = globals()[g_name](**g_settings)
-        m          = globals()[name](g, **settings)
+        dotted = g_name.split(".")
+        # TODO: clean up
+        if len(dotted) > 1:
+            mod = globals()[dotted[0]]  # assure package networkx is imported as nx
+            for comp in dotted[1:]:
+                mod = getattr(mod, comp)
+            g = mod(**g_settings)
+        else:
+            g = globals()[g_name](**g_settings)
+        m   = globals()[name](g, **settings)
+
         return m
 
 import datetime
-# TODO: iterate over those
 if __name__ == "__main__":
 
     # load toml settings

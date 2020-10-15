@@ -1,7 +1,12 @@
+# local tests
 # output_directory = "data/"
+# server
 output_directory = "/var/scratch/cveltere/"
-# experiment_run   = "experiment_configs/Potts_recursion_center_focus.py"
-experiment_run = 'experiment_configs/Potts_recursion1.py'
+
+# runs
+# experiment_run = "configs/Potts_recursion_center_focus.py"
+# experiment_run = 'configs/Potts_recursion1.py'
+experiment_run = 'configs/barabasi_albert.py'
 
 trials = 1
 [model]
@@ -9,16 +14,18 @@ trials = 1
     [model.settings]
         sampleSize = 1
     [model.graph]
-        name     = "recursive_tree"
-        settings = {r = 5, jump = 0}
+        # name     = "recursive_tree"
+        name = "nx.barabasi_albert_graph"
+        settings = {n = 100, m = 4}
+        # settings = {r = 5, jump = 0}
 
 [simulation]
     # simulations parameters
     [simulation.tipping]
         n_samples   = 1000
-        buffer_size = 1000000
+        buffer_size = 100000
         surround    = 10
-        start       = 5
+        start       = 1
         sigma       = 1000
 
     [simulation.conditional]
