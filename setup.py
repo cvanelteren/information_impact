@@ -70,7 +70,6 @@ cdirectives =  dict(\
                     )
 
 from setuptools import find_packages, find_namespace_packages
-
 __version__ = 2.0
 pbase = "imi"
 # todo: make prettier

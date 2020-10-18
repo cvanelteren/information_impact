@@ -16,7 +16,7 @@ trials = 1
     [model.graph]
         # name     = "recursive_tree"
         name = "nx.barabasi_albert_graph"
-        settings = {n = 100, m = 4}
+        settings = {n = 10, m = 4}
         # settings = {r = 5, jump = 0}
 
 [simulation]
@@ -29,5 +29,5 @@ trials = 1
         sigma       = 1000
 
     [simulation.conditional]
-        repeats    = 10000
+        repeats    = 100
         time_steps = 5000
