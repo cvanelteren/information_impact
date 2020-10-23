@@ -32,7 +32,6 @@ for (root, dirs, files) in os.walk(BASE):
 
             # extName = extName.replace("core.", '')
 
-            print(extPath, extName, extension)
             sources  = [extPath]
             ex = Extension(extName,
                            sources            = sources,
@@ -46,7 +45,21 @@ for (root, dirs, files) in os.walk(BASE):
                             define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
             )
             exts.append(ex)
+def find_pxd(base) -> list:
+    """
+    package pxd files
+    """
+    data_files = []
+    for root, dirs, files in os.walk(base):
+        for file in files:
+            if file.endswith('pxd'):
+                # base     = os.path.basename(base)
+                file = os.path.join(root, file)
+                print(root, file)
+                data_files.append([root, [file]])
 
+    return data_files
+data_files = find_pxd("imi")
 cdirectives =  dict(
                     boundscheck      = False,
                     cdivision        = True,
@@ -75,6 +88,7 @@ setup(
         zip_safe     = False,
         # namespace_packages     = namespaces,
         include_packaged_data = True,
+        data_files   = data_files,
         # package_data = package_data,
         packages     = packages,
         ext_modules  = cythonize(
