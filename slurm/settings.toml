@@ -20,10 +20,10 @@ trials = 1
 [simulation]
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 10
+        n_samples   = 100
         buffer_size = 10000
         window      = 100
-        asymmetric  = true
+        asymmetric  = false
         spacing     = 1
         rtol        = 0.05
 
