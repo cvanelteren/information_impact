@@ -69,7 +69,14 @@ if __name__ == "__main__":
     run_name += date
 
     # create the output directory
-    output_directory = reader.settings.get("output_directory") + "_" + run_name
+
+    if "fs2" in os.uname().nodename:
+        from getpass import getuser
+        output_directory = os.path.join("/var/scratch", getuser())
+    else:
+        output_directory = 'data/'
+
+    output_directory += run_name
 
     os.makedirs(output_directory, exist_ok = True)
     print(f"created {output_directory}")

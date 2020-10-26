@@ -1,7 +1,5 @@
 # local tests
-# output_directory = "data/"
 # server
-output_directory = "/var/scratch/cveltere/"
 
 # runs
 # experiment_run = "configs/Potts_recursion_center_focus.py"
