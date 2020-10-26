@@ -15,19 +15,20 @@ trials = 1
         sampleSize = 1
     [model.graph]
         # name     = "recursive_tree"
-        name = "nx.barabasi_albert_graph"
-        settings = {n = 10, m = 4}
+        name = "graph.powerlaw_graph"
+        settings = {n = 30, gamma = 1.6}
         # settings = {r = 5, jump = 0}
 
 [simulation]
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 1000
-        buffer_size = 100000
-        surround    = 10
-        start       = 1
-        sigma       = 1000
+        n_samples   = 10
+        buffer_size = 10000
+        window      = 100
+        asymmetric  = False
+        spacing     = 1
+        rtol        = .05
 
     [simulation.conditional]
-        repeats    = 100
-        time_steps = 5000
+        repeats    = 1000
+        time_steps = 100

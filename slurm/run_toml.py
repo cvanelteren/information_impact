@@ -1,10 +1,21 @@
 from plexsim.models import *
 import networkx as nx
 import toml, pickle, os
-from imi.utils.graph import *
+from imi.utils import graph
 from imi import infcy
 import importlib
 
+"""
+loads :settings.toml: and runs simulation that are in "configs/".
+The idea is to setup an experiment with an 'easy to use' toml file which is then passed to the corresponding
+run_file in configs. This takes away the complexity of designing a 'one does all' class for running experiments.
+
+The config files have two functions
+:setup_model: which setups the model and
+:run_model: which runs the model
+
+N.B. there is currently no standard what the toml should contain..
+"""
 class toml_reader:
     def __init__(self, fn):
         self.settings = toml.load(fn)

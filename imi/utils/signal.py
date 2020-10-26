@@ -129,7 +129,8 @@ def find_peaks_single(m,
                target = None,
                start = 1,
                reset = False,
-               tol = .1
+               tol = .1,
+               spacing = 1,
                ):
     """
     Will attempt to find peaks for the Potts model with states 0, 1
@@ -154,6 +155,7 @@ def find_peaks_single(m,
         if target == None:
             # filtered = ndimage.gaussian_filter(sim.mean(1), sigma = sigma)
             idx = np.where(np.isclose(sim.mean(1), 0.5, atol = 0, rtol = tol))[0]
+            idx =  idx[np.argwhere(np.diff(idx) > spacing)]
             # scores = np.abs(np.gradient(np.sign(filtered * 2 - 1)))
             # idx = np.where(scores)[0]
         else:

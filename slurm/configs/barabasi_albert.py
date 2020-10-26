@@ -4,6 +4,7 @@ import numpy as np, copy
 
 from imi.utils import signal
 from plexsim.models import *
+from imi.signal import find_tipping
 
 from imi import infcy
 # TODO: write general setup step for model
@@ -43,9 +44,9 @@ def run_experiment(model, settings = {}) -> dict:
 
     # find peaks
     #
-    bins = np.linspace(0.01, 1, 20)
-    bins = np.asarray([*-bins[::-1], *bins])
-    snapshots = signal.find_peaks_single(model,
+    bins = np.linspace(0, 1, 4)
+    # bins = np.asarray([*-bins[::-1], *bins])
+    snapshots = find_peaks_tipping(model,
                            bins = bins,
                            **peak_settings)
     sim = infcy.Simulator(model)
