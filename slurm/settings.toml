@@ -25,9 +25,9 @@ trials = 1
         n_samples   = 10
         buffer_size = 10000
         window      = 100
-        asymmetric  = False
+        asymmetric  = true
         spacing     = 1
-        rtol        = .05
+        rtol        = 0.05
 
     [simulation.conditional]
         repeats    = 1000
