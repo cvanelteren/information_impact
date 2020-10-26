@@ -14,6 +14,7 @@ imi/__init__.py
 imi/infcy.cpp
 imi/infcy.pxd
 imi/signal.cpp
+imi/signal.pxd
 imi.egg-info/PKG-INFO
 imi.egg-info/SOURCES.txt
 imi.egg-info/dependency_links.txt
