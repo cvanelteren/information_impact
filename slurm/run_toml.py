@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     if "fs2" in os.uname().nodename:
         from getpass import getuser
-        output_directory = os.path.join("/var/scratch", getuser())
+        output_directory = os.path.join("/var/scratch/data", getuser())
     else:
         output_directory = 'data/'
 
