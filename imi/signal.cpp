@@ -1686,7 +1686,7 @@ typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,struct __pyx_t_7pl
  */
 typedef std::pair<__pyx_t_7plexsim_6models_state_t,__pyx_t_7plexsim_6models_state_t>  __pyx_t_7plexsim_6models_MemoizeUnit;
 
-/* "plexsim/models.pxd":292
+/* "plexsim/models.pxd":293
  *     cpdef np.ndarray simulate(self, size_t samples)
  * 
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)             # <<<<<<<<<<<<<<
@@ -1698,7 +1698,7 @@ struct __pyx_opt_args_7plexsim_6models_5Model__spawn {
   size_t nThreads;
 };
 
-/* "plexsim/models.pxd":294
+/* "plexsim/models.pxd":295
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)
  * 
  *     cpdef void reset(self, p =*)             # <<<<<<<<<<<<<<
@@ -1710,7 +1710,7 @@ struct __pyx_opt_args_7plexsim_6models_5Model_reset {
   PyObject *p;
 };
 
-/* "plexsim/models.pxd":328
+/* "plexsim/models.pxd":329
  *     cdef double _hamiltonian(self, state_t x, state_t  y) nogil
  * 
  *     cpdef  np.ndarray magnetize(self,\             # <<<<<<<<<<<<<<
@@ -1725,7 +1725,7 @@ struct __pyx_opt_args_7plexsim_6models_5Potts_magnetize {
   double match;
 };
 
-/* "plexsim/models.pxd":381
+/* "plexsim/models.pxd":382
  *     cdef float _checkNeighbors(self,  node_id_t node) nogil
  * 
  *     cpdef void init_random(self, node =*)             # <<<<<<<<<<<<<<
@@ -1830,6 +1830,7 @@ struct __pyx_obj_7plexsim_6models_Adjacency {
 struct __pyx_obj_7plexsim_6models_Model {
   PyObject_HEAD
   struct __pyx_vtabstruct_7plexsim_6models_Model *__pyx_vtab;
+  PyObject *ptr;
   __Pyx_memviewslice _Model__states;
   __pyx_t_7plexsim_6models_state_t *_states;
   __Pyx_memviewslice _Model__newstates;
@@ -1855,7 +1856,7 @@ struct __pyx_obj_7plexsim_6models_Model {
 };
 
 
-/* "plexsim/models.pxd":307
+/* "plexsim/models.pxd":308
  * 
  * 
  * cdef class Logmap(Model):             # <<<<<<<<<<<<<<
@@ -1869,7 +1870,7 @@ struct __pyx_obj_7plexsim_6models_Logmap {
 };
 
 
-/* "plexsim/models.pxd":311
+/* "plexsim/models.pxd":312
  *     cdef double _alpha
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
@@ -1884,7 +1885,7 @@ struct __pyx_obj_7plexsim_6models_Potts {
 };
 
 
-/* "plexsim/models.pxd":337
+/* "plexsim/models.pxd":338
  * 
  * 
  * cdef class Prisoner(Potts):             # <<<<<<<<<<<<<<
@@ -1901,7 +1902,7 @@ struct __pyx_obj_7plexsim_6models_Prisoner {
 };
 
 
-/* "plexsim/models.pxd":341
+/* "plexsim/models.pxd":342
  *         double _S, _T, _P, _R
  *         double _coupling
  * cdef class AB(Model):             # <<<<<<<<<<<<<<
@@ -1914,7 +1915,7 @@ struct __pyx_obj_7plexsim_6models_AB {
 };
 
 
-/* "plexsim/models.pxd":346
+/* "plexsim/models.pxd":347
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
@@ -1928,7 +1929,7 @@ struct __pyx_obj_7plexsim_6models_Pottsis {
 };
 
 
-/* "plexsim/models.pxd":352
+/* "plexsim/models.pxd":353
  *     cdef double  _energy(self, node_id_t  node) nogil
  * 
  * cdef class Ising(Potts):             # <<<<<<<<<<<<<<
@@ -1940,7 +1941,7 @@ struct __pyx_obj_7plexsim_6models_Ising {
 };
 
 
-/* "plexsim/models.pxd":356
+/* "plexsim/models.pxd":357
  * 
  * 
  * cdef class Bornholdt(Ising):             # <<<<<<<<<<<<<<
@@ -1957,7 +1958,7 @@ struct __pyx_obj_7plexsim_6models_Bornholdt {
 };
 
 
-/* "plexsim/models.pxd":370
+/* "plexsim/models.pxd":371
  *      cdef double _get_system_influence(self) nogil
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
@@ -1973,7 +1974,7 @@ struct __pyx_obj_7plexsim_6models_SIRS {
 };
 
 
-/* "plexsim/models.pxd":383
+/* "plexsim/models.pxd":384
  *     cpdef void init_random(self, node =*)
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
@@ -1987,7 +1988,7 @@ struct __pyx_obj_7plexsim_6models_Bonabeau {
 };
 
 
-/* "plexsim/models.pxd":390
+/* "plexsim/models.pxd":391
  *     cdef double _hamiltonian(self, double x, double y) nogil
  * 
  * cdef class RBN(Model):             # <<<<<<<<<<<<<<
@@ -2001,7 +2002,7 @@ struct __pyx_obj_7plexsim_6models_RBN {
 };
 
 
-/* "plexsim/models.pxd":400
+/* "plexsim/models.pxd":401
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class Percolation(Model):             # <<<<<<<<<<<<<<
@@ -2014,7 +2015,7 @@ struct __pyx_obj_7plexsim_6models_Percolation {
 };
 
 
-/* "plexsim/models.pxd":406
+/* "plexsim/models.pxd":407
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
@@ -2183,7 +2184,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Model {
 static struct __pyx_vtabstruct_7plexsim_6models_Model *__pyx_vtabptr_7plexsim_6models_Model;
 
 
-/* "plexsim/models.pxd":307
+/* "plexsim/models.pxd":308
  * 
  * 
  * cdef class Logmap(Model):             # <<<<<<<<<<<<<<
@@ -2197,7 +2198,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Logmap {
 static struct __pyx_vtabstruct_7plexsim_6models_Logmap *__pyx_vtabptr_7plexsim_6models_Logmap;
 
 
-/* "plexsim/models.pxd":311
+/* "plexsim/models.pxd":312
  *     cdef double _alpha
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
@@ -2216,7 +2217,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Potts {
 static struct __pyx_vtabstruct_7plexsim_6models_Potts *__pyx_vtabptr_7plexsim_6models_Potts;
 
 
-/* "plexsim/models.pxd":337
+/* "plexsim/models.pxd":338
  * 
  * 
  * cdef class Prisoner(Potts):             # <<<<<<<<<<<<<<
@@ -2230,7 +2231,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Prisoner {
 static struct __pyx_vtabstruct_7plexsim_6models_Prisoner *__pyx_vtabptr_7plexsim_6models_Prisoner;
 
 
-/* "plexsim/models.pxd":341
+/* "plexsim/models.pxd":342
  *         double _S, _T, _P, _R
  *         double _coupling
  * cdef class AB(Model):             # <<<<<<<<<<<<<<
@@ -2244,7 +2245,7 @@ struct __pyx_vtabstruct_7plexsim_6models_AB {
 static struct __pyx_vtabstruct_7plexsim_6models_AB *__pyx_vtabptr_7plexsim_6models_AB;
 
 
-/* "plexsim/models.pxd":346
+/* "plexsim/models.pxd":347
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
@@ -2258,7 +2259,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Pottsis {
 static struct __pyx_vtabstruct_7plexsim_6models_Pottsis *__pyx_vtabptr_7plexsim_6models_Pottsis;
 
 
-/* "plexsim/models.pxd":352
+/* "plexsim/models.pxd":353
  *     cdef double  _energy(self, node_id_t  node) nogil
  * 
  * cdef class Ising(Potts):             # <<<<<<<<<<<<<<
@@ -2272,7 +2273,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Ising {
 static struct __pyx_vtabstruct_7plexsim_6models_Ising *__pyx_vtabptr_7plexsim_6models_Ising;
 
 
-/* "plexsim/models.pxd":356
+/* "plexsim/models.pxd":357
  * 
  * 
  * cdef class Bornholdt(Ising):             # <<<<<<<<<<<<<<
@@ -2287,7 +2288,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Bornholdt {
 static struct __pyx_vtabstruct_7plexsim_6models_Bornholdt *__pyx_vtabptr_7plexsim_6models_Bornholdt;
 
 
-/* "plexsim/models.pxd":370
+/* "plexsim/models.pxd":371
  *      cdef double _get_system_influence(self) nogil
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
@@ -2303,7 +2304,7 @@ struct __pyx_vtabstruct_7plexsim_6models_SIRS {
 static struct __pyx_vtabstruct_7plexsim_6models_SIRS *__pyx_vtabptr_7plexsim_6models_SIRS;
 
 
-/* "plexsim/models.pxd":383
+/* "plexsim/models.pxd":384
  *     cpdef void init_random(self, node =*)
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
@@ -2318,7 +2319,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Bonabeau {
 static struct __pyx_vtabstruct_7plexsim_6models_Bonabeau *__pyx_vtabptr_7plexsim_6models_Bonabeau;
 
 
-/* "plexsim/models.pxd":390
+/* "plexsim/models.pxd":391
  *     cdef double _hamiltonian(self, double x, double y) nogil
  * 
  * cdef class RBN(Model):             # <<<<<<<<<<<<<<
@@ -2332,7 +2333,7 @@ struct __pyx_vtabstruct_7plexsim_6models_RBN {
 static struct __pyx_vtabstruct_7plexsim_6models_RBN *__pyx_vtabptr_7plexsim_6models_RBN;
 
 
-/* "plexsim/models.pxd":400
+/* "plexsim/models.pxd":401
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class Percolation(Model):             # <<<<<<<<<<<<<<
@@ -2346,7 +2347,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Percolation {
 static struct __pyx_vtabstruct_7plexsim_6models_Percolation *__pyx_vtabptr_7plexsim_6models_Percolation;
 
 
-/* "plexsim/models.pxd":406
+/* "plexsim/models.pxd":407
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
@@ -5126,7 +5127,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
  *     for ni in range(n_samples):
  *         m.states = m.agentStates[0]             # <<<<<<<<<<<<<<
  *         tid = threadid()
- *         # with gil:
+ *         buffer_          = (<Model> models[tid].ptr).simulate(buffer_size)
  */
     __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_m), __pyx_n_s_agentStates); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -5140,8 +5141,8 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
  *     for ni in range(n_samples):
  *         m.states = m.agentStates[0]
  *         tid = threadid()             # <<<<<<<<<<<<<<
- *         # with gil:
  *         buffer_          = (<Model> models[tid].ptr).simulate(buffer_size)
+ *         idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]
  */
     #ifdef _OPENMP
     __pyx_t_12 = omp_get_thread_num();
@@ -5150,37 +5151,37 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
     #endif
     __pyx_v_tid = __pyx_t_12;
 
-    /* "imi/signal.pyx":58
+    /* "imi/signal.pyx":57
+ *         m.states = m.agentStates[0]
  *         tid = threadid()
- *         # with gil:
  *         buffer_          = (<Model> models[tid].ptr).simulate(buffer_size)             # <<<<<<<<<<<<<<
  *         idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]
  *         idx =  idx[np.argwhere(np.diff(idx) > spacing)]
  */
     __pyx_t_13 = (__pyx_v_models[__pyx_v_tid]).ptr;
-    __pyx_t_8 = ((PyObject *)((struct __pyx_vtabstruct_7plexsim_6models_Model *)((struct __pyx_obj_7plexsim_6models_Model *)__pyx_t_13)->__pyx_vtab)->simulate(((struct __pyx_obj_7plexsim_6models_Model *)__pyx_t_13), __pyx_v_buffer_size, 0)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 58, __pyx_L1_error)
+    __pyx_t_8 = ((PyObject *)((struct __pyx_vtabstruct_7plexsim_6models_Model *)((struct __pyx_obj_7plexsim_6models_Model *)__pyx_t_13)->__pyx_vtab)->simulate(((struct __pyx_obj_7plexsim_6models_Model *)__pyx_t_13), __pyx_v_buffer_size, 0)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 57, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_XDECREF_SET(__pyx_v_buffer_, __pyx_t_8);
     __pyx_t_8 = 0;
 
-    /* "imi/signal.pyx":59
- *         # with gil:
+    /* "imi/signal.pyx":58
+ *         tid = threadid()
  *         buffer_          = (<Model> models[tid].ptr).simulate(buffer_size)
  *         idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]             # <<<<<<<<<<<<<<
  *         idx =  idx[np.argwhere(np.diff(idx) > spacing)]
  *         if len(idx):
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_where); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_where); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_isclose); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_isclose); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_14);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_buffer_, __pyx_n_s_mean); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_v_buffer_, __pyx_n_s_mean); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
     __pyx_t_16 = NULL;
     __pyx_t_12 = 0;
@@ -5198,13 +5199,13 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       PyObject *__pyx_callargs[2] = {__pyx_t_16, __pyx_int_1};
       __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_15, __pyx_callargs+1-__pyx_t_12, 1+__pyx_t_12);
       __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
     }
-    __pyx_t_15 = PyFloat_FromDouble(__pyx_v_tipping_point); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_15 = PyFloat_FromDouble(__pyx_v_tipping_point); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
-    __pyx_t_16 = PyTuple_New(2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_16 = PyTuple_New(2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_16);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_16, 0, __pyx_t_1);
@@ -5212,17 +5213,17 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
     PyTuple_SET_ITEM(__pyx_t_16, 1, __pyx_t_15);
     __pyx_t_1 = 0;
     __pyx_t_15 = 0;
-    __pyx_t_15 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_atol); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_atol); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (PyDict_SetItem(__pyx_t_15, __pyx_n_s_atol, __pyx_t_1) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_15, __pyx_n_s_atol, __pyx_t_1) < 0) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_rtol); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_rtol); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (PyDict_SetItem(__pyx_t_15, __pyx_n_s_rtol, __pyx_t_1) < 0) __PYX_ERR(0, 59, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_15, __pyx_n_s_rtol, __pyx_t_1) < 0) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_t_16, __pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_14, __pyx_t_16, __pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
     __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
@@ -5244,31 +5245,31 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_12, 1+__pyx_t_12);
       __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 59, __pyx_L1_error)
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 58, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
-    __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_8, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_8, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_XDECREF_SET(__pyx_v_idx, __pyx_t_7);
     __pyx_t_7 = 0;
 
-    /* "imi/signal.pyx":60
+    /* "imi/signal.pyx":59
  *         buffer_          = (<Model> models[tid].ptr).simulate(buffer_size)
  *         idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]
  *         idx =  idx[np.argwhere(np.diff(idx) > spacing)]             # <<<<<<<<<<<<<<
  *         if len(idx):
  *             if idx.max() + window > buffer_.shape[0]:
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 60, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_argwhere); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_argwhere); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __Pyx_GetModuleGlobalName(__pyx_t_15, __pyx_n_s_np); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 60, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_15, __pyx_n_s_np); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
-    __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_t_15, __pyx_n_s_diff); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 60, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_t_15, __pyx_n_s_diff); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_16);
     __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
     __pyx_t_15 = NULL;
@@ -5287,13 +5288,13 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       PyObject *__pyx_callargs[2] = {__pyx_t_15, __pyx_v_idx};
       __pyx_t_8 = __Pyx_PyObject_FastCall(__pyx_t_16, __pyx_callargs+1-__pyx_t_12, 1+__pyx_t_12);
       __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 60, __pyx_L1_error)
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 59, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
     }
-    __pyx_t_16 = __Pyx_PyInt_FromSize_t(__pyx_v_spacing); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 60, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyInt_FromSize_t(__pyx_v_spacing); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_16);
-    __pyx_t_15 = PyObject_RichCompare(__pyx_t_8, __pyx_t_16, Py_GT); __Pyx_XGOTREF(__pyx_t_15); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 60, __pyx_L1_error)
+    __pyx_t_15 = PyObject_RichCompare(__pyx_t_8, __pyx_t_16, Py_GT); __Pyx_XGOTREF(__pyx_t_15); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
     __pyx_t_16 = NULL;
@@ -5313,35 +5314,35 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_12, 1+__pyx_t_12);
       __Pyx_XDECREF(__pyx_t_16); __pyx_t_16 = 0;
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 60, __pyx_L1_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
-    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_idx, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_idx, __pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF_SET(__pyx_v_idx, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "imi/signal.pyx":61
+    /* "imi/signal.pyx":60
  *         idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]
  *         idx =  idx[np.argwhere(np.diff(idx) > spacing)]
  *         if len(idx):             # <<<<<<<<<<<<<<
  *             if idx.max() + window > buffer_.shape[0]:
  *                 buffer_ = np.concatenate((buffer_,  m.simulate(window)))
  */
-    __pyx_t_3 = PyObject_Length(__pyx_v_idx); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 61, __pyx_L1_error)
+    __pyx_t_3 = PyObject_Length(__pyx_v_idx); if (unlikely(__pyx_t_3 == ((Py_ssize_t)-1))) __PYX_ERR(0, 60, __pyx_L1_error)
     __pyx_t_17 = (__pyx_t_3 != 0);
     if (__pyx_t_17) {
 
-      /* "imi/signal.pyx":62
+      /* "imi/signal.pyx":61
  *         idx =  idx[np.argwhere(np.diff(idx) > spacing)]
  *         if len(idx):
  *             if idx.max() + window > buffer_.shape[0]:             # <<<<<<<<<<<<<<
  *                 buffer_ = np.concatenate((buffer_,  m.simulate(window)))
  *         # bin around tipping points
  */
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_idx, __pyx_n_s_max); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_idx, __pyx_n_s_max); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_15 = NULL;
       __pyx_t_12 = 0;
@@ -5359,43 +5360,43 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
         PyObject *__pyx_callargs[1] = {__pyx_t_15, };
         __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_12, 0+__pyx_t_12);
         __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       }
-      __pyx_t_7 = __Pyx_PyInt_FromSize_t(__pyx_v_window); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_FromSize_t(__pyx_v_window); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_15 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_15 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_buffer_, __pyx_n_s_shape); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_buffer_, __pyx_n_s_shape); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = PyObject_RichCompare(__pyx_t_15, __pyx_t_1, Py_GT); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_7 = PyObject_RichCompare(__pyx_t_15, __pyx_t_1, Py_GT); __Pyx_XGOTREF(__pyx_t_7); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_17 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 62, __pyx_L1_error)
+      __pyx_t_17 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_17 < 0)) __PYX_ERR(0, 61, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       if (__pyx_t_17) {
 
-        /* "imi/signal.pyx":63
+        /* "imi/signal.pyx":62
  *         if len(idx):
  *             if idx.max() + window > buffer_.shape[0]:
  *                 buffer_ = np.concatenate((buffer_,  m.simulate(window)))             # <<<<<<<<<<<<<<
  *         # bin around tipping points
  *         for jdx in idx:
  */
-        __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+        __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_concatenate); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 63, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_concatenate); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_7plexsim_6models_Model *)__pyx_v_m->__pyx_vtab)->simulate(__pyx_v_m, __pyx_v_window, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
+        __pyx_t_1 = ((PyObject *)((struct __pyx_vtabstruct_7plexsim_6models_Model *)__pyx_v_m->__pyx_vtab)->simulate(__pyx_v_m, __pyx_v_window, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_16 = PyTuple_New(2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 63, __pyx_L1_error)
+        __pyx_t_16 = PyTuple_New(2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 62, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_16);
         __Pyx_INCREF(__pyx_v_buffer_);
         __Pyx_GIVEREF(__pyx_v_buffer_);
@@ -5420,14 +5421,14 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
           __pyx_t_7 = __Pyx_PyObject_FastCall(__pyx_t_15, __pyx_callargs+1-__pyx_t_12, 1+__pyx_t_12);
           __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 63, __pyx_L1_error)
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 62, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         }
         __Pyx_DECREF_SET(__pyx_v_buffer_, __pyx_t_7);
         __pyx_t_7 = 0;
 
-        /* "imi/signal.pyx":62
+        /* "imi/signal.pyx":61
  *         idx =  idx[np.argwhere(np.diff(idx) > spacing)]
  *         if len(idx):
  *             if idx.max() + window > buffer_.shape[0]:             # <<<<<<<<<<<<<<
@@ -5436,7 +5437,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
  */
       }
 
-      /* "imi/signal.pyx":61
+      /* "imi/signal.pyx":60
  *         idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]
  *         idx =  idx[np.argwhere(np.diff(idx) > spacing)]
  *         if len(idx):             # <<<<<<<<<<<<<<
@@ -5445,7 +5446,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
  */
     }
 
-    /* "imi/signal.pyx":65
+    /* "imi/signal.pyx":64
  *                 buffer_ = np.concatenate((buffer_,  m.simulate(window)))
  *         # bin around tipping points
  *         for jdx in idx:             # <<<<<<<<<<<<<<
@@ -5456,26 +5457,26 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       __pyx_t_7 = __pyx_v_idx; __Pyx_INCREF(__pyx_t_7); __pyx_t_3 = 0;
       __pyx_t_18 = NULL;
     } else {
-      __pyx_t_3 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_v_idx); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 65, __pyx_L1_error)
+      __pyx_t_3 = -1; __pyx_t_7 = PyObject_GetIter(__pyx_v_idx); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 64, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_18 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_7); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 65, __pyx_L1_error)
+      __pyx_t_18 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_7); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 64, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_18)) {
         if (likely(PyList_CheckExact(__pyx_t_7))) {
           if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_7)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_15 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_3); __Pyx_INCREF(__pyx_t_15); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_15 = PyList_GET_ITEM(__pyx_t_7, __pyx_t_3); __Pyx_INCREF(__pyx_t_15); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 64, __pyx_L1_error)
           #else
-          __pyx_t_15 = PySequence_ITEM(__pyx_t_7, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_15 = PySequence_ITEM(__pyx_t_7, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 64, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           #endif
         } else {
           if (__pyx_t_3 >= PyTuple_GET_SIZE(__pyx_t_7)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_15 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_3); __Pyx_INCREF(__pyx_t_15); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_15 = PyTuple_GET_ITEM(__pyx_t_7, __pyx_t_3); __Pyx_INCREF(__pyx_t_15); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 64, __pyx_L1_error)
           #else
-          __pyx_t_15 = PySequence_ITEM(__pyx_t_7, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 65, __pyx_L1_error)
+          __pyx_t_15 = PySequence_ITEM(__pyx_t_7, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 64, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           #endif
         }
@@ -5485,17 +5486,17 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 65, __pyx_L1_error)
+            else __PYX_ERR(0, 64, __pyx_L1_error)
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_15);
       }
-      __pyx_t_19 = __Pyx_PyInt_As_size_t(__pyx_t_15); if (unlikely((__pyx_t_19 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 65, __pyx_L1_error)
+      __pyx_t_19 = __Pyx_PyInt_As_size_t(__pyx_t_15); if (unlikely((__pyx_t_19 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 64, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       __pyx_v_jdx = __pyx_t_19;
 
-      /* "imi/signal.pyx":66
+      /* "imi/signal.pyx":65
  *         # bin around tipping points
  *         for jdx in idx:
  *             if jdx - window >= 0:             # <<<<<<<<<<<<<<
@@ -5505,22 +5506,22 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       __pyx_t_17 = (((__pyx_v_jdx - __pyx_v_window) >= 0) != 0);
       if (__pyx_t_17) {
 
-        /* "imi/signal.pyx":71
+        /* "imi/signal.pyx":70
  *                 # dist[0][target] = dist[0].get(target, 0 ) + 1
  * 
  *                 for state in buffer_[jdx - window : jdx + window]:             # <<<<<<<<<<<<<<
  *                     mag = tipping_point - state.mean()
  *                     if asymmetric:
  */
-        __pyx_t_15 = __Pyx_PyObject_GetSlice(__pyx_v_buffer_, (__pyx_v_jdx - __pyx_v_window), (__pyx_v_jdx + __pyx_v_window), NULL, NULL, NULL, 1, 1, 1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 71, __pyx_L1_error)
+        __pyx_t_15 = __Pyx_PyObject_GetSlice(__pyx_v_buffer_, (__pyx_v_jdx - __pyx_v_window), (__pyx_v_jdx + __pyx_v_window), NULL, NULL, NULL, 1, 1, 1); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 70, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_15);
         if (likely(PyList_CheckExact(__pyx_t_15)) || PyTuple_CheckExact(__pyx_t_15)) {
           __pyx_t_16 = __pyx_t_15; __Pyx_INCREF(__pyx_t_16); __pyx_t_4 = 0;
           __pyx_t_20 = NULL;
         } else {
-          __pyx_t_4 = -1; __pyx_t_16 = PyObject_GetIter(__pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 71, __pyx_L1_error)
+          __pyx_t_4 = -1; __pyx_t_16 = PyObject_GetIter(__pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 70, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_16);
-          __pyx_t_20 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_16); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 71, __pyx_L1_error)
+          __pyx_t_20 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_16); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 70, __pyx_L1_error)
         }
         __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
         for (;;) {
@@ -5528,17 +5529,17 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
             if (likely(PyList_CheckExact(__pyx_t_16))) {
               if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_16)) break;
               #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_15 = PyList_GET_ITEM(__pyx_t_16, __pyx_t_4); __Pyx_INCREF(__pyx_t_15); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 71, __pyx_L1_error)
+              __pyx_t_15 = PyList_GET_ITEM(__pyx_t_16, __pyx_t_4); __Pyx_INCREF(__pyx_t_15); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 70, __pyx_L1_error)
               #else
-              __pyx_t_15 = PySequence_ITEM(__pyx_t_16, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 71, __pyx_L1_error)
+              __pyx_t_15 = PySequence_ITEM(__pyx_t_16, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 70, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_15);
               #endif
             } else {
               if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_16)) break;
               #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-              __pyx_t_15 = PyTuple_GET_ITEM(__pyx_t_16, __pyx_t_4); __Pyx_INCREF(__pyx_t_15); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 71, __pyx_L1_error)
+              __pyx_t_15 = PyTuple_GET_ITEM(__pyx_t_16, __pyx_t_4); __Pyx_INCREF(__pyx_t_15); __pyx_t_4++; if (unlikely(0 < 0)) __PYX_ERR(0, 70, __pyx_L1_error)
               #else
-              __pyx_t_15 = PySequence_ITEM(__pyx_t_16, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 71, __pyx_L1_error)
+              __pyx_t_15 = PySequence_ITEM(__pyx_t_16, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 70, __pyx_L1_error)
               __Pyx_GOTREF(__pyx_t_15);
               #endif
             }
@@ -5548,7 +5549,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
               PyObject* exc_type = PyErr_Occurred();
               if (exc_type) {
                 if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-                else __PYX_ERR(0, 71, __pyx_L1_error)
+                else __PYX_ERR(0, 70, __pyx_L1_error)
               }
               break;
             }
@@ -5557,16 +5558,16 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
           __Pyx_XDECREF_SET(__pyx_v_state, __pyx_t_15);
           __pyx_t_15 = 0;
 
-          /* "imi/signal.pyx":72
+          /* "imi/signal.pyx":71
  * 
  *                 for state in buffer_[jdx - window : jdx + window]:
  *                     mag = tipping_point - state.mean()             # <<<<<<<<<<<<<<
  *                     if asymmetric:
  *                         mag = abs(mag)
  */
-          __pyx_t_15 = PyFloat_FromDouble(__pyx_v_tipping_point); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 72, __pyx_L1_error)
+          __pyx_t_15 = PyFloat_FromDouble(__pyx_v_tipping_point); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 71, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
-          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_state, __pyx_n_s_mean); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 72, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_state, __pyx_n_s_mean); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 71, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           __pyx_t_14 = NULL;
           __pyx_t_12 = 0;
@@ -5584,18 +5585,18 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
             PyObject *__pyx_callargs[1] = {__pyx_t_14, };
             __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_8, __pyx_callargs+1-__pyx_t_12, 0+__pyx_t_12);
             __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+            if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_1);
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           }
-          __pyx_t_8 = PyNumber_Subtract(__pyx_t_15, __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 72, __pyx_L1_error)
+          __pyx_t_8 = PyNumber_Subtract(__pyx_t_15, __pyx_t_1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 71, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_XDECREF_SET(__pyx_v_mag, __pyx_t_8);
           __pyx_t_8 = 0;
 
-          /* "imi/signal.pyx":73
+          /* "imi/signal.pyx":72
  *                 for state in buffer_[jdx - window : jdx + window]:
  *                     mag = tipping_point - state.mean()
  *                     if asymmetric:             # <<<<<<<<<<<<<<
@@ -5605,19 +5606,19 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
           __pyx_t_17 = (__pyx_v_asymmetric != 0);
           if (__pyx_t_17) {
 
-            /* "imi/signal.pyx":74
+            /* "imi/signal.pyx":73
  *                     mag = tipping_point - state.mean()
  *                     if asymmetric:
  *                         mag = abs(mag)             # <<<<<<<<<<<<<<
  *                     b   = bins[np.digitize(mag, bins, right = False)]
  *                     dist[b][tuple(state)] = dist[b].get(tuple(state), 0 ) + 1
  */
-            __pyx_t_8 = __Pyx_PyNumber_Absolute(__pyx_v_mag); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 74, __pyx_L1_error)
+            __pyx_t_8 = __Pyx_PyNumber_Absolute(__pyx_v_mag); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 73, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_8);
             __Pyx_DECREF_SET(__pyx_v_mag, __pyx_t_8);
             __pyx_t_8 = 0;
 
-            /* "imi/signal.pyx":73
+            /* "imi/signal.pyx":72
  *                 for state in buffer_[jdx - window : jdx + window]:
  *                     mag = tipping_point - state.mean()
  *                     if asymmetric:             # <<<<<<<<<<<<<<
@@ -5626,21 +5627,21 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
  */
           }
 
-          /* "imi/signal.pyx":75
+          /* "imi/signal.pyx":74
  *                     if asymmetric:
  *                         mag = abs(mag)
  *                     b   = bins[np.digitize(mag, bins, right = False)]             # <<<<<<<<<<<<<<
  *                     dist[b][tuple(state)] = dist[b].get(tuple(state), 0 ) + 1
  *     # normalize counts
  */
-          __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_8, __pyx_n_s_np); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_digitize); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_digitize); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __pyx_t_8 = __pyx_memoryview_fromslice(__pyx_v_bins, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
+          __pyx_t_8 = __pyx_memoryview_fromslice(__pyx_v_bins, 1, (PyObject *(*)(char *)) __pyx_memview_get_double, (int (*)(char *, PyObject *)) __pyx_memview_set_double, 0);; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 75, __pyx_L1_error)
+          __pyx_t_15 = PyTuple_New(2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           __Pyx_INCREF(__pyx_v_mag);
           __Pyx_GIVEREF(__pyx_v_mag);
@@ -5648,36 +5649,36 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
           __Pyx_GIVEREF(__pyx_t_8);
           PyTuple_SET_ITEM(__pyx_t_15, 1, __pyx_t_8);
           __pyx_t_8 = 0;
-          __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_right, Py_False) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
-          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_15, __pyx_t_8); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 75, __pyx_L1_error)
+          if (PyDict_SetItem(__pyx_t_8, __pyx_n_s_right, Py_False) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+          __pyx_t_14 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_15, __pyx_t_8); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_14);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_t_14); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 75, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyIndex_AsSsize_t(__pyx_t_14); if (unlikely((__pyx_t_5 == (Py_ssize_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
           __pyx_t_6 = __pyx_t_5;
           if (__pyx_t_6 < 0) __pyx_t_6 += __pyx_v_bins.shape[0];
-          __pyx_t_14 = PyFloat_FromDouble((*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_bins.data) + __pyx_t_6)) )))); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 75, __pyx_L1_error)
+          __pyx_t_14 = PyFloat_FromDouble((*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_bins.data) + __pyx_t_6)) )))); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 74, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_14);
           __Pyx_XDECREF_SET(__pyx_v_b, __pyx_t_14);
           __pyx_t_14 = 0;
 
-          /* "imi/signal.pyx":76
+          /* "imi/signal.pyx":75
  *                         mag = abs(mag)
  *                     b   = bins[np.digitize(mag, bins, right = False)]
  *                     dist[b][tuple(state)] = dist[b].get(tuple(state), 0 ) + 1             # <<<<<<<<<<<<<<
  *     # normalize counts
  *     for k, v  in dist.items():
  */
-          __pyx_t_8 = __Pyx_PyDict_GetItem(__pyx_v_dist, __pyx_v_b); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_PyDict_GetItem(__pyx_v_dist, __pyx_v_b); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_get); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyObject_GetAttrStr(__pyx_t_8, __pyx_n_s_get); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 75, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __pyx_t_8 = __Pyx_PySequence_Tuple(__pyx_v_state); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_PySequence_Tuple(__pyx_v_state); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           __pyx_t_1 = NULL;
           __pyx_t_12 = 0;
@@ -5696,23 +5697,23 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
             __pyx_t_14 = __Pyx_PyObject_FastCall(__pyx_t_15, __pyx_callargs+1-__pyx_t_12, 2+__pyx_t_12);
             __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-            if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 76, __pyx_L1_error)
+            if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 75, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_14);
             __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
           }
-          __pyx_t_15 = __Pyx_PyInt_AddObjC(__pyx_t_14, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyInt_AddObjC(__pyx_t_14, __pyx_int_1, 1, 0, 0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 75, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_15);
           __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-          __pyx_t_14 = __Pyx_PyDict_GetItem(__pyx_v_dist, __pyx_v_b); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_14 = __Pyx_PyDict_GetItem(__pyx_v_dist, __pyx_v_b); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 75, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_14);
-          __pyx_t_8 = __Pyx_PySequence_Tuple(__pyx_v_state); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 76, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_PySequence_Tuple(__pyx_v_state); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 75, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          if (unlikely(PyObject_SetItem(__pyx_t_14, __pyx_t_8, __pyx_t_15) < 0)) __PYX_ERR(0, 76, __pyx_L1_error)
+          if (unlikely(PyObject_SetItem(__pyx_t_14, __pyx_t_8, __pyx_t_15) < 0)) __PYX_ERR(0, 75, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
 
-          /* "imi/signal.pyx":71
+          /* "imi/signal.pyx":70
  *                 # dist[0][target] = dist[0].get(target, 0 ) + 1
  * 
  *                 for state in buffer_[jdx - window : jdx + window]:             # <<<<<<<<<<<<<<
@@ -5722,7 +5723,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
         }
         __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
 
-        /* "imi/signal.pyx":66
+        /* "imi/signal.pyx":65
  *         # bin around tipping points
  *         for jdx in idx:
  *             if jdx - window >= 0:             # <<<<<<<<<<<<<<
@@ -5731,7 +5732,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
  */
       }
 
-      /* "imi/signal.pyx":65
+      /* "imi/signal.pyx":64
  *                 buffer_ = np.concatenate((buffer_,  m.simulate(window)))
  *         # bin around tipping points
  *         for jdx in idx:             # <<<<<<<<<<<<<<
@@ -5742,7 +5743,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
 
-  /* "imi/signal.pyx":78
+  /* "imi/signal.pyx":77
  *                     dist[b][tuple(state)] = dist[b].get(tuple(state), 0 ) + 1
  *     # normalize counts
  *     for k, v  in dist.items():             # <<<<<<<<<<<<<<
@@ -5750,7 +5751,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
  *         for kk, vv in v.items():
  */
   __pyx_t_3 = 0;
-  __pyx_t_16 = __Pyx_dict_iterator(__pyx_v_dist, 1, __pyx_n_s_items, (&__pyx_t_4), (&__pyx_t_12)); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_16 = __Pyx_dict_iterator(__pyx_v_dist, 1, __pyx_n_s_items, (&__pyx_t_4), (&__pyx_t_12)); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_16);
   __Pyx_XDECREF(__pyx_t_7);
   __pyx_t_7 = __pyx_t_16;
@@ -5758,7 +5759,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
   while (1) {
     __pyx_t_21 = __Pyx_dict_iter_next(__pyx_t_7, __pyx_t_4, &__pyx_t_3, &__pyx_t_16, &__pyx_t_15, NULL, __pyx_t_12);
     if (unlikely(__pyx_t_21 == 0)) break;
-    if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 77, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_16);
     __Pyx_GOTREF(__pyx_t_15);
     __Pyx_XDECREF_SET(__pyx_v_k, __pyx_t_16);
@@ -5766,14 +5767,14 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
     __Pyx_XDECREF_SET(__pyx_v_v, __pyx_t_15);
     __pyx_t_15 = 0;
 
-    /* "imi/signal.pyx":79
+    /* "imi/signal.pyx":78
  *     # normalize counts
  *     for k, v  in dist.items():
  *         z = sum(v.values())             # <<<<<<<<<<<<<<
  *         for kk, vv in v.items():
  *             dist[k][kk] = vv / z
  */
-    __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_v_v, __pyx_n_s_values); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_GetAttrStr(__pyx_v_v, __pyx_n_s_values); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 78, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_16);
     __pyx_t_8 = NULL;
     __pyx_t_21 = 0;
@@ -5791,17 +5792,17 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       PyObject *__pyx_callargs[1] = {__pyx_t_8, };
       __pyx_t_15 = __Pyx_PyObject_FastCall(__pyx_t_16, __pyx_callargs+1-__pyx_t_21, 0+__pyx_t_21);
       __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 79, __pyx_L1_error)
+      if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 78, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
     }
-    __pyx_t_16 = __Pyx_PyObject_CallOneArg(__pyx_builtin_sum, __pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 79, __pyx_L1_error)
+    __pyx_t_16 = __Pyx_PyObject_CallOneArg(__pyx_builtin_sum, __pyx_t_15); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 78, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_16);
     __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
     __Pyx_XDECREF_SET(__pyx_v_z, __pyx_t_16);
     __pyx_t_16 = 0;
 
-    /* "imi/signal.pyx":80
+    /* "imi/signal.pyx":79
  *     for k, v  in dist.items():
  *         z = sum(v.values())
  *         for kk, vv in v.items():             # <<<<<<<<<<<<<<
@@ -5811,9 +5812,9 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
     __pyx_t_5 = 0;
     if (unlikely(__pyx_v_v == Py_None)) {
       PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "items");
-      __PYX_ERR(0, 80, __pyx_L1_error)
+      __PYX_ERR(0, 79, __pyx_L1_error)
     }
-    __pyx_t_15 = __Pyx_dict_iterator(__pyx_v_v, 0, __pyx_n_s_items, (&__pyx_t_22), (&__pyx_t_21)); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 80, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_dict_iterator(__pyx_v_v, 0, __pyx_n_s_items, (&__pyx_t_22), (&__pyx_t_21)); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 79, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
     __Pyx_XDECREF(__pyx_t_16);
     __pyx_t_16 = __pyx_t_15;
@@ -5821,7 +5822,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
     while (1) {
       __pyx_t_23 = __Pyx_dict_iter_next(__pyx_t_16, __pyx_t_22, &__pyx_t_5, &__pyx_t_15, &__pyx_t_8, NULL, __pyx_t_21);
       if (unlikely(__pyx_t_23 == 0)) break;
-      if (unlikely(__pyx_t_23 == -1)) __PYX_ERR(0, 80, __pyx_L1_error)
+      if (unlikely(__pyx_t_23 == -1)) __PYX_ERR(0, 79, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_XDECREF_SET(__pyx_v_kk, __pyx_t_15);
@@ -5829,18 +5830,18 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
       __Pyx_XDECREF_SET(__pyx_v_vv, __pyx_t_8);
       __pyx_t_8 = 0;
 
-      /* "imi/signal.pyx":81
+      /* "imi/signal.pyx":80
  *         z = sum(v.values())
  *         for kk, vv in v.items():
  *             dist[k][kk] = vv / z             # <<<<<<<<<<<<<<
  *     return dist
  * 
  */
-      __pyx_t_8 = __Pyx_PyNumber_Divide(__pyx_v_vv, __pyx_v_z); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyNumber_Divide(__pyx_v_vv, __pyx_v_z); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_15 = __Pyx_PyDict_GetItem(__pyx_v_dist, __pyx_v_k); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 81, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyDict_GetItem(__pyx_v_dist, __pyx_v_k); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      if (unlikely(PyObject_SetItem(__pyx_t_15, __pyx_v_kk, __pyx_t_8) < 0)) __PYX_ERR(0, 81, __pyx_L1_error)
+      if (unlikely(PyObject_SetItem(__pyx_t_15, __pyx_v_kk, __pyx_t_8) < 0)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     }
@@ -5848,7 +5849,7 @@ static PyObject *__pyx_f_3imi_6signal_find_tipping(struct __pyx_obj_7plexsim_6mo
   }
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "imi/signal.pyx":82
+  /* "imi/signal.pyx":81
  *         for kk, vv in v.items():
  *             dist[k][kk] = vv / z
  *     return dist             # <<<<<<<<<<<<<<
@@ -22393,7 +22394,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
   __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 54, __pyx_L1_error)
-  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) __PYX_ERR(0, 78, __pyx_L1_error)
   __pyx_builtin_RuntimeError = __Pyx_GetBuiltinName(__pyx_n_s_RuntimeError); if (!__pyx_builtin_RuntimeError) __PYX_ERR(1, 777, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 781, __pyx_L1_error)
   __pyx_builtin_ImportError = __Pyx_GetBuiltinName(__pyx_n_s_ImportError); if (!__pyx_builtin_ImportError) __PYX_ERR(1, 959, __pyx_L1_error)
@@ -22984,41 +22985,41 @@ static int __Pyx_modinit_type_import_code(void) {
    if (!__pyx_ptype_7plexsim_6models_Model) __PYX_ERR(6, 217, __pyx_L1_error)
   __pyx_vtabptr_7plexsim_6models_Model = (struct __pyx_vtabstruct_7plexsim_6models_Model*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Model); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Model)) __PYX_ERR(6, 217, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Logmap = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Logmap", sizeof(struct __pyx_obj_7plexsim_6models_Logmap), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Logmap) __PYX_ERR(6, 307, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Logmap = (struct __pyx_vtabstruct_7plexsim_6models_Logmap*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Logmap); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Logmap)) __PYX_ERR(6, 307, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Logmap) __PYX_ERR(6, 308, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Logmap = (struct __pyx_vtabstruct_7plexsim_6models_Logmap*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Logmap); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Logmap)) __PYX_ERR(6, 308, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Potts = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Potts", sizeof(struct __pyx_obj_7plexsim_6models_Potts), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Potts) __PYX_ERR(6, 311, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Potts = (struct __pyx_vtabstruct_7plexsim_6models_Potts*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Potts); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Potts)) __PYX_ERR(6, 311, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Potts) __PYX_ERR(6, 312, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Potts = (struct __pyx_vtabstruct_7plexsim_6models_Potts*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Potts); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Potts)) __PYX_ERR(6, 312, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Prisoner = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Prisoner", sizeof(struct __pyx_obj_7plexsim_6models_Prisoner), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Prisoner) __PYX_ERR(6, 337, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Prisoner = (struct __pyx_vtabstruct_7plexsim_6models_Prisoner*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Prisoner); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Prisoner)) __PYX_ERR(6, 337, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Prisoner) __PYX_ERR(6, 338, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Prisoner = (struct __pyx_vtabstruct_7plexsim_6models_Prisoner*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Prisoner); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Prisoner)) __PYX_ERR(6, 338, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_AB = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "AB", sizeof(struct __pyx_obj_7plexsim_6models_AB), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_AB) __PYX_ERR(6, 341, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_AB = (struct __pyx_vtabstruct_7plexsim_6models_AB*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_AB); if (unlikely(!__pyx_vtabptr_7plexsim_6models_AB)) __PYX_ERR(6, 341, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_AB) __PYX_ERR(6, 342, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_AB = (struct __pyx_vtabstruct_7plexsim_6models_AB*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_AB); if (unlikely(!__pyx_vtabptr_7plexsim_6models_AB)) __PYX_ERR(6, 342, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Pottsis = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Pottsis", sizeof(struct __pyx_obj_7plexsim_6models_Pottsis), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Pottsis) __PYX_ERR(6, 346, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Pottsis = (struct __pyx_vtabstruct_7plexsim_6models_Pottsis*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Pottsis); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Pottsis)) __PYX_ERR(6, 346, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Pottsis) __PYX_ERR(6, 347, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Pottsis = (struct __pyx_vtabstruct_7plexsim_6models_Pottsis*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Pottsis); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Pottsis)) __PYX_ERR(6, 347, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Ising = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Ising", sizeof(struct __pyx_obj_7plexsim_6models_Ising), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Ising) __PYX_ERR(6, 352, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Ising = (struct __pyx_vtabstruct_7plexsim_6models_Ising*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Ising); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Ising)) __PYX_ERR(6, 352, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Ising) __PYX_ERR(6, 353, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Ising = (struct __pyx_vtabstruct_7plexsim_6models_Ising*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Ising); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Ising)) __PYX_ERR(6, 353, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Bornholdt = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Bornholdt", sizeof(struct __pyx_obj_7plexsim_6models_Bornholdt), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Bornholdt) __PYX_ERR(6, 356, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Bornholdt = (struct __pyx_vtabstruct_7plexsim_6models_Bornholdt*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bornholdt); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bornholdt)) __PYX_ERR(6, 356, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Bornholdt) __PYX_ERR(6, 357, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Bornholdt = (struct __pyx_vtabstruct_7plexsim_6models_Bornholdt*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bornholdt); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bornholdt)) __PYX_ERR(6, 357, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_SIRS = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "SIRS", sizeof(struct __pyx_obj_7plexsim_6models_SIRS), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_SIRS) __PYX_ERR(6, 370, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_SIRS = (struct __pyx_vtabstruct_7plexsim_6models_SIRS*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_SIRS); if (unlikely(!__pyx_vtabptr_7plexsim_6models_SIRS)) __PYX_ERR(6, 370, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_SIRS) __PYX_ERR(6, 371, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_SIRS = (struct __pyx_vtabstruct_7plexsim_6models_SIRS*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_SIRS); if (unlikely(!__pyx_vtabptr_7plexsim_6models_SIRS)) __PYX_ERR(6, 371, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Bonabeau = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Bonabeau", sizeof(struct __pyx_obj_7plexsim_6models_Bonabeau), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Bonabeau) __PYX_ERR(6, 383, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Bonabeau = (struct __pyx_vtabstruct_7plexsim_6models_Bonabeau*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bonabeau); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bonabeau)) __PYX_ERR(6, 383, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Bonabeau) __PYX_ERR(6, 384, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Bonabeau = (struct __pyx_vtabstruct_7plexsim_6models_Bonabeau*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bonabeau); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bonabeau)) __PYX_ERR(6, 384, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_RBN = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "RBN", sizeof(struct __pyx_obj_7plexsim_6models_RBN), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_RBN) __PYX_ERR(6, 390, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_RBN = (struct __pyx_vtabstruct_7plexsim_6models_RBN*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_RBN); if (unlikely(!__pyx_vtabptr_7plexsim_6models_RBN)) __PYX_ERR(6, 390, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_RBN) __PYX_ERR(6, 391, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_RBN = (struct __pyx_vtabstruct_7plexsim_6models_RBN*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_RBN); if (unlikely(!__pyx_vtabptr_7plexsim_6models_RBN)) __PYX_ERR(6, 391, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Percolation = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Percolation", sizeof(struct __pyx_obj_7plexsim_6models_Percolation), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Percolation) __PYX_ERR(6, 400, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Percolation = (struct __pyx_vtabstruct_7plexsim_6models_Percolation*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Percolation); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Percolation)) __PYX_ERR(6, 400, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Percolation) __PYX_ERR(6, 401, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Percolation = (struct __pyx_vtabstruct_7plexsim_6models_Percolation*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Percolation); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Percolation)) __PYX_ERR(6, 401, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_CCA = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "CCA", sizeof(struct __pyx_obj_7plexsim_6models_CCA), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_CCA) __PYX_ERR(6, 406, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_CCA = (struct __pyx_vtabstruct_7plexsim_6models_CCA*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_CCA); if (unlikely(!__pyx_vtabptr_7plexsim_6models_CCA)) __PYX_ERR(6, 406, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_CCA) __PYX_ERR(6, 407, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_CCA = (struct __pyx_vtabstruct_7plexsim_6models_CCA*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_CCA); if (unlikely(!__pyx_vtabptr_7plexsim_6models_CCA)) __PYX_ERR(6, 407, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;

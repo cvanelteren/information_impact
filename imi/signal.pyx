@@ -54,7 +54,6 @@ cpdef dict find_tipping(Model m,
     for ni in range(n_samples):
         m.states = m.agentStates[0]
         tid = threadid()
-        # with gil:
         buffer_          = (<Model> models[tid].ptr).simulate(buffer_size)
         idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]
         idx =  idx[np.argwhere(np.diff(idx) > spacing)]

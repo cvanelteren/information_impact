@@ -1688,7 +1688,7 @@ typedef std::unordered_map<__pyx_t_7plexsim_6models_node_id_t,struct __pyx_t_7pl
  */
 typedef std::pair<__pyx_t_7plexsim_6models_state_t,__pyx_t_7plexsim_6models_state_t>  __pyx_t_7plexsim_6models_MemoizeUnit;
 
-/* "plexsim/models.pxd":292
+/* "plexsim/models.pxd":293
  *     cpdef np.ndarray simulate(self, size_t samples)
  * 
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)             # <<<<<<<<<<<<<<
@@ -1700,7 +1700,7 @@ struct __pyx_opt_args_7plexsim_6models_5Model__spawn {
   size_t nThreads;
 };
 
-/* "plexsim/models.pxd":294
+/* "plexsim/models.pxd":295
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)
  * 
  *     cpdef void reset(self, p =*)             # <<<<<<<<<<<<<<
@@ -1712,7 +1712,7 @@ struct __pyx_opt_args_7plexsim_6models_5Model_reset {
   PyObject *p;
 };
 
-/* "plexsim/models.pxd":328
+/* "plexsim/models.pxd":329
  *     cdef double _hamiltonian(self, state_t x, state_t  y) nogil
  * 
  *     cpdef  np.ndarray magnetize(self,\             # <<<<<<<<<<<<<<
@@ -1727,7 +1727,7 @@ struct __pyx_opt_args_7plexsim_6models_5Potts_magnetize {
   double match;
 };
 
-/* "plexsim/models.pxd":381
+/* "plexsim/models.pxd":382
  *     cdef float _checkNeighbors(self,  node_id_t node) nogil
  * 
  *     cpdef void init_random(self, node =*)             # <<<<<<<<<<<<<<
@@ -1893,6 +1893,7 @@ struct __pyx_obj_7plexsim_6models_Adjacency {
 struct __pyx_obj_7plexsim_6models_Model {
   PyObject_HEAD
   struct __pyx_vtabstruct_7plexsim_6models_Model *__pyx_vtab;
+  PyObject *ptr;
   __Pyx_memviewslice _Model__states;
   __pyx_t_7plexsim_6models_state_t *_states;
   __Pyx_memviewslice _Model__newstates;
@@ -1918,7 +1919,7 @@ struct __pyx_obj_7plexsim_6models_Model {
 };
 
 
-/* "plexsim/models.pxd":307
+/* "plexsim/models.pxd":308
  * 
  * 
  * cdef class Logmap(Model):             # <<<<<<<<<<<<<<
@@ -1932,7 +1933,7 @@ struct __pyx_obj_7plexsim_6models_Logmap {
 };
 
 
-/* "plexsim/models.pxd":311
+/* "plexsim/models.pxd":312
  *     cdef double _alpha
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
@@ -1947,7 +1948,7 @@ struct __pyx_obj_7plexsim_6models_Potts {
 };
 
 
-/* "plexsim/models.pxd":337
+/* "plexsim/models.pxd":338
  * 
  * 
  * cdef class Prisoner(Potts):             # <<<<<<<<<<<<<<
@@ -1964,7 +1965,7 @@ struct __pyx_obj_7plexsim_6models_Prisoner {
 };
 
 
-/* "plexsim/models.pxd":341
+/* "plexsim/models.pxd":342
  *         double _S, _T, _P, _R
  *         double _coupling
  * cdef class AB(Model):             # <<<<<<<<<<<<<<
@@ -1977,7 +1978,7 @@ struct __pyx_obj_7plexsim_6models_AB {
 };
 
 
-/* "plexsim/models.pxd":346
+/* "plexsim/models.pxd":347
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
@@ -1991,7 +1992,7 @@ struct __pyx_obj_7plexsim_6models_Pottsis {
 };
 
 
-/* "plexsim/models.pxd":352
+/* "plexsim/models.pxd":353
  *     cdef double  _energy(self, node_id_t  node) nogil
  * 
  * cdef class Ising(Potts):             # <<<<<<<<<<<<<<
@@ -2003,7 +2004,7 @@ struct __pyx_obj_7plexsim_6models_Ising {
 };
 
 
-/* "plexsim/models.pxd":356
+/* "plexsim/models.pxd":357
  * 
  * 
  * cdef class Bornholdt(Ising):             # <<<<<<<<<<<<<<
@@ -2020,7 +2021,7 @@ struct __pyx_obj_7plexsim_6models_Bornholdt {
 };
 
 
-/* "plexsim/models.pxd":370
+/* "plexsim/models.pxd":371
  *      cdef double _get_system_influence(self) nogil
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
@@ -2036,7 +2037,7 @@ struct __pyx_obj_7plexsim_6models_SIRS {
 };
 
 
-/* "plexsim/models.pxd":383
+/* "plexsim/models.pxd":384
  *     cpdef void init_random(self, node =*)
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
@@ -2050,7 +2051,7 @@ struct __pyx_obj_7plexsim_6models_Bonabeau {
 };
 
 
-/* "plexsim/models.pxd":390
+/* "plexsim/models.pxd":391
  *     cdef double _hamiltonian(self, double x, double y) nogil
  * 
  * cdef class RBN(Model):             # <<<<<<<<<<<<<<
@@ -2064,7 +2065,7 @@ struct __pyx_obj_7plexsim_6models_RBN {
 };
 
 
-/* "plexsim/models.pxd":400
+/* "plexsim/models.pxd":401
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class Percolation(Model):             # <<<<<<<<<<<<<<
@@ -2077,7 +2078,7 @@ struct __pyx_obj_7plexsim_6models_Percolation {
 };
 
 
-/* "plexsim/models.pxd":406
+/* "plexsim/models.pxd":407
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
@@ -2275,7 +2276,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Model {
 static struct __pyx_vtabstruct_7plexsim_6models_Model *__pyx_vtabptr_7plexsim_6models_Model;
 
 
-/* "plexsim/models.pxd":307
+/* "plexsim/models.pxd":308
  * 
  * 
  * cdef class Logmap(Model):             # <<<<<<<<<<<<<<
@@ -2289,7 +2290,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Logmap {
 static struct __pyx_vtabstruct_7plexsim_6models_Logmap *__pyx_vtabptr_7plexsim_6models_Logmap;
 
 
-/* "plexsim/models.pxd":311
+/* "plexsim/models.pxd":312
  *     cdef double _alpha
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
@@ -2308,7 +2309,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Potts {
 static struct __pyx_vtabstruct_7plexsim_6models_Potts *__pyx_vtabptr_7plexsim_6models_Potts;
 
 
-/* "plexsim/models.pxd":337
+/* "plexsim/models.pxd":338
  * 
  * 
  * cdef class Prisoner(Potts):             # <<<<<<<<<<<<<<
@@ -2322,7 +2323,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Prisoner {
 static struct __pyx_vtabstruct_7plexsim_6models_Prisoner *__pyx_vtabptr_7plexsim_6models_Prisoner;
 
 
-/* "plexsim/models.pxd":341
+/* "plexsim/models.pxd":342
  *         double _S, _T, _P, _R
  *         double _coupling
  * cdef class AB(Model):             # <<<<<<<<<<<<<<
@@ -2336,7 +2337,7 @@ struct __pyx_vtabstruct_7plexsim_6models_AB {
 static struct __pyx_vtabstruct_7plexsim_6models_AB *__pyx_vtabptr_7plexsim_6models_AB;
 
 
-/* "plexsim/models.pxd":346
+/* "plexsim/models.pxd":347
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
@@ -2350,7 +2351,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Pottsis {
 static struct __pyx_vtabstruct_7plexsim_6models_Pottsis *__pyx_vtabptr_7plexsim_6models_Pottsis;
 
 
-/* "plexsim/models.pxd":352
+/* "plexsim/models.pxd":353
  *     cdef double  _energy(self, node_id_t  node) nogil
  * 
  * cdef class Ising(Potts):             # <<<<<<<<<<<<<<
@@ -2364,7 +2365,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Ising {
 static struct __pyx_vtabstruct_7plexsim_6models_Ising *__pyx_vtabptr_7plexsim_6models_Ising;
 
 
-/* "plexsim/models.pxd":356
+/* "plexsim/models.pxd":357
  * 
  * 
  * cdef class Bornholdt(Ising):             # <<<<<<<<<<<<<<
@@ -2379,7 +2380,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Bornholdt {
 static struct __pyx_vtabstruct_7plexsim_6models_Bornholdt *__pyx_vtabptr_7plexsim_6models_Bornholdt;
 
 
-/* "plexsim/models.pxd":370
+/* "plexsim/models.pxd":371
  *      cdef double _get_system_influence(self) nogil
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
@@ -2395,7 +2396,7 @@ struct __pyx_vtabstruct_7plexsim_6models_SIRS {
 static struct __pyx_vtabstruct_7plexsim_6models_SIRS *__pyx_vtabptr_7plexsim_6models_SIRS;
 
 
-/* "plexsim/models.pxd":383
+/* "plexsim/models.pxd":384
  *     cpdef void init_random(self, node =*)
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
@@ -2410,7 +2411,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Bonabeau {
 static struct __pyx_vtabstruct_7plexsim_6models_Bonabeau *__pyx_vtabptr_7plexsim_6models_Bonabeau;
 
 
-/* "plexsim/models.pxd":390
+/* "plexsim/models.pxd":391
  *     cdef double _hamiltonian(self, double x, double y) nogil
  * 
  * cdef class RBN(Model):             # <<<<<<<<<<<<<<
@@ -2424,7 +2425,7 @@ struct __pyx_vtabstruct_7plexsim_6models_RBN {
 static struct __pyx_vtabstruct_7plexsim_6models_RBN *__pyx_vtabptr_7plexsim_6models_RBN;
 
 
-/* "plexsim/models.pxd":400
+/* "plexsim/models.pxd":401
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class Percolation(Model):             # <<<<<<<<<<<<<<
@@ -2438,7 +2439,7 @@ struct __pyx_vtabstruct_7plexsim_6models_Percolation {
 static struct __pyx_vtabstruct_7plexsim_6models_Percolation *__pyx_vtabptr_7plexsim_6models_Percolation;
 
 
-/* "plexsim/models.pxd":406
+/* "plexsim/models.pxd":407
  *     cdef void _step(self, node_id_t node) nogil
  * 
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
@@ -29840,41 +29841,41 @@ static int __Pyx_modinit_type_import_code(void) {
    if (!__pyx_ptype_7plexsim_6models_Model) __PYX_ERR(6, 217, __pyx_L1_error)
   __pyx_vtabptr_7plexsim_6models_Model = (struct __pyx_vtabstruct_7plexsim_6models_Model*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Model); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Model)) __PYX_ERR(6, 217, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Logmap = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Logmap", sizeof(struct __pyx_obj_7plexsim_6models_Logmap), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Logmap) __PYX_ERR(6, 307, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Logmap = (struct __pyx_vtabstruct_7plexsim_6models_Logmap*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Logmap); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Logmap)) __PYX_ERR(6, 307, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Logmap) __PYX_ERR(6, 308, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Logmap = (struct __pyx_vtabstruct_7plexsim_6models_Logmap*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Logmap); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Logmap)) __PYX_ERR(6, 308, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Potts = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Potts", sizeof(struct __pyx_obj_7plexsim_6models_Potts), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Potts) __PYX_ERR(6, 311, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Potts = (struct __pyx_vtabstruct_7plexsim_6models_Potts*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Potts); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Potts)) __PYX_ERR(6, 311, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Potts) __PYX_ERR(6, 312, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Potts = (struct __pyx_vtabstruct_7plexsim_6models_Potts*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Potts); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Potts)) __PYX_ERR(6, 312, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Prisoner = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Prisoner", sizeof(struct __pyx_obj_7plexsim_6models_Prisoner), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Prisoner) __PYX_ERR(6, 337, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Prisoner = (struct __pyx_vtabstruct_7plexsim_6models_Prisoner*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Prisoner); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Prisoner)) __PYX_ERR(6, 337, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Prisoner) __PYX_ERR(6, 338, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Prisoner = (struct __pyx_vtabstruct_7plexsim_6models_Prisoner*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Prisoner); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Prisoner)) __PYX_ERR(6, 338, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_AB = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "AB", sizeof(struct __pyx_obj_7plexsim_6models_AB), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_AB) __PYX_ERR(6, 341, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_AB = (struct __pyx_vtabstruct_7plexsim_6models_AB*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_AB); if (unlikely(!__pyx_vtabptr_7plexsim_6models_AB)) __PYX_ERR(6, 341, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_AB) __PYX_ERR(6, 342, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_AB = (struct __pyx_vtabstruct_7plexsim_6models_AB*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_AB); if (unlikely(!__pyx_vtabptr_7plexsim_6models_AB)) __PYX_ERR(6, 342, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Pottsis = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Pottsis", sizeof(struct __pyx_obj_7plexsim_6models_Pottsis), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Pottsis) __PYX_ERR(6, 346, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Pottsis = (struct __pyx_vtabstruct_7plexsim_6models_Pottsis*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Pottsis); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Pottsis)) __PYX_ERR(6, 346, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Pottsis) __PYX_ERR(6, 347, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Pottsis = (struct __pyx_vtabstruct_7plexsim_6models_Pottsis*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Pottsis); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Pottsis)) __PYX_ERR(6, 347, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Ising = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Ising", sizeof(struct __pyx_obj_7plexsim_6models_Ising), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Ising) __PYX_ERR(6, 352, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Ising = (struct __pyx_vtabstruct_7plexsim_6models_Ising*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Ising); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Ising)) __PYX_ERR(6, 352, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Ising) __PYX_ERR(6, 353, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Ising = (struct __pyx_vtabstruct_7plexsim_6models_Ising*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Ising); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Ising)) __PYX_ERR(6, 353, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Bornholdt = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Bornholdt", sizeof(struct __pyx_obj_7plexsim_6models_Bornholdt), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Bornholdt) __PYX_ERR(6, 356, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Bornholdt = (struct __pyx_vtabstruct_7plexsim_6models_Bornholdt*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bornholdt); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bornholdt)) __PYX_ERR(6, 356, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Bornholdt) __PYX_ERR(6, 357, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Bornholdt = (struct __pyx_vtabstruct_7plexsim_6models_Bornholdt*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bornholdt); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bornholdt)) __PYX_ERR(6, 357, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_SIRS = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "SIRS", sizeof(struct __pyx_obj_7plexsim_6models_SIRS), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_SIRS) __PYX_ERR(6, 370, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_SIRS = (struct __pyx_vtabstruct_7plexsim_6models_SIRS*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_SIRS); if (unlikely(!__pyx_vtabptr_7plexsim_6models_SIRS)) __PYX_ERR(6, 370, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_SIRS) __PYX_ERR(6, 371, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_SIRS = (struct __pyx_vtabstruct_7plexsim_6models_SIRS*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_SIRS); if (unlikely(!__pyx_vtabptr_7plexsim_6models_SIRS)) __PYX_ERR(6, 371, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Bonabeau = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Bonabeau", sizeof(struct __pyx_obj_7plexsim_6models_Bonabeau), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Bonabeau) __PYX_ERR(6, 383, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Bonabeau = (struct __pyx_vtabstruct_7plexsim_6models_Bonabeau*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bonabeau); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bonabeau)) __PYX_ERR(6, 383, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Bonabeau) __PYX_ERR(6, 384, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Bonabeau = (struct __pyx_vtabstruct_7plexsim_6models_Bonabeau*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Bonabeau); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Bonabeau)) __PYX_ERR(6, 384, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_RBN = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "RBN", sizeof(struct __pyx_obj_7plexsim_6models_RBN), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_RBN) __PYX_ERR(6, 390, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_RBN = (struct __pyx_vtabstruct_7plexsim_6models_RBN*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_RBN); if (unlikely(!__pyx_vtabptr_7plexsim_6models_RBN)) __PYX_ERR(6, 390, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_RBN) __PYX_ERR(6, 391, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_RBN = (struct __pyx_vtabstruct_7plexsim_6models_RBN*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_RBN); if (unlikely(!__pyx_vtabptr_7plexsim_6models_RBN)) __PYX_ERR(6, 391, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_Percolation = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "Percolation", sizeof(struct __pyx_obj_7plexsim_6models_Percolation), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_Percolation) __PYX_ERR(6, 400, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_Percolation = (struct __pyx_vtabstruct_7plexsim_6models_Percolation*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Percolation); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Percolation)) __PYX_ERR(6, 400, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_Percolation) __PYX_ERR(6, 401, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_Percolation = (struct __pyx_vtabstruct_7plexsim_6models_Percolation*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_Percolation); if (unlikely(!__pyx_vtabptr_7plexsim_6models_Percolation)) __PYX_ERR(6, 401, __pyx_L1_error)
   __pyx_ptype_7plexsim_6models_CCA = __Pyx_ImportType(__pyx_t_1, "plexsim.models", "CCA", sizeof(struct __pyx_obj_7plexsim_6models_CCA), __Pyx_ImportType_CheckSize_Warn);
-   if (!__pyx_ptype_7plexsim_6models_CCA) __PYX_ERR(6, 406, __pyx_L1_error)
-  __pyx_vtabptr_7plexsim_6models_CCA = (struct __pyx_vtabstruct_7plexsim_6models_CCA*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_CCA); if (unlikely(!__pyx_vtabptr_7plexsim_6models_CCA)) __PYX_ERR(6, 406, __pyx_L1_error)
+   if (!__pyx_ptype_7plexsim_6models_CCA) __PYX_ERR(6, 407, __pyx_L1_error)
+  __pyx_vtabptr_7plexsim_6models_CCA = (struct __pyx_vtabstruct_7plexsim_6models_CCA*)__Pyx_GetVtable(__pyx_ptype_7plexsim_6models_CCA); if (unlikely(!__pyx_vtabptr_7plexsim_6models_CCA)) __PYX_ERR(6, 407, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_RefNannyFinishContext();
   return 0;
