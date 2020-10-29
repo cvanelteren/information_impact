@@ -1,0 +1,2 @@
+recursive-include *.pxd *.pyx
+global-exclude __pycache__
