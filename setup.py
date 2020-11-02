@@ -87,7 +87,7 @@ setup(
         url          = "cvanelteren.github.io",
         zip_safe     = False,
         # namespace_packages     = namespaces,
-        include_packaged_data = True,
+        include_package_data = True,
         data_files   = data_files,
         # package_data = package_data,
         packages     = packages,
