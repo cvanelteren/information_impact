@@ -22,7 +22,7 @@ trials = 1
     [simulation.tipping]
         n_samples   = 500
         buffer_size = 10000
-        window      = 100
+        window      = 1000
         asymmetric  = false
         spacing     = 1
 
