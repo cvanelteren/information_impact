@@ -20,7 +20,7 @@ trials = 1
 [simulation]
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 100
+        n_samples   = 500
         buffer_size = 10000
         window      = 100
         asymmetric  = false
@@ -28,4 +28,4 @@ trials = 1
 
     [simulation.conditional]
         repeats    = 1000
-        time_steps = 100
+        time_steps = 1000

@@ -20,7 +20,6 @@ def bfs_iso(graph, discovered, tree = nx.DiGraph()):
         bfs_iso(graph, d, tree)
     # print(discovered, d)
     return tree
-
 def construct_iso_tree(nodes, graph):
     return [bfs_iso(graph, {i:[None]}, nx.DiGraph()) for i in nodes]
 
