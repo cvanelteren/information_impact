@@ -20,7 +20,7 @@ trials = 1
 [simulation]
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 500
+        n_samples   = 100
         buffer_size = 10000
         window      = 1000
         asymmetric  = false
