@@ -7,7 +7,5 @@
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
 #SBATCH --constraint=cpunode
 source activate
-cd /var/scratch/cveltere/information_impact
-python setup.py install
-cd slurm
+cd /var/scratch/cveltere/information_impact/slurm
 srun python run_toml.py

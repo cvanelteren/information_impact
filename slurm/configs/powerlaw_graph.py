@@ -71,4 +71,5 @@ def run_experiment(model, settings = {}) -> dict:
     for k, v in snapshots.items():
         print(f"{len(v)} \t at {k}")
     # print(f"Found {len(snapshots)}")
+    print("done")
     return dict(snapshots = snapshots, mi = mis, px = pxs)
