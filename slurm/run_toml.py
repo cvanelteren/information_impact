@@ -55,11 +55,14 @@ class toml_reader:
 
         return m
 
-import datetime
+import datetime, shutil
+
+SETTINGS = "settings.toml"
+
 if __name__ == "__main__":
 
     # load toml settings
-    reader = toml_reader('settings.toml')
+    reader = toml_reader(SETTINGS)
     # make local directory if exists
     date = datetime.datetime.now().isoformat()
 
@@ -80,6 +83,7 @@ if __name__ == "__main__":
 
     os.makedirs(output_directory, exist_ok = True)
     print(f"created {output_directory}")
+    shutil.copyfile(SETTINGS, os.path.join(output_directory, SETTINGS))
     # run experiments
     from pyprind import prog_bar
     trials = reader.settings.get("trials", 1)

@@ -267,34 +267,3 @@ def addGraphPretty(graph, \
     ax.set_aspect('equal')
     return ax
 
-from ipycytoscape import CytoscapeWidget
-class Visualizer:
-    def __init__(self, graph):
-        self.graph = graph
-        self.widget= CytoscapeWidget()
-        self.widget.graph.add_graph_from_networkx(graph,)
-        self.update_nodes()
-        style = [
-        dict(selector = 'node',
-              css = {
-                  "background-color": "data(color)",
-                  "text-outline-width" : 10
-                    }),
-        dict(selector = ':selected',
-            css = {"background-color" : 'red',
-                   "line-color" : "black",
-                   "source-arrow-color" : "yellow",
-                   "target-arrow-color" : "purple"})]
-        self.widget.set_style(style)
-        self.widget.set_layout(name = 'cose')
-    def update_nodes(self, data = None, colors = None):
-        if not isinstance(None, type(data)):
-            for idx, c in enumerate(data):
-                node = self.widget.graph.nodes[idx]
-                node.data['color'] = colors[c]
-        else:
-            for node in self.widget.graph.nodes:
-                if np.random.rand() < .5:
-                    node.data['color'] = 'red'
-                else:
-                    node.data['color'] = 'blue'
