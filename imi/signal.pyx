@@ -22,16 +22,62 @@ from plexsim.models cimport *
 #         dist[tmp] = dist.get(tmp, 0) + 1
 #     return dist
 
+def matchT(Model m, object sig, double m0 = .5,
+              size_t window = int(2e5), double pct = .01):
+
+    from scipy import optimize
+    cdef np.ndarray idx = np.array([])
+    cdef size_t nmin = int(window * pct)
+
+    cdef double tol = 2 * (1/ <double> m.nNodes)
+    cdef double high, low
+
+    while not idx.size:
+        # setup model
+        t = optimize.minimize(lambda x: abs(sig(x) - m0), 0.0)
+#         m.states = 0
+        m.t = t.x
+
+        # generate buffer
+#         buffer = m.simulate_mean(window)
+        buffer = m.simulate(window).mean(1)
+        idx = np.where(np.isclose(buffer, 0.5, atol = tol))[0]
+        print(f"Setting m_0 ={m0}\tt={m.t}\t#tipps={idx.size}\tthreshold={nmin}")
+        if idx.size > nmin:
+            idx  = np.array([])
+            high = m0 * 2
+            low  = m0
+            m0   = (high + low) / 2
+            m0   = np.clip(m0, 0, 1)
+            idx  = np.array([])
+        else:
+            m0 /= 2
+    return t, idx, m0
+
+from scipy import ndimage
+cpdef np.ndarray detect_tipping(double[::1] signal,
+                                double threshold,
+                                double rtol = 0,
+                                double atol = 0,
+                                size_t spacing = 1,
+                                size_t sigma = 0 ):
+    cdef np.ndarray idx
+    if sigma:
+        signal = ndimage.median_filter(signal, sigma)
+    idx = np.where(np.isclose(signal, threshold, atol = atol, rtol = rtol))[0]
+    idx =  idx[np.argwhere(np.diff(idx) > spacing)]
+    return idx
+
 cpdef dict find_tipping(Model m,
                    double[::1] bins,
                    size_t n_samples,
-                   size_t window      = 100,
-                   size_t buffer_size = int(1e4),
-                   size_t sigma       = 100,
-                   double rtol    = 0.,
-                   double atol    = .01,
-                    bint asymmetric = False,
-                    size_t spacing = 1,
+                   size_t window        = 100,
+                   size_t buffer_size   = int(1e4),
+                   size_t sigma         = 100,
+                   double rtol          = 0.,
+                   double atol          = .01,
+                   bint asymmetric      = False,
+                   size_t spacing       = 1,
                    double tipping_point = .5):
 
     # storage for sims
@@ -55,8 +101,9 @@ cpdef dict find_tipping(Model m,
         m.states = m.agentStates[0]
         tid = threadid()
         buffer_          = (<Model> models[tid].ptr).simulate(buffer_size)
-        idx = np.where(np.isclose(buffer_.mean(1), tipping_point, atol = atol, rtol = rtol))[0]
-        idx =  idx[np.argwhere(np.diff(idx) > spacing)]
+        idx = detect_tipping(buffer_.mean(1), threshold = tipping_point,
+                             atol = atol, rtol = rtol, spacing = spacing,
+                             sigma = sigma)
         if len(idx):
             if idx.max() + window > buffer_.shape[0]:
                 buffer_ = np.concatenate((buffer_,  m.simulate(window)))

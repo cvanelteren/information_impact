@@ -151,6 +151,16 @@ def addGraphPretty(graph, \
                              zorder    = 2)
     for k, v in kwargs.get('circle', {}).items():
             circlekwargs[k] = v
+
+    arrowsprops = dict(\
+                   arrowstyle = '-|>' if graph.is_directed() else '<|-|>' ,\
+                   mutation_scale = 5.0,\
+                   lw = 2,\
+                   alpha = 1,\
+                   )
+    for k, v in kwargs.get("edges", {}).items():
+        arrowsprops[k] = v
+
     # get length of the fontsize
     #    diamax = 6 * circlekwargs['radius']
 
@@ -198,12 +208,7 @@ def addGraphPretty(graph, \
     seen = {} # bookkeeping
     from copy import copy
     # arrow style for drawing
-    arrowsprops = dict(\
-                   arrowstyle = '-|>' if graph.is_directed() else '<|-|>' ,\
-                   mutation_scale = 5.0,\
-                   lw = 2,\
-                   alpha = 1,\
-                   )
+
     edgesScaling = {}
     for u, v in graph.edges():
         edgesScaling[(u, v)] = dict(graph[u][v]).get('weight', 1)
@@ -267,3 +272,10 @@ def addGraphPretty(graph, \
     ax.set_aspect('equal')
     return ax
 
+
+def get_main(fig, position = (1, 1, 1)):
+    mx = fig.add_subplot(*position,\
+                    frameon = [],
+                    xticks = [],
+                   yticks = [])
+    return mx

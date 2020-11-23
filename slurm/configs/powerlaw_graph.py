@@ -48,6 +48,7 @@ def run_experiment(model, settings = {}) -> dict:
     bins = np.asarray([*-bins[::-1], *bins])
 
     peak_settings['rtol'] = 2/model.nNodes
+    peak_settings['sigma'] = m.nNodes * 10
     snapshots = find_tipping(model,
                            bins = bins,
                            **peak_settings)
