@@ -49,7 +49,7 @@ def run_experiment(model, settings = {}) -> dict:
 
     # hacked in parameter settings
     peak_settings['rtol'] = 2/model.nNodes
-    peak_settings['sigma'] = m.nNodes * 10
+    peak_settings['sigma'] = model.nNodes * 10
 
     snapshots = find_tipping(model,
                            bins = bins,
