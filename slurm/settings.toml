@@ -14,7 +14,7 @@ trials = 1
     [model.graph]
         # name     = "recursive_tree"
         name = "graph.powerlaw_graph"
-        settings = {n = 30, gamma = 1.1}
+        settings = {n = 30, gamma = 1.1, connected = true}
         # settings = {r = 5, jump = 0}
 
 [simulation]
