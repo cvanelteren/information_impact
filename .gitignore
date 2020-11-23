@@ -12,3 +12,4 @@ Results/*
 *.ipynb
 *.pickle
 *-egg
+*.cpp
