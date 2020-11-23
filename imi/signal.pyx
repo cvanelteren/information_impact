@@ -64,6 +64,7 @@ cpdef np.ndarray detect_tipping(double[::1] signal,
     cdef np.ndarray idx
     if sigma:
         signal = ndimage.median_filter(signal, sigma)
+    # idx = np.where(np.abs(np.diff(np.sign(signal - threshold))), x = 1, y = 0)
     idx = np.where(np.isclose(signal, threshold, atol = atol, rtol = rtol))[0]
     idx =  idx[np.argwhere(np.diff(idx) > spacing)]
     return idx

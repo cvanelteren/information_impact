@@ -25,7 +25,7 @@ def setup_model(model) -> list :
     opts, cov = optimize.curve_fit(sig, xdata = temps, ydata = out[0],\
                       maxfev = 100_000)
 
-    thetas = [.5] # match_temperatures
+    thetas = [.3] # match_temperatures
 
     # bounds = optimize.Bounds(0, np.inf)
     for theta in thetas:
@@ -47,8 +47,10 @@ def run_experiment(model, settings = {}) -> dict:
     bins = np.linspace(0, 1, 20)
     bins = np.asarray([*-bins[::-1], *bins])
 
+    # hacked in parameter settings
     peak_settings['rtol'] = 2/model.nNodes
     peak_settings['sigma'] = m.nNodes * 10
+
     snapshots = find_tipping(model,
                            bins = bins,
                            **peak_settings)
