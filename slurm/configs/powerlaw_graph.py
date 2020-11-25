@@ -84,11 +84,13 @@ def run_experiment(model, settings = {}) -> dict:
     pxs = {}
     cs  = {}
     nStates = sum([len(i) for i in snapshots.values()])
+    if nStates == 0:
+        nsStates = 1
     t = conditional.get("time_steps")
-    bits =  check_allocation( t * model.nNodes * nStates * np.float64().itemsize
-                             )
+    bits = t * model.nNodes * nStates * np.float64().itemsize
+    bits =  check_allocation(bits)
     if bits < 1:
-        bins = np.from_iter(snapshots.keys(), dtype = np.float64)
+        bins = np.array([i for i in snapshots.keys()])
         counts = np.asarray([len(i) for i in snapshots.values()])
         n = bits * counts.sum()
         resampled = resample(counts, bins, snapshots, n)
