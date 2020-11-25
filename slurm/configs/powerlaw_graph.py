@@ -93,7 +93,6 @@ def run_experiment(model, settings = {}) -> dict:
         bins = np.array([i for i in snapshots.keys()])
         counts = np.asarray([len(i) for i in snapshots.values()])
         n = int(bits * counts.sum())
-        print(n)
         resampled = resample(counts, bins, snapshots, n)
     else:
         resampled = snapshots
@@ -101,7 +100,7 @@ def run_experiment(model, settings = {}) -> dict:
     for k, v in resampled.items():
         try:
             s, c = sim.forward(v, **conditional).values()
-            c = { k: np.float32(v) for k, vv in c.items() }
+            c = { k: np.float32(vv) for k, vv in c.items() }
             px, mi = infcy.mutualInformation(c, s)
             mis[k] = np.float32(mi)
             cs[k]  = c
