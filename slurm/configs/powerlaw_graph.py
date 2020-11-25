@@ -85,7 +85,7 @@ def run_experiment(model, settings = {}) -> dict:
     cs  = {}
     nStates = sum([len(i) for i in snapshots.values()])
     if nStates == 0:
-        nsStates = 1
+        nStates = 1
     t = conditional.get("time_steps")
     bits = t * model.nNodes * nStates * np.float64().itemsize
     bits =  check_allocation(bits)
@@ -100,8 +100,9 @@ def run_experiment(model, settings = {}) -> dict:
     for k, v in resampled.items():
         try:
             s, c = sim.forward(v, **conditional).values()
+            c = { k: np.float32(v) for k, vv in c.items() }
             px, mi = infcy.mutualInformation(c, s)
-            mis[k] = mi
+            mis[k] = np.float32(mi)
             cs[k]  = c
             pxs[k] = px
         # no states found
