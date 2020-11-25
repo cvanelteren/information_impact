@@ -20,12 +20,13 @@ trials = 1
 [simulation]
     # simulations parameters
     [simulation.tipping]
-        n_samples   = 100
-        buffer_size = 1000000
-        window      = 1000
-        asymmetric  = false
-        spacing     = 1
-        tipping_point   = 0.5
+        n_samples     = 100
+        buffer_size   = 1000000
+        window        = 1000
+        asymmetric    = false
+        spacing       = 1
+        tipping_point = 0.5
+        #edit
 
     [simulation.conditional]
         repeats    = 1000
