@@ -92,7 +92,7 @@ def run_experiment(model, settings = {}) -> dict:
     if bits < 1:
         bins = np.array([i for i in snapshots.keys()])
         counts = np.asarray([len(i) for i in snapshots.values()])
-        n = bits * counts.sum()
+        n = int(bits * counts.sum())
         resampled = resample(counts, bins, snapshots, n)
     else:
         resampled = snapshots
