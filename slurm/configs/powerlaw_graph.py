@@ -11,6 +11,7 @@ from imi import infcy
 #
 MODEL = Ising
 
+
 def setup_model(model) -> list :
     run_settings = [] # list of dicts
 
@@ -39,6 +40,28 @@ def setup_model(model) -> list :
         run_settings.append(settings)
     return run_settings
 
+
+def resample(counts, bins, samples, n):
+    s = np.random.choice(bins, size = n, p = counts / counts.sum())
+    out = dict()
+    rsamples = {}
+    import random
+    for o in s:
+        out[o] = out.get(o, 0) + 1
+        rs = random.choice(list(samples[o].keys()))
+        rsamples[o] = rsamples.get(o, []) + [rs]
+    out = dict(sorted(out.items(), key = lambda x : x[0]))
+    return out
+
+def check_allocation(bits, pct = .8, maxGb = None):
+    assert pct < 1
+    import psutil
+    if maxGb:
+        possible = maxGb
+    else:
+        possible = psutil.virtual_memory().free  * pct
+    return possible / bits
+
 def run_experiment(model, settings = {}) -> dict:
     peak_settings =  settings['tipping']
 
@@ -60,7 +83,19 @@ def run_experiment(model, settings = {}) -> dict:
     mis = {}
     pxs = {}
     cs  = {}
-    for k, v in snapshots.items():
+    nStates = sum([len(i) for i in snapshots.values()])
+    t = conditional.get("time_steps")
+    bits =  check_allocation( t * model.nNodes * nStates * np.float64().itemsize
+                             )
+    if bits < 1:
+        bins = np.from_iter(snapshots.keys(), dtype = np.float64)
+        counts = np.asarray([len(i) for i in snapshots.values()])
+        n = bits * counts.sum()
+        resampled = resample(counts, bins, snapshots, n)
+    else:
+        resampled = snapshots
+
+    for k, v in resampled.items():
         try:
             s, c = sim.forward(v, **conditional).values()
             px, mi = infcy.mutualInformation(c, s)
@@ -75,4 +110,4 @@ def run_experiment(model, settings = {}) -> dict:
         print(f"{len(v)} \t at {k}")
     # print(f"Found {len(snapshots)}")
     print("done")
-    return dict(snapshots = snapshots, mi = mis, px = pxs)
+    return dict(snapshots = snapshots, mi = mis, px = pxs, resampled = resampled)
