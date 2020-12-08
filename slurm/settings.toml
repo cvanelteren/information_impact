@@ -1,7 +1,3 @@
-# local tests
-# server
-
-# runs
 # experiment_run = "configs/Potts_recursion_center_focus.py"
 # experiment_run = 'configs/Potts_recursion1.py'
 experiment_run = 'configs/powerlaw_graph.py'

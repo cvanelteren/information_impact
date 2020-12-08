@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     # create the output directory
 
-    output_dir = parser.parse_args().d
+    output_directory = parser.parse_args().d
     output_directory += run_name
 
     os.makedirs(output_directory, exist_ok = True)
