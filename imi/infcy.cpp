@@ -1789,7 +1789,7 @@ struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data {
   double Z;
 };
 
-/* "imi/infcy.pxd":26
+/* "imi/infcy.pxd":25
  *     ) nogil
  * 
  *     cpdef dict forward(self,\             # <<<<<<<<<<<<<<
@@ -1802,7 +1802,7 @@ struct __pyx_opt_args_3imi_5infcy_9Simulator_forward {
   size_t time_steps;
 };
 
-/* "imi/infcy.pxd":33
+/* "imi/infcy.pxd":32
  *                       )
  * 
  *     cpdef dict normalize(self,\             # <<<<<<<<<<<<<<
@@ -2474,7 +2474,7 @@ static struct __pyx_vtabstruct_7plexsim_6models_CCA *__pyx_vtabptr_7plexsim_6mod
 struct __pyx_vtabstruct_3imi_5infcy_Simulator {
   PyObject *(*snapshots)(struct __pyx_obj_3imi_5infcy_Simulator *, size_t, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_snapshots *__pyx_optional_args);
   PyObject *(*running)(struct __pyx_obj_3imi_5infcy_Simulator *, size_t, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_running *__pyx_optional_args);
-  void (*bin_data)(struct __pyx_obj_3imi_5infcy_Simulator *, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, size_t, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args);
+  void (*bin_data)(struct __pyx_obj_3imi_5infcy_Simulator *, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args);
   PyObject *(*forward)(struct __pyx_obj_3imi_5infcy_Simulator *, PyObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_forward *__pyx_optional_args);
   PyObject *(*normalize)(struct __pyx_obj_3imi_5infcy_Simulator *, PyObject *, PyObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_normalize *__pyx_optional_args);
 };
@@ -3599,7 +3599,7 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, size_t __pyx_v_n_samples, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_snapshots *__pyx_optional_args); /* proto*/
 static PyObject *__pyx_f_3imi_5infcy_9Simulator_running(struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, size_t __pyx_v_n_samples, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_running *__pyx_optional_args); /* proto*/
 static PyObject *__pyx_f_3imi_5infcy_9Simulator_normalize(CYTHON_UNUSED struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, PyObject *__pyx_v_conditional, PyObject *__pyx_v_snapshots, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_normalize *__pyx_optional_args); /* proto*/
-static void __pyx_f_3imi_5infcy_9Simulator_bin_data(struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, __Pyx_memviewslice __pyx_v_buff, CYTHON_UNUSED __Pyx_memviewslice __pyx_v_target, __Pyx_memviewslice __pyx_v_bin_buffer, size_t __pyx_v_time_steps, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args); /* proto*/
+static void __pyx_f_3imi_5infcy_9Simulator_bin_data(struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, __Pyx_memviewslice __pyx_v_buff, CYTHON_UNUSED __Pyx_memviewslice __pyx_v_target, __Pyx_memviewslice __pyx_v_bin_buffer, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args); /* proto*/
 static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, PyObject *__pyx_v_snapshots, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_forward *__pyx_optional_args); /* proto*/
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_7ndarray_4base_base(PyArrayObject *__pyx_v_self); /* proto*/
 static CYTHON_INLINE PyArray_Descr *__pyx_f_5numpy_7ndarray_5descr_descr(PyArrayObject *__pyx_v_self); /* proto*/
@@ -6806,7 +6806,7 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_target, 1);
  *             target = buff[target_idx]
  *             # obtain buffer or empty
  *             bin_buffer = conditional.get(tuple(target), np.zeros(shape))             # <<<<<<<<<<<<<<
- *             self.bin_data(buff, target, bin_buffer, time_steps, 1)
+ *             self.bin_data(buff, target, bin_buffer, 1)
  * 
  */
     __pyx_t_5 = __pyx_memoryview_fromslice(__pyx_v_target, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn___pyx_t_7plexsim_6models_state_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn___pyx_t_7plexsim_6models_state_t, 0);; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 102, __pyx_L1_error)
@@ -6853,16 +6853,16 @@ __PYX_XDEC_MEMVIEW(&__pyx_v_target, 1);
     /* "imi/infcy.pyx":103
  *             # obtain buffer or empty
  *             bin_buffer = conditional.get(tuple(target), np.zeros(shape))
- *             self.bin_data(buff, target, bin_buffer, time_steps, 1)             # <<<<<<<<<<<<<<
+ *             self.bin_data(buff, target, bin_buffer, 1)             # <<<<<<<<<<<<<<
  * 
  *             conditional[tuple(target)] = conditional.get(tuple(target), bin_buffer.base.copy())
  */
     __pyx_t_17.__pyx_n = 1;
     __pyx_t_17.Z = 1.0;
-    ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->bin_data(__pyx_v_self, __pyx_v_buff, __pyx_v_target, __pyx_v_bin_buffer, __pyx_v_time_steps, &__pyx_t_17); 
+    ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->bin_data(__pyx_v_self, __pyx_v_buff, __pyx_v_target, __pyx_v_bin_buffer, &__pyx_t_17); 
 
     /* "imi/infcy.pyx":105
- *             self.bin_data(buff, target, bin_buffer, time_steps, 1)
+ *             self.bin_data(buff, target, bin_buffer, 1)
  * 
  *             conditional[tuple(target)] = conditional.get(tuple(target), bin_buffer.base.copy())             # <<<<<<<<<<<<<<
  *             snapshots[tuple(target)] = snapshots.get(tuple(target), 0) + 1.
@@ -7664,10 +7664,11 @@ static PyObject *__pyx_pf_3imi_5infcy_9Simulator_6normalize(struct __pyx_obj_3im
  *                        state_t[::1] target,\
  */
 
-static void __pyx_f_3imi_5infcy_9Simulator_bin_data(struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, __Pyx_memviewslice __pyx_v_buff, CYTHON_UNUSED __Pyx_memviewslice __pyx_v_target, __Pyx_memviewslice __pyx_v_bin_buffer, size_t __pyx_v_time_steps, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args) {
+static void __pyx_f_3imi_5infcy_9Simulator_bin_data(struct __pyx_obj_3imi_5infcy_Simulator *__pyx_v_self, __Pyx_memviewslice __pyx_v_buff, CYTHON_UNUSED __Pyx_memviewslice __pyx_v_target, __Pyx_memviewslice __pyx_v_bin_buffer, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args) {
   double __pyx_v_Z = ((double)1.0);
   size_t __pyx_v_idx;
   size_t __pyx_v_n;
+  size_t __pyx_v_time_steps;
   size_t __pyx_v_t;
   size_t __pyx_v_node;
   size_t __pyx_t_1;
@@ -7685,18 +7686,27 @@ static void __pyx_f_3imi_5infcy_9Simulator_bin_data(struct __pyx_obj_3imi_5infcy
     }
   }
 
-  /* "imi/infcy.pyx":142
+  /* "imi/infcy.pyx":141
  *         # reset
  *         cdef size_t idx
  *         cdef size_t n = self.model.adj._nNodes             # <<<<<<<<<<<<<<
+ *         cdef size_t time_steps = buff.shape[0]
  *         # bin
- *         for t in range(time_steps):
  */
   __pyx_t_1 = __pyx_v_self->model->adj->_nNodes;
   __pyx_v_n = __pyx_t_1;
 
-  /* "imi/infcy.pyx":144
+  /* "imi/infcy.pyx":142
+ *         cdef size_t idx
  *         cdef size_t n = self.model.adj._nNodes
+ *         cdef size_t time_steps = buff.shape[0]             # <<<<<<<<<<<<<<
+ *         # bin
+ *         for t in range(time_steps):
+ */
+  __pyx_v_time_steps = (__pyx_v_buff.shape[0]);
+
+  /* "imi/infcy.pyx":144
+ *         cdef size_t time_steps = buff.shape[0]
  *         # bin
  *         for t in range(time_steps):             # <<<<<<<<<<<<<<
  *             for node in range(n):
@@ -8787,7 +8797,7 @@ if (unlikely(__pyx_memoryview_copy_contents(__pyx_t_20, __pyx_t_21, 1, 1, 0) < 0
  * 
  *                # bin buffer
  *                self.bin_data(thread_state[tid], start_state[tid], \             # <<<<<<<<<<<<<<
- *                                  bin_buffer[tid], time_steps, Z)
+ *                                  bin_buffer[tid], Z)
  * 
  */
                               __pyx_t_10.data = __pyx_v_thread_state.data;
@@ -8831,7 +8841,7 @@ __pyx_t_36.data = __pyx_v_bin_buffer.data;
                               /* "imi/infcy.pyx":211
  *                # bin buffer
  *                self.bin_data(thread_state[tid], start_state[tid], \
- *                                  bin_buffer[tid], time_steps, Z)             # <<<<<<<<<<<<<<
+ *                                  bin_buffer[tid], Z)             # <<<<<<<<<<<<<<
  * 
  *                # with gil:
  */
@@ -8864,11 +8874,11 @@ __pyx_t_37.__pyx_n = 1;
  * 
  *                # bin buffer
  *                self.bin_data(thread_state[tid], start_state[tid], \             # <<<<<<<<<<<<<<
- *                                  bin_buffer[tid], time_steps, Z)
+ *                                  bin_buffer[tid], Z)
  * 
  */
                               __pyx_t_37.Z = __pyx_v_Z;
-                              ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->bin_data(__pyx_v_self, __pyx_t_10, __pyx_t_20, __pyx_t_36, __pyx_v_time_steps, &__pyx_t_37); 
+                              ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->bin_data(__pyx_v_self, __pyx_t_10, __pyx_t_20, __pyx_t_36, &__pyx_t_37); 
                               __PYX_XDEC_MEMVIEW(&__pyx_t_10, 0);
                               __pyx_t_10.memview = NULL; __pyx_t_10.data = NULL;
                               __PYX_XDEC_MEMVIEW(&__pyx_t_20, 0);
@@ -29224,7 +29234,7 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_vtabptr_3imi_5infcy_Simulator = &__pyx_vtable_3imi_5infcy_Simulator;
   __pyx_vtable_3imi_5infcy_Simulator.snapshots = (PyObject *(*)(struct __pyx_obj_3imi_5infcy_Simulator *, size_t, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_snapshots *__pyx_optional_args))__pyx_f_3imi_5infcy_9Simulator_snapshots;
   __pyx_vtable_3imi_5infcy_Simulator.running = (PyObject *(*)(struct __pyx_obj_3imi_5infcy_Simulator *, size_t, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_running *__pyx_optional_args))__pyx_f_3imi_5infcy_9Simulator_running;
-  __pyx_vtable_3imi_5infcy_Simulator.bin_data = (void (*)(struct __pyx_obj_3imi_5infcy_Simulator *, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, size_t, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args))__pyx_f_3imi_5infcy_9Simulator_bin_data;
+  __pyx_vtable_3imi_5infcy_Simulator.bin_data = (void (*)(struct __pyx_obj_3imi_5infcy_Simulator *, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice, struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data *__pyx_optional_args))__pyx_f_3imi_5infcy_9Simulator_bin_data;
   __pyx_vtable_3imi_5infcy_Simulator.forward = (PyObject *(*)(struct __pyx_obj_3imi_5infcy_Simulator *, PyObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_forward *__pyx_optional_args))__pyx_f_3imi_5infcy_9Simulator_forward;
   __pyx_vtable_3imi_5infcy_Simulator.normalize = (PyObject *(*)(struct __pyx_obj_3imi_5infcy_Simulator *, PyObject *, PyObject *, int __pyx_skip_dispatch, struct __pyx_opt_args_3imi_5infcy_9Simulator_normalize *__pyx_optional_args))__pyx_f_3imi_5infcy_9Simulator_normalize;
   #if CYTHON_COMPILING_IN_LIMITED_API

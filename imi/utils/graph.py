@@ -3,6 +3,20 @@ import numpy as np
 __author__ = 'Casper van Elteren'
 __email__ = "caspervanelteren@gmail.com"
 
+# nx.draw(gc, pos = nx.circular_layout(gc, scale = 1e-5),)
+def nx_layout(graph, layout = None):
+    from datashader.bundling import hammer_bundle
+    import pandas as pd
+    if not layout:
+        layout = nx.circular_layout(graph)
+    data = [[node]+layout[node].tolist() for node in graph.nodes]
+
+    nodes = pd.DataFrame(data, columns=['id', 'x', 'y'])
+    nodes.set_index('id', inplace=True)
+
+    edges = pd.DataFrame(list(graph.edges), columns=['source', 'target'])
+    return nodes, edges, hammer_bundle(nodes, edges)
+
 
 def bfs_iso(graph, discovered, tree=nx.DiGraph()):
     """

@@ -111,7 +111,6 @@ def addGraphPretty(graph, \
 #    graph = model.graph.
     # if default
     if positions is None:
-        print('Using circular_layout')
         positions = nx.circular_layout(graph)
     # check if it is callable
     elif hasattr(positions, '__call__'):

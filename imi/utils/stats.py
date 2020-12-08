@@ -1,8 +1,29 @@
 import numpy as np, multiprocessing as mp, scipy
-from Utils.plotting import fit
+from imi.utils.plotting import fit
 from statistics import NormalDist
 
 '''Dump file of statistical related functions'''
+
+def resample(counts, bins, samples, n):
+    s = np.random.choice(bins, size = n, p = counts / counts.sum())
+    out = dict()
+    rsamples = {}
+    import random
+    for o in s:
+        out[o] = out.get(o, 0) + 1
+        rs = random.choice(list(samples[o].keys()))
+        rsamples[o] = rsamples.get(o, []) + [rs]
+    out = dict(sorted(out.items(), key = lambda x : x[0]))
+    return out
+
+def check_allocation(bits, pct = .8, maxGb = None):
+    assert pct < 1
+    import psutil
+    if maxGb:
+        possible = maxGb
+    else:
+        possible = psutil.virtual_memory().free  * pct
+    return possible / bits
 
 
 def aucs(data, func, params = {},\

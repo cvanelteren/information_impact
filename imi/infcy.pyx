@@ -100,7 +100,7 @@ cdef class Simulator:
             target = buff[target_idx]
             # obtain buffer or empty
             bin_buffer = conditional.get(tuple(target), np.zeros(shape))
-            self.bin_data(buff, target, bin_buffer, time_steps, 1)
+            self.bin_data(buff, target, bin_buffer, 1)
 
             conditional[tuple(target)] = conditional.get(tuple(target), bin_buffer.base.copy())
             snapshots[tuple(target)] = snapshots.get(tuple(target), 0) + 1.
@@ -134,12 +134,12 @@ cdef class Simulator:
                        state_t[:, ::1] buff,\
                        state_t[::1] target,\
                        double[:, :, ::1] bin_buffer,\
-                       size_t time_steps,\
                        double Z = 1) nogil:
 
         # reset
         cdef size_t idx
         cdef size_t n = self.model.adj._nNodes
+        cdef size_t time_steps = buff.shape[0]
         # bin
         for t in range(time_steps):
             for node in range(n):
@@ -208,7 +208,7 @@ cdef class Simulator:
 
                # bin buffer
                self.bin_data(thread_state[tid], start_state[tid], \
-                                 bin_buffer[tid], time_steps, Z)
+                                 bin_buffer[tid], Z)
 
                # with gil:
            with gil:

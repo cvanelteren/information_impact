@@ -19,7 +19,6 @@ cdef class Simulator:
     cdef void bin_data(self, state_t[:, ::1] buffer,\
                        state_t[::1] target,\
                        double[:, :, ::1] bin_buffer, \
-                       size_t time_steps,\
                        double Z = *
     ) nogil
 
