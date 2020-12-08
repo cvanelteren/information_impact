@@ -13,8 +13,15 @@ trials = 1
         sampleSize = 1
     [model.graph]
         # name     = "recursive_tree"
-        name = "graph.powerlaw_graph"
-        settings = {n = 100, gamma = 1.1, connected = true}
+        # name = "graph.powerlaw_graph"
+        # settings = {n = 100, gamma = 1.1, connected = true}
+
+        name = "nx.grid_2d_graph"
+        settings = {n = 10, m = 10, periodic = True}
+
+        # name = "graph.beta_graph"
+        # settings = {n = 100, beta = 30, alpha = 2, connected = True}
+
         # settings = {r = 5, jump = 0}
 
 [simulation]
