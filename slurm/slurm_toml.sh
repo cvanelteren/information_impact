@@ -7,5 +7,19 @@
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
 #SBATCH --constraint=cpunode
 source activate
-cd /var/scratch/cveltere/information_impact/slurm
-srun python run_toml.py
+
+nodename=$(uname -n)
+output_dir="data/"
+if [[ $nodename =~ "ivi-*" ]]; then
+   cd ~/information_impact/slurm
+   output_dir=~/information_impact/slurm/data
+fi
+
+if [[ $nodename =~ "fs2" ]]; then
+    cd /var/scratch/cveltere/information_impact/slurm
+   output_dir=/var/scratch/cveltere/data
+fi
+
+echo $nodename
+echo $output_dir
+srun python run_toml.py -d $output_dir

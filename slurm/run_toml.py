@@ -3,7 +3,7 @@ import networkx as nx
 import toml, pickle, os
 from imi.utils import graph
 from imi import infcy
-import importlib
+import importlib, click
 
 """
 loads :settings.toml: and runs simulation that are in configs/.
@@ -19,7 +19,7 @@ N.B. there is currently no standard what the toml should contain..
 class toml_reader:
     def __init__(self, fn):
         self.settings = toml.load(fn)
-        print(self.settings)
+        # print(self.settings)
         self.sim_settings = self.settings.get('simulation')
 
     def experiment_run(self, f, opt_settings = {}):
@@ -59,6 +59,12 @@ import datetime, shutil
 
 SETTINGS = "settings.toml"
 
+
+from optparse import OptionParser
+from argparse import ArgumentParser
+parser = ArgumentParser()
+parser.add_argument("-d", help = "output directory", type = str,
+                    default = 'data/')
 if __name__ == "__main__":
 
     # load toml settings
@@ -73,12 +79,7 @@ if __name__ == "__main__":
 
     # create the output directory
 
-    if "fs2" in os.uname().nodename:
-        from getpass import getuser
-        output_directory = os.path.join("/var/scratch/data", getuser())
-    else:
-        output_directory = 'data/'
-
+    output_dir = parser.parse_args().d
     output_directory += run_name
 
     os.makedirs(output_directory, exist_ok = True)

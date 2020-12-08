@@ -16,8 +16,8 @@ trials = 1
         # name = "graph.powerlaw_graph"
         # settings = {n = 100, gamma = 1.1, connected = true}
 
-        name = "nx.grid_2d_graph"
-        settings = {n = 10, m = 10, periodic = True}
+        # name = "nx.grid_2d_graph"
+        # settings = {n = 10, m = 10, periodic = True}
 
         # name = "graph.beta_graph"
         # settings = {n = 100, beta = 30, alpha = 2, connected = True}
