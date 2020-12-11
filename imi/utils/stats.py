@@ -22,7 +22,7 @@ def check_allocation(bits, pct = .8, maxGb = None):
     if maxGb:
         possible = maxGb
     else:
-        possible = psutil.virtual_memory().free  * pct
+        possible = psutil.virtual_memory().free * pct
     return possible / bits
 
 

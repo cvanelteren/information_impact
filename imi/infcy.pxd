@@ -26,7 +26,7 @@ cdef class Simulator:
                       # size_t n_samples =*,\
                        dict snapshots,\
                       size_t repeats =*,\
-                      size_t time_steps =*,\
+                       np.ndarray time =*
                       )
 
     cpdef dict normalize(self,\

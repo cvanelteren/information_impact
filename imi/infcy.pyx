@@ -150,11 +150,14 @@ cdef class Simulator:
     cpdef dict forward(self, \
                        dict snapshots,\
                        size_t repeats    = 10,\
-                       size_t time_steps = 10,\
+                       np.ndarray time = np.arange(10),\
                        ):
 
+
+       from imi.utils.stats import check_allocation
        #setup buffers
        cdef:
+          size_t time_steps = time.size
           size_t cpus    = mp.cpu_count()
 
           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
@@ -167,8 +170,6 @@ cdef class Simulator:
           state_t[:, ::1] states = np.array([i for i in snapshots.keys()], \
                                             dtype = np.double)
 
-
-          node_id_t[:, :, ::1] r = np.zeros((cpus, repeats * time_steps, self.model.sampleSize), dtype = np.uintp)
           size_t nStates = len(states)
 
           # spawn models parallely
@@ -177,6 +178,18 @@ cdef class Simulator:
           # shape of buffer
           tuple shape = (time_steps, self.model.nNodes, self.model.nStates)
           dict conditional = {}
+
+       cdef size_t type_bytes = np.uintp().nbytes
+       cdef size_t inner = repeats * time_steps
+       cdef size_t nbytes = inner * type_bytes
+       print("checking available bytes")
+       cdef double check = check_allocation(nbytes * cpus)
+       # memory reduction
+       if check < 1:
+           print("Changed inner dimension")
+           inner = <size_t>(inner * check)
+       print(f"setting inner dimension {inner}")
+       cdef node_id_t[:, :, ::1] r = np.zeros((cpus, inner, self.model.sampleSize), dtype = np.uintp)
        # private variables
        cdef:
           PyObject* ptr
@@ -184,33 +197,51 @@ cdef class Simulator:
           tuple tuple_start_state
           double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
           double Z = 1  / <double> (repeats)
+          unordered_map[size_t, size_t] store_idx
+
+       for idx in range(len(time)):
+           store_idx[time[idx]] = idx
+
 
        pbar = ProgBar(nStates)
-       # for state_idx in prange(nStates, nogil = True):
-       for state_idx in prange(nStates, nogil = True):
+       # setup rngs
+       cdef vector[size_t] thread_counter
+       for tid in range(cpus):
+           r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
+           thread_counter.push_back(0)
+
+       print("Ready")
+       cdef size_t T = time.max()
+       for state_idx in prange(nStates, nogil = True, num_threads = cpus):
            tid              = threadid()
            start_state[tid] = states[state_idx]
 
            with gil:
                # get or reset buffer
                bin_buffer.base[tid] = conditional.get(tuple(start_state[tid]), np.zeros(shape))
-               r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(repeats * time_steps)
 
            # start binning
            for trial in range(repeats):
                # reset buffer
                for node in range(NODES):
                    (<Model> models[tid].ptr)._states[node] = start_state[tid, node]
+                   thread_state[tid, 0, node]              = start_state[tid, node]
 
-                   thread_state[tid, 0, node] = start_state[tid, node]
-               for step in range(1, time_steps):
-                   thread_state[tid, step] = (<Model> models[tid].ptr)._updateState(r[tid, trial*step + step])
+                # simulate a trace
+               for step in range(1, T):
+                   if thread_counter[tid] >= inner:
+                       with gil:
+                            r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
+                            thread_counter[tid] =  0
+
+                   if store_idx[step]:
+                        thread_state[tid, store_idx[step]] = \
+                        (<Model> models[tid].ptr)._updateState(r[tid, thread_counter[tid]])
+                   thread_counter[tid] += 1
 
                # bin buffer
                self.bin_data(thread_state[tid], start_state[tid], \
                                  bin_buffer[tid], Z)
-
-               # with gil:
            with gil:
                conditional[tuple(start_state[tid])] = conditional.get(\
                             tuple(start_state[tid]),  bin_buffer.base[tid].copy())
@@ -218,6 +249,46 @@ cdef class Simulator:
        # print("sanity check 2")
        # return dict(conditional = conditional, snapshots = snapshots)
        return self.normalize(conditional, snapshots, False)
+
+
+# cdef struct Task:
+#     node_id_t* nodes
+
+# cdef class PoolSampler:
+#     cdef:
+#         SpawnVec models
+#         vector[vector[Task]] queue = []
+#         size_t thread_queue_size  = 10
+#         bint kill = False
+
+#     def __init__(self, SpawnVec models):
+#         # store models
+#         self.models = models
+#         # setup tasks
+#         for tid in range(self.models.size()):
+#             self.setup_tasks(tid)
+
+
+#     cdef void setup_tasks(self, size_t tid):
+#         cdef Task task;
+#         while self.queue[tid].size() < self.thread_queue_size:
+#             # create task add to queue
+#             task.nodes = (<Model> self.model[tid].ptr)._sampleNodes(1)[0][0]
+#             self.queue[tid].push_back(task)
+#         return
+
+#     cdef void run(self):
+#         # TODO define the kill pill
+#         while True:
+#             # check all threads
+#             for tid in range(self.models.size()):
+#                 self.setup_task(tid)
+#             # external force?
+#             if self.kill:
+#                 break
+#         return
+
+
 
 
 cpdef double kpn_entropy(double[:, ::1] x, size_t k, size_t p):
@@ -473,7 +544,7 @@ def KL(p1, p2):
 #     # print("Decoding..")
 #     # setup
 #     cdef:
-#         float past = timer()
+#         double past = timer()
 #     # pre-declaration
 #         double Z              = <double> repeats
 #         unordered_map[node_id_t, nudge_t]  copyNudge = model.nudges
@@ -633,7 +704,7 @@ def KL(p1, p2):
 #     # normalize
 #     z = sum(snapshots.values())
 #     for k, v in cpx.items():
-#         cpx[k] = np.asarray(v.base) / <double> snapshots.get(k) 
+#         cpx[k] = np.asarray(v.base) / <double> snapshots.get(k)
 #         snapshots[k] /= <double> z
 #     px, mi = mutualInformation(cpx, snapshots)
 #     return snapshots, px, cpx, mi

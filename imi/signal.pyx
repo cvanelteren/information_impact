@@ -69,7 +69,7 @@ cpdef np.ndarray detect_tipping(double[::1] signal,
     idx =  idx[np.argwhere(np.diff(idx) > spacing)]
     return idx
 
-cpdef dict find_tipping(Model m,
+cpdef tuple find_tipping(Model m,
                    double[::1] bins,
                    size_t n_samples,
                    size_t window        = 100,
@@ -90,7 +90,7 @@ cpdef dict find_tipping(Model m,
     # building the dist
     cdef dict dist = {b: {} for b in bins}
     cdef:
-        size_t jdx
+        size_t jdx, zdx
         size_t ni
         size_t tid
         SpawnVec models = m._spawn()
@@ -98,6 +98,7 @@ cpdef dict find_tipping(Model m,
     #
     # cdef size_t n = n_samples
     # for ni in prange(n_samples, nogil = True):
+    cdef vector[size_t] isi = []
     for ni in range(n_samples):
         m.states = m.agentStates[0]
         tid = threadid()
@@ -108,8 +109,12 @@ cpdef dict find_tipping(Model m,
         if len(idx):
             if idx.max() + window > buffer_.shape[0]:
                 buffer_ = np.concatenate((buffer_,  m.simulate(window)))
+
         # bin around tipping points
-        for jdx in idx:
+        for zdx in range(len(idx)):
+            jdx = idx[zdx]
+            if zdx > 0:
+                isi.push_back(idx[zdx] - idx[zdx - 1])
             if jdx - window >= 0:
                 # target = tuple(buffer_[jdx])
                 # print(target)
@@ -126,7 +131,7 @@ cpdef dict find_tipping(Model m,
         z = sum(v.values())
         for kk, vv in v.items():
             dist[k][kk] = vv / z
-    return dist
+    return dist, isi
 
 # cdef _tipping(Model m,
               # size_t buffer_size,
