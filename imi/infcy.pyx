@@ -184,12 +184,14 @@ cdef class Simulator:
        cdef size_t nbytes = inner * type_bytes
        print("checking available bytes")
        cdef double check = check_allocation(nbytes * cpus)
-       # memory reduction
-       if check < 1:
-           print("Changed inner dimension")
-           inner = <size_t>(inner * check)
+
+       # # memory reduction
+       # if check < 1:
+       #     print("Changed inner dimension")
+       #     inner = <size_t>(inner * check)
+
        print(f"setting inner dimension {inner}")
-       cdef node_id_t[:, :, ::1] r = np.zeros((cpus, inner, self.model.sampleSize), dtype = np.uintp)
+
        # private variables
        cdef:
           PyObject* ptr
@@ -201,17 +203,19 @@ cdef class Simulator:
 
        for idx in range(len(time)):
            store_idx[time[idx]] = idx
-
-
        pbar = ProgBar(nStates)
        # setup rngs
-       cdef vector[size_t] thread_counter
-       for tid in range(cpus):
-           r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
-           thread_counter.push_back(0)
 
        print("Ready")
-       cdef size_t T = time.max()
+       cdef size_t T = <size_t> (np.max(time) + 1)
+       # cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype = np.uintp)
+
+       cdef vector[size_t] thread_counter
+       for tid in range(cpus):
+           thread_counter.push_back(0)
+        #    r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
+
+       cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype = np.uintp)
        for state_idx in prange(nStates, nogil = True, num_threads = cpus):
            tid              = threadid()
            start_state[tid] = states[state_idx]
@@ -227,17 +231,29 @@ cdef class Simulator:
                    (<Model> models[tid].ptr)._states[node] = start_state[tid, node]
                    thread_state[tid, 0, node]              = start_state[tid, node]
 
+               with gil:
+                    r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
+
+               # r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
                 # simulate a trace
                for step in range(1, T):
-                   if thread_counter[tid] >= inner:
-                       with gil:
-                            r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
-                            thread_counter[tid] =  0
-
-                   if store_idx[step]:
+                    # store data
+                   if store_idx.find(step) != store_idx.end():
                         thread_state[tid, store_idx[step]] = \
                         (<Model> models[tid].ptr)._updateState(r[tid, thread_counter[tid]])
-                   thread_counter[tid] += 1
+
+                        # thread_counter[tid] = 0
+
+                        # thread_state[tid, store_idx[step]] = \
+                        # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
+
+                   else:
+                        (<Model> models[tid].ptr)._updateState(r[tid, thread_counter[tid]])
+
+                        # thread_state[tid, store_idx[step]] = \
+                        # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
+
+                   # thread_counter[tid] += 1
 
                # bin buffer
                self.bin_data(thread_state[tid], start_state[tid], \
