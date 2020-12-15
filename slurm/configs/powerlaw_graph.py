@@ -27,7 +27,7 @@ def setup_model(model) -> list :
     opts, cov = optimize.curve_fit(sig, xdata = temps, ydata = out[0],\
                       maxfev = 100_000)
 
-    thetas = [.3] # match_temperatures
+    thetas = [.5] # match_temperatures
 
     # bounds = optimize.Bounds(0, np.inf)
     for theta in thetas:
@@ -48,14 +48,15 @@ def run_experiment(model, settings = {}) -> dict:
 
     # find peaks
     #
-    bins = np.linspace(0, 1, 20)
-    bins = np.asarray([*-bins[::-1], *bins])
+    # bins = np.linspace(0, 1, 20)
+    bins = np.linspace(-1, 1, 21)
+    # bins = np.asarray([*-bins[::-1], *bins])
 
     # hacked in parameter settings
     peak_settings['rtol'] = 2/model.nNodes
     peak_settings['sigma'] = model.nNodes * 10
 
-    snapshots = find_tipping(model,
+    snapshots, isi = find_tipping(model,
                            bins = bins,
                            **peak_settings)
     sim = infcy.Simulator(model)
@@ -79,6 +80,18 @@ def run_experiment(model, settings = {}) -> dict:
     else:
         resampled = snapshots
 
+
+    time_steps = conditional.get("time_steps", 1000)
+    time    = np.arange(0, time_steps // 2)
+    logtime = np.geomspace(min(isi), max(isi), time_steps // 2)
+
+    try:
+        del conditional['time_step']
+    except KeyError:
+        continue
+
+    time = np.concatenate((time, logtime))
+    conditional['time'] = time
     for k, v in resampled.items():
         try:
             s, c = sim.forward(v, **conditional).values()
@@ -95,4 +108,5 @@ def run_experiment(model, settings = {}) -> dict:
         print(f"{len(v)} \t at {k}")
     # print(f"Found {len(snapshots)}")
     print("done")
-    return dict(snapshots = snapshots, mi = mis, px = pxs, resampled = resampled)
+    return dict(snapshots = snapshots, mi = mis, px = pxs, resampled =
+                resampled, isi = isi)

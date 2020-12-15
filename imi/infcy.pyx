@@ -1,41 +1,45 @@
 # cython: infer_types=True
 # distutils: language=c++
 # __author__ = 'Casper van Elteren'
+from tqdm import tqdm  # progress bar
+from cpython cimport PyObject, Py_XINCREF, Py_XDECREF
+from cython.operator cimport dereference as deref, preincrement as prec
+from timeit import default_timer as timer
+from cython.view cimport array as cvarray
+import ctypes
+from libc.stdio cimport printf
+from libcpp.unordered_map cimport unordered_map
+from libc.stdlib cimport srand
+from libcpp.string cimport string
+from libcpp.vector cimport vector
+from pyprind import ProgBar
+from plexsim.models cimport *
+from cpython.ref cimport PyObject
+import copy
+import multiprocessing as mp
+from cython.parallel cimport parallel, prange, threadid
+import time
 import numpy as np
 cimport numpy as np
 cimport cython
-import time
-from cython.parallel cimport parallel, prange, threadid
-import multiprocessing as mp
-import copy
-from cpython.ref cimport PyObject
 
 
-from plexsim.models cimport *
 # progressbar
-from tqdm import tqdm   #progress bar
 
-from pyprind import ProgBar
 # cython
-from libcpp.vector cimport vector
-from libcpp.string cimport string
-from libc.stdlib cimport srand
-from libcpp.unordered_map cimport unordered_map
-from libc.stdio cimport printf
-import ctypes
-from cython.view cimport array as cvarray
-from timeit import default_timer as timer
-from cython.operator cimport dereference as deref, preincrement as prec
-from cpython cimport PyObject, Py_XINCREF, Py_XDECREF
 
 # print gil stuff; no mp used currently so ....useless
+
+
 def checkDistribution():
     '''Warning statement'''
     from platform import platform
     if 'windows' in platform().lower():
-        print('Warning: Windows detected. Please remember to respect the GIL'\
+        print('Warning: Windows detected. Please remember to respect the GIL'
               ' when using multi-core functions')
-checkDistribution() # print it only once
+
+
+checkDistribution()  # print it only once
 
 
 cdef class Simulator:
@@ -45,9 +49,8 @@ cdef class Simulator:
         for idx, i in enumerate(m.agentStates):
             self.hist_map[i] = idx
 
-    cpdef dict snapshots(self, size_t n_samples,\
-                         size_t step = 1):
-
+    cpdef dict snapshots(self, size_t n_samples,
+                         size_t step=1):
 
         cdef state_t[::1] states
         # cdef double z = 1 # / <double> n_samples
@@ -64,11 +67,11 @@ cdef class Simulator:
             snapshots[tmp] = snapshots.get(tmp, 0) + 1
         return snapshots
 
-    cpdef dict running(self, \
+    cpdef dict running(self,
                        size_t n_samples,
-                       size_t time_steps = 10,
-                       size_t steps      = 1,
-                       bint center       = False):
+                       size_t time_steps=10,
+                       size_t steps=1,
+                       bint center=False):
         """
         Performs running window over :time_steps: for :n_samples: times separated with
         :steps:.
@@ -77,23 +80,23 @@ cdef class Simulator:
 
         # setup buffer
         cdef:
-            tuple shape                  = (time_steps, \
-                                            self.model.adj._nNodes,\
+            tuple shape = (time_steps,
+                                            self.model.adj._nNodes,
                                             self.model._nStates)
             double[:, :, ::1] bin_buffer = np.zeros(shape)
-            state_t[:, ::1] buff       = np.zeros(shape[:2], dtype = np.double)
+            state_t[:, ::1] buff = np.zeros(shape[:2], dtype=np.double)
 
         assert n_samples > time_steps, "time_steps needs to be bigger than number of samples"
         # setup targets
         cdef:
             state_t[::1] target
-            size_t target_idx =  time_steps // 2 if center else time_steps - 1
+            size_t target_idx = time_steps // 2 if center else time_steps - 1
 
         cdef dict conditional = {}, snapshots = {}
         # start binning
         # init sample
         cdef size_t sample
-        cdef double z = 1/<double> n_samples
+        cdef double z = 1/<double > n_samples
         # init buffer
         buff = self.model.simulate(time_steps)
         for sample in range(n_samples):
@@ -102,20 +105,21 @@ cdef class Simulator:
             bin_buffer = conditional.get(tuple(target), np.zeros(shape))
             self.bin_data(buff, target, bin_buffer, 1)
 
-            conditional[tuple(target)] = conditional.get(tuple(target), bin_buffer.base.copy())
+            conditional[tuple(target)] = conditional.get(
+                tuple(target), bin_buffer.base.copy())
             snapshots[tuple(target)] = snapshots.get(tuple(target), 0) + 1.
 
             # roll buffers
-            buff = self.model.simulate(time_steps * steps)[time_steps * steps - time_steps:, :]
+            buff = self.model.simulate(
+                time_steps * steps)[time_steps * steps - time_steps:, :]
 
         return self.normalize(conditional, snapshots, True)
 
-
-    cpdef dict normalize(self, dict conditional, \
-                         dict snapshots, \
-                         bint running = True):
+    cpdef dict normalize(self, dict conditional,
+                         dict snapshots,
+                         bint running=True):
         # normalize the probs
-        cdef double z = 1 / <double> sum(snapshots.values())
+        cdef double z = 1 / <double > sum(snapshots.values())
         cdef double Z = Z
         cdef tuple k
         cdef np.ndarray v
@@ -123,18 +127,17 @@ cdef class Simulator:
         for k, v in conditional.items():
             Z = snapshots.get(k) * z
             if running:
-                conditional[k] = v /snapshots.get(k)
-            snapshots[k]   = Z
+                conditional[k] = v / snapshots.get(k)
+            snapshots[k] = Z
 
-        return dict(snapshots = snapshots, \
-                    conditional = conditional)
+        return dict(snapshots=snapshots,
+                    conditional=conditional)
 
-
-    cdef void bin_data(self, \
-                       state_t[:, ::1] buff,\
-                       state_t[::1] target,\
-                       double[:, :, ::1] bin_buffer,\
-                       double Z = 1) nogil:
+    cdef void bin_data(self,
+                       state_t[:, ::1] buff,
+                       state_t[::1] target,
+                       double[:, :, ::1] bin_buffer,
+                       double Z=1) nogil:
 
         # reset
         cdef size_t idx
@@ -147,28 +150,27 @@ cdef class Simulator:
                 bin_buffer[t, node, idx] += Z
         return
 
-    cpdef dict forward(self, \
-                       dict snapshots,\
-                       size_t repeats    = 10,\
-                       np.ndarray time = np.arange(10),\
+    cpdef dict forward(self,
+                       dict snapshots,
+                       size_t repeats=10,
+                       np.ndarray time=np.arange(10),
                        ):
 
-
        from imi.utils.stats import check_allocation
-       #setup buffers
+       # setup buffers
        cdef:
           size_t time_steps = time.size
-          size_t cpus    = mp.cpu_count()
+          size_t cpus = mp.cpu_count()
 
-          state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,\
-                                                      self.model.adj._nNodes), \
-                                                      dtype = np.double)
+          state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,
+                                                      self.model.adj._nNodes),
+                                                      dtype=np.double)
 
-          state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes), \
-                                                 dtype = np.double)
+          state_t[:, ::1] start_state = np.zeros((cpus, self.model.nNodes),
+                                                 dtype=np.double)
 
-          state_t[:, ::1] states = np.array([i for i in snapshots.keys()], \
-                                            dtype = np.double)
+          state_t[:, ::1] states = np.array([i for i in snapshots.keys()],
+                                            dtype=np.double)
 
           size_t nStates = len(states)
 
@@ -194,11 +196,11 @@ cdef class Simulator:
 
        # private variables
        cdef:
-          PyObject* ptr
+          PyObject * ptr
           size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes
           tuple tuple_start_state
-          double[:,:, :, ::1] bin_buffer = np.zeros((cpus, *shape))
-          double Z = 1  / <double> (repeats)
+          double[:, :, :, ::1] bin_buffer = np.zeros((cpus, *shape))
+          double Z = 1 / <double > (repeats)
           unordered_map[size_t, size_t] store_idx
 
        for idx in range(len(time)):
@@ -207,7 +209,7 @@ cdef class Simulator:
        # setup rngs
 
        print("Ready")
-       cdef size_t T = <size_t> (np.max(time) + 1)
+       cdef size_t T = <size_t > (np.max(time) + 1)
        # cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype = np.uintp)
 
        cdef vector[size_t] thread_counter
@@ -215,40 +217,40 @@ cdef class Simulator:
            thread_counter.push_back(0)
         #    r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
 
-       cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype = np.uintp)
-       for state_idx in prange(nStates, nogil = True, num_threads = cpus):
-           tid              = threadid()
+       cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+       for state_idx in prange(nStates, nogil=True, num_threads=cpus):
+           tid = threadid()
            start_state[tid] = states[state_idx]
 
            with gil:
                # get or reset buffer
-               bin_buffer.base[tid] = conditional.get(tuple(start_state[tid]), np.zeros(shape))
+               bin_buffer.base[tid] = conditional.get(
+                   tuple(start_state[tid]), np.zeros(shape))
 
            # start binning
            for trial in range(repeats):
                # reset buffer
                for node in range(NODES):
-                   (<Model> models[tid].ptr)._states[node] = start_state[tid, node]
-                   thread_state[tid, 0, node]              = start_state[tid, node]
+                   (< Model > models[tid].ptr)._states[node] = start_state[tid, node]
+                   thread_state[tid, 0, node] = start_state[tid, node]
 
-               with gil:
-                    r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
+               # with gil:
+               #      r.base[tid] = (< Model > models[tid].ptr)._sampleNodes(T)
 
-               # r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
+               r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
                 # simulate a trace
                for step in range(1, T):
                     # store data
+                   (< Model > models[tid].ptr)._updateState(r[tid, step])
                    if store_idx.find(step) != store_idx.end():
-                        thread_state[tid, store_idx[step]] = \
-                        (<Model> models[tid].ptr)._updateState(r[tid, thread_counter[tid]])
+                       for node in range(NODES):
+                            thread_state[tid, store_idx[step], node] = (< Model > models[tid].ptr)._states[node]
 
                         # thread_counter[tid] = 0
 
                         # thread_state[tid, store_idx[step]] = \
                         # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
 
-                   else:
-                        (<Model> models[tid].ptr)._updateState(r[tid, thread_counter[tid]])
 
                         # thread_state[tid, store_idx[step]] = \
                         # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
@@ -264,6 +266,8 @@ cdef class Simulator:
                pbar.update(1)
        # print("sanity check 2")
        # return dict(conditional = conditional, snapshots = snapshots)
+       for k, v in conditional.items():
+           print(v[-1])
        return self.normalize(conditional, snapshots, False)
 
 
