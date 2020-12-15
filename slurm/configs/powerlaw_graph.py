@@ -81,12 +81,12 @@ def run_experiment(model, settings = {}) -> dict:
         resampled = snapshots
 
 
-    time_steps = conditional.get("time_steps", 1000)
-    time    = np.arange(0, time_steps // 2)
-    logtime = np.geomspace(min(isi), max(isi), time_steps // 2)
 
+    time_steps = conditional.get("time_steps", 1000)
+    time       = np.arange(0, time_steps // 2)
     try:
         del conditional['time_step']
+        logtime    = np.geomspace(min(isi), max(isi), time_steps // 2)
     except KeyError:
         print("key not found")
 

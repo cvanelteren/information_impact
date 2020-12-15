@@ -101,6 +101,7 @@ cpdef tuple find_tipping(Model m,
     # cdef size_t n = n_samples
     # for ni in prange(n_samples, nogil = True):
     cdef vector[size_t] isi = []
+    cdef long last_flip = -1
     for ni in range(n_samples):
         m.states = m.agentStates[0]
         tid = threadid()
@@ -115,8 +116,10 @@ cpdef tuple find_tipping(Model m,
         # bin around tipping points
         for zdx in range(len(idx)):
             jdx = idx[zdx]
-            if zdx > 0:
-                isi.push_back(idx[zdx] - idx[zdx - 1])
+            # only count diffs
+            if last_flip != -1:
+                isi.push_back(idx[zdx] - last_flip)
+            last_flip = idx[zdx]
             if jdx - window >= 0:
                 # target = tuple(buffer_[jdx])
                 # print(target)
