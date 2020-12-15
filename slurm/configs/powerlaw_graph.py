@@ -4,7 +4,7 @@ import numpy as np, copy
 
 from imi.utils import signal
 from plexsim.models import *
-from imi.signal import find_tipping
+from imi.utils.signal import find_tipping
 from imi.stats import check_allocation
 
 from imi import infcy
@@ -88,7 +88,7 @@ def run_experiment(model, settings = {}) -> dict:
     try:
         del conditional['time_step']
     except KeyError:
-        continue
+        print("key not found")
 
     time = np.concatenate((time, logtime))
     conditional['time'] = time
