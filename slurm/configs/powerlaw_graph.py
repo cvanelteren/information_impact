@@ -4,14 +4,13 @@ import numpy as np, copy
 
 from imi.utils import signal
 from plexsim.models import *
-from imi.utils.signal import find_tipping
-from imi.stats import check_allocation
+from imi.signal import find_tipping
+from imi.utils.stats import check_allocation
 
 from imi import infcy
 # TODO: write general setup step for model
 #
 MODEL = Ising
-
 
 def setup_model(model) -> list :
     run_settings = [] # list of dicts
