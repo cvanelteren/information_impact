@@ -26,7 +26,7 @@ def setup_model(model) -> list :
     opts, cov = optimize.curve_fit(sig, xdata = temps, ydata = out[0],\
                       maxfev = 100_000)
 
-    thetas = [.5] # match_temperatures
+    thetas = [0.4] # match_temperatures
 
     # bounds = optimize.Bounds(0, np.inf)
     for theta in thetas:
