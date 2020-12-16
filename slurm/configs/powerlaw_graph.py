@@ -86,10 +86,10 @@ def run_experiment(model, settings = {}) -> dict:
     try:
         del conditional['time_step']
         logtime    = np.geomspace(min(isi), max(isi), time_steps // 2)
+        time = np.concatenate((time, logtime))
     except KeyError:
         print("key not found")
 
-    time = np.concatenate((time, logtime))
     conditional['time'] = time
     for k, v in resampled.items():
         try:
