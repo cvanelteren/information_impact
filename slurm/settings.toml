@@ -28,7 +28,6 @@ trials = 1
         window        = 1000
         asymmetric    = false
         spacing       = 1
-        tipping_point = 0.5
 
     [simulation.conditional]
         repeats    = 1000
