@@ -87,7 +87,7 @@ def run_experiment(model, settings = {}) -> dict:
     time_steps = conditional.get("time_steps", 1000)
     time       = np.arange(0, time_steps // 2)
     try:
-        del conditional['time_step']
+        del conditional['time_steps']
         logtime    = np.geomspace(min(isi), max(isi), time_steps // 2)
         time = np.concatenate((time, logtime))
     except KeyError:
