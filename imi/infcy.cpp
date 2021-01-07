@@ -1734,7 +1734,7 @@ struct __pyx_opt_args_7plexsim_6models_5Potts_magnetize {
 };
 
 /* "plexsim/models.pxd":385
- *     cdef double _checkNeighbors(self,  node_id_t node) nogil
+ *     cdef float _checkNeighbors(self,  node_id_t node) nogil
  * 
  *     cpdef void init_random(self, node =*)             # <<<<<<<<<<<<<<
  * 
@@ -1989,13 +1989,13 @@ struct __pyx_obj_7plexsim_6models_AB {
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
- *     cdef double _mu
- *     cdef double _eta
+ *     cdef float _mu
+ *     cdef float _eta
  */
 struct __pyx_obj_7plexsim_6models_Pottsis {
   struct __pyx_obj_7plexsim_6models_Potts __pyx_base;
-  double _mu;
-  double _eta;
+  float _mu;
+  float _eta;
 };
 
 
@@ -2033,14 +2033,14 @@ struct __pyx_obj_7plexsim_6models_Bornholdt {
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
  *     cdef:
- *         double _beta
+ *         float _beta
  */
 struct __pyx_obj_7plexsim_6models_SIRS {
   struct PyModel __pyx_base;
-  double _beta;
-  double _mu;
-  double _nu;
-  double _kappa;
+  float _beta;
+  float _mu;
+  float _nu;
+  float _kappa;
 };
 
 
@@ -2049,11 +2049,11 @@ struct __pyx_obj_7plexsim_6models_SIRS {
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
  *     cdef:
- *         double _eta
+ *         float _eta
  */
 struct __pyx_obj_7plexsim_6models_Bonabeau {
   struct PyModel __pyx_base;
-  double _eta;
+  float _eta;
   __Pyx_memviewslice _weight;
 };
 
@@ -2351,8 +2351,8 @@ static struct __pyx_vtabstruct_7plexsim_6models_AB *__pyx_vtabptr_7plexsim_6mode
  * 
  * 
  * cdef class Pottsis(Potts):             # <<<<<<<<<<<<<<
- *     cdef double _mu
- *     cdef double _eta
+ *     cdef float _mu
+ *     cdef float _eta
  */
 
 struct __pyx_vtabstruct_7plexsim_6models_Pottsis {
@@ -2395,12 +2395,12 @@ static struct __pyx_vtabstruct_7plexsim_6models_Bornholdt *__pyx_vtabptr_7plexsi
  * 
  * cdef class SIRS(Model):             # <<<<<<<<<<<<<<
  *     cdef:
- *         double _beta
+ *         float _beta
  */
 
 struct __pyx_vtabstruct_7plexsim_6models_SIRS {
   struct __pyx_vtabstruct_7plexsim_6models_Model __pyx_base;
-  double (*_checkNeighbors)(struct __pyx_obj_7plexsim_6models_SIRS *, __pyx_t_7plexsim_6models_node_id_t);
+  float (*_checkNeighbors)(struct __pyx_obj_7plexsim_6models_SIRS *, __pyx_t_7plexsim_6models_node_id_t);
   void (*init_random)(struct __pyx_obj_7plexsim_6models_SIRS *, int __pyx_skip_dispatch, struct __pyx_opt_args_7plexsim_6models_4SIRS_init_random *__pyx_optional_args);
 };
 static struct __pyx_vtabstruct_7plexsim_6models_SIRS *__pyx_vtabptr_7plexsim_6models_SIRS;
@@ -2411,7 +2411,7 @@ static struct __pyx_vtabstruct_7plexsim_6models_SIRS *__pyx_vtabptr_7plexsim_6mo
  * 
  * cdef class Bonabeau(Model):             # <<<<<<<<<<<<<<
  *     cdef:
- *         double _eta
+ *         float _eta
  */
 
 struct __pyx_vtabstruct_7plexsim_6models_Bonabeau {

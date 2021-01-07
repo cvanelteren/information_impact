@@ -5,16 +5,18 @@ from statistics import NormalDist
 '''Dump file of statistical related functions'''
 
 def resample(counts, bins, samples, n):
+    # randomly sample distribution bins
     s = np.random.choice(bins, size = n, p = counts / counts.sum())
-    out = dict()
+    # resampled distribution
     rsamples = {}
     import random
     for o in s:
-        out[o] = out.get(o, 0) + 1
+        # get random state for particular bin
         rs = random.choice(list(samples[o].keys()))
+        # add it to rsamples
         rsamples[o] = rsamples.get(o, []) + [rs]
-    out = dict(sorted(out.items(), key = lambda x : x[0]))
-    return out
+    rsamples = dict(sorted(rsamples.items(), key = lambda x : x[0]))
+    return rsamples
 
 def check_allocation(bits, pct = .8, maxGb = None):
     assert pct < 1

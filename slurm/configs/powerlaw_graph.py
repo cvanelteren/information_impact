@@ -5,7 +5,7 @@ import numpy as np, copy
 from imi.utils import signal
 from plexsim.models import *
 from imi.signal import find_tipping
-from imi.utils.stats import check_allocation
+from imi.utils.stats import check_allocation, resample
 
 from imi import infcy
 # TODO: write general setup step for model
@@ -55,6 +55,7 @@ def run_experiment(model, settings = {}) -> dict:
     peak_settings['rtol'] = 2/model.nNodes
     peak_settings['sigma'] = model.nNodes * 10
 
+    # snapshots here is bins, states
     snapshots, isi = find_tipping(model,
                            bins = bins,
                            **peak_settings)
@@ -68,6 +69,8 @@ def run_experiment(model, settings = {}) -> dict:
     if nStates == 0:
         nStates = 1
     t = conditional.get("time_steps")
+
+    # check for allocation of results
     bits = t * model.nNodes * nStates * np.float64().itemsize
     bits =  check_allocation(bits)
     if bits < 1:
@@ -108,4 +111,4 @@ def run_experiment(model, settings = {}) -> dict:
     # print(f"Found {len(snapshots)}")
     print("done")
     return dict(snapshots = snapshots, mi = mis, px = pxs, resampled =
-                resampled, isi = isi, time = time)
+                resampled, isi = isi, time = time, cpx = cs)
