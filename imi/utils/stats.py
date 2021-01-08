@@ -19,10 +19,10 @@ def resample(counts, bins, samples, n):
 
     for k, v in resampled_dist.items():
         z = sum(v.values())
-        for kk, vv in v.items()
-        resampled_dist[k][kk] = vv / z
+        for kk, vv in v.items():
+            resampled_dist[k][kk] = vv / z
     # return rsamples, resampled_dist
-     return resampled_dist
+    return resampled_dist
 
 def check_allocation(bits, pct = .8, maxGb = None):
     assert pct < 1
