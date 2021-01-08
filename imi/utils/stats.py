@@ -14,9 +14,15 @@ def resample(counts, bins, samples, n):
         # get random state for particular bin
         rs = random.choice(list(samples[o].keys()))
         # add it to rsamples
-        rsamples[o] = rsamples.get(o, []) + [rs]
-    rsamples = dict(sorted(rsamples.items(), key = lambda x : x[0]))
-    return rsamples
+        rsamples[o][rs] = rsamples.get(o, {}).get(rs, 0) + 1 # rsamples = dict(sorted(rsamples.items(), key = lambda x : x[0]))
+    resampled_dist = dict(sorted(resampled_dist.items(), key = x : x[0]))
+
+    for k, v in resampled_dist.items():
+        z = sum(v.values())
+        for kk, vv in v.items()
+        resampled_dist[k][kk] = vv / z
+    # return rsamples, resampled_dist
+     return resampled_dist
 
 def check_allocation(bits, pct = .8, maxGb = None):
     assert pct < 1
