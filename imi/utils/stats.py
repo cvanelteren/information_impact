@@ -15,7 +15,7 @@ def resample(counts, bins, samples, n):
         rs = random.choice(list(samples[o].keys()))
         # add it to rsamples
         rsamples[o][rs] = rsamples.get(o, {}).get(rs, 0) + 1 # rsamples = dict(sorted(rsamples.items(), key = lambda x : x[0]))
-    resampled_dist = dict(sorted(resampled_dist.items(), key = x : x[0]))
+    resampled_dist = dict(sorted(resampled_dist.items(), key = lambda x : x[0]))
 
     for k, v in resampled_dist.items():
         z = sum(v.values())
