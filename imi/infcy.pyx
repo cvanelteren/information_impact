@@ -266,8 +266,6 @@ cdef class Simulator:
                pbar.update(1)
        # print("sanity check 2")
        # return dict(conditional = conditional, snapshots = snapshots)
-       for k, v in conditional.items():
-           print(v[-1])
        return self.normalize(conditional, snapshots, False)
 
 
