@@ -38,3 +38,16 @@ imi/utils/plotting.py
 imi/utils/proposalGraph.py
 imi/utils/signal.py
 imi/utils/stats.py
+slurm/Task.py
+slurm/__init__.py
+slurm/run_toml.py
+slurm/test.py
+slurm/experiments/Potts_recursion1.py
+slurm/experiments/Potts_recursion_center_focus.py
+slurm/experiments/__init__.py
+slurm/experiments/barabasi_albert.py
+slurm/experiments/beta_graph.py
+slurm/experiments/grid_graph.py
+slurm/experiments/powerlaw.py
+slurm/experiments/powerlaw_graph.py
+slurm/experiments/testing.py

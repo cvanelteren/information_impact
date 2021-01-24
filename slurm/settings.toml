@@ -1,27 +1,16 @@
 # experiment_run = "configs/Potts_recursion_center_focus.py"
 # experiment_run = 'configs/Potts_recursion1.py'
-experiment_run = 'configs/powerlaw_graph.py'
+# experiment_run = 'configs/powerlaw_graph.py'
 
-trials = 1
-[model]
-    name       = "Potts"
-    [model.settings]
-        sampleSize = 1
-    [model.graph]
-        # name     = "recursive_tree"
-        name = "graph.powerlaw_graph"
-        settings = {n = 100, gamma = 1.1, connected = true}
+# trials = 1
 
-        # name = "nx.grid_2d_graph"
-        # settings = {n = 10, m = 10, periodic = True}
+experiments = [
+"small_graphs",
 
-        # name = "graph.beta_graph"
-        # settings = {n = 100, beta = 30, alpha = 2, connected = True}
-
-        # settings = {r = 5, jump = 0}
-
+]
 [simulation]
     # simulations parameters
+    trials = 1
     [simulation.tipping]
         n_samples     = 100
         buffer_size   = 10000000
@@ -32,3 +21,29 @@ trials = 1
     [simulation.conditional]
         repeats    = 1000
         time_steps = 1000
+
+[sbatch]
+  nodes = 1  
+  tasks = 1
+  cores = 16
+  constraint = "cpunode"
+  outfile = "%x-$j.out"
+  errfile = "%x-%j.err"
+  deadline = "48:00:00"
+
+# [model]
+    # name       = "Potts"
+    # [model.settings]
+        # sampleSize = 1
+    # [model.graph]
+        # name     = "recursive_tree"
+        # name = "graph.powerlaw_graph"
+        # settings = {n = 100, gamma = 1.1, connected = true}
+
+        # name = "nx.grid_2d_graph"
+        # settings = {n = 10, m = 10, periodic = True}
+
+        # name = "graph.beta_graph"
+        # settings = {n = 100, beta = 30, alpha = 2, connected = True}
+
+        # settings = {r = 5, jump = 0}

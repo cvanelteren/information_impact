@@ -1,10 +1,5 @@
-from plexsim.models import *
-import networkx as nx
-import toml, pickle, os
-from imi.utils import graph
-from imi import infcy
-import importlib, click
-
+import toml, pickle, os, subprocess, datetime, importlib
+from Task import Worker
 """
 loads :settings.toml: and runs simulation that are in configs/.
 The idea is to setup an experiment with an 'easy to use' toml file which is then passed to the corresponding
@@ -16,94 +11,82 @@ The config files have two functions
 
 N.B. there is currently no standard what the toml should contain..
 """
-class toml_reader:
-    def __init__(self, fn):
-        self.settings = toml.load(fn)
-        # print(self.settings)
-        self.sim_settings = self.settings.get('simulation')
+class sim_settings:
+    def __init__(self, data):
+        for k, v in data.items():
+            if isinstance(v, dict):
+                v = toml_dotted(v)
+            self.__setitem__(k, v)
 
-    def experiment_run(self, f, opt_settings = {}):
-        """
-        calls the run_model method from the experimental script
-        """
-        fn = self.settings.get("experiment_run").replace("/", ".").replace(".py", '')
-        print("-" * 13 + f"{f}" + "-" * 13)
-        run = importlib.import_module(fn)
-        return getattr(run, f)(**opt_settings)
-   
-    def load_model(self):
-        """
-        load the model
-        - primarily used to set up the graph structure, the actual model settings need to be defined in setup_model
-        """
-        model_settings = self.settings.get('model')
-        name           = model_settings.get('name', '')
-        settings       = model_settings.get('settings', {})
-        
-        g_name     = model_settings.get('graph').get('name')
-        g_settings = model_settings.get('graph').get('settings', {})
-        dotted = g_name.split(".")
-        # TODO: clean up
-        if len(dotted) > 1:
-            mod = globals()[dotted[0]]  # assure package networkx is imported as nx
-            for comp in dotted[1:]:
-                mod = getattr(mod, comp)
-            g = mod(**g_settings)
+    def __setitem__(self, key, value):
+        self.__dict__[k] = v
+
+    def __getitem__(self, key):
+        return self.__dict__.get(k)
+
+
+
+
+class ExperimentManager:
+    def __init__(self, settings_file):
+        self.reader = sim_settings(settings_file)
+
+        # max jobs on the server
+        #
+        # assume running on the server
+        # TODO deal with local processing of experiments
+        self.delegate = False
+        if os.uname().nodename != "g14":
+            self.max_jobs = 5
+            self.delegate = True
+
+    def run(self):
+        date = datetime.datetime.now().isoformat()
+        os.makedirs(base, exists_ok = True)
+
+        for idx, experiment in enumerate(self.reader.experiments):
+            # run experiment
+            self.run_experiment(experiment, idx)
+
+            
+    def run_experiment(self, experiment : str, idx : int) -> None:
+        if run_file := experiments.get(experiment):
+            # create tasks
+            tasks = run_file.setup()
+
+            # extract deadline in case it overflows server deadline
+            # convert time to int
+            hours, minutes, seconds = [int(i) for i in reader.deadline.split(":")]
+            deadline = (date + datetime.timedelta(hours = hours, minutes = minutes,
+                                                seconds = seconds)).toordinal()
+
+            worker = Worker(tasks, id = id, deadline = deadline)
+
+            fp = f"worker_{worker.id}.pickle"
+            with open(fp, "wb") as f:
+                pickle.dump(worker, fp)
+            if self.delegate:
+                subprocess.call(f"sbatch run_worker.sh worker_{worker.id}".split())
+
+                # release only when jobs can be queued
+                while self.get_jobs() < self.max_jobs:
+                    time.sleep(1)
+
         else:
-            g = globals()[g_name](**g_settings)
-        m   = globals()[name](g, **settings)
+            print(f"!Warning! {experiment} not found")
 
-        return m
-
-import datetime, shutil
-
+    def get_jobs(self):
+       # count output squeue
+       call = "squeue -u {echo $USER} -h -t pending,running -r | wc -l"
+       jobs = subprocess.check_output(call, shell = True)
+       return int(jobs)
+       
+import experiments # contains the experiments
 SETTINGS = "settings.toml"
-
-
-from optparse import OptionParser
-from argparse import ArgumentParser
-parser = ArgumentParser()
-parser.add_argument("-d", help = "output directory", type = str,
-                    default = 'data/')
 if __name__ == "__main__":
+    manager = ExperimentManager(SETTINGS)
+    manager.run()
 
-    # load toml settings
-    reader = toml_reader(SETTINGS)
-    # make local directory if exists
-    date = datetime.datetime.now().isoformat()
+    
+         
 
-    # get the run script
-    run_name = os.path.basename(reader.settings.get("experiment_run", "experiment")) # remove path
-    run_name = os.path.splitext(run_name)[0] # remove extensions
-    run_name += date
-
-    # create the output directory
-
-    output_directory = parser.parse_args().d
-    output_directory += run_name
-
-    os.makedirs(output_directory, exist_ok = True)
-    print(f"created {output_directory}")
-    shutil.copyfile(SETTINGS, os.path.join(output_directory, SETTINGS))
-    # run experiments
-    from pyprind import prog_bar
-    trials = reader.settings.get("trials", 1)
-    for trial in prog_bar(range(trials)):
-        for idx, experiment in enumerate(reader.experiment_run("setup_model",
-                                    dict(model = reader.load_model()))):
-            # run the actual experiment
-            fn       = f'{run_name}-{idx}-{trial}.pickle'
-            settings = dict(
-                model    = experiment["model"],
-                settings = reader.settings.get("simulation", {})
-            )
-            results  = reader.experiment_run("run_experiment", settings)
-            print("-" * 13 + "Done" + "-" * 13)
-            #write data
-            path = os.path.join(output_directory, fn)
-            print(f"Saving {path}")
-            with open(path, "wb") as f:
-                o = dict(results = results,
-                         settings = experiment)
-                pickle.dump(o, f)
-    print('exited')

@@ -28,6 +28,7 @@ causal_impact      = '$\gamma_i$'
 # %%
 # begin the uggliness
 class Worker:
+
     def __init__(self , datadict, setting):
         self.setting = setting
         # ctime is bugged on linux(?)
