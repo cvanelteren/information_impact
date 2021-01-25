@@ -4,11 +4,7 @@
 
 # trials = 1
 
-experiments = [
-"small_graphs",
-
-]
-[simulation]
+[general]
     # simulations parameters
     trials = 1
     [simulation.tipping]
@@ -30,6 +26,14 @@ experiments = [
   outfile = "%x-$j.out"
   errfile = "%x-%j.err"
   deadline = "48:00:00"
+
+[experiments]
+   # present should produce output
+   [experiments.test_experiment]
+
+   # not present should generate warning
+   [experiments.test_experiment2]
+  
 
 # [model]
     # name       = "Potts"
