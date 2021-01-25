@@ -57,15 +57,15 @@ class ExperimentManager:
         timeout_server = 60 * 15 # //minutes
         self.deadline = current_time + timeout_server
 
-    def is_resumed(self):
+    def clean_up(self):
         # if resumed cleanup file
-        fp =  "{self.__class__.__name__}-{self.pid}.pickle"
+        fp =  f"{self.__class__.__name__}-{self.pid}.pickle"
         if os.path.exists(fp):
             os.remove(fp)
 
     def run(self):
         # cleanup if resumed
-        self.is_resumed()
+        self.clean_up()
 
         # keep running
         experiments = list(self.reader.get("experiments").items())
@@ -129,7 +129,6 @@ class ExperimentManager:
                 self.set_deadline()
                 subprocess.call("python {__file__}")
                 exit()
-                
                 
     def get_jobs(self):
        # count output squeue

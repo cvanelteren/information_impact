@@ -1,5 +1,6 @@
 import time, os, pickle, re, subprocess
 
+# TODO: write nosetests check the deadline for the worker
 class Task:
     def __init__(self, settings : dict, output_directory : str,
                 *args, **kwargs):
@@ -53,6 +54,14 @@ class Worker:
 
             # resuming if deadline
             self.check_deadline()
+        self.log("Done with all tasks")
+        self.clean_up()
+
+    def clean_up(self):
+        fp =  f"{self.name}.pickle"
+        print(fp)
+        if os.path.exists(fp):
+            os.remove(fp)
 
     def check_deadline(self):
         # dump object and resume
