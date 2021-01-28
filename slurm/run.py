@@ -52,6 +52,8 @@ class ExperimentManager:
         os.makedirs(base, exist_ok = True)
         self.base = base
 
+        self.name = f"{self.__class__.__name__}-{self.pid}"
+
     def set_deadline(self):
         current_time = time.time()
         timeout_server = 60 * 15 # //minutes
@@ -59,20 +61,18 @@ class ExperimentManager:
 
     def clean_up(self):
         # if resumed cleanup file
-        fp =  f"{self.__class__.__name__}-{self.pid}.pickle"
-        if os.path.exists(fp):
+        if os.path.exists(self.name + ".pickle"):
             os.remove(fp)
 
     def run(self):
         # cleanup if resumed
         self.clean_up()
-
+        self._running = True
         # keep running
         experiments = list(self.reader.get("experiments").items())
-        while experiments:
-            experiment = experiments.pop(0)
-            self.run_experiment(experiment, self.pid)
-
+        while experiments and self._running:
+                experiment = experiments.pop(0)
+                self.run_experiment(experiment, self.pid)
             
     def override_config(self, config: dict) -> dict:
         overriden = self.reader.get("general", {}).copy()
@@ -115,20 +115,31 @@ class ExperimentManager:
         else:
             print(f"!Warning! {experiment} not found")
 
+    def dump_to_disk(self):
+        fp = f"{self.name}.pickle" 
+        with open(fp, "wb") as f:
+            pickle.dump(self)
+
+
+    def exit(self):
+        self._running = False
+        subprocess.call("python {__file__}")
+
+    # TODO: write test case dump file to disk and call itself
+    def restart(self):
+        self.dump_to_disk()
+        #update deadline
+        self.set_deadline()
+        
+
     def check_deadline(self):
         # only use when on the server
         while self.get_jobs() < self.max_jobs:
             time.sleep(1)
             # restart process
             if time.time() >= self.deadline * self.threshold:
-                fp = f"{self.__class__.__name__}-{self.pid}.pickle"
-                with open(fp, "wb") as f:
-                    pickle.dump(self)
-
-                #update deadline
-                self.set_deadline()
-                subprocess.call("python {__file__}")
-                exit()
+                self.restart()
+                
                 
     def get_jobs(self):
        # count output squeue

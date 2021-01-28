@@ -1,0 +1,9 @@
+
+ # General simulations parameters
+[general]
+
+ # list of experiments
+[experiments]
+
+[experiments.test_experiment]
+# can override settings here

@@ -3,7 +3,7 @@ from slurm.Task import Task
 
 def setup(config: dict) -> list:
     tasks = []
-    for i in range(10):
+    for i in range(1):
         tasks.append(Experiment(config))
     return tasks
 
@@ -13,4 +13,4 @@ class Experiment(Task):
                                    output_directory = output_directory)
 
     def run(self):
-        return {"hello there" : "how do you do"}
+        return {"hello there" : "how do you do?"}
