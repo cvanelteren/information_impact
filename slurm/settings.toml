@@ -29,10 +29,7 @@
 
 [experiments]
    # present should produce output
-   [experiments.test_experiment]
-
-   # not present should generate warning
-   [experiments.test_experiment2]
+[experiments.connected_graphs]
   
 
 # [model]

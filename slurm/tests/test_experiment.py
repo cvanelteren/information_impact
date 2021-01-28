@@ -1,5 +1,5 @@
 import os
-from unittest import Testcase, main
+from unittest import TestCase, main
 from slurm.Task import Task
 
 SETTINGS = "test_toml.toml"
@@ -39,6 +39,7 @@ class TestExperimentManager(TestCase):
     def tearDown(self):
        self.test_no_created_files()
 
+# from slurm.tests import sample_experiment
 import sample_experiment
 class TestExperiment(TestCase):
     """

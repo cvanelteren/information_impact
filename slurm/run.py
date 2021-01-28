@@ -54,6 +54,10 @@ class ExperimentManager:
 
         self.name = f"{self.__class__.__name__}-{self.pid}"
 
+        self.workers = []
+
+        self.setup_workers()
+
     def set_deadline(self):
         current_time = time.time()
         timeout_server = 60 * 15 # //minutes
@@ -68,11 +72,10 @@ class ExperimentManager:
         # cleanup if resumed
         self.clean_up()
         self._running = True
+        self.run_workers()
         # keep running
         experiments = list(self.reader.get("experiments").items())
-        while experiments and self._running:
-                experiment = experiments.pop(0)
-                self.run_experiment(experiment, self.pid)
+        
             
     def override_config(self, config: dict) -> dict:
         overriden = self.reader.get("general", {}).copy()
@@ -81,37 +84,50 @@ class ExperimentManager:
         return overriden
 
 
-    def run_experiment(self, experiment : tuple, idx : int) -> None:
+    def setup_workers(self, experiments):
+        while experiments and self._running:
+            experiment = experiments.pop(0)
+            worker = self.setup_experiment(experiment, self.pid)
+            self.workers.append(worker)
+            self.check_deadline()
+
+    def run_worker(self, worker):
+        if self.delegate:
+            self.send_worker(worker)
+        else:
+            worker.run()
+
+    def run_workers(self):
+        for worker in self.workers:
+            self.run_worker(worker)
+        
+    def create_worker(self, tasks):
+        # extract deadline in case it overflows server deadline
+        # convert time to int
+        date = datetime.datetime.now()
+        deadline = self.reader.get('sbatch', {} ).get("deadline", None)
+        hours, minutes, seconds = [int(i) for i in deadline.split(":")]
+        deadline = (date + datetime.timedelta(hours = hours,
+                                              minutes = minutes,
+                                              seconds = seconds)).toordinal()
+
+        worker = Worker(tasks, id = f"{self.pid}-{idx}",
+                        deadline = deadline, base = self.base)
+        return worker
+
+    def send_worker(self, worker):
+        fp = f"{worker.name}.pickle"
+        with open(fp, "wb") as f:
+                pickle.dump(worker, fp)
+        subprocess.call(f"sbatch run_worker.sh {worker.name}".split())
+
+    def setup_experiment(self, experiment: tuple, idx : int) -> None:
         name, config = experiment
         if run_file := experiments.get(name):
             # create tasks
             config = self.override_config(config)
             tasks = run_file.setup(config) 
-
-            # extract deadline in case it overflows server deadline
-            # convert time to int
-            date = datetime.datetime.now()
-            deadline = self.reader.get('sbatch', {} ).get("deadline", None)
-            hours, minutes, seconds = [int(i) for i in deadline.split(":")]
-            deadline = (date + datetime.timedelta(hours = hours, minutes = minutes,
-                                                seconds = seconds)).toordinal()
-
-            worker = Worker(tasks, id = f"{self.pid}-{idx}",
-                            deadline = deadline, base = self.base)
-
-            # start worker
-            if self.delegate:
-                fp = f"{worker.name}.pickle"
-                with open(fp, "wb") as f:
-                    pickle.dump(worker, fp)
-
-                subprocess.call(f"sbatch run_worker.sh {worker.name}".split())
-
-                # release only when jobs can be queued
-                self.check_deadline()
-            else:
-                worker.run()
-
+            worker = self.create_worker(tasks)
         else:
             print(f"!Warning! {experiment} not found")
 
@@ -130,6 +146,7 @@ class ExperimentManager:
         self.dump_to_disk()
         #update deadline
         self.set_deadline()
+        self.exit()
         
 
     def check_deadline(self):
