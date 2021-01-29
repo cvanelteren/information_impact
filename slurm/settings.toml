@@ -19,13 +19,13 @@
         time_steps = 1000
 
 [sbatch]
-  nodes = 1  
-  tasks = 1
-  cores = 16
-  constraint = "cpunode"
-  outfile = "%x-$j.out"
-  errfile = "%x-%j.err"
-  deadline = "48:00:00"
+  cpus-per-task    = 1  
+  ntasks-per-node  = 1
+  cores-per-socket = 16
+  constraint       = "cpunode"
+  # output           = "%x-$j.out"
+  # error            = "%x-%j.err"
+  deadline         = "48:00:00"
 
 [experiments]
    # present should produce output

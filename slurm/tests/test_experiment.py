@@ -2,7 +2,7 @@ import os
 from unittest import TestCase, main
 from slurm.Task import Task
 
-SETTINGS = "test_toml.toml"
+SETTINGS = "tests/test_settings.toml"
 
 from run import ExperimentManager
 class TestExperimentManager(TestCase):
@@ -40,7 +40,7 @@ class TestExperimentManager(TestCase):
        self.test_no_created_files()
 
 # from slurm.tests import sample_experiment
-import sample_experiment
+from . import sample_experiment
 class TestExperiment(TestCase):
     """
     An experiment should
@@ -66,7 +66,8 @@ class TestExperiment(TestCase):
 
     def test_run(self):
         results = []
-        for t in task:
+        tasks = sample_experiment.setup({})
+        for t in tasks:
             r = t.run()
             self.assertEqual(r, {"hello there" : "how do you do"})
         
@@ -107,15 +108,3 @@ class TestWorker(TestCase):
 if __name__ == "__main__":
     main()
         
-
-
-        
-
-        
-
-    
-
-if __name__ == "__main__":
-    main()
-    
- 

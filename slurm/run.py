@@ -22,18 +22,14 @@ class sim_settings:
 # TODO add unique identifier to the manager class
 class ExperimentManager:
     def __init__(self, settings_file):
-        try:
-            self.reader = toml.load(settings_file)
-        except Exception as e:
-            print(e)
-            exit()
+        self.reader = toml.load(settings_file)
 
         # max jobs on the server
         # assume running on the server
         # TODO deal with local processing of experiments
         self.delegate = False
         # TODO: REMOVE THIS assume server
-        if os.uname().nodename != "g14":
+        if os.uname().nodename.endswith("uva.nl"):
             self.max_jobs = 5
             self.delegate = True
 
@@ -41,6 +37,7 @@ class ExperimentManager:
         # unique id base on time ensures uniqueness
         self.pid = time.time()
 
+        self.is_running = False # running overwrites
         self.deadline = self.set_deadline()
         self.threshold = .8
 
@@ -54,88 +51,121 @@ class ExperimentManager:
 
         self.name = f"{self.__class__.__name__}-{self.pid}"
 
-        self.workers = []
-
-        self.setup_workers()
-
-    def set_deadline(self):
-        current_time = time.time()
-        timeout_server = 60 * 15 # //minutes
-        self.deadline = current_time + timeout_server
-
-    def clean_up(self):
-        # if resumed cleanup file
-        if os.path.exists(self.name + ".pickle"):
-            os.remove(fp)
+        
+        # holds workers name and whether they are done
+        self.setup_workers(self.reader.get("experiments"))
 
     def run(self):
         # cleanup if resumed
         self.clean_up()
-        self._running = True
-        self.run_workers()
-        # keep running
-        experiments = list(self.reader.get("experiments").items())
+        self.is_running = True
+        while self.is_running:
+            # are all workers done?
+            if all([w for w in self.workers.values()]):
+                self.is_running = False
+            for worker_file, is_done in self.workers.items():
+                is_done = self.check_worker(worker_file)
+                if not is_done:
+                    if self.delegate:
+                        self.delegate_worker(worker_file)
+                    else:
+                        #run it
+                        worker = Worker.load_from(worker_file)
+                        worker.run()
+            self.check_deadline()
         
-            
+    def check_worker(self, worker_file):
+        """Check whether the worker is working"""
+        # check error logs
+        
+        # assume it is not done
+        self.workers[worker_file] = False
+        if self.delegate:
+            fp = worker_file.replace(".pickle", ".out")
+            with open(fp, 'rb') as f:
+                for line in f.readlines():
+                    # assume still running
+                    if "CANCELLED" in line:
+                        self.workers[worker_file] = True
+                    if "exited" in line:
+                        self.workers[worker_file] = True
+                    
+        # load file
+        else:
+            worker = Worker.load_from(worker_file)
+            if worker.task_done:
+                self.workers[worker_file] = True
+
+
+    def check_pending_workers(self):
+        pending = []
+        for file in os.listdir():
+            if file in self.workers:
+                pending.append(file)
+
     def override_config(self, config: dict) -> dict:
         overriden = self.reader.get("general", {}).copy()
         for k, v in config.items():
             overriden[k] = v
         return overriden
 
-
     def setup_workers(self, experiments):
-        while experiments and self._running:
-            experiment = experiments.pop(0)
-            worker = self.setup_experiment(experiment, self.pid)
-            self.workers.append(worker)
-            self.check_deadline()
+        self.workers = {}
+        for idx, experiment in enumerate(experiments):
+            self.setup_worker(experiment, idx)
 
-    def run_worker(self, worker):
-        if self.delegate:
-            self.send_worker(worker)
-        else:
-            worker.run()
-
-    def run_workers(self):
-        for worker in self.workers:
-            self.run_worker(worker)
-        
-    def create_worker(self, tasks):
-        # extract deadline in case it overflows server deadline
-        # convert time to int
-        date = datetime.datetime.now()
-        deadline = self.reader.get('sbatch', {} ).get("deadline", None)
-        hours, minutes, seconds = [int(i) for i in deadline.split(":")]
-        deadline = (date + datetime.timedelta(hours = hours,
-                                              minutes = minutes,
-                                              seconds = seconds)).toordinal()
-
-        worker = Worker(tasks, id = f"{self.pid}-{idx}",
-                        deadline = deadline, base = self.base)
-        return worker
-
-    def send_worker(self, worker):
-        fp = f"{worker.name}.pickle"
-        with open(fp, "wb") as f:
-                pickle.dump(worker, fp)
-        subprocess.call(f"sbatch run_worker.sh {worker.name}".split())
-
-    def setup_experiment(self, experiment: tuple, idx : int) -> None:
+    def setup_worker(self, experiment, idx: int):
         name, config = experiment
-        if run_file := experiments.get(name):
+        if experiment_module := experiments.get(name):
             # create tasks
             config = self.override_config(config)
-            tasks = run_file.setup(config) 
-            worker = self.create_worker(tasks)
+            # extract deadline in case it overflows server deadline
+            # convert time to int
+            date = datetime.datetime.now()
+
+            # default to 24 hours
+            job_time = self.reader.get('sbatch', {} ).get("job_time", "24:00:0")
+            hours, minutes, seconds = [int(i) for i in job_time.split(":")]
+            deadline = (date + datetime.timedelta(
+                                                hours = hours,
+                                                minutes = minutes,
+                                                seconds = seconds)).toordinal()
+            # setup worker settings
+            worker_settings = dict(
+                id        = f"{self.pid}-{idx}",
+                deadline  = deadline,
+                base      = self.base,
+                job_time  = job_time,
+                autostart = False
+            )
+
+            # bind configs
+            config = dict(experiment_settings = config,
+                        worker_settings = worker_settings)
+
+            # setup worker / delegate?
+            worker = Worker(experiment_module, config)
+            fp = worker.dump_to_disk()
+            self.workers[fp] = worker.tasks_done
         else:
             print(f"!Warning! {experiment} not found")
+       
+
+    def delegate_worker(self, worker_file):
+        command = "srun " # mind the space
+
+        for k, v in sbatch.items():
+            command += "--{k}={v} "
+        
+        command += f"--output {worker_file.split()}.out "
+        command += f"python do_task.py --worker_file {worker_file}" 
+        subprocess.call(command.split())
+
 
     def dump_to_disk(self):
         fp = f"{self.name}.pickle" 
         with open(fp, "wb") as f:
             pickle.dump(self)
-
 
     def exit(self):
         self._running = False
@@ -145,9 +175,9 @@ class ExperimentManager:
     def restart(self):
         self.dump_to_disk()
         #update deadline
-        self.set_deadline()
-        self.exit()
-        
+        self.update_deadline()
+
+        self.is_running = False
 
     def check_deadline(self):
         # only use when on the server
@@ -157,7 +187,16 @@ class ExperimentManager:
             if time.time() >= self.deadline * self.threshold:
                 self.restart()
                 
-                
+    def update_deadline(self):
+        current_time = time.time()
+        timeout_server = 60 * 15 # //minutes
+        self.deadline = current_time + timeout_server
+
+    def clean_up(self):
+        # if resumed cleanup file
+        if os.path.exists(self.name + ".pickle"):
+            os.remove(fp)
+
     def get_jobs(self):
        # count output squeue
        call = "squeue -u {echo $USER} -h -t pending,running -r | wc -l"

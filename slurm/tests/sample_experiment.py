@@ -14,3 +14,12 @@ class Experiment(Task):
 
     def run(self):
         return {"hello there" : "how do you do?"}
+
+# if __name__ == "__main__":
+#     tasks = setup(config)
+#     worker_settings = dict(id = id, deadline = deadline,
+#                            threshold = threshold)
+#     worker = Worker(tasks, **worker_settings)
+
+    
+

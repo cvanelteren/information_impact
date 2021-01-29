@@ -11,30 +11,41 @@ class Task:
         assert False, "Needs to be implemented"
 
 class Worker:
-    def __init__(self, tasks: list,
-                 deadline: int,
-                 id:  str,
-                 threshold: float = .8,
-                 autostart = False,
-                 base = '', 
+    def __init__(self,
+                 experiment : object,
+                 config : dict,
                  *args, **kwargs):
 
-        self.tasks = tasks
-        self.deadline = deadline # in uints
+        # setup variables
+        self.experiment = experiment
+        self.worker_settings = config.get('worker_settings', {})
+        self.experiment_settings = config.get('experiment_settings', {})
 
-        # be within threshold of deadline
-        self.threshold = threshold
+        # setup worker
+        self.setup_worker(self.worker_settings)
 
-        # give it a personality
-        self.id = id
+        self.tasks_done = False
+        self.restart = False
+        # start worker
+        if self.autostart:
+            self.run()
+
+    def setup_experiment(self, settings: dict):
+        self.tasks = self.experiment.setup(config.get("experiment_settings"))
+
+    def setup_worker(self, settings: dict ):
+        # TODO set better defaults
+        defaults = dict(deadline = 0,
+                        threshold = 0,
+                        id = '',
+                        autostart = False,
+                        job_time = 0)
+
+        # assign worker properties
+        for k,v in defaults.items(): 
+            self.__dict__[k] = settings.get(k, v)
 
         self.name = f"worker_{self.id}"
-
-        self.base = base
-
-        # start worker
-        if autostart:
-            self.run()
 
     def create_output_file(self, task):
         fp = os.path.join(directory,
@@ -43,8 +54,16 @@ class Worker:
 
 
     def run(self):
-        self._running = True
-        while self.tasks and self._running:
+        """
+        setup experiments and start running
+        """
+
+        # only when first init
+        if self.task_done == False ^  len(self.tasks) == 0 :
+            self.tasks = self.setup_experiment(self.experiment_settings)
+
+        self.restart = False
+        while self.tasks_done == False and self.restart == False:
             self.log(f"{len(self.tasks)} tasks left")
             task = self.tasks.pop(0)
             results = task.run()
@@ -62,11 +81,16 @@ class Worker:
             # resuming if deadline
             self.check_deadline()
 
-        # termination case: no more tasks but still running
-        if self._running and len(self.tasks) == 0:
-            self.log("Done with all tasks")
-            self.clean_up()
+            # termination case: no more tasks but still running
+            if len(self.tasks) == 0:
+                self.tasks_done = True
+                self.log("Done with all tasks")
+                self.clean_up()
 
+    def update_deadline(self):
+        current_time = time.time()
+        self.deadline = current_time + self.job_time
+        
     def clean_up(self):
         fp =  self.create_dump_name()
         if os.path.exists(fp):
@@ -79,12 +103,15 @@ class Worker:
         fp = self.create_dump_name()
         with open(fp, 'wb') as f:
             pickle.dump(self, f)
-
+        
         self.log("Dumping to disk")
+        return fp
 
     def restart(self):
         self.dump_to_disk()
-        self._running = False
+        self.update_deadline()
+        self.restart = True
+        # exit compute node
 
     def check_deadline(self):
         # dump object and resume
@@ -94,6 +121,12 @@ class Worker:
 
     def log(self, message : str):
         print(f"Worker {self.id}: {message}")
+
+    @staticmethod
+    def load_from(file):
+        if re.match("worker*.pickle", file):
+            with open(file, 'rb') as f:
+                return pickle.load(f)
 
     
 
