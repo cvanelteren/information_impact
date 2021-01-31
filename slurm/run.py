@@ -29,7 +29,7 @@ class ExperimentManager:
         # TODO deal with local processing of experiments
         self.delegate = False
         # TODO: REMOVE THIS assume server
-        if os.uname().nodename.endswith("uva.nl"):
+        if os.uname().nodename.endswith("uva.nl_"):
             self.max_jobs = 5
             self.delegate = True
 
@@ -38,22 +38,22 @@ class ExperimentManager:
         self.pid = time.time()
 
         self.is_running = False # running overwrites
-        self.deadline = self.set_deadline()
+        self.deadline = self.update_deadline()
         self.threshold = .8
 
         # create output folder
         date = datetime.datetime.now().isoformat()
 
         # group simulations in the same folder
-        base = f"data/{__file__}-{date}"
+        base = f"data/{self.__class__.__name__}-{date}"
         os.makedirs(base, exist_ok = True)
         self.base = base
 
         self.name = f"{self.__class__.__name__}-{self.pid}"
 
-        
         # holds workers name and whether they are done
-        self.setup_workers(self.reader.get("experiments"))
+        self.update_deadline()
+        self.setup_workers(self.reader.get("experiments", {}))
 
     def run(self):
         # cleanup if resumed
@@ -84,16 +84,19 @@ class ExperimentManager:
             fp = worker_file.replace(".pickle", ".out")
             with open(fp, 'rb') as f:
                 for line in f.readlines():
+                    line = line.lower()
                     # assume still running
-                    if "CANCELLED" in line:
+                    if "cancelled" in line:
                         self.workers[worker_file] = True
                     if "exited" in line:
+                        self.workers[worker_file] = True
+                    if "termination" in line:
                         self.workers[worker_file] = True
                     
         # load file
         else:
             worker = Worker.load_from(worker_file)
-            if worker.task_done:
+            if worker.tasks_done:
                 self.workers[worker_file] = True
 
 
@@ -111,7 +114,7 @@ class ExperimentManager:
 
     def setup_workers(self, experiments):
         self.workers = {}
-        for idx, experiment in enumerate(experiments):
+        for idx, experiment in enumerate(experiments.items()):
             self.setup_worker(experiment, idx)
 
     def setup_worker(self, experiment, idx: int):
@@ -124,18 +127,19 @@ class ExperimentManager:
             date = datetime.datetime.now()
 
             # default to 24 hours
-            job_time = self.reader.get('sbatch', {} ).get("job_time", "24:00:0")
+            job_time = self.reader.get('sbatch', {} ).get("deadline", "24:00:0")
             hours, minutes, seconds = [int(i) for i in job_time.split(":")]
-            deadline = (date + datetime.timedelta(
-                                                hours = hours,
-                                                minutes = minutes,
-                                                seconds = seconds)).toordinal()
+            td = datetime.timedelta(
+                                hours = hours,
+                                minutes = minutes,
+                                seconds = seconds)
+            deadline = (date + td).toordinal()
             # setup worker settings
             worker_settings = dict(
                 id        = f"{self.pid}-{idx}",
                 deadline  = deadline,
                 base      = self.base,
-                job_time  = job_time,
+                job_time  = td.total_seconds(),
                 autostart = False
             )
 
@@ -165,7 +169,7 @@ class ExperimentManager:
     def dump_to_disk(self):
         fp = f"{self.name}.pickle" 
         with open(fp, "wb") as f:
-            pickle.dump(self)
+            pickle.dump(self, f)
 
     def exit(self):
         self._running = False
@@ -181,11 +185,13 @@ class ExperimentManager:
 
     def check_deadline(self):
         # only use when on the server
-        while self.get_jobs() < self.max_jobs:
-            time.sleep(1)
+        if time.time() >= self.deadline * self.threshold:
+            if self.delegate:
+                while self.get_jobs() < self.max_jobs:
+                    time.sleep(1)
             # restart process
-            if time.time() >= self.deadline * self.threshold:
-                self.restart()
+            self.restart()
+        
                 
     def update_deadline(self):
         current_time = time.time()

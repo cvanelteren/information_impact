@@ -1,4 +1,4 @@
-import os
+import os,time
 from unittest import TestCase, main
 from slurm.Task import Task
 
@@ -16,7 +16,7 @@ class TestExperimentManager(TestCase):
         self.manager = ExperimentManager(SETTINGS)
 
     def test_detinstion_directory(self):
-        self.assertTrue(os.isdir(self.manager.base))
+        self.assertTrue(os.path.isdir(self.manager.base))
 
     # check if it runs
     def test_run(self):
@@ -25,14 +25,14 @@ class TestExperimentManager(TestCase):
     def test_dump_to_disk(self):
 
         self.manager.dump_to_disk()
-        self.assertTrue(os.exists(self.manager.name + ".pickle"))
+        self.assertTrue(os.path.exists(self.manager.name + ".pickle"))
     # check restart
     def test_restart(self):
         self.assertEqual(self.manager.run(), None)
 
     def test_no_created_files(self):
        fp = self.manager.name + ".pickle"
-       if not self.assertFalse(os.exists(fp)):
+       if os.path.exists(fp):
            os.remove(fp)
 
     # check if no files are left behind
@@ -55,7 +55,7 @@ class TestExperiment(TestCase):
         # check the output
         tasks = sample_experiment.setup({})
 
-        self.assertEqual(tasks, list)
+        self.assertEqual(type(tasks), list)
         # testing magic number (see experiment file)
         self.assertEqual(len(tasks), 1)
 
@@ -69,10 +69,11 @@ class TestExperiment(TestCase):
         tasks = sample_experiment.setup({})
         for t in tasks:
             r = t.run()
-            self.assertEqual(r, {"hello there" : "how do you do"})
+            self.assertEqual(r, {"hello there" : "how do you do?"})
         
 
 from slurm.Task import Worker
+from . import sample_experiment 
 class TestWorker(TestCase):
     """
     A worker needs to:
@@ -81,28 +82,35 @@ class TestWorker(TestCase):
     - restart
     """
     def setUp(self):
-        self.tasks = sample_experiment.setup()
 
-        self.worker_settings = dict(deadline = time.time() + 100,
-                               id = "test",
+        experiment_settings = dict(test = {})
+        worker_settings = dict(
+                                deadline = time.time() + 100,
+                               id = "!test",
                                )
+        self.config = dict(
+            experiment_settings = experiment_settings,
+            worker_settings = worker_settings
+        )
 
     def test_run(self):
-        worker = Worker(self.tasks, **self.worker_settings)
+        worker = Worker(sample_experiment, self.config)
+        worker.setup_experiment()
+        tasks = worker.tasks.copy()
         # should finish
         self.assertEqual(worker.run(), None)
-        for t in self.tasks:
+        for t in tasks:
             fp = worker.create_output_file(t)
-            self.assertTrue(os.exists(fp))
+            self.assertTrue(os.path.exists(fp))
         
     def test_restart(self):
-        worker = Worker(self.tasks, **self.worker_settings)
+        worker = Worker(sample_experiment, self.config)
         worker.restart()
-        self.assertEqual(worker._running, False)
+        self.assertEqual(worker.tasks_done, False)
 
         worker.clean_up()
         fp = worker.create_dump_name()
-        self.assertFalse(os.exists(fp))
+        self.assertFalse(os.path.exists(fp))
     
 
 if __name__ == "__main__":

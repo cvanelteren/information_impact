@@ -14,10 +14,10 @@ class Worker:
     def __init__(self,
                  experiment : object,
                  config : dict,
-                 *args, **kwargs):
+                 ):
 
         # setup variables
-        self.experiment = experiment
+        self.experiment_setup = experiment.setup
         self.worker_settings = config.get('worker_settings', {})
         self.experiment_settings = config.get('experiment_settings', {})
 
@@ -25,20 +25,22 @@ class Worker:
         self.setup_worker(self.worker_settings)
 
         self.tasks_done = False
-        self.restart = False
+        self._restart = False
+        self.tasks = []
         # start worker
         if self.autostart:
             self.run()
 
-    def setup_experiment(self, settings: dict):
-        self.tasks = self.experiment.setup(config.get("experiment_settings"))
+    def setup_experiment(self):
+        self.tasks = self.experiment_setup(self.experiment_settings)
 
     def setup_worker(self, settings: dict ):
         # TODO set better defaults
-        defaults = dict(deadline = 0,
-                        threshold = 0,
+        defaults = dict(deadline = 1,
+                        threshold = 1,
                         id = '',
                         autostart = False,
+                        base = '',
                         job_time = 0)
 
         # assign worker properties
@@ -47,9 +49,8 @@ class Worker:
 
         self.name = f"worker_{self.id}"
 
-    def create_output_file(self, task):
-        fp = os.path.join(directory,
-                        f"{task.settings}.pickle")
+    def create_output_file(self, task, dire = ""):
+        fp = os.path.join(dire, f"{task.settings}.pickle")
         return fp
 
 
@@ -59,22 +60,23 @@ class Worker:
         """
 
         # only when first init
-        if self.task_done == False ^  len(self.tasks) == 0 :
-            self.tasks = self.setup_experiment(self.experiment_settings)
+        if self.tasks_done == False ^  len(self.tasks) == 0 :
+            self.setup_experiment()
 
-        self.restart = False
-        while self.tasks_done == False and self.restart == False:
+        self._restart = False
+        while self.tasks_done == False and self._restart == False:
             self.log(f"{len(self.tasks)} tasks left")
             task = self.tasks.pop(0)
             results = task.run()
 
-            directory = os.path.join(self.base, task.output_directory)
-            fp = self.create_output_file(task)
+            dire = os.path.join(self.base, task.output_directory)
 
-            os.makedirs(directory, exist_ok = True)
+            os.makedirs(dire, exist_ok = True)
 
+            fp = os.path.join(dire, self.create_output_file(task))
+            print(fp)
             with open(fp, 'wb') as f:
-                self.log(f"Saving results to {directory}")
+                self.log(f"Saving results to {dire}")
                 pickle.dump(results, f)
                 self.log("Done with task")
 
@@ -97,20 +99,22 @@ class Worker:
             os.remove(fp)
 
     def create_dump_name(self):
-        return self.name + ".pickle", 'wb'
+        return self.name + ".pickle"
 
     def dump_to_disk(self):
         fp = self.create_dump_name()
         with open(fp, 'wb') as f:
             pickle.dump(self, f)
         
+        # with open(fp, 'rb') as f:
+            # print(">", pickle.load(f))
         self.log("Dumping to disk")
         return fp
 
     def restart(self):
         self.dump_to_disk()
         self.update_deadline()
-        self.restart = True
+        self._restart = True
         # exit compute node
 
     def check_deadline(self):
@@ -124,9 +128,10 @@ class Worker:
 
     @staticmethod
     def load_from(file):
-        if re.match("worker*.pickle", file):
-            with open(file, 'rb') as f:
-                return pickle.load(f)
+        # if re.match("worker*+.pickle", file):
+            # print("->", file)
+        with open(file, 'rb') as f:
+            return pickle.load(f)
 
     
 
