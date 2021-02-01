@@ -1,6 +1,6 @@
 import toml, pickle, os, subprocess, datetime, importlib, re, time
 from Task import Worker
-import experiments # contains the experiments
+import experiments, click # contains the experiments
 
 
 # TODO  general settings file?
@@ -21,9 +21,11 @@ class sim_settings:
 # this class setups the the experiments and delegates it to workers
 # TODO add unique identifier to the manager class
 class ExperimentManager:
-    def __init__(self, settings_file):
+    def __init__(self, settings_file,
+                 timeout = 600 * 5):
         self.reader = toml.load(settings_file)
 
+        self.timeout_server = timeout 
         # max jobs on the server
         # assume running on the server
         # TODO deal with local processing of experiments
@@ -38,8 +40,8 @@ class ExperimentManager:
         self.pid = time.time()
 
         self.is_running = False # running overwrites
-        self.deadline = self.update_deadline()
-        self.threshold = .8
+        self.shutdown = False
+        self.threshold = .95
 
         # create output folder
         date = datetime.datetime.now().isoformat()
@@ -52,27 +54,37 @@ class ExperimentManager:
         self.name = f"{self.__class__.__name__}-{self.pid}"
 
         # holds workers name and whether they are done
-        self.update_deadline()
         self.setup_workers(self.reader.get("experiments", {}))
+        
 
     def run(self):
         # cleanup if resumed
+        self.update_deadline()
         self.clean_up()
         self.is_running = True
         while self.is_running:
             # are all workers done?
             if all([w for w in self.workers.values()]):
                 self.is_running = False
+                self.shutdown = True
+                break
             for worker_file, is_done in self.workers.items():
                 is_done = self.check_worker(worker_file)
                 if not is_done:
-                    if self.delegate:
+                    if self.delegate and self.get_jobs() < self.max_jobs:
                         self.delegate_worker(worker_file)
                     else:
                         #run it
                         worker = Worker.load_from(worker_file)
                         worker.run()
-            self.check_deadline()
+                        self.workers[worker_file] = worker.tasks_done
+                
+                self.check_deadline()
+                if self.is_running == False:
+                    break
+
+        if self.shutdown:
+            self.clean_up()
         
     def check_worker(self, worker_file):
         """Check whether the worker is working"""
@@ -86,6 +98,7 @@ class ExperimentManager:
                 for line in f.readlines():
                     line = line.lower()
                     # assume still running
+                     
                     if "cancelled" in line:
                         self.workers[worker_file] = True
                     if "exited" in line:
@@ -96,8 +109,7 @@ class ExperimentManager:
         # load file
         else:
             worker = Worker.load_from(worker_file)
-            if worker.tasks_done:
-                self.workers[worker_file] = True
+            self.workers[worker_file] = worker.tasks_done
 
 
     def check_pending_workers(self):
@@ -168,40 +180,52 @@ class ExperimentManager:
 
     def dump_to_disk(self):
         fp = f"{self.name}.pickle" 
+
+        print(f"dumping to {fp}")
         with open(fp, "wb") as f:
             pickle.dump(self, f)
 
+        print(fp)
+
     def exit(self):
         self._running = False
-        subprocess.call("python {__file__}")
+        command = f"python {__file__}"
+        # os.system(command)
+        subprocess.Popen(command.split())
+        # os.system(command)
+        print('exiting')
 
     # TODO: write test case dump file to disk and call itself
     def restart(self):
         self.dump_to_disk()
         #update deadline
-        self.update_deadline()
-
-        self.is_running = False
+        self.exit()
 
     def check_deadline(self):
         # only use when on the server
         if time.time() >= self.deadline * self.threshold:
-            if self.delegate:
-                while self.get_jobs() < self.max_jobs:
-                    time.sleep(1)
+            print("deadline reached; restarting")
             # restart process
             self.restart()
         
                 
     def update_deadline(self):
         current_time = time.time()
-        timeout_server = 60 * 15 # //minutes
-        self.deadline = current_time + timeout_server
+        self.deadline = current_time + self.timeout_server
 
     def clean_up(self):
         # if resumed cleanup file
-        if os.path.exists(self.name + ".pickle"):
+        fp = self.name + ".pickle"
+        if os.path.exists(fp):
             os.remove(fp)
+
+        # remove worker files
+        if self.shutdown:
+            for k, v in self.workers.items():
+                try:
+                    os.remove(k)
+                except:
+                    continue
 
     def get_jobs(self):
        # count output squeue
@@ -210,21 +234,28 @@ class ExperimentManager:
        return int(jobs)
        
 SETTINGS = "settings.toml"
-if __name__ == "__main__":
 
-    # check if manager exists
-    pattern = f"{ExperimentManager.__name__}-d+.pickle"
-    # load it
-    for file in os.listdir():
+@click.command()
+@click.option("-s", default = "", type = str)
+def run_main(s):
+    if s == '':
+        pattern = f"{ExperimentManager.__name__}.+\.pickle"
+        for file in os.listdir():
         # found file
-        if re.match(pattern, file):
-            with open(file, 'rb') as f:
-                manager = pickle.load(f)
-            break
-    # create one and run it
+            if re.match(pattern, file):
+                print("Found a match")
+                with open(file, 'rb') as f:
+                    manager = pickle.load(f)
+                    if not manager.is_running:
+                        manager.run()
+                    print("resuming")
+                break
     else:
-        manager = ExperimentManager(SETTINGS)
-    manager.run()
+        manager = ExperimentManager(s)
+        manager.run()
+
+if __name__ == "__main__":
+    run_main()
 
     
          

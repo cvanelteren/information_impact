@@ -89,3 +89,60 @@ def recursive_tree(r, jump = 0):
         r -= 2 + jump
         sources = newsources
     return g
+
+import random
+class ConnectedSimpleGraphs:
+    
+    def __init__(self):
+        """"
+        Class to hold connected graphs of size n
+        """
+        self.graphs = {2 : [nx.path_graph(2)]}
+        self.gm = nx.algorithms.isomorphism.GraphMatcher
+        
+    def generate(self, n):
+        self.graphs = dict(sorted(self.graphs.items(), key = lambda x : x[0]))
+        # get largest key already computed
+        start = list(self.graphs.keys())[-1]
+        while start < n:
+            for base in self.graphs.get(start, []):
+                # TODO add check for each key if all graphs are found
+                for k in range(1, start + 1):
+                    graph = self.__call__(base, k)
+            start += 1
+        return self.graphs
+            
+    def __call__(self, base, k : int):
+        import itertools
+        # generate new connected graph
+        n = len(base) + 1 
+        for nodes in itertools.permutations(list(base.nodes()), k):
+            proposal = base.copy()
+            add = True
+            for node in nodes:
+                proposal.add_edge(node, n)
+            
+            for gprime in self.graphs.get(n, []):
+                if self.gm(gprime, proposal).is_isomorphic():
+                    add = False
+                    break
+            if add:
+                self.graphs[n] = self.graphs.get(n, []) + [proposal]
+        return proposal
+    
+    def rvs(self, n, sparseness = None):
+        """
+        Generate random connected graph of size n
+        """
+        if not sparseness:
+            sparseness = lambda : random.uniform(0, 1)
+        # start from the same base
+        proposal = self.graphs[2][0].copy()
+        for ni in range(2, n):
+            print(sparseness())
+            k = int(sparseness() * ni)
+            k = max((k, 1))
+            for node in random.choices(list(proposal.nodes()), k = k):
+                proposal.add_edge(ni, node)
+        return proposal
+            

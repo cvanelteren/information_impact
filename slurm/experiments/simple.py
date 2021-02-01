@@ -3,18 +3,21 @@ from plexsim import models
 from datetime import datetime
 from imi import infcy
 
-import numpy as np, itertools
+from scipy import optimize
+import numpy as np, itertools, copy
 
 # helper function for phase transition
 def sig(x, a, b, c, d):
         return a / (1 + b * np.exp(c * (x - d)))
 
+from imi.utils.graph import ConnectedSimpleGraphs as CSG
 def setup():
    # define type of model + settings
     model_t = Potts
     model_settings = dict(
        agentStates = np.arange(2)
     )
+
 
     # output directory
     output_directory = f"{__file__}:{datetime.now().isoformat()}"
@@ -25,12 +28,12 @@ def setup():
     # fitting params
     maxfev = 100_000
 
-    from scipy import optimize
 
     thetas = [.5] # match_temperatures
 
     # TODO : implement
-    graphs = []
+    gen = CSG()
+    graphs = gen.generate(5)
 
     # memoize phase transition results
     phase_transition = {}
@@ -92,11 +95,26 @@ class Experiment(Task):
        # obtain system snapshots
        snapshots = sim.snapshots(**snapshots_settings)
 
+       same_side = True
+       tmp = dict()
+       if same_side:
+            for k, v in snapshots.items():
+                if np.mean(v) > .5:
+                    k = np.abs(np.array(k)  - 1)
+                    k = tuple(k)
+                tmp[k] = tmp.get(k, 0) + v
+       z = sum(tmp.values())
+       tmp = {k : v / z for k, v in tmp.items()}
+       backup = copy.deepcopy(snapshots)
+       snapshots = tmp
+
        # conditional sampling
        conditional = sim.forward(snapshots, **conditional_settings)
 
        # store results
-       results = dict(snapshots = snapshots, conditional = conditional)
+       results = dict(snapshots = snapshots,
+                      conditional = conditional,
+                      backup_snapshots = backup)
 
        return results
 

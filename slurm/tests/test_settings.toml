@@ -5,5 +5,5 @@
  # list of experiments
 [experiments]
 
-[experiments.test_experiment]
+[experiments.sleep_experiment]
 # can override settings here

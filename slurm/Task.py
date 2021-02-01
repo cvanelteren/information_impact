@@ -74,7 +74,6 @@ class Worker:
             os.makedirs(dire, exist_ok = True)
 
             fp = os.path.join(dire, self.create_output_file(task))
-            print(fp)
             with open(fp, 'wb') as f:
                 self.log(f"Saving results to {dire}")
                 pickle.dump(results, f)
@@ -87,7 +86,7 @@ class Worker:
             if len(self.tasks) == 0:
                 self.tasks_done = True
                 self.log("Done with all tasks")
-                self.clean_up()
+                # self.clean_up()
 
     def update_deadline(self):
         current_time = time.time()
