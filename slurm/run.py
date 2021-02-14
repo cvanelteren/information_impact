@@ -25,15 +25,17 @@ class ExperimentManager:
                  timeout = 600 * 5):
         self.reader = toml.load(settings_file)
 
-        self.timeout_server = timeout 
-        # max jobs on the server
         # assume running on the server
         # TODO deal with local processing of experiments
         self.delegate = False
         # TODO: REMOVE THIS assume server
+        
+        self.timeout_server = timeout 
         if os.uname().nodename.endswith("uva.nl_"):
             self.max_jobs = 5
+            # max jobs on the server
             self.delegate = True
+
 
         # counter for reset to prevent overwriting workers
         # unique id base on time ensures uniqueness
@@ -73,13 +75,13 @@ class ExperimentManager:
                 if not is_done:
                     if self.delegate and self.get_jobs() < self.max_jobs:
                         self.delegate_worker(worker_file)
+                        self.check_deadline()
                     else:
                         #run it
                         worker = Worker.load_from(worker_file)
                         worker.run()
                         self.workers[worker_file] = worker.tasks_done
-                
-                self.check_deadline()
+
                 if self.is_running == False:
                     break
 

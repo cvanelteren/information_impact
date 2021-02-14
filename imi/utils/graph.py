@@ -139,7 +139,6 @@ class ConnectedSimpleGraphs:
         # start from the same base
         proposal = self.graphs[2][0].copy()
         for ni in range(2, n):
-            print(sparseness())
             k = int(sparseness() * ni)
             k = max((k, 1))
             for node in random.choices(list(proposal.nodes()), k = k):

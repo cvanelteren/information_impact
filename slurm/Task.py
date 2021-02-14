@@ -9,6 +9,8 @@ class Task:
 
     def run(self):
         assert False, "Needs to be implemented"
+    def gen_id(self):
+        assert False, "Need to name experiments"
 
 class Worker:
     def __init__(self,
@@ -50,7 +52,7 @@ class Worker:
         self.name = f"worker_{self.id}"
 
     def create_output_file(self, task, dire = ""):
-        fp = os.path.join(dire, f"{task.settings}.pickle")
+        fp = os.path.join(dire, f"{task.gen_id()}.pickle")
         return fp
 
 

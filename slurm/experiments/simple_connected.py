@@ -11,9 +11,9 @@ def sig(x, a, b, c, d):
         return a / (1 + b * np.exp(c * (x - d)))
 
 from imi.utils.graph import ConnectedSimpleGraphs as CSG
-def setup():
+def setup(config : dict):
    # define type of model + settings
-    model_t = Potts
+    model_t = models.Potts
     model_settings = dict(
        agentStates = np.arange(2)
     )
@@ -23,20 +23,21 @@ def setup():
     output_directory = f"{__file__}:{datetime.now().isoformat()}"
     # magnetization params
     n_magnetize = int(1e5)
-    temps = np.linspace(0, 10, 100);
+    temps = np.linspace(0, 10, 40);
 
     # fitting params
     maxfev = 100_000
 
 
-    thetas = [.5] # match_temperatures
+    thetas = [.7] # match_temperatures
 
     # TODO : implement
     gen = CSG()
-    graphs = gen.generate(5)
+    # graphs = [gen.generate(5)]
+    graphs = [j for i in gen.generate(5).values() for j in i]
 
     # memoize phase transition results
-    phase_transition = {}
+    phase_transitions = {}
 
     # hold tasks
     experiments = []
@@ -44,13 +45,19 @@ def setup():
     combinations = itertools.product(thetas, graphs)
     for comb in combinations:
        # unpack
+
+       instance_settings = model_settings.copy()
        theta, graph = comb
+
+       instance_settings['graph'] = graph
+       instance_settings['sampleSize'] = graph.number_of_nodes() 
+
         # get params fit
        if phase_transition := phase_transitions.get(graph):
            opts, cov = phase_transition.get('fit')
        else:
             # create model
-            model = model_t(**model_settings)
+            model = model_t(**instance_settings)
             magnetization, susceptibility   = model.magnetize(temps, n = n_magnetize)
 
             # fit phase transition
@@ -69,15 +76,18 @@ def setup():
                                 method = 'TNC',\
                                 )
         # setup model
-       model_settings['graph'] = graph
-       model_settings['temperature'] = res.x
+       temperature = res.x
+       instance_settings['temperature'] = temperature
    
        # reinit model
-       model = model_t(**model_settings)
+       model = model_t(**instance_settings)
 
+       
        settings = dict(model = model,
-                        t = temperature,
-                        magnetisation = theta)
+                       instance_settings = instance_settings, 
+                       t = temperature,
+                       config = config,
+                magnetisation = theta)
 
        task = Experiment(settings, output_directory = output_directory)
        experiments.append(task)
@@ -85,37 +95,62 @@ def setup():
 
 class Experiment(Task):
    def __init__(self, settings, *args, **kwargs): 
-      super(self).__init__(self, settings)
+      super(Experiment, self).__init__(settings, output_directory = "connected_simple")
       # do stuff
 
    def run(self):
+       model = self.settings.get('model')
+
+       config = self.settings.get('config').copy()
+       print(config)
+       snapshot_settings = config.get("snapshots").copy()
+       conditional_settings = config.get("conditional").copy()
        # setup simulatator object
        sim = infcy.Simulator(model)
 
        # obtain system snapshots
-       snapshots = sim.snapshots(**snapshots_settings)
+       snapshots = sim.snapshots(**snapshot_settings)
 
        same_side = True
-       tmp = dict()
        if same_side:
+            tmp = dict()
             for k, v in snapshots.items():
                 if np.mean(v) > .5:
                     k = np.abs(np.array(k)  - 1)
                     k = tuple(k)
                 tmp[k] = tmp.get(k, 0) + v
-       z = sum(tmp.values())
-       tmp = {k : v / z for k, v in tmp.items()}
+            z = sum(tmp.values())
+            tmp = {k : v / z for k, v in tmp.items()}
+            snapshots = tmp
        backup = copy.deepcopy(snapshots)
-       snapshots = tmp
 
        # conditional sampling
-       conditional = sim.forward(snapshots, **conditional_settings)
+       time = conditional_settings.get('time')
+       time = np.arange(time)
+       
+       conditional_settings['time'] = time
+       output  = sim.forward(snapshots, **conditional_settings)
+
+       snapshots = output['snapshots']
+       conditional = output['conditional']
+       px, mi = infcy.mutualInformation(conditional, snapshots)
+
 
        # store results
        results = dict(snapshots = snapshots,
-                      conditional = conditional,
-                      backup_snapshots = backup)
+                      conditional = conditional, 
+                      backup_snapshots = backup,
+                      graph = model.graph,
+                      config = config,
+                      mi = mi,
+                      px = px)
 
        return results
+   def gen_id(self):
+        N = self.settings.get('model').nNodes
+        M = self.settings.get('magnetisation')
+
+        import time
+        return f"{time.time()}_nNodes={N}_mag={M}"
 
       

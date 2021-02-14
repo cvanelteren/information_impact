@@ -7,44 +7,31 @@
 [general]
     # simulations parameters
     trials = 1
-    [simulation.tipping]
+    [general.tipping]
         n_samples     = 100
         buffer_size   = 10000000
         window        = 1000
         asymmetric    = false
         spacing       = 1
 
-    [simulation.conditional]
+    [general.snapshots]
+    n_samples = 1000
+    step      = 1
+    
+    [general.conditional]
         repeats    = 1000
-        time_steps = 1000
+        time       = 50
 
 [sbatch]
   cpus-per-task    = 1  
   ntasks-per-node  = 1
   cores-per-socket = 16
   constraint       = "cpunode"
-  # output           = "%x-$j.out"
+  # output           = "%x-$j."
   # error            = "%x-%j.err"
   deadline         = "48:00:00"
 
 [experiments]
-   # present should produce output
-[experiments.connected_graphs]
-  
+[experiments.kite]
 
-# [model]
-    # name       = "Potts"
-    # [model.settings]
-        # sampleSize = 1
-    # [model.graph]
-        # name     = "recursive_tree"
-        # name = "graph.powerlaw_graph"
-        # settings = {n = 100, gamma = 1.1, connected = true}
 
-        # name = "nx.grid_2d_graph"
-        # settings = {n = 10, m = 10, periodic = True}
-
-        # name = "graph.beta_graph"
-        # settings = {n = 100, beta = 30, alpha = 2, connected = True}
-
-        # settings = {r = 5, jump = 0}

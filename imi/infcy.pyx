@@ -51,7 +51,7 @@ cdef class Simulator:
 
     cpdef dict snapshots(self, size_t n_samples,
                          size_t step=1):
-
+#     if verbose:
         cdef state_t[::1] states
         # cdef double z = 1 # / <double> n_samples
         # cdef tuple tmp
@@ -61,10 +61,36 @@ cdef class Simulator:
         # make the loop below fully nogil.
         cdef dict snapshots = {}
         # cdef unordered_map[string, double] snapshots
-        for i in range(n_samples):
-            states = self.model.simulate(step + 1)[-1]
-            tmp = tuple(states.base)
-            snapshots[tmp] = snapshots.get(tmp, 0) + 1
+         
+        # for i in prange(n_samples):
+        #     states[tid] = (<models[tid].ptr)._updateState(r[tid])
+
+        cdef:
+            size_t nThreads = mp.cpu_count() 
+            SpawnVec models = self.model._spawn(nThreads)
+            size_t tid, s, i
+            node_id_t[:, :, ::1] r    = np.ndarray((nThreads, step, self.model.sampleSize), \
+                                                   dtype = np.uintp)
+
+
+        for i in prange(n_samples, nogil = True):
+            tid = threadid()
+
+            with gil:
+                r[tid] = ( <Model> models[tid].ptr).sampleNodes(step)
+
+            for s in range(step):
+                (<Model> models[tid].ptr)._updateState(r[tid, s])
+
+            with gil:
+                tmp = tuple((<Model> models[tid].ptr).states)
+                snapshots[tmp] = snapshots.get(tmp, 0) + 1 / <double> n_samples
+        
+        # for i in range(n_samples):
+        #     states = self.model.simulate(step + 1)[-1]
+        #     tmp = tuple(states.base)
+        #     snapshots[tmp] = snapshots.get(tmp, 0) + 1
+        #     # self.model.reset()
         return snapshots
 
     cpdef dict running(self,
@@ -159,7 +185,7 @@ cdef class Simulator:
        from imi.utils.stats import check_allocation
        # setup buffers
        cdef:
-          size_t time_steps = time.size
+          size_t time_steps = len(time)
           size_t cpus = mp.cpu_count()
 
           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,
@@ -170,9 +196,10 @@ cdef class Simulator:
                                                  dtype=np.double)
 
           state_t[:, ::1] states = np.array([i for i in snapshots.keys()],
-                                            dtype=np.double)
+                                            dtype=np.double).reshape(-1, self.model.nNodes)
 
-          size_t nStates = len(states)
+          # object states = iter(snapshots.keys())
+          size_t nStates = len(snapshots)
 
           # spawn models parallely
           SpawnVec models = self.model._spawn(cpus)
@@ -226,6 +253,7 @@ cdef class Simulator:
                # get or reset buffer
                bin_buffer.base[tid] = conditional.get(
                    tuple(start_state[tid]), np.zeros(shape))
+               # start_state[tid] =  np.array(next(states)).reshape(-1, (< Model > models[tid].ptr).nNodes)
 
            # start binning
            for trial in range(repeats):
