@@ -14,6 +14,8 @@ class Experiment(Task):
 
     def run(self):
         return {"hello there" : "how do you do?"}
+    def gen_id(self):
+        return "test"
 
 # if __name__ == "__main__":
 #     tasks = setup(config)
