@@ -245,6 +245,10 @@ cdef class Simulator:
         #    r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
 
        cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+       cdef unordered_map[node_id_t, weight_t]  copyNudge = self.model.nudges
+       cdef size_t half = max((int(T * .5), 1))
+       print('>','>',  half)
+       
        for state_idx in prange(nStates, nogil=True, num_threads=cpus):
            tid = threadid()
            start_state[tid] = states[state_idx]
@@ -258,8 +262,11 @@ cdef class Simulator:
            # start binning
            for trial in range(repeats):
                # reset buffer
+               
                for node in range(NODES):
                    (< Model > models[tid].ptr)._states[node] = start_state[tid, node]
+                   if copyNudge.find(node) != copyNudge.end():
+                        (<Model> models[tid].ptr)._nudges[node] = copyNudge[node]
                    thread_state[tid, 0, node] = start_state[tid, node]
 
                # with gil:
@@ -270,6 +277,9 @@ cdef class Simulator:
                for step in range(1, T):
                     # store data
                    (< Model > models[tid].ptr)._updateState(r[tid, step])
+                   if step >= half:
+                       (<Model> models[tid].ptr)._nudges.clear()
+
                    if store_idx.find(step) != store_idx.end():
                        for node in range(NODES):
                             thread_state[tid, store_idx[step], node] = (< Model > models[tid].ptr)._states[node]

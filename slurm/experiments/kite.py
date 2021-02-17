@@ -21,21 +21,22 @@ def setup(config : dict):
     # output directory
     output_directory = f"{__file__}:{datetime.now().isoformat()}"
     # magnetization params
-    n_magnetize = int(1e5)
-    temps = np.linspace(0, 5, 100);
+    n_magnetize = int(1e4)
+    temps = np.linspace(0, 5, 50);
 
     # fitting params
     maxfev = 100_000
 
 
-    thetas = [.01] # match_temperatures
+    thetas = [.8] # match_temperatures
+
 
     # TODO : implement
     # graphs = [gen.generate(5)]
     graphs = [nx.krackhardt_kite_graph()]
-    graphs = [nx.florentine_families_graph()]
+    # graphs = [nx.florentine_families_graph()]
     # graphs = [nx.star_graph(5)]
-    # graphs = [nx.path_graph(3)]
+    # graphs = [nx.path_graph(5)]
     # 
 
     # memoize phase transition results
@@ -44,7 +45,7 @@ def setup(config : dict):
     # hold tasks
     experiments = []
 
-    impacts = np.array([-3, -np.inf])
+    impacts = -np.array([-1, -np.inf])
     interventions = []
     for g in graphs:
         # unperturbed
@@ -64,7 +65,7 @@ def setup(config : dict):
 
        instance_settings = model_settings.copy()
        theta, graph, intervention = comb
-       instance_settings['sampleSize'] = len(graph)
+       instance_settings['sampleSize'] = 1 # len(graph)
        instance_settings['graph'] = graph
        # instance_settings['sampleSize'] = graph.number_of_nodes() 
 
@@ -91,7 +92,7 @@ def setup(config : dict):
 
        res = optimize.minimize(lambda x: abs(sig(x, *opts) - theta), \
                                 x0 = 0,\
-                                # method = 'TNC',\
+                                method = 'COBYLA',\
                                 )
 
         # setup model
@@ -102,16 +103,15 @@ def setup(config : dict):
        # reinit model
        model = model_t(**instance_settings)
 
-       s = snaps.get(graph, {})
-       if len(s) == 0:
-            sim = infcy.Simulator(model)
-            ss = config['snapshots']
-            ss['step'] = 1000
-            s = sim.snapshots(**ss)
+       # s = snaps.get(graph, {})
+       # if len(s) == 0:
+       #      sim = infcy.Simulator(model)
+       #      ss = config['snapshots']
+       #      s = sim.snapshots(**ss)
 
-            print(s)
-            snaps[graph] = s
-            print(f"snaps:{len(s)}")
+       #      print(s)
+       #      snaps[graph] = s
+       #      print(f"snaps:{len(s)}")
        config['intervention'] = intervention
        import copy
        settings = dict(
@@ -120,7 +120,7 @@ def setup(config : dict):
                        t                 = t,
                        config            = config.copy(),
                        magnetisation     = theta,
-                       snapshots         = s
+                       # snapshots         = s
                        )
 
        task = Experiment(settings, output_directory = output_directory)
@@ -142,26 +142,27 @@ class Experiment(Task):
 
 
        intervention = config.get('intervention', {})
-       # snapshot_settings = config.get("snapshots").copy()
+       snapshot_settings = config.get("snapshots").copy()
 
        conditional_settings = config.get("conditional").copy()
        # setup simulatator object
-       # sim = infcy.Simulator(model)
+       sim = infcy.Simulator(model)
 
        # obtain system snapshots
-       # snapshots = sim.snapshots(**snapshot_settings)
-       snapshots = self.settings['snapshots']
+       snapshots = sim.snapshots(**snapshot_settings)
+       # snapshots = self.settings['snapshots']
 
 
        same_side = True
        if same_side:
             tmp = dict()
             mapper = {i: j for i, j in zip(model.agentStates, model.agentStates[::-1])}
-            print(">", mapper)
+            print(mapper)
             for k, v in snapshots.items():
-                if np.mean(v) > np.mean(model.agentStates):
+                if np.mean(k) > np.mean(model.agentStates):
                     k = tuple(mapper[ki] for ki in k)
                 tmp[k] = tmp.get(k, 0) + v
+                print(k, v)
             z = sum(tmp.values())
             tmp = {k : v / z for k, v in tmp.items()}
             snapshots = tmp
@@ -174,15 +175,19 @@ class Experiment(Task):
        conditional_settings['time'] = time
 
        
-       # model.nudges = intervention
-       for k, v in intervention.items():
-            idx = model.adj.mapping[str(k)]
-            model.H[idx] = v
-       print(model.H)
+       model.nudges = intervention
+       print(model.nudges)
+
+       # # model.nudges = intervention
+       # for k, v in intervention.items():
+       #      idx = model.adj.mapping[str(k)]
+       #      model.H[idx] = v
+       # print(model.H)
+
        sim = infcy.Simulator(model)
        output  = sim.forward(snapshots, **conditional_settings)
 
-       snapshots = output['snapshots']
+       # snapshots = output['snapshots']
        conditional = output['conditional']
        px, mi = infcy.mutualInformation(conditional, snapshots)
 

@@ -108,37 +108,39 @@ def returnX(x):
 
 def ratio(x):
     return x[...,[0]] / x[..., 1:]
-def bootStrapDrivers(bootStrapData,\
-        alpha = .5):
+
+def bootStrapDrivers(bootStrapData, phi = .5):
     """
     Determines driver-nodes through the boostrap distribution
     It consists as an iterative procedure that takes the max value in the data, then 
     a normal distribution is fit an tested with overlap for the other nodes in the data at :alpha: level
 
+     
+    Parameters
+    ----------
+    bootStrapData: np.array
+    2d matrix consisting of size samples x nodes
+    phi : float
+    Overlap between distribution.
     """
     trials, nodes = bootStrapData.shape[:2]
     # create bootstrap distribution
-    #boots = bootStrap(data, func = returnX, total = total, batch = batch)
-    #boots = boots.mean(1)
     driver = bootStrapData.mean(0).argmax()
+    # add noise to prevent p(x) = 0
     bootStrapData += np.random.rand(*bootStrapData.shape)  * 1e-16
     driverDist = NormalDist().from_samples(bootStrapData[..., driver])
     
     drivers = {driver: (driverDist.mean, driverDist.variance)}
+    # other nodes to consider
     options = np.delete(np.arange(nodes), driver)
-
-    allnodes = {k: v for k, v in drivers.items()}
     for node in options:
         # fit distribution
         otherDist = NormalDist().from_samples(bootStrapData[..., node])
-
+        # compute overlap
         overlap = driverDist.overlap(otherDist)
-        # statisticserror -> sigma = 0
-
-        if  overlap > alpha:
+        if overlap > phi:
             drivers[node] = (otherDist.mean, otherDist.variance)
-        allnodes[node] = (otherDist.mean, otherDist.variance)
-    return drivers, allnodes
+    return drivers
 
 def bootStrapDriversThresholds(boots,\
         alphas):

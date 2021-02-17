@@ -8,19 +8,19 @@
     # simulations parameters
     trials = 1
     [general.tipping]
-        n_samples     = 100
+        n_samples     = 10000
         buffer_size   = 10000000
         window        = 1000
         asymmetric    = false
         spacing       = 1
 
     [general.snapshots]
-    n_samples = 1000
-    step      = 1
+    n_samples = 100
+    step      = 1000
     
     [general.conditional]
         repeats    = 1000
-        time       = 50
+        time       = 200
 
 [sbatch]
   cpus-per-task    = 1  
