@@ -17,8 +17,6 @@ def setup(config : dict):
     model_settings = dict(
        agentStates = np.arange(2)
     )
-
-
     # output directory
     output_directory = f"{__file__}:{datetime.now().isoformat()}"
     # magnetization params
@@ -51,6 +49,7 @@ def setup(config : dict):
 
        instance_settings['graph'] = graph
        instance_settings['sampleSize'] = graph.number_of_nodes() 
+       # instance_settings['agentStates'] = np.arange(len(rule))
 
         # get params fit
        if phase_transition := phase_transitions.get(graph):

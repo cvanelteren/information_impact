@@ -28,7 +28,7 @@ def setup(config : dict):
     maxfev = 100_000
 
 
-    thetas = [.8] # match_temperatures
+    thetas = [.9] # match_temperatures
 
 
     # TODO : implement
@@ -45,7 +45,7 @@ def setup(config : dict):
     # hold tasks
     experiments = []
 
-    impacts = -np.array([-1, -np.inf])
+    impacts = np.array([-1, -np.inf])
     interventions = []
     for g in graphs:
         # unperturbed
@@ -65,7 +65,7 @@ def setup(config : dict):
 
        instance_settings = model_settings.copy()
        theta, graph, intervention = comb
-       instance_settings['sampleSize'] = 1 # len(graph)
+       instance_settings['sampleSize'] = 1 #len(graph)
        instance_settings['graph'] = graph
        # instance_settings['sampleSize'] = graph.number_of_nodes() 
 
@@ -157,12 +157,12 @@ class Experiment(Task):
        if same_side:
             tmp = dict()
             mapper = {i: j for i, j in zip(model.agentStates, model.agentStates[::-1])}
-            print(mapper)
+            # print(mapper)
             for k, v in snapshots.items():
-                if np.mean(k) > np.mean(model.agentStates):
+                if np.mean(k) < np.mean(model.agentStates):
                     k = tuple(mapper[ki] for ki in k)
                 tmp[k] = tmp.get(k, 0) + v
-                print(k, v)
+                # print(k, v)
             z = sum(tmp.values())
             tmp = {k : v / z for k, v in tmp.items()}
             snapshots = tmp

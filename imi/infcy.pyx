@@ -66,7 +66,7 @@ cdef class Simulator:
         #     states[tid] = (<models[tid].ptr)._updateState(r[tid])
 
         cdef:
-            size_t nThreads = mp.cpu_count() 
+            size_t nThreads = mp.cpu_count() - 1
             SpawnVec models = self.model._spawn(nThreads)
             size_t tid, s, i
             node_id_t[:, :, ::1] r    = np.ndarray((nThreads, step, self.model.sampleSize), \
@@ -186,7 +186,7 @@ cdef class Simulator:
        # setup buffers
        cdef:
           size_t time_steps = len(time)
-          size_t cpus = mp.cpu_count()
+          size_t cpus = mp.cpu_count() - 1
 
           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,
                                                       self.model.adj._nNodes),

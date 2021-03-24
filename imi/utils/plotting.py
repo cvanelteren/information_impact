@@ -132,7 +132,6 @@ def addGraphPretty(graph, \
     # average distance
 #    r = linalg.norm(r[:, None] - r[None, :], axis = 0).mean() * .1
     # DEFAULTS
-    #
     # get min distance between nodes; use that as baseline for circle size
     layout = kwargs.get('layout', {})
     s      = layout.get('scale', None)
@@ -216,6 +215,7 @@ def addGraphPretty(graph, \
     else:
         minWeight, maxWeight = 0, 1
 
+ 
     for u, v in graph.edges():
         n1      = nodePatches[u]
         n2      = nodePatches[v]
@@ -226,27 +226,17 @@ def addGraphPretty(graph, \
         if (u,v) in seen:
             rad = seen.get((u,v))
             rad = ( rad + np.sign(rad) *0.1 ) * -1
-
         # set properties of the edge
         alphaEdge = np.clip(abs(d), .2, 1)
-        arrowsprops['color'] = 'green' if d > 0 else 'red'
-#        arrowsprops['alpha'] = alphaEdge
+        
+        arrowsprops['color'] = 'green'
+        if d < 0:
+            arrowsprops['color'] = 'red'
+       # arrowsprops['alpha'] = alphaEdge
         if maxWeight != minWeight:
             arrowsprops['lw'] = np.clip(((maxWeight - d) / (maxWeight - minWeight)) * 2.5, .1, None) # magic numbers galore!
         # self-edge is a special case
         if u == v:
-            # n2 = copy(n1)
-            # n1 = copy(n1)
-            # theta     = random.uniform(0, 2*pi)
-            # r         = circlekwargs.get('radius')
-            # rotation  = pi
-            # corner1   = array([sin(theta), cos(theta)]) * r
-            # corner2   = array([sin(theta + rotation), cos(theta + rotation)]) *\
-            # r + .12 * sign(random.randn()) * r
-            # n1.center = array(n1.center) + corner1
-            # n2.center = array(n2.center) + corner2
-            # e = FancyArrowPatch(n2.center, n1.center, **arrowsprops)
-
             offset = np.array(n1.center, dtype = float)
 
             # add * for self-edges

@@ -8,19 +8,18 @@
     # simulations parameters
     trials = 1
     [general.tipping]
-        n_samples     = 10000
-        buffer_size   = 10000000
-        window        = 1000
-        asymmetric    = false
-        spacing       = 1
+        n_samples     = 1000
+        buffer_size   = 10000
+        surround      = 1000
+        reset         = true
 
     [general.snapshots]
-    n_samples = 100
-    step      = 1000
+    n_samples = 10000
+    step      = 1
     
     [general.conditional]
         repeats    = 1000
-        time       = 200
+        time       = 100
 
 [sbatch]
   cpus-per-task    = 1  
@@ -32,6 +31,9 @@
   deadline         = "48:00:00"
 
 [experiments]
-[experiments.kite]
+#[experiments.tipping]
+# [experiments.kite]
+#[experiments.psycho]
+[experiments.value_network_satisfaction]
 
 

@@ -38,12 +38,12 @@ class Worker:
 
     def setup_worker(self, settings: dict ):
         # TODO set better defaults
-        defaults = dict(deadline = 1,
+        defaults = dict(deadline = 360000,
                         threshold = 1,
                         id = '',
                         autostart = False,
                         base = '',
-                        job_time = 0)
+                        job_time = 360000)
 
         # assign worker properties
         for k,v in defaults.items(): 

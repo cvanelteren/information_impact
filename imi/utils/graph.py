@@ -5,7 +5,7 @@ __email__ = "caspervanelteren@gmail.com"
 
 # nx.draw(gc, pos = nx.circular_layout(gc, scale = 1e-5),)
 def nx_layout(graph, layout = None):
-    from datashader.bundling import hammer_bundle
+    from .bundling import hammer_bundle
     import pandas as pd
     if not layout:
         layout = nx.circular_layout(graph)
@@ -144,4 +144,116 @@ class ConnectedSimpleGraphs:
             for node in random.choices(list(proposal.nodes()), k = k):
                 proposal.add_edge(ni, node)
         return proposal
+
+def legacy_graph(graph):
+    from ast import literal_eval
+
+    mapping = dict()
+    rmapping = dict()
+    for line in nx.generate_multiline_adjlist(graph, ','):
+        add = False # tmp for not overwriting doubles
+        # input validation
+        lineData = []
+        # if second is not dict then it must be source
+        for prop in line.split(','):
+            try:
+                i = literal_eval(prop) # throws error if only string
+                lineData.append(i)
+            except:
+                lineData.append(prop) # for strings
+        node, info = lineData
+        # check properties, assign defaults
+        # if 'state' not in graph.node[node]:
+        #     idx = np.random.choice(agentStates)
+        #     # print(idx, agentStates)
+        #     graph.node[node]['state'] = idx
+        # if 'nudge' not in graph.node[node]:
+        #     graph.node[node]['nudge'] =  DEFAULTNUDGE
+
+        # if not dict then it is a source
+        if isinstance(info, dict) is False:
+            # add node to seen
+            if node not in mapping:
+                # append to stack
+                counter             = len(mapping)
+                mapping[node]       = counter
+                rmapping[counter]   = node
+                print(mapping)
+
+            # set source
+            source   = node
+            sourceID = mapping[node]
+
+            # states[sourceID] = <long> graph.node[node]['state']
+            # nudges[sourceID] = <double> graph.node[node]['nudge']
+        # check neighbors
+        else:
+            # if 'weight' not in info:
+                # graph[source][node]['weight'] = DEFAULTWEIGHT
+            if node not in mapping:
+                counter           = len(mapping)
+                mapping[node]     = counter
+                rmapping[counter] = node
+
+            # # check if it has a reverse edge
+            # if graph.has_edge(node, source):
+            #     sincID = mapping[node]
+            #     # weight = graph[node][source]['weight']
+            #     # check if t he node is already in stack
+            #     if sourceID in set(adj[sincID]) :
+            #         add = True
+            #     # not found so we should add
+            #     else:
+            #         add = True
+            # # add source > node
+            # sincID = <long> mapping[node]
+            # adj[sourceID].neighbors.push_back(<long> mapping[node])
+            # adj[sourceID].weights.push_back(<double> graph[source][node]['weight'])
+            # add reverse
+            # if add:
+                # adj[sincID].neighbors.push_back( <long> sourceID)
+                # adj[sincID].weights.push_back( <double> graph[node][source]['weight'])
+    return mapping, rmapping
+
+def get_neighbors(g, node):
+    neighbors = list(g.neighbors(node))
+    weights  = np.array([g[node][neighbor].get('weight', 1) for neighbor in neighbors])
+    weights = weights / weights.sum()
+    return neighbors, weights
+def jujujajaki(g, t, p1, p2, p3, w0 = .2, delta = .1):
+     
+    results = []
+    for ti in range(t):
+        node = np.random.choice(g.nodes())
+        # cutoff
+        if np.random.rand() < p1:
+            neighbors = tuple(g.neighbors(node))
+            for neighbor in neighbors:
+                g.remove_edge(node, neighbor)
+        # explore
+        if np.random.rand() < p2:
+            alpha = True if len(tuple(g.neighbors(node))) != len(g) else False
+            while alpha:
+                other = np.random.choice(g.nodes())
+                if not g.has_edge(node, other):
+                    alpha = False
+            g.add_edge(node, other, weight = np.random.rand())
             
+        # local search 
+        if p3 < np.random.rand():
+            neighbors, weights = get_neighbors(g, node)
+
+            if neighbors:
+                other = np.random.choice(neighbors, 1 if len(neighbors) else 0, p = weights)[0]
+                neighbors, weights = get_neighbors(g, other)
+                
+                if neighbors:
+                    other_k = np.random.choice(neighbors, 1 if len(neighbors) else 0, p = weights)[0]
+                    if not g.has_edge(node, other_k):
+                        g.add_edge(node, other_k, weight = w0)
+            
+                
+                    g[node][other_k]['weight'] = g[node][other_k].get('weight', 0) + delta
+        results.append(g.copy())
+    return results
+

@@ -63,6 +63,7 @@ def _find_peaks(dummy, settings):
             s = tuple(s)
             dist[b][s]= dist[b].get(s, 0) + 1
     return dist
+
 def find_peaks(m,
                n_samples,
                buffer_size,
@@ -101,7 +102,7 @@ def find_peaks(m,
     f = partial(_find_peaks, settings = settings)
     with mp.Manager() as man:
 
-        cpus = mp.cpu_count()
+        cpus = mp.cpu_count() - 1
         with mp.Pool(cpus) as p:
             output = p.map(f, range(n_samples))
 
