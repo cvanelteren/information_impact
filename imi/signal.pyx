@@ -71,6 +71,48 @@ cpdef np.ndarray detect_tipping(double[::1] signal,
     idx =  idx[np.argwhere(np.diff(idx) > spacing)]
     return idx
 
+# cpdef tuple find_tipping_inline(Model, m,
+#                                 dict settings):
+#     cdef np.ndarray bins = settings.get('bins', np.linspace(0, 1, 10))
+#     cdef dict dist = {b : {} for b in bins}
+
+#     # spawn models
+#     cdef size_t threads = settings.get('n_jobs', mp.cpu_count() - 1)
+#     cdef SpawnVec models = m._spawn(threads = threads)
+
+#     # look around tipping point
+#     cdef size_t neighborhood = settings.get("surround", 1000)
+#     cdef size_t n_samples = settings.get('n_samples', 100)
+
+#     cdef float threshold = 1/<float>(m.nNodes) 
+#     cdef float tipping = np.mean(m.agentStates)
+#     cdef bint tipping_found = False
+
+#     cdef size_t tid
+#     cdef Model tid_model
+#     cdef state_t[::1] tid_state 
+#     for sample in prange(n_samples):
+#         # acquire model
+#         tid = thread_id()
+#         tid_model = models[tid]
+#         # find tipping
+#         tipping_found = False
+#         while tipping_found != True:
+#             tid_state = (<Model> tid_model.ptr)._updateState((<Model>tid_model.ptr)._sampleNodes(1))
+#             if abs( sum(tipping - tid_state) ) <=  threshold:
+#                tipping_found = True 
+#         with gil:
+#             dist[0] = dist.get(0, 0) + 1
+#             # find state in the neighborhood
+#             tmp = (<Model> tid_model.ptr).simulate(neighbood)
+#             for state in tmp[1:]:
+#                 idx = np.digitize(state.mean(), bins)
+#                 bin_ = bins[idx]
+#                 dist[bin_] = dist.get(bin_, 0) + 1
+#     return dist 
+
+            
+        
 cpdef tuple find_tipping(Model m,
                    double[::1] bins,
                    size_t n_samples,

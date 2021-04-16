@@ -50,7 +50,7 @@ cdef class Simulator:
             self.hist_map[i] = idx
 
     cpdef dict snapshots(self, size_t n_samples,
-                         size_t step=1):
+                         size_t step=2):
 #     if verbose:
         cdef state_t[::1] states
         # cdef double z = 1 # / <double> n_samples
@@ -68,25 +68,23 @@ cdef class Simulator:
         cdef:
             size_t nThreads = mp.cpu_count() - 1
             SpawnVec models = self.model._spawn(nThreads)
-            size_t tid, s, i
             node_id_t[:, :, ::1] r    = np.ndarray((nThreads, step, self.model.sampleSize), \
-                                                   dtype = np.uintp)
+                                                   dtype = np.uint)
 
 
-        for i in prange(n_samples, nogil = True):
+        cdef size_t tid, s, i
+        for i in prange(n_samples, nogil = True, num_threads = nThreads):
             tid = threadid()
-
-            with gil:
-                r[tid] = ( <Model> models[tid].ptr).sampleNodes(step)
+            r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
 
             for s in range(step):
                 (<Model> models[tid].ptr)._updateState(r[tid, s])
 
             with gil:
                 tmp = tuple((<Model> models[tid].ptr).states)
-                snapshots[tmp] = snapshots.get(tmp, 0) + 1 / <double> n_samples
+                snapshots[tmp] = snapshots.get(tmp, 0) + 1 / <double>(n_samples)
         
-        # for i in range(n_samples):
+        #for i in range(n_samples):
         #     states = self.model.simulate(step + 1)[-1]
         #     tmp = tuple(states.base)
         #     snapshots[tmp] = snapshots.get(tmp, 0) + 1

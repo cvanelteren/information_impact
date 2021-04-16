@@ -10,7 +10,7 @@ from subprocess import run
 add = []
 compiler = 'g++'
 optFlag = '-Ofast'
-cppv    = '17'
+cppv    = '20'
 
 flags = f'{optFlag} -march=native -std=c++{cppv} -flto '\
         '-frename-registers -funroll-loops -fno-wrapv '\
@@ -78,7 +78,9 @@ pbase = "imi"
 package_data = {"" : "*.pxd *.pyx".split(),
                 # "imi.core" : "*.pxd *.pyx".split(),
                 }
-packages = find_packages(exclude = ["Plexsim*"])
+exclude = ["Plexsim*"]
+exclude = []
+packages = find_packages(exclude = exclude)
 setup(
         name                 = 'imi',
         version              = __version__,

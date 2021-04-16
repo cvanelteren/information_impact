@@ -28,14 +28,14 @@ def setup(config : dict):
     maxfev = 100_000
 
 
-    thetas = [.6] # match_temperatures
+    thetas = [.85] # match_temperatures
 
 
     # TODO : implement
     # graphs = [gen.generate(5)]
-    #graphs = [nx.krackhardt_kite_graph()]
+    graphs = [nx.krackhardt_kite_graph()]
     #graphs = [nx.florentine_families_graph()]
-    graphs = [recursive_tree(6, 0)]
+    #graphs = [recursive_tree(6, 0)]
     # graphs = [nx.star_graph(5)]
     # graphs = [nx.path_graph(5)]
     # 
@@ -136,6 +136,7 @@ class Experiment(Task):
    def run(self):
         model = self.settings.get('model')
         from imi.utils.signal import find_peaks
+
         peak_settings =  self.settings['config']['tipping']
 
         # find peaks
@@ -147,7 +148,7 @@ class Experiment(Task):
                                 **peak_settings)
         print("-" * 13 + "Tipping points" + "-" * 13)
         for k, v in snapshots.items():
-                print(f"{len(v)} \t at {k}")
+            print(f"{len(v)} \t at {k}")
         sim = infcy.Simulator(model)
 
         conditional = self.settings['config'].get("conditional", {})

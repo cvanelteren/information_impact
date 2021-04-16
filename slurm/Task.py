@@ -120,9 +120,10 @@ class Worker:
 
     def check_deadline(self):
         # dump object and resume
-        if time.time() >= self.deadline * self.threshold:
-            self.log("Deadline reached")
-            self.restart()
+        print(time.time(), self.deadline)
+        #if time.time() >= self.deadline * self.threshold:
+        #    self.log("Deadline reached")
+        #    self.restart()
 
     def log(self, message : str):
         print(f"Worker {self.id}: {message}")

@@ -15,9 +15,10 @@ from imi.utils.graph import ConnectedSimpleGraphs as CSG
 from imi.utils.rules import create_rule_full
 def setup(config : dict):
    # define type of model + settings
-    model_t = models.Potts
+    model_t = models.ValueNetwork
     model_settings = dict(
-       agentStates = np.arange(2)
+            agentStates = np.arange(2), 
+            memorySize  = 2,
     )
     # output directory
     output_directory = f"{__file__}:{datetime.now().isoformat()}"
@@ -29,12 +30,12 @@ def setup(config : dict):
     maxfev = 100_000
 
 
-    thetas = [.7] # match_temperatures
+    thetas = [.8] # match_temperatures
 
     # TODO : implement
     gen = CSG()
     #graphs = [gen.generate(5)]
-    graphs = [nx.grid_graph((10, 10))]
+    graphs = [nx.grid_graph((40, 40), periodic = 1)]
     rules = [create_rule_full(j).copy() for i in gen.generate(5).values() for j in i]
 
     # memoize phase transition results
@@ -53,44 +54,24 @@ def setup(config : dict):
        instance_settings['rules'] = rule.copy()
        instance_settings['sampleSize'] = graph.number_of_nodes() 
        instance_settings['agentStates'] = np.arange(len(rule))
+       instance_settings['bounded_rational'] = len(rule)
 
-       # get params fit
-       if phase_transition := phase_transitions.get((graph, rule)):
-           opts, cov = phase_transition.get('fit')
-       else:
-            # create model
-            model = model_t(**instance_settings)
-            magnetization, susceptibility   = model.magnetize(temps, n = n_magnetize)
+       for bounded_rational in range(1, len(rule)):
+           instance_settings['bounded_rational'] = bounded_rational
 
-            # fit phase transition
-            opts, cov = optimize.curve_fit(sig, xdata = temps,
-                                           ydata = magnetization,
-                                           maxfev = maxfev, bounds = (0, np.inf))
-      
-       res = optimize.minimize(lambda x: abs(sig(x, *opts) - theta), \
-                                x0 = .1,\
-                                method = 'COBYLA',\
-                                )
-        # setup model
-       temperature = res.x
-       if temperature < 0:
-           assert 0
+           model = model_t(**instance_settings)
 
-       instance_settings['temperature'] = temperature
-   
-       # reinit model
-       model = model_t(**instance_settings)
 
-       
-       settings = dict(model = model,
-                       instance_settings = instance_settings, 
-                       t = temperature,
-                       config = config,
-                magnetisation = theta)
+           settings = dict(model = model.__deepcopy__(),
+                                   instance_settings = instance_settings.copy(), 
+                                   #t = temperature,
+                                   config = config.copy(),
+                                   magnetisation = theta)
 
-       task = Experiment(settings.copy(),
-                         output_directory = output_directory)
-       experiments.append(task)
+           task = Experiment(settings.copy(),
+                        output_directory = output_directory)
+           experiments.append(task)
+
     return experiments
 
 class Experiment(Task):
@@ -101,18 +82,23 @@ class Experiment(Task):
    def run(self):
        model = self.settings.get('model')
 
-       N = 100000 
-       res =  model.simulate(N)
+       #N = 100 
+       #res =  model.simulate(N)
 
-       satisfaction = np.zeros((N, model.nNodes))
-       for idx, r in enumerate(res):
-           satisfaction[idx, :] = np.asarray(model.siteEnergy(r)).flatten()
+       temps = np.linspace(0, 5, 50)
+       res = model.magnetize(temps, n = 1e4)
+
+       #satisfaction = np.zeros((N, model.nNodes))
+       #for idx, r in enumerate(res):
+       #    satisfaction[idx, :] = np.asarray(model.siteEnergy(r)).flatten()
     
        # store results
-       results = dict(results = res,
-                      satisfaction = satisfaction,
-                      graph = model.graph,
-                      config = self.settings.copy()
+       results = dict(
+                results = res,
+                #satisfaction = satisfaction,
+                graph = model.graph,
+                config = self.settings.get("instance_settings"),
+                temps = temps
                       )
 
        return results
