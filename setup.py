@@ -28,7 +28,9 @@ nums = numpy.get_include()
 import plexsim
 
 plex = plexsim.get_include()
+print("-" * 32)
 print(plex)
+print("-" * 32)
 for (root, dirs, files) in os.walk(BASE):
     for file in files:
         fileName = os.path.join(root, file)

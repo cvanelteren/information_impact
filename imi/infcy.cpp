@@ -15,6 +15,7 @@
             "/home/casper/miniconda3/lib/python3.9/site-packages/numpy/core/include/numpy/ndarrayobject.h",
             "/home/casper/miniconda3/lib/python3.9/site-packages/numpy/core/include/numpy/ndarraytypes.h",
             "/home/casper/miniconda3/lib/python3.9/site-packages/numpy/core/include/numpy/ufuncobject.h",
+            "/home/casper/miniconda3/lib/python3.9/site-packages/plexsim-2.0-py3.9-linux-x86_64.egg/plexsim/include/pyobjectholder.cpp",
             "/home/casper/miniconda3/lib/python3.9/site-packages/plexsim-2.0-py3.9-linux-x86_64.egg/plexsim/include/pyobjectholder.hpp"
         ],
         "extra_compile_args": [
@@ -34,14 +35,12 @@
             "-std=c++20"
         ],
         "include_dirs": [
+            "plexsim/include/",
             "/home/casper/miniconda3/lib/python3.9/site-packages/numpy/core/include",
             ".",
-            "/home/casper/miniconda3/lib/python3.9/site-packages/plexsim-2.0-py3.9-linux-x86_64.egg/plexsim/include"
+            "/home/casper/miniconda3/lib/python3.9/site-packages/plexsim-2.0-py3.9-linux-x86_64.egg/plexsim/../"
         ],
         "language": "c++",
-        "libraries": [
-            "plexsim"
-        ],
         "name": "imi.infcy",
         "sources": [
             "imi/infcy.pyx"
@@ -912,7 +911,8 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include <unordered_map>
 #include <unordered_set>
 #include "pythread.h"
-#include "pyobjectholder.hpp"
+#include "plexsim/include/pyobjectholder.cpp"
+#include "plexsim/include/pyobjectholder.hpp"
 #include "math.h"
 #include <random>
 #include <algorithm>
