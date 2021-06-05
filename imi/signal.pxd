@@ -1,4 +1,3 @@
-from libcpp.pair cimport pair
 
 # cdef extern from "parallel-hashmap/parallel_hashmap/phmap.h":
 #     cdef cppclass parallel_hash_map[T, U, HASH=*, ALLOCATOR =*]:

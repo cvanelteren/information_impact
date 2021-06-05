@@ -30,12 +30,11 @@
   # error            = "%x-%j.err"
   deadline         = "48:00:00"
 
+# experiments to run
 [experiments]
 #[experiments.tipping]
 #[experiments.tipping2]
 # [experiments.kite]
 #[experiments.psycho]
-#[experiments.value_network_satisfaction]
-[experiments.value_stability]
-
-
+[experiments.value_network_satisfaction]
+# [experiments.value_stability]

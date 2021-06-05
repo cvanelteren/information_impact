@@ -2,14 +2,16 @@ import numpy as np, multiprocessing as mp, scipy
 from imi.utils.plotting import fit
 from statistics import NormalDist
 
-'''Dump file of statistical related functions'''
+"""Dump file of statistical related functions"""
+
 
 def resample(counts, bins, samples, n):
     # randomly sample distribution bins
-    s = np.random.choice(bins, size = n, p = counts / counts.sum())
+    s = np.random.choice(bins, size=n, p=counts / counts.sum())
     # resampled distribution
     rsamples = {}
     import random
+
     for o in s:
         # get random state for particular bin
         rs = random.choice(list(samples[o].keys()))
@@ -17,7 +19,7 @@ def resample(counts, bins, samples, n):
         tmp = rsamples.get(o, {})
         tmp[rs] = tmp.get(rs, 0) + 1
         rsamples[o] = tmp
-    rsamples = dict(sorted(rsamples.items(), key = lambda x : x[0]))
+    rsamples = dict(sorted(rsamples.items(), key=lambda x: x[0]))
 
     for k, v in rsamples.items():
         z = sum(v.values())
@@ -26,9 +28,11 @@ def resample(counts, bins, samples, n):
     # return rsamples, resampled_dist
     return rsamples
 
-def check_allocation(bits, pct = .8, maxGb = None):
+
+def check_allocation(bits, pct=0.8, maxGb=None):
     assert pct < 1
     import psutil
+
     if maxGb:
         possible = maxGb
     else:
@@ -36,50 +40,55 @@ def check_allocation(bits, pct = .8, maxGb = None):
     return possible / bits
 
 
-def aucs(data, func, params = {},\
-        bounds = (0, np.inf), **kwargs):
+def aucs(data, func, params={}, bounds=(0, np.inf), **kwargs):
     from scipy.integrate import quad
-    coeffs = fit(data, func, params = params, **kwargs)[0]
-    auc = np.zeros((data.shape[0]), dtype = float)
+
+    coeffs = fit(data, func, params=params, **kwargs)[0]
+    auc = np.zeros((data.shape[0]), dtype=float)
     for node, c in enumerate(coeffs):
         tmp = lambda x: func(x, *c)
         auc[node] = quad(tmp, *bounds)[0]
     return auc
 
+
 from statsmodels.stats.proportion import proportion_confint
 
-def pci(ranks, alpha = .05):
+
+def pci(ranks, alpha=0.05):
     """
     Compute confidence interval on binomial successes
     with willson correction
     """
     from collections import Counter
+
     hist = Counter(ranks)
 
-#     pvals = {}
+    #     pvals = {}
     from scipy.stats import norm, multinomial, chi2_contingency
-#     z = norm.ppf(1 - alpha / 2)
-#     n = len(hist)
+
+    #     z = norm.ppf(1 - alpha / 2)
+    #     n = len(hist)
     n = len(ranks)
 
-    hist = dict(sorted(hist.items(), key = lambda x : x[1])[::-1])
+    hist = dict(sorted(hist.items(), key=lambda x: x[1])[::-1])
 
     candidates = [i for i in hist.keys()]
     success = [i for i in hist.values()]
 
-#     print(success)
+    #     print(success)
     for ni in range(len(hist)):
-        p = multinomial.pmf(success[:ni + 1], n = n, p = np.ones(ni + 1) * 1/(ni + 1))
-#         chi2, p, dof, expected = chi2_contingency(t,  correction = 0)
-#         print(chi2, p, dof, expected)
-        driverset = set(candidates[:ni + 1])
+        p = multinomial.pmf(success[: ni + 1], n=n, p=np.ones(ni + 1) * 1 / (ni + 1))
+        #         chi2, p, dof, expected = chi2_contingency(t,  correction = 0)
+        #         print(chi2, p, dof, expected)
+        driverset = set(candidates[: ni + 1])
         if p >= alpha:
-#             print(driverset, hist)
+            #             print(driverset, hist)
             break
 
     return driverset
 
-def driverNodeEstimateSEM(ranks, alpha = .01):
+
+def driverNodeEstimateSEM(ranks, alpha=0.01):
     """
     Use all the trials for all the nodes to determine the driver node
     :ranks: should be node x trials
@@ -87,11 +96,12 @@ def driverNodeEstimateSEM(ranks, alpha = .01):
 
     # get number of standard deviations
     from scipy.stats import norm, sem
+
     zdx = norm.ppf(1 - alpha / 2)
     nodes, trials = ranks.shape
 
     means = ranks.mean(1)
-    sems  = sem(ranks, axis = 1) * zdx
+    sems = sem(ranks, axis=1) * zdx
 
     driver = means.argmax()
 
@@ -102,20 +112,21 @@ def driverNodeEstimateSEM(ranks, alpha = .01):
                 candidates.add(i)
     return candidates
 
+
 # boostrap functions
 def returnX(x):
     return x
 
-def ratio(x):
-    return x[...,[0]] / x[..., 1:]
 
-def bootStrapDrivers(bootStrapData, phi = .5):
+def ratio(x):
+    return x[..., [0]] / x[..., 1:]
+
+
+def bootStrapDrivers(bootStrapData, phi=0.5):
     """
     Determines driver-nodes through the boostrap distribution
-    It consists as an iterative procedure that takes the max value in the data, then 
+    It consists as an iterative procedure that takes the max value in the data, then
     a normal distribution is fit an tested with overlap for the other nodes in the data at :alpha: level
-
-     
     Parameters
     ----------
     bootStrapData: np.array
@@ -127,9 +138,9 @@ def bootStrapDrivers(bootStrapData, phi = .5):
     # create bootstrap distribution
     driver = bootStrapData.mean(0).argmax()
     # add noise to prevent p(x) = 0
-    bootStrapData += np.random.rand(*bootStrapData.shape)  * 1e-16
+    bootStrapData += np.random.rand(*bootStrapData.shape) * 1e-16
     driverDist = NormalDist().from_samples(bootStrapData[..., driver])
-    
+
     drivers = {driver: (driverDist.mean, driverDist.variance)}
     # other nodes to consider
     options = np.delete(np.arange(nodes), driver)
@@ -142,39 +153,45 @@ def bootStrapDrivers(bootStrapData, phi = .5):
             drivers[node] = (otherDist.mean, otherDist.variance)
     return drivers
 
-def bootStrapDriversThresholds(boots,\
-        alphas):
+
+def bootStrapDriversThresholds(boots, alphas):
     """
     Wrapper around :bootStrapDrivers:
     """
     # boots = bootStrap(data, func, total, batch)
     driversPerAlpha = {}
     for alphai, alpha in enumerate(alphas):
-        driversPerAlpha[alpha] = bootStrapDrivers(boots, alpha = alpha)
+        driversPerAlpha[alpha] = bootStrapDrivers(boots, alpha=alpha)
     return driversPerAlpha
 
+
 from itertools import product
+
+
 def bootStrapAll(data, func, total, batch, alpha):
     conditions, temps = data.shape[-2:]
     boots = bootStrap(data, func, total, batch)
-    
+
     tmp = (boots[..., i, j] for (i, j) in product(*map(range, (conditions, temps))))
-    #tmp = (bootStrap(data[..., i, j], func, total, batch) for (i,j) in product(*map(range,(conditions, temps)))) 
+    # tmp = (bootStrap(data[..., i, j], func, total, batch) for (i,j) in product(*map(range,(conditions, temps))))
     from functools import partial
 
-    F = partial(bootStrapDrivers, alpha = alpha) 
+    F = partial(bootStrapDrivers, alpha=alpha)
     with mp.Pool(mp.cpu_count()) as p:
-        drivers = np.array(p.map(F, tmp), dtype = list).reshape(conditions, temps, -1)
+        drivers = np.array(p.map(F, tmp), dtype=list).reshape(conditions, temps, -1)
     return drivers
+
 
 def jaccard(a, b):
     return len(a.intersection(b)) / len(a.union(b))
+
+
 def computeMatchScore(drivers: np.ndarray) -> np.ndarray:
     """
     Computes the overlap of the driver-node estimates with ground truth
     """
-    s = drivers.shape # should be conditions x temps
-    overlaps = np.zeros(s, dtype = float)
+    s = drivers.shape  # should be conditions x temps
+    overlaps = np.zeros(s, dtype=float)
 
     for (condition, pulse, temp) in product(*map(range, s)):
         pred = drivers[condition, pulse, temp]
@@ -182,7 +199,7 @@ def computeMatchScore(drivers: np.ndarray) -> np.ndarray:
             pred = set([pred])
         else:
             pred = set(pred)
-        
+
         control = drivers[0, pulse, temp]
         if isinstance(control, int):
             control = set([control])
@@ -192,16 +209,20 @@ def computeMatchScore(drivers: np.ndarray) -> np.ndarray:
         overlaps[condition, pulse, temp] = jaccard(pred, control)
     return overlaps
 
+
 # boostrap samples
 
-def minibootstrap(x, statistic = np.mean):
+
+def minibootstrap(x, statistic=np.mean):
     data, func, batch = x
-    idx = np.random.randint(0, len(data), size = batch)
+    idx = np.random.randint(0, len(data), size=batch)
 
     d = data[idx]
     stat = func(data[idx, ...])
 
-    return statistic(stat, axis = 0)
+    return statistic(stat, axis=0)
+
+
 def bootStrap(data, func, total, batch):
     # create generate
     tmp = ((data, func, batch) for i in range(total))
@@ -211,16 +232,16 @@ def bootStrap(data, func, total, batch):
     return boots
 
 
-def driverNodeEstimate(ranks, alpha = .01):
+def driverNodeEstimate(ranks, alpha=0.01):
     from collections import Counter
     from statsmodels.stats.proportion import multinomial_proportions_confint as mpci
 
     hist = Counter(ranks)
-    hist = sorted(hist.items(), key = lambda x : x[1])[::-1]
+    hist = sorted(hist.items(), key=lambda x: x[1])[::-1]
     candidates = [i[0] for i in hist]
-#     print(candidates, hist)
+    #     print(candidates, hist)
     if len(candidates) > 1:
-        intervals = mpci([i[1] for i in hist], alpha = alpha)
+        intervals = mpci([i[1] for i in hist], alpha=alpha)
         driverSet = set([candidates[0]])
         # print(intervals)
         for idx, (lower, upper) in enumerate(intervals[1:]):
@@ -230,7 +251,8 @@ def driverNodeEstimate(ranks, alpha = .01):
     else:
         return set(candidates)
 
-def determineDrivers(drivers, alpha = 0.05):
+
+def determineDrivers(drivers, alpha=0.05):
     """
     Iterative approach in determining  the driver-nodes
 
@@ -242,11 +264,12 @@ def determineDrivers(drivers, alpha = 0.05):
         :alpha: rejection alpha
     """
     from scipy.stats import binom
-    from collections import Counter # histogram symbolic
-    n = len(drivers) #.shape[0]
+    from collections import Counter  # histogram symbolic
+
+    n = len(drivers)  # .shape[0]
     # bin the data
     # get distribution over rank 1; start from highest
-    counts = sorted(Counter(drivers).items(), key = lambda x : x[1])[::-1]
+    counts = sorted(Counter(drivers).items(), key=lambda x: x[1])[::-1]
 
     nDrivers = len(counts)
     # print(counts, drivers)
@@ -257,13 +280,13 @@ def determineDrivers(drivers, alpha = 0.05):
     else:
         for nDriver in range(1, nDrivers):
 
-            driverSet = counts[:nDriver + 1]
+            driverSet = counts[: nDriver + 1]
             # H_0 -> are there nDriver + 1 driver nodes?
             p = 1  # assume the random choice
             success = sum([count for node, count in driverSet])
             pval = binom.pmf(success, n, p)
 
-            if pval  > alpha:
+            if pval > alpha:
                 break
             # return pval, driverSet
     # print(driverSet)
@@ -271,24 +294,26 @@ def determineDrivers(drivers, alpha = 0.05):
 
 
 def hellingerDistance(p1, p2):
-    '''
+    """
     input:
         :p1: probability control
         :p2: probability of nudge conditions
     Note: it assumes the last axis contains the probability distributions to be compared
     returns:
         hellinger distance between p1, p2
-    '''
-    return np.linalg.norm( p1 - p2, ord = 2, axis = -1) / np.sqrt(2)
+    """
+    return np.linalg.norm(p1 - p2, ord=2, axis=-1) / np.sqrt(2)
 
-def KL(p1, p2, exclude = []):
+
+def KL(p1, p2, exclude=[]):
     # p2[p2 == 0] = 1 # circumvent p = 0
     # p1[p1==0] = 1
-    kl = np.nansum(p1 * (np.log(p1 / p2)), axis = -1)
-    kl[np.isfinite(kl) == False] = 0 # remove x = 0
+    kl = np.nansum(p1 * (np.log(p1 / p2)), axis=-1)
+    kl[np.isfinite(kl) == False] = 0  # remove x = 0
     if exclude:
         kl = np.array([i for idx, i in enumerate(kl) if idx not in exclude])
     return kl
+
 
 def panzeriTrevesCorrection(px, cpx, repeats):
     """
@@ -300,15 +325,16 @@ def panzeriTrevesCorrection(px, cpx, repeats):
     Returns:
         :bias:
     """
-    rs  = np.zeros(px.shape[:-1])
+    rs = np.zeros(px.shape[:-1])
     for key, value in cpx.items():
         for zdx, deltaInfo in enumerate(value):
             for jdx, nodeInfo in enumerate(deltaInfo):
                 rs[zdx, jdx] += pt_bayescount(nodeInfo, repeats) - 1
-    Rs = np.array([[pt_bayescount(j, repeats) - 1 for j in i]\
-                 for i in px])
+    Rs = np.array([[pt_bayescount(j, repeats) - 1 for j in i] for i in px])
 
     return (rs - Rs) / (2 * repeats * np.log(2))
+
+
 def pt_bayescount(Pr, Nt):
     # all credit of this function goes to panzeri-treves
     """Compute the support for analytic bias correction using the
@@ -330,41 +356,44 @@ def pt_bayescount(Pr, Nt):
     dim = Pr.size
 
     # non zero probs only
-    PrNZ = Pr[Pr>np.finfo(np.float).eps]
+    PrNZ = Pr[Pr > np.finfo(np.float).eps]
     Rnaive = PrNZ.size
 
     R = Rnaive
     if Rnaive < dim:
-        Rexpected = Rnaive - ((1.0-PrNZ)**Nt).sum()
+        Rexpected = Rnaive - ((1.0 - PrNZ) ** Nt).sum()
         deltaR_prev = dim
         deltaR = np.abs(Rnaive - Rexpected)
         xtr = 0.0
-        while (deltaR < deltaR_prev) and ((Rnaive+xtr)<dim):
-            xtr = xtr+1.0
+        while (deltaR < deltaR_prev) and ((Rnaive + xtr) < dim):
+            xtr = xtr + 1.0
             Rexpected = 0.0
             # occupied bins
-            gamma = xtr*(1.0 - ((Nt/(Nt+Rnaive))**(1.0/Nt)))
-            Pbayes = ((1.0-gamma) / (Nt+Rnaive)) * (PrNZ*Nt+1.0)
-            Rexpected = (1.0 - (1.0-Pbayes)**Nt).sum()
+            gamma = xtr * (1.0 - ((Nt / (Nt + Rnaive)) ** (1.0 / Nt)))
+            Pbayes = ((1.0 - gamma) / (Nt + Rnaive)) * (PrNZ * Nt + 1.0)
+            Rexpected = (1.0 - (1.0 - Pbayes) ** Nt).sum()
             # non-occupied bins
             Pbayes = gamma / xtr
-            Rexpected = Rexpected + xtr*(1.0 - (1.0 - Pbayes)**Nt)
+            Rexpected = Rexpected + xtr * (1.0 - (1.0 - Pbayes) ** Nt)
             deltaR_prev = deltaR
             deltaR = np.abs(Rnaive - Rexpected)
         Rnaive = Rnaive + xtr - 1.0
         if deltaR < deltaR_prev:
             Rnaive += 1.0
     return Rnaive
+
+
 def KL2(p1, p2):
     from scipy.special import kl_div
-    return np.nansum(kl_div(p1, p2), axis = -1)
+
+    return np.nansum(kl_div(p1, p2), axis=-1)
+
 
 def JS(p1, p2):
     """
     Jenson shannon divergence
     """
     return KL(p1, p2) / 2 + KL(p2, p1)
-
 
 
 # -*- coding: utf-8 -*-
@@ -395,7 +424,8 @@ class Logit(sm.families.links.Logit):
     """Logit tranform that won't overflow with large numbers."""
 
     def inverse(self, z):
-        return 1 / (1. + np.exp(-z))
+        return 1 / (1.0 + np.exp(-z))
+
 
 _init_example = """
     Beta regression with default of logit-link for exog and log-link
@@ -417,6 +447,7 @@ _init_example = """
     >>> rslt = mod.fit()
 """
 
+
 class Beta(GenericLikelihoodModel):
 
     """Beta Regression.
@@ -424,8 +455,15 @@ class Beta(GenericLikelihoodModel):
     `a + b` from the Beta parameters.
     """
 
-    def __init__(self, endog, exog, Z=None, link=Logit(),
-            link_phi=sm.families.links.Log(), **kwds):
+    def __init__(
+        self,
+        endog,
+        exog,
+        Z=None,
+        link=Logit(),
+        link_phi=sm.families.links.Log(),
+        **kwds
+    ):
         """
         Parameters
         ----------
@@ -451,15 +489,21 @@ class Beta(GenericLikelihoodModel):
         See Also
         --------
         :ref:`links`
-        """.format(example=_init_example)
+        """.format(
+            example=_init_example
+        )
         assert np.all((0 < endog) & (endog < 1))
         if Z is None:
-            extra_names = ['phi']
-            Z = np.ones((len(endog), 1), dtype='f')
+            extra_names = ["phi"]
+            Z = np.ones((len(endog), 1), dtype="f")
         else:
-            extra_names = ['precision-%s' % zc for zc in \
-                        (Z.columns if hasattr(Z, 'columns') else range(1, Z.shape[1] + 1))]
-        kwds['extra_params_names'] = extra_names
+            extra_names = [
+                "precision-%s" % zc
+                for zc in (
+                    Z.columns if hasattr(Z, "columns") else range(1, Z.shape[1] + 1)
+                )
+            ]
+        kwds["extra_params_names"] = extra_names
 
         super(Beta, self).__init__(endog, exog, **kwds)
         self.link = link
@@ -478,8 +522,15 @@ class Beta(GenericLikelihoodModel):
         """
         return -self._ll_br(self.endog, self.exog, self.Z, params)
 
-    def fit(self, start_params=None, maxiter=100000, maxfun=5000, disp=False,
-            method='bfgs', **kwds):
+    def fit(
+        self,
+        start_params=None,
+        maxiter=100000,
+        maxfun=5000,
+        disp=False,
+        method="bfgs",
+        **kwds
+    ):
         """
         Fit the model.
         Parameters
@@ -496,13 +547,19 @@ class Beta(GenericLikelihoodModel):
         """
 
         if start_params is None:
-            start_params = sm.GLM(self.endog, self.exog, family=Binomial()
-                                 ).fit(disp=False).params
+            start_params = (
+                sm.GLM(self.endog, self.exog, family=Binomial()).fit(disp=False).params
+            )
             start_params = np.append(start_params, [0.5] * self.Z.shape[1])
 
-        return super(Beta, self).fit(start_params=start_params,
-                                        maxiter=maxiter, maxfun=maxfun,
-                                        method=method, disp=disp, **kwds)
+        return super(Beta, self).fit(
+            start_params=start_params,
+            maxiter=maxiter,
+            maxfun=maxfun,
+            method=method,
+            disp=disp,
+            **kwds
+        )
 
     def _ll_br(self, y, X, Z, params):
         nz = self.Z.shape[1]
@@ -514,10 +571,15 @@ class Beta(GenericLikelihoodModel):
         phi = self.link_phi.inverse(np.dot(Z, Zparams))
         # TODO: derive a and b and constrain to > 0?
 
-        if np.any(phi <= np.finfo(float).eps): return np.array(-np.inf)
+        if np.any(phi <= np.finfo(float).eps):
+            return np.array(-np.inf)
 
-        ll = lgamma(phi) - lgamma(mu * phi) - lgamma((1 - mu) * phi) \
-                + (mu * phi - 1) * np.log(y) + (((1 - mu) * phi) - 1) \
-                * np.log(1 - y)
+        ll = (
+            lgamma(phi)
+            - lgamma(mu * phi)
+            - lgamma((1 - mu) * phi)
+            + (mu * phi - 1) * np.log(y)
+            + (((1 - mu) * phi) - 1) * np.log(1 - y)
+        )
 
         return ll

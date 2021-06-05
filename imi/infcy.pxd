@@ -1,13 +1,18 @@
 # get all definition including typedefs
-from plexsim.models cimport *
+from plexsim.models.base cimport *
+from plexsim.models.types cimport *
 from libcpp.unordered_map cimport unordered_map
+
+import numpy as np
+cimport numpy as np
 
 # ctypedef long state_t 
 cdef class Simulator:
     cdef Model model
     cdef unordered_map[state_t, size_t] hist_map
 
-    cpdef dict snapshots(self, size_t n_samples, size_t step=*)
+    cpdef dict snapshots(self, size_t n_samples, size_t step=*,
+                         size_t n_jobs =*)
 
     cpdef dict running (self, \
                         size_t n_samples,\

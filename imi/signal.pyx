@@ -1,14 +1,16 @@
 #distutils: language = c++
 import numpy as np
-cimport numpy as np
-
-cimport cython
+cimport numpy as np, cython
 from cython.parallel cimport prange, threadid, parallel
 from scipy.ndimage import gaussian_filter
 
 from scipy import signal as ssignal
 
-from plexsim.models cimport *
+from plexsim.models.base cimport *
+from plexsim.models.types cimport *
+
+from libcpp.vector cimport vector
+from libcpp.pair cimport pair
 
 # cpdef build_dist(state_t[:, ::1] x, dict dist):
 #     cdef:

@@ -6,14 +6,12 @@ from cpython cimport PyObject, Py_XINCREF, Py_XDECREF
 from cython.operator cimport dereference as deref, preincrement as prec
 from timeit import default_timer as timer
 from cython.view cimport array as cvarray
-import ctypes
 from libc.stdio cimport printf
 from libcpp.unordered_map cimport unordered_map
 from libc.stdlib cimport srand
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from pyprind import ProgBar
-from plexsim.models cimport *
 from cpython.ref cimport PyObject
 import copy
 import multiprocessing as mp
@@ -50,7 +48,7 @@ cdef class Simulator:
             self.hist_map[i] = idx
 
     cpdef dict snapshots(self, size_t n_samples,
-                         size_t step=2):
+                         size_t step=2, size_t n_jobs = -1):
 #     if verbose:
         cdef state_t[::1] states
         # cdef double z = 1 # / <double> n_samples
@@ -66,7 +64,7 @@ cdef class Simulator:
         #     states[tid] = (<models[tid].ptr)._updateState(r[tid])
 
         cdef:
-            size_t nThreads = mp.cpu_count() - 1
+            size_t nThreads = mp.cpu_count() - 1 if n_jobs == -1 else n_jobs
             SpawnVec models = self.model._spawn(nThreads)
             node_id_t[:, :, ::1] r    = np.ndarray((nThreads, step, self.model.sampleSize), \
                                                    dtype = np.uint)
