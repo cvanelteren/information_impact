@@ -20,10 +20,6 @@ from plexsim.utils.annealing import annealing
 def setup(config: dict):
     # define type of model + settings
     model_t = models.ValueNetwork
-    model_settings = dict(
-        agentStates=np.arange(2),
-        memorySize=2,
-    )
     # output directory
     output_directory = f"{__file__}:{datetime.now().isoformat()}"
     # magnetization params
@@ -34,27 +30,33 @@ def setup(config: dict):
     maxfev = 100_000
 
     # thetas = [0.8]  # match_temperatures
-    thetas = [0.8]
 
     # TODO : implement
     gen = CSG()
     # graphs = [gen.generate(5)]
     # graphs = [nx.grid_graph((40, 40), periodic=1)]
     # rules = [create_rule_full(j).copy() for i in gen.generate(6).values() for j in i]
-    rules = [create_rule_full(nx.cycle_graph(3))]
-    graphs = [j for i in gen.generate(6).values() for j in i]
+    dry_run = False
+    if dry_run:
+        graphs = [nx.cycle_graph(3)]
+        rules = [create_rule_full(nx.cycle_graph(3), self_weight=-1)]
+    else:
+        graphs = [j for i in gen.generate(6).values() for j in i]
+        rules = [create_rule_full(i, self_weight=-1) for i in graphs]
     # memoize phase transition results
     phase_transitions = {}
 
     # hold tasks
     experiments = []
 
-    combinations = itertools.product(thetas, graphs, rules)
+    combinations = itertools.product(graphs, rules)
+    model_settings = {}
     for comb in combinations:
         # unpack
         instance_settings = model_settings.copy()
-        theta, graph, rule = comb
+        graph, rule = comb
 
+        # setup model
         instance_settings["graph"] = graph
         instance_settings["rules"] = rule.copy()
         instance_settings["sampleSize"] = graph.number_of_nodes()
@@ -71,7 +73,6 @@ def setup(config: dict):
                 instance_settings=instance_settings.copy(),
                 # t = temperature,
                 config=config.copy(),
-                magnetisation=theta,
             )
 
             task = Experiment(settings.copy(), output_directory=output_directory)
