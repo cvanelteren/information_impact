@@ -22,4 +22,4 @@ fi
 
 echo $nodename
 echo $output_dir
-srun python run_toml.py -d $output_dir
+srun python run_toml.py -s "settings.toml"

@@ -11,7 +11,7 @@ from subprocess import run
 add = []
 compiler = "g++"
 optFlag = "-Ofast"
-cppv = "20"
+cppv = "2a"
 
 flags = (
     f"{optFlag} -march=native -std=c++{cppv} -flto "
