@@ -28,12 +28,12 @@
             "."
         ],
         "language": "c++",
-        "name": "Models.Circular",
+        "name": "PlexSim.Models.Circular",
         "sources": [
-            "Models/Circular.pyx"
+            "PlexSim/Models/Circular.pyx"
         ]
     },
-    "module_name": "Models.Circular"
+    "module_name": "PlexSim.Models.Circular"
 }
 END: Cython Metadata */
 
@@ -853,8 +853,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__Models__Circular
-#define __PYX_HAVE_API__Models__Circular
+#define __PYX_HAVE__PlexSim__Models__Circular
+#define __PYX_HAVE_API__PlexSim__Models__Circular
 /* Early includes */
 #include <string.h>
 #include <stdio.h>
@@ -1133,7 +1133,7 @@ static const char *__pyx_filename;
 /* #### Code section: filename_table ### */
 
 static const char *__pyx_f[] = {
-  "Models/Circular.pyx",
+  "PlexSim/Models/Circular.pyx",
   "stringsource",
   "__init__.cython-30.pxd",
   "type.pxd",
@@ -1466,7 +1466,7 @@ static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(do
 
 /*--- Type declarations ---*/
 struct __pyx_obj_6Models_6Models_Model;
-struct __pyx_obj_6Models_8Circular_CCA;
+struct __pyx_obj_7PlexSim_6Models_8Circular_CCA;
 struct __pyx_array_obj;
 struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
@@ -1551,14 +1551,14 @@ struct __pyx_obj_6Models_6Models_Model {
 };
 
 
-/* "Models/Circular.pxd":5
+/* "PlexSim/Models/Circular.pxd":5
  * 
  * 
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
  *     cdef:
  *         double _threshold
  */
-struct __pyx_obj_6Models_8Circular_CCA {
+struct __pyx_obj_7PlexSim_6Models_8Circular_CCA {
   struct __pyx_obj_6Models_6Models_Model __pyx_base;
   double _threshold;
 };
@@ -1663,7 +1663,7 @@ struct __pyx_vtabstruct_6Models_6Models_Model {
 static struct __pyx_vtabstruct_6Models_6Models_Model *__pyx_vtabptr_6Models_6Models_Model;
 
 
-/* "Models/Circular.pyx":6
+/* "PlexSim/Models/Circular.pyx":6
  * cimport numpy as np
  * cimport cython
  * cdef class CCA(Model):             # <<<<<<<<<<<<<<
@@ -1671,11 +1671,11 @@ static struct __pyx_vtabstruct_6Models_6Models_Model *__pyx_vtabptr_6Models_6Mod
  *                     graph,\
  */
 
-struct __pyx_vtabstruct_6Models_8Circular_CCA {
+struct __pyx_vtabstruct_7PlexSim_6Models_8Circular_CCA {
   struct __pyx_vtabstruct_6Models_6Models_Model __pyx_base;
-  long (*_evolve)(struct __pyx_obj_6Models_8Circular_CCA *, long);
+  long (*_evolve)(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *, long);
 };
-static struct __pyx_vtabstruct_6Models_8Circular_CCA *__pyx_vtabptr_6Models_8Circular_CCA;
+static struct __pyx_vtabstruct_7PlexSim_6Models_8Circular_CCA *__pyx_vtabptr_7PlexSim_6Models_8Circular_CCA;
 
 
 /* "View.MemoryView":109
@@ -2657,9 +2657,9 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 #endif
 
 /* #### Code section: module_declarations ### */
-static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, long __pyx_v_node); /* proto*/
-static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA_updateState(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch); /* proto*/
-static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto*/
+static long __pyx_f_7PlexSim_6Models_8Circular_3CCA__evolve(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, long __pyx_v_node); /* proto*/
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_8Circular_3CCA_updateState(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch); /* proto*/
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_8Circular_3CCA__updateState(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto*/
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_7ndarray_4base_base(PyArrayObject *__pyx_v_self); /* proto*/
 static CYTHON_INLINE PyArray_Descr *__pyx_f_5numpy_7ndarray_5descr_descr(PyArrayObject *__pyx_v_self); /* proto*/
 static CYTHON_INLINE int __pyx_f_5numpy_7ndarray_4ndim_ndim(PyArrayObject *__pyx_v_self); /* proto*/
@@ -2761,9 +2761,9 @@ static PyTypeObject *__pyx_ptype_5numpy_ufunc = 0;
 static PyTypeObject *__pyx_ptype_6Models_6Models_Model = 0;
 #endif
 
-/* Module declarations from "Models.Circular" */
+/* Module declarations from "PlexSim.Models.Circular" */
 #if !CYTHON_COMPILING_IN_LIMITED_API
-static PyTypeObject *__pyx_ptype_6Models_8Circular_CCA = 0;
+static PyTypeObject *__pyx_ptype_7PlexSim_6Models_8Circular_CCA = 0;
 static PyTypeObject *__pyx_array_type = 0;
 static PyTypeObject *__pyx_MemviewEnum_type = 0;
 static PyTypeObject *__pyx_memoryview_type = 0;
@@ -2814,11 +2814,11 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, 
 /* #### Code section: typeinfo ### */
 static __Pyx_TypeInfo __Pyx_TypeInfo_long = { "long", NULL, sizeof(long), { 0 }, 0, IS_UNSIGNED(long) ? 'U' : 'I', IS_UNSIGNED(long), 0 };
 /* #### Code section: before_global_var ### */
-#define __Pyx_MODULE_NAME "Models.Circular"
-extern int __pyx_module_is_main_Models__Circular;
-int __pyx_module_is_main_Models__Circular = 0;
+#define __Pyx_MODULE_NAME "PlexSim.Models.Circular"
+extern int __pyx_module_is_main_PlexSim__Models__Circular;
+int __pyx_module_is_main_PlexSim__Models__Circular = 0;
 
-/* Implementation of "Models.Circular" */
+/* Implementation of "PlexSim.Models.Circular" */
 /* #### Code section: global_var ### */
 static PyObject *__pyx_builtin_super;
 static PyObject *__pyx_builtin_AssertionError;
@@ -2920,7 +2920,6 @@ static const char __pyx_k_pyx_getbuffer[] = "__pyx_getbuffer";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_AssertionError[] = "AssertionError";
 static const char __pyx_k_CCA_updateState[] = "CCA.updateState";
-static const char __pyx_k_Models_Circular[] = "Models.Circular";
 static const char __pyx_k_View_MemoryView[] = "View.MemoryView";
 static const char __pyx_k_allocate_buffer[] = "allocate_buffer";
 static const char __pyx_k_dtype_is_object[] = "dtype_is_object";
@@ -2931,7 +2930,6 @@ static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_CCA___reduce_cython[] = "CCA.__reduce_cython__";
-static const char __pyx_k_Models_Circular_pyx[] = "Models/Circular.pyx";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_CCA___setstate_cython[] = "CCA.__setstate_cython__";
 static const char __pyx_k_Invalid_shape_in_axis[] = "Invalid shape in axis ";
@@ -2939,9 +2937,11 @@ static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
 static const char __pyx_k_Cannot_index_with_type[] = "Cannot index with type '";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
+static const char __pyx_k_PlexSim_Models_Circular[] = "PlexSim.Models.Circular";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
 static const char __pyx_k_Dimension_d_is_not_direct[] = "Dimension %d is not direct";
 static const char __pyx_k_Index_out_of_bounds_axis_d[] = "Index out of bounds (axis %d)";
+static const char __pyx_k_PlexSim_Models_Circular_pyx[] = "PlexSim/Models/Circular.pyx";
 static const char __pyx_k_Step_may_not_be_zero_axis_d[] = "Step may not be zero (axis %d)";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
@@ -2991,11 +2991,11 @@ static PyObject *__pyx_kp_u_Invalid_shape_in_axis;
 static PyObject *__pyx_n_s_MemoryError;
 static PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
 static PyObject *__pyx_kp_s_MemoryView_of_r_object;
-static PyObject *__pyx_n_s_Models_Circular;
-static PyObject *__pyx_kp_s_Models_Circular_pyx;
 static PyObject *__pyx_n_b_O;
 static PyObject *__pyx_kp_u_Out_of_bounds_on_buffer_access_a;
 static PyObject *__pyx_n_s_PickleError;
+static PyObject *__pyx_n_s_PlexSim_Models_Circular;
+static PyObject *__pyx_kp_s_PlexSim_Models_Circular_pyx;
 static PyObject *__pyx_kp_s_Step_may_not_be_zero_axis_d;
 static PyObject *__pyx_n_s_TypeError;
 static PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
@@ -3101,12 +3101,12 @@ static PyObject *__pyx_n_s_updateState;
 static PyObject *__pyx_n_s_updateType;
 #endif
 /* #### Code section: decls ### */
-static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_threshold, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_updateType, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_kwargs); /* proto */
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_9threshold___get__(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self); /* proto */
-static int __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto */
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_4__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_6__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static int __pyx_pf_7PlexSim_6Models_8Circular_3CCA___init__(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_threshold, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_updateType, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_kwargs); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_9threshold___get__(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self); /* proto */
+static int __pyx_pf_7PlexSim_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_4__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_6__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -3148,7 +3148,7 @@ static void __pyx_memoryviewslice___pyx_pf_15View_dot_MemoryView_16_memoryviewsl
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_6Models_8Circular_CCA(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_tp_new_7PlexSim_6Models_8Circular_CCA(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_Enum(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3214,8 +3214,8 @@ typedef struct {
   PyTypeObject *__pyx_ptype_5numpy_character;
   PyTypeObject *__pyx_ptype_5numpy_ufunc;
   PyTypeObject *__pyx_ptype_6Models_6Models_Model;
-  PyTypeObject *__pyx_ptype_6Models_8Circular_CCA;
-  PyObject *__pyx_type_6Models_8Circular_CCA;
+  PyTypeObject *__pyx_ptype_7PlexSim_6Models_8Circular_CCA;
+  PyObject *__pyx_type_7PlexSim_6Models_8Circular_CCA;
   PyTypeObject *__pyx_array_type;
   PyObject *__pyx_type___pyx_array;
   PyTypeObject *__pyx_MemviewEnum_type;
@@ -3250,11 +3250,11 @@ typedef struct {
   PyObject *__pyx_n_s_MemoryError;
   PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
   PyObject *__pyx_kp_s_MemoryView_of_r_object;
-  PyObject *__pyx_n_s_Models_Circular;
-  PyObject *__pyx_kp_s_Models_Circular_pyx;
   PyObject *__pyx_n_b_O;
   PyObject *__pyx_kp_u_Out_of_bounds_on_buffer_access_a;
   PyObject *__pyx_n_s_PickleError;
+  PyObject *__pyx_n_s_PlexSim_Models_Circular;
+  PyObject *__pyx_kp_s_PlexSim_Models_Circular_pyx;
   PyObject *__pyx_kp_s_Step_may_not_be_zero_axis_d;
   PyObject *__pyx_n_s_TypeError;
   PyObject *__pyx_kp_s_Unable_to_convert_item_to_object;
@@ -3432,8 +3432,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_ptype_5numpy_character);
   Py_CLEAR(clear_module_state->__pyx_ptype_5numpy_ufunc);
   Py_CLEAR(clear_module_state->__pyx_ptype_6Models_6Models_Model);
-  Py_CLEAR(clear_module_state->__pyx_ptype_6Models_8Circular_CCA);
-  Py_CLEAR(clear_module_state->__pyx_type_6Models_8Circular_CCA);
+  Py_CLEAR(clear_module_state->__pyx_ptype_7PlexSim_6Models_8Circular_CCA);
+  Py_CLEAR(clear_module_state->__pyx_type_7PlexSim_6Models_8Circular_CCA);
   Py_CLEAR(clear_module_state->__pyx_array_type);
   Py_CLEAR(clear_module_state->__pyx_type___pyx_array);
   Py_CLEAR(clear_module_state->__pyx_MemviewEnum_type);
@@ -3468,11 +3468,11 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_MemoryError);
   Py_CLEAR(clear_module_state->__pyx_kp_s_MemoryView_of_r_at_0x_x);
   Py_CLEAR(clear_module_state->__pyx_kp_s_MemoryView_of_r_object);
-  Py_CLEAR(clear_module_state->__pyx_n_s_Models_Circular);
-  Py_CLEAR(clear_module_state->__pyx_kp_s_Models_Circular_pyx);
   Py_CLEAR(clear_module_state->__pyx_n_b_O);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Out_of_bounds_on_buffer_access_a);
   Py_CLEAR(clear_module_state->__pyx_n_s_PickleError);
+  Py_CLEAR(clear_module_state->__pyx_n_s_PlexSim_Models_Circular);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_PlexSim_Models_Circular_pyx);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Step_may_not_be_zero_axis_d);
   Py_CLEAR(clear_module_state->__pyx_n_s_TypeError);
   Py_CLEAR(clear_module_state->__pyx_kp_s_Unable_to_convert_item_to_object);
@@ -3637,8 +3637,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_ptype_5numpy_character);
   Py_VISIT(traverse_module_state->__pyx_ptype_5numpy_ufunc);
   Py_VISIT(traverse_module_state->__pyx_ptype_6Models_6Models_Model);
-  Py_VISIT(traverse_module_state->__pyx_ptype_6Models_8Circular_CCA);
-  Py_VISIT(traverse_module_state->__pyx_type_6Models_8Circular_CCA);
+  Py_VISIT(traverse_module_state->__pyx_ptype_7PlexSim_6Models_8Circular_CCA);
+  Py_VISIT(traverse_module_state->__pyx_type_7PlexSim_6Models_8Circular_CCA);
   Py_VISIT(traverse_module_state->__pyx_array_type);
   Py_VISIT(traverse_module_state->__pyx_type___pyx_array);
   Py_VISIT(traverse_module_state->__pyx_MemviewEnum_type);
@@ -3673,11 +3673,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_MemoryError);
   Py_VISIT(traverse_module_state->__pyx_kp_s_MemoryView_of_r_at_0x_x);
   Py_VISIT(traverse_module_state->__pyx_kp_s_MemoryView_of_r_object);
-  Py_VISIT(traverse_module_state->__pyx_n_s_Models_Circular);
-  Py_VISIT(traverse_module_state->__pyx_kp_s_Models_Circular_pyx);
   Py_VISIT(traverse_module_state->__pyx_n_b_O);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Out_of_bounds_on_buffer_access_a);
   Py_VISIT(traverse_module_state->__pyx_n_s_PickleError);
+  Py_VISIT(traverse_module_state->__pyx_n_s_PlexSim_Models_Circular);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_PlexSim_Models_Circular_pyx);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Step_may_not_be_zero_axis_d);
   Py_VISIT(traverse_module_state->__pyx_n_s_TypeError);
   Py_VISIT(traverse_module_state->__pyx_kp_s_Unable_to_convert_item_to_object);
@@ -3839,8 +3839,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_ptype_5numpy_character __pyx_mstate_global->__pyx_ptype_5numpy_character
 #define __pyx_ptype_5numpy_ufunc __pyx_mstate_global->__pyx_ptype_5numpy_ufunc
 #define __pyx_ptype_6Models_6Models_Model __pyx_mstate_global->__pyx_ptype_6Models_6Models_Model
-#define __pyx_ptype_6Models_8Circular_CCA __pyx_mstate_global->__pyx_ptype_6Models_8Circular_CCA
-#define __pyx_type_6Models_8Circular_CCA __pyx_mstate_global->__pyx_type_6Models_8Circular_CCA
+#define __pyx_ptype_7PlexSim_6Models_8Circular_CCA __pyx_mstate_global->__pyx_ptype_7PlexSim_6Models_8Circular_CCA
+#define __pyx_type_7PlexSim_6Models_8Circular_CCA __pyx_mstate_global->__pyx_type_7PlexSim_6Models_8Circular_CCA
 #define __pyx_array_type __pyx_mstate_global->__pyx_array_type
 #define __pyx_type___pyx_array __pyx_mstate_global->__pyx_type___pyx_array
 #define __pyx_MemviewEnum_type __pyx_mstate_global->__pyx_MemviewEnum_type
@@ -3875,11 +3875,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_MemoryError __pyx_mstate_global->__pyx_n_s_MemoryError
 #define __pyx_kp_s_MemoryView_of_r_at_0x_x __pyx_mstate_global->__pyx_kp_s_MemoryView_of_r_at_0x_x
 #define __pyx_kp_s_MemoryView_of_r_object __pyx_mstate_global->__pyx_kp_s_MemoryView_of_r_object
-#define __pyx_n_s_Models_Circular __pyx_mstate_global->__pyx_n_s_Models_Circular
-#define __pyx_kp_s_Models_Circular_pyx __pyx_mstate_global->__pyx_kp_s_Models_Circular_pyx
 #define __pyx_n_b_O __pyx_mstate_global->__pyx_n_b_O
 #define __pyx_kp_u_Out_of_bounds_on_buffer_access_a __pyx_mstate_global->__pyx_kp_u_Out_of_bounds_on_buffer_access_a
 #define __pyx_n_s_PickleError __pyx_mstate_global->__pyx_n_s_PickleError
+#define __pyx_n_s_PlexSim_Models_Circular __pyx_mstate_global->__pyx_n_s_PlexSim_Models_Circular
+#define __pyx_kp_s_PlexSim_Models_Circular_pyx __pyx_mstate_global->__pyx_kp_s_PlexSim_Models_Circular_pyx
 #define __pyx_kp_s_Step_may_not_be_zero_axis_d __pyx_mstate_global->__pyx_kp_s_Step_may_not_be_zero_axis_d
 #define __pyx_n_s_TypeError __pyx_mstate_global->__pyx_n_s_TypeError
 #define __pyx_kp_s_Unable_to_convert_item_to_object __pyx_mstate_global->__pyx_kp_s_Unable_to_convert_item_to_object
@@ -4010,7 +4010,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #endif
 /* #### Code section: module_code ### */
 
-/* "Models/Circular.pyx":7
+/* "PlexSim/Models/Circular.pyx":7
  * cimport cython
  * cdef class CCA(Model):
  *     def __init__(self, \             # <<<<<<<<<<<<<<
@@ -4019,8 +4019,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
  */
 
 /* Python wrapper */
-static int __pyx_pw_6Models_8Circular_3CCA_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_6Models_8Circular_3CCA_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_7PlexSim_6Models_8Circular_3CCA_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_7PlexSim_6Models_8Circular_3CCA_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_graph = 0;
   PyObject *__pyx_v_threshold = 0;
   PyObject *__pyx_v_agentStates = 0;
@@ -4129,11 +4129,11 @@ static int __pyx_pw_6Models_8Circular_3CCA_1__init__(PyObject *__pyx_v_self, PyO
   __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 5, __pyx_nargs); __PYX_ERR(0, 7, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_DECREF(__pyx_v_kwargs); __pyx_v_kwargs = 0;
-  __Pyx_AddTraceback("Models.Circular.CCA.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6Models_8Circular_3CCA___init__(((struct __pyx_obj_6Models_8Circular_CCA *)__pyx_v_self), __pyx_v_graph, __pyx_v_threshold, __pyx_v_agentStates, __pyx_v_updateType, __pyx_v_nudgeType, __pyx_v_kwargs);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_8Circular_3CCA___init__(((struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self), __pyx_v_graph, __pyx_v_threshold, __pyx_v_agentStates, __pyx_v_updateType, __pyx_v_nudgeType, __pyx_v_kwargs);
 
   /* function exit code */
   __Pyx_DECREF(__pyx_v_kwargs);
@@ -4141,7 +4141,7 @@ static int __pyx_pw_6Models_8Circular_3CCA_1__init__(PyObject *__pyx_v_self, PyO
   return __pyx_r;
 }
 
-static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_threshold, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_updateType, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_kwargs) {
+static int __pyx_pf_7PlexSim_6Models_8Circular_3CCA___init__(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_threshold, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_updateType, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_kwargs) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4152,7 +4152,7 @@ static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Ci
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "Models/Circular.pyx":14
+  /* "PlexSim/Models/Circular.pyx":14
  *                     nudgeType   = 'constant',\
  *                     **kwargs):
  *         super(CCA, self).__init__(**locals())             # <<<<<<<<<<<<<<
@@ -4161,9 +4161,9 @@ static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Ci
  */
   __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 14, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF((PyObject *)__pyx_ptype_6Models_8Circular_CCA);
-  __Pyx_GIVEREF((PyObject *)__pyx_ptype_6Models_8Circular_CCA);
-  PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_ptype_6Models_8Circular_CCA));
+  __Pyx_INCREF((PyObject *)__pyx_ptype_7PlexSim_6Models_8Circular_CCA);
+  __Pyx_GIVEREF((PyObject *)__pyx_ptype_7PlexSim_6Models_8Circular_CCA);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_ptype_7PlexSim_6Models_8Circular_CCA));
   __Pyx_INCREF((PyObject *)__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_v_self);
   PyTuple_SET_ITEM(__pyx_t_1, 1, ((PyObject *)__pyx_v_self));
@@ -4204,7 +4204,7 @@ static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Ci
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "Models/Circular.pyx":15
+  /* "PlexSim/Models/Circular.pyx":15
  *                     **kwargs):
  *         super(CCA, self).__init__(**locals())
  *         self.threshold = threshold             # <<<<<<<<<<<<<<
@@ -4213,7 +4213,7 @@ static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Ci
  */
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_threshold, __pyx_v_threshold) < 0) __PYX_ERR(0, 15, __pyx_L1_error)
 
-  /* "Models/Circular.pyx":7
+  /* "PlexSim/Models/Circular.pyx":7
  * cimport cython
  * cdef class CCA(Model):
  *     def __init__(self, \             # <<<<<<<<<<<<<<
@@ -4228,14 +4228,14 @@ static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Ci
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("Models.Circular.CCA.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "Models/Circular.pyx":18
+/* "PlexSim/Models/Circular.pyx":18
  * 
  *     # threshold for neighborhood decision
  *     @property             # <<<<<<<<<<<<<<
@@ -4244,20 +4244,20 @@ static int __pyx_pf_6Models_8Circular_3CCA___init__(struct __pyx_obj_6Models_8Ci
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_9threshold_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_9threshold_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_9threshold_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_9threshold_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_8Circular_3CCA_9threshold___get__(((struct __pyx_obj_6Models_8Circular_CCA *)__pyx_v_self));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_8Circular_3CCA_9threshold___get__(((struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_9threshold___get__(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self) {
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_9threshold___get__(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4266,7 +4266,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_9threshold___get__(struct __pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Models/Circular.pyx":20
+  /* "PlexSim/Models/Circular.pyx":20
  *     @property
  *     def threshold(self):
  *         return self._threshold             # <<<<<<<<<<<<<<
@@ -4280,7 +4280,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_9threshold___get__(struct __pyx
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Models/Circular.pyx":18
+  /* "PlexSim/Models/Circular.pyx":18
  * 
  *     # threshold for neighborhood decision
  *     @property             # <<<<<<<<<<<<<<
@@ -4291,7 +4291,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_9threshold___get__(struct __pyx
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Circular.CCA.threshold.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.threshold.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -4299,7 +4299,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_9threshold___get__(struct __pyx
   return __pyx_r;
 }
 
-/* "Models/Circular.pyx":21
+/* "PlexSim/Models/Circular.pyx":21
  *     def threshold(self):
  *         return self._threshold
  *     @threshold.setter             # <<<<<<<<<<<<<<
@@ -4308,20 +4308,20 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_9threshold___get__(struct __pyx
  */
 
 /* Python wrapper */
-static int __pyx_pw_6Models_8Circular_3CCA_9threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_6Models_8Circular_3CCA_9threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_7PlexSim_6Models_8Circular_3CCA_9threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_7PlexSim_6Models_8Circular_3CCA_9threshold_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(((struct __pyx_obj_6Models_8Circular_CCA *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_8Circular_3CCA_9threshold_2__set__(((struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_7PlexSim_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4332,7 +4332,7 @@ static int __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Models/Circular.pyx":23
+  /* "PlexSim/Models/Circular.pyx":23
  *     @threshold.setter
  *     def threshold(self, value):
  *         assert 0 <= value <= 1.             # <<<<<<<<<<<<<<
@@ -4357,7 +4357,7 @@ static int __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_
   if ((1)); else __PYX_ERR(0, 23, __pyx_L1_error)
   #endif
 
-  /* "Models/Circular.pyx":24
+  /* "PlexSim/Models/Circular.pyx":24
  *     def threshold(self, value):
  *         assert 0 <= value <= 1.
  *         self._threshold = value             # <<<<<<<<<<<<<<
@@ -4367,7 +4367,7 @@ static int __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_
   __pyx_t_3 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_3 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 24, __pyx_L1_error)
   __pyx_v_self->_threshold = __pyx_t_3;
 
-  /* "Models/Circular.pyx":21
+  /* "PlexSim/Models/Circular.pyx":21
  *     def threshold(self):
  *         return self._threshold
  *     @threshold.setter             # <<<<<<<<<<<<<<
@@ -4380,14 +4380,14 @@ static int __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_
   goto __pyx_L0;
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Circular.CCA.threshold.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.threshold.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "Models/Circular.pyx":32
+/* "PlexSim/Models/Circular.pyx":32
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef long _evolve(self, long node) nogil:             # <<<<<<<<<<<<<<
@@ -4395,7 +4395,7 @@ static int __pyx_pf_6Models_8Circular_3CCA_9threshold_2__set__(struct __pyx_obj_
  *         Rule : evolve if the state of the neigbhors exceed a threshold
  */
 
-static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, long __pyx_v_node) {
+static long __pyx_f_7PlexSim_6Models_8Circular_3CCA__evolve(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, long __pyx_v_node) {
   long __pyx_v_neighbor;
   long __pyx_v_nNeighbors;
   int __pyx_v_i;
@@ -4408,7 +4408,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
   Py_ssize_t __pyx_t_5;
   int __pyx_t_6;
 
-  /* "Models/Circular.pyx":38
+  /* "PlexSim/Models/Circular.pyx":38
  * 
  *         cdef:
  *             long neighbor, nNeighbors = self._adj[node].neighbors.size()             # <<<<<<<<<<<<<<
@@ -4417,7 +4417,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  */
   __pyx_v_nNeighbors = (__pyx_v_self->__pyx_base._adj[__pyx_v_node]).neighbors.size();
 
-  /* "Models/Circular.pyx":40
+  /* "PlexSim/Models/Circular.pyx":40
  *             long neighbor, nNeighbors = self._adj[node].neighbors.size()
  *             int i
  *             double fraction = 0             # <<<<<<<<<<<<<<
@@ -4426,7 +4426,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  */
   __pyx_v_fraction = 0.0;
 
-  /* "Models/Circular.pyx":42
+  /* "PlexSim/Models/Circular.pyx":42
  *             double fraction = 0
  *         # check neighbors and see if they exceed threshold
  *         for neighbor in range(nNeighbors):             # <<<<<<<<<<<<<<
@@ -4438,7 +4438,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_neighbor = __pyx_t_3;
 
-    /* "Models/Circular.pyx":43
+    /* "PlexSim/Models/Circular.pyx":43
  *         # check neighbors and see if they exceed threshold
  *         for neighbor in range(nNeighbors):
  *             neighbor = self._adj[node].neighbors[neighbor]             # <<<<<<<<<<<<<<
@@ -4447,7 +4447,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  */
     __pyx_v_neighbor = ((__pyx_v_self->__pyx_base._adj[__pyx_v_node]).neighbors[__pyx_v_neighbor]);
 
-    /* "Models/Circular.pyx":44
+    /* "PlexSim/Models/Circular.pyx":44
  *         for neighbor in range(nNeighbors):
  *             neighbor = self._adj[node].neighbors[neighbor]
  *             if self._states[neighbor] == (self._states[node] + 1) % self._nStates:             # <<<<<<<<<<<<<<
@@ -4459,7 +4459,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
     __pyx_t_6 = (((*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_4)) ))) == (((*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_5)) ))) + 1) % __pyx_v_self->__pyx_base._nStates)) != 0);
     if (__pyx_t_6) {
 
-      /* "Models/Circular.pyx":45
+      /* "PlexSim/Models/Circular.pyx":45
  *             neighbor = self._adj[node].neighbors[neighbor]
  *             if self._states[neighbor] == (self._states[node] + 1) % self._nStates:
  *                 fraction += 1             # <<<<<<<<<<<<<<
@@ -4468,7 +4468,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  */
       __pyx_v_fraction = (__pyx_v_fraction + 1.0);
 
-      /* "Models/Circular.pyx":44
+      /* "PlexSim/Models/Circular.pyx":44
  *         for neighbor in range(nNeighbors):
  *             neighbor = self._adj[node].neighbors[neighbor]
  *             if self._states[neighbor] == (self._states[node] + 1) % self._nStates:             # <<<<<<<<<<<<<<
@@ -4478,7 +4478,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
     }
   }
 
-  /* "Models/Circular.pyx":47
+  /* "PlexSim/Models/Circular.pyx":47
  *                 fraction += 1
  *         # consume cell
  *         fraction /= <double> nNeighbors             # <<<<<<<<<<<<<<
@@ -4487,7 +4487,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  */
   __pyx_v_fraction = (__pyx_v_fraction / ((double)__pyx_v_nNeighbors));
 
-  /* "Models/Circular.pyx":48
+  /* "PlexSim/Models/Circular.pyx":48
  *         # consume cell
  *         fraction /= <double> nNeighbors
  *         if fraction  >= self._threshold:             # <<<<<<<<<<<<<<
@@ -4497,7 +4497,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
   __pyx_t_6 = ((__pyx_v_fraction >= __pyx_v_self->_threshold) != 0);
   if (__pyx_t_6) {
 
-    /* "Models/Circular.pyx":49
+    /* "PlexSim/Models/Circular.pyx":49
  *         fraction /= <double> nNeighbors
  *         if fraction  >= self._threshold:
  *             return  (self._states[node]  + 1)  %  self._nStates             # <<<<<<<<<<<<<<
@@ -4508,7 +4508,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
     __pyx_r = (((*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_5)) ))) + 1) % __pyx_v_self->__pyx_base._nStates);
     goto __pyx_L0;
 
-    /* "Models/Circular.pyx":48
+    /* "PlexSim/Models/Circular.pyx":48
  *         # consume cell
  *         fraction /= <double> nNeighbors
  *         if fraction  >= self._threshold:             # <<<<<<<<<<<<<<
@@ -4517,7 +4517,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  */
   }
 
-  /* "Models/Circular.pyx":52
+  /* "PlexSim/Models/Circular.pyx":52
  *         # remain unchanged
  *         else:
  *             if self.rand() <= self._threshold:             # <<<<<<<<<<<<<<
@@ -4525,19 +4525,19 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  *                 self._states[node] = self._agentStates[i]
  */
   /*else*/ {
-    __pyx_t_6 = ((((struct __pyx_vtabstruct_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self)) <= __pyx_v_self->_threshold) != 0);
+    __pyx_t_6 = ((((struct __pyx_vtabstruct_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self)) <= __pyx_v_self->_threshold) != 0);
     if (__pyx_t_6) {
 
-      /* "Models/Circular.pyx":53
+      /* "PlexSim/Models/Circular.pyx":53
  *         else:
  *             if self.rand() <= self._threshold:
  *                 i = <long> self.rand() * self._nStates             # <<<<<<<<<<<<<<
  *                 self._states[node] = self._agentStates[i]
  *             return self._states[node]
  */
-      __pyx_v_i = (((long)((struct __pyx_vtabstruct_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self))) * __pyx_v_self->__pyx_base._nStates);
+      __pyx_v_i = (((long)((struct __pyx_vtabstruct_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self))) * __pyx_v_self->__pyx_base._nStates);
 
-      /* "Models/Circular.pyx":54
+      /* "PlexSim/Models/Circular.pyx":54
  *             if self.rand() <= self._threshold:
  *                 i = <long> self.rand() * self._nStates
  *                 self._states[node] = self._agentStates[i]             # <<<<<<<<<<<<<<
@@ -4548,7 +4548,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
       __pyx_t_4 = __pyx_v_node;
       *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_4)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._agentStates.data) + __pyx_t_5)) )));
 
-      /* "Models/Circular.pyx":52
+      /* "PlexSim/Models/Circular.pyx":52
  *         # remain unchanged
  *         else:
  *             if self.rand() <= self._threshold:             # <<<<<<<<<<<<<<
@@ -4557,7 +4557,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  */
     }
 
-    /* "Models/Circular.pyx":55
+    /* "PlexSim/Models/Circular.pyx":55
  *                 i = <long> self.rand() * self._nStates
  *                 self._states[node] = self._agentStates[i]
  *             return self._states[node]             # <<<<<<<<<<<<<<
@@ -4569,7 +4569,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
     goto __pyx_L0;
   }
 
-  /* "Models/Circular.pyx":32
+  /* "PlexSim/Models/Circular.pyx":32
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef long _evolve(self, long node) nogil:             # <<<<<<<<<<<<<<
@@ -4582,7 +4582,7 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
   return __pyx_r;
 }
 
-/* "Models/Circular.pyx":57
+/* "PlexSim/Models/Circular.pyx":57
  *             return self._states[node]
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
@@ -4590,14 +4590,14 @@ static long __pyx_f_6Models_8Circular_3CCA__evolve(struct __pyx_obj_6Models_8Cir
  *     @cython.boundscheck(False)
  */
 
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_3updateState(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_3updateState(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA_updateState(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch) {
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_8Circular_3CCA_updateState(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch) {
   __Pyx_memviewslice __pyx_r = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -4622,7 +4622,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA_updateState(struct __py
       #endif
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_updateState); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_6Models_8Circular_3CCA_3updateState)) {
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_7PlexSim_6Models_8Circular_3CCA_3updateState)) {
         if (unlikely(!__pyx_v_nodesToUpdate.memview)) { __Pyx_RaiseUnboundLocalError("nodesToUpdate"); __PYX_ERR(0, 57, __pyx_L1_error) }
         __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_nodesToUpdate, 1, (PyObject *(*)(char *)) __pyx_memview_get_long, (int (*)(char *, PyObject *)) __pyx_memview_set_long, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 57, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
@@ -4669,20 +4669,20 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA_updateState(struct __py
     #endif
   }
 
-  /* "Models/Circular.pyx":58
+  /* "PlexSim/Models/Circular.pyx":58
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
  *         return self._updateState(nodesToUpdate)             # <<<<<<<<<<<<<<
  *     @cython.boundscheck(False)
  *     @cython.wraparound(False)
  */
-  __pyx_t_7 = ((struct __pyx_vtabstruct_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base._updateState(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self), __pyx_v_nodesToUpdate); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 58, __pyx_L1_error)
+  __pyx_t_7 = ((struct __pyx_vtabstruct_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base._updateState(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self), __pyx_v_nodesToUpdate); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 58, __pyx_L1_error)
   __pyx_r = __pyx_t_7;
   __pyx_t_7.memview = NULL;
   __pyx_t_7.data = NULL;
   goto __pyx_L0;
 
-  /* "Models/Circular.pyx":57
+  /* "PlexSim/Models/Circular.pyx":57
  *             return self._states[node]
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
@@ -4700,7 +4700,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA_updateState(struct __py
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_7, 1);
   __pyx_r.data = NULL;
   __pyx_r.memview = NULL;
-  __Pyx_AddTraceback("Models.Circular.CCA.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
   goto __pyx_L2;
   __pyx_L0:;
   if (unlikely(!__pyx_r.memview)) {
@@ -4712,15 +4712,15 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA_updateState(struct __py
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_3updateState(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_3updateState(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_8Circular_3CCA_3updateState = {"updateState", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_8Circular_3CCA_3updateState, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_3updateState(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_8Circular_3CCA_3updateState = {"updateState", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_8Circular_3CCA_3updateState, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_3updateState(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -4775,18 +4775,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("updateState", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 57, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("Models.Circular.CCA.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6Models_8Circular_3CCA_2updateState(((struct __pyx_obj_6Models_8Circular_CCA *)__pyx_v_self), __pyx_v_nodesToUpdate);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_8Circular_3CCA_2updateState(((struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self), __pyx_v_nodesToUpdate);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_memviewslice __pyx_t_1 = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -4797,7 +4797,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_6
   __Pyx_RefNannySetupContext("updateState", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_nodesToUpdate.memview)) { __Pyx_RaiseUnboundLocalError("nodesToUpdate"); __PYX_ERR(0, 57, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_f_6Models_8Circular_3CCA_updateState(__pyx_v_self, __pyx_v_nodesToUpdate, 1); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7PlexSim_6Models_8Circular_3CCA_updateState(__pyx_v_self, __pyx_v_nodesToUpdate, 1); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 57, __pyx_L1_error)
   __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_long, (int (*)(char *, PyObject *)) __pyx_memview_set_long, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_1, 1);
@@ -4810,7 +4810,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_6
   __pyx_L1_error:;
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_1, 1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("Models.Circular.CCA.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_nodesToUpdate, 1);
@@ -4819,7 +4819,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_6
   return __pyx_r;
 }
 
-/* "Models/Circular.pyx":65
+/* "PlexSim/Models/Circular.pyx":65
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef long [::1]  _updateState(self, long[::1] nodesToUpdate) nogil:             # <<<<<<<<<<<<<<
@@ -4827,7 +4827,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_2updateState(struct __pyx_obj_6
  *         Circular update rule with threshold:
  */
 
-static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_8Circular_3CCA__updateState(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
   int __pyx_v_node;
   int __pyx_v_N;
   __Pyx_memviewslice __pyx_r = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -4838,7 +4838,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
   Py_ssize_t __pyx_t_5;
   Py_ssize_t __pyx_t_6;
 
-  /* "Models/Circular.pyx":72
+  /* "PlexSim/Models/Circular.pyx":72
  *         """
  *         cdef:
  *             int node, N = len(nodesToUpdate)             # <<<<<<<<<<<<<<
@@ -4848,7 +4848,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
   __pyx_t_1 = __Pyx_MemoryView_Len(__pyx_v_nodesToUpdate); 
   __pyx_v_N = __pyx_t_1;
 
-  /* "Models/Circular.pyx":73
+  /* "PlexSim/Models/Circular.pyx":73
  *         cdef:
  *             int node, N = len(nodesToUpdate)
  *         for node in range(N):             # <<<<<<<<<<<<<<
@@ -4860,7 +4860,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_node = __pyx_t_4;
 
-    /* "Models/Circular.pyx":74
+    /* "PlexSim/Models/Circular.pyx":74
  *             int node, N = len(nodesToUpdate)
  *         for node in range(N):
  *             node = nodesToUpdate[node]             # <<<<<<<<<<<<<<
@@ -4870,7 +4870,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
     __pyx_t_5 = __pyx_v_node;
     __pyx_v_node = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_nodesToUpdate.data) + __pyx_t_5)) )));
 
-    /* "Models/Circular.pyx":75
+    /* "PlexSim/Models/Circular.pyx":75
  *         for node in range(N):
  *             node = nodesToUpdate[node]
  *             self._newstates[node] = self._evolve(node)             # <<<<<<<<<<<<<<
@@ -4878,10 +4878,10 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
  *             self._states[node] = self._newstates[node]
  */
     __pyx_t_5 = __pyx_v_node;
-    *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._newstates.data) + __pyx_t_5)) )) = ((struct __pyx_vtabstruct_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->_evolve(__pyx_v_self, __pyx_v_node);
+    *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._newstates.data) + __pyx_t_5)) )) = ((struct __pyx_vtabstruct_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self->__pyx_base.__pyx_vtab)->_evolve(__pyx_v_self, __pyx_v_node);
   }
 
-  /* "Models/Circular.pyx":76
+  /* "PlexSim/Models/Circular.pyx":76
  *             node = nodesToUpdate[node]
  *             self._newstates[node] = self._evolve(node)
  *         for node in range(self._nNodes):             # <<<<<<<<<<<<<<
@@ -4893,7 +4893,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_node = __pyx_t_4;
 
-    /* "Models/Circular.pyx":77
+    /* "PlexSim/Models/Circular.pyx":77
  *             self._newstates[node] = self._evolve(node)
  *         for node in range(self._nNodes):
  *             self._states[node] = self._newstates[node]             # <<<<<<<<<<<<<<
@@ -4904,7 +4904,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
     *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_6)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._newstates.data) + __pyx_t_5)) )));
   }
 
-  /* "Models/Circular.pyx":78
+  /* "PlexSim/Models/Circular.pyx":78
  *         for node in range(self._nNodes):
  *             self._states[node] = self._newstates[node]
  *         return self._states             # <<<<<<<<<<<<<<
@@ -4913,7 +4913,7 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
   __pyx_r = __pyx_v_self->__pyx_base._states;
   goto __pyx_L0;
 
-  /* "Models/Circular.pyx":65
+  /* "PlexSim/Models/Circular.pyx":65
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef long [::1]  _updateState(self, long[::1] nodesToUpdate) nogil:             # <<<<<<<<<<<<<<
@@ -4942,15 +4942,15 @@ static __Pyx_memviewslice __pyx_f_6Models_8Circular_3CCA__updateState(struct __p
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_5__reduce_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_5__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_8Circular_3CCA_5__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_8Circular_3CCA_5__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_5__reduce_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_8Circular_3CCA_5__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_8Circular_3CCA_5__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_5__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -4967,14 +4967,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("__reduce_cython__", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__reduce_cython__", 0))) return NULL;
-  __pyx_r = __pyx_pf_6Models_8Circular_3CCA_4__reduce_cython__(((struct __pyx_obj_6Models_8Circular_CCA *)__pyx_v_self));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_8Circular_3CCA_4__reduce_cython__(((struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_4__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self) {
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_4__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -4999,7 +4999,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_4__reduce_cython__(CYTHON_UNUSE
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("Models.Circular.CCA.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -5014,15 +5014,15 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_4__reduce_cython__(CYTHON_UNUSE
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_7__setstate_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_7__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_8Circular_3CCA_7__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_8Circular_3CCA_7__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_8Circular_3CCA_7__setstate_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_8Circular_3CCA_7__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_8Circular_3CCA_7__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_8Circular_3CCA_7__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -5077,18 +5077,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__setstate_cython__", 1, 1, 1, __pyx_nargs); __PYX_ERR(1, 3, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("Models.Circular.CCA.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6Models_8Circular_3CCA_6__setstate_cython__(((struct __pyx_obj_6Models_8Circular_CCA *)__pyx_v_self), __pyx_v___pyx_state);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_8Circular_3CCA_6__setstate_cython__(((struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)__pyx_v_self), __pyx_v___pyx_state);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_8Circular_3CCA_6__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_6Models_8Circular_CCA *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_7PlexSim_6Models_8Circular_3CCA_6__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -5113,7 +5113,7 @@ static PyObject *__pyx_pf_6Models_8Circular_3CCA_6__setstate_cython__(CYTHON_UNU
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("Models.Circular.CCA.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Circular.CCA.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -19811,10 +19811,10 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
-static struct __pyx_vtabstruct_6Models_8Circular_CCA __pyx_vtable_6Models_8Circular_CCA;
+static struct __pyx_vtabstruct_7PlexSim_6Models_8Circular_CCA __pyx_vtable_7PlexSim_6Models_8Circular_CCA;
 
-static PyObject *__pyx_tp_new_6Models_8Circular_CCA(PyTypeObject *t, PyObject *a, PyObject *k) {
-  struct __pyx_obj_6Models_8Circular_CCA *p;
+static PyObject *__pyx_tp_new_7PlexSim_6Models_8Circular_CCA(PyTypeObject *t, PyObject *a, PyObject *k) {
+  struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *p;
   #if CYTHON_COMPILING_IN_LIMITED_API
   newfunc new_func = (newfunc)PyType_GetSlot(__pyx_ptype_6Models_6Models_Model, Py_tp_new);
   PyObject *o = new_func(t, a, k);
@@ -19822,24 +19822,24 @@ static PyObject *__pyx_tp_new_6Models_8Circular_CCA(PyTypeObject *t, PyObject *a
   PyObject *o = __pyx_ptype_6Models_6Models_Model->tp_new(t, a, k);
   #endif
   if (unlikely(!o)) return 0;
-  p = ((struct __pyx_obj_6Models_8Circular_CCA *)o);
-  p->__pyx_base.__pyx_vtab = (struct __pyx_vtabstruct_6Models_6Models_Model*)__pyx_vtabptr_6Models_8Circular_CCA;
+  p = ((struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)o);
+  p->__pyx_base.__pyx_vtab = (struct __pyx_vtabstruct_6Models_6Models_Model*)__pyx_vtabptr_7PlexSim_6Models_8Circular_CCA;
   return o;
 }
 
-static int __pyx_tp_traverse_6Models_8Circular_CCA(PyObject *o, visitproc v, void *a) {
+static int __pyx_tp_traverse_7PlexSim_6Models_8Circular_CCA(PyObject *o, visitproc v, void *a) {
   int e;
-  e = ((likely(__pyx_ptype_6Models_6Models_Model)) ? ((__pyx_ptype_6Models_6Models_Model->tp_traverse) ? __pyx_ptype_6Models_6Models_Model->tp_traverse(o, v, a) : 0) : __Pyx_call_next_tp_traverse(o, v, a, __pyx_tp_traverse_6Models_8Circular_CCA)); if (e) return e;
+  e = ((likely(__pyx_ptype_6Models_6Models_Model)) ? ((__pyx_ptype_6Models_6Models_Model->tp_traverse) ? __pyx_ptype_6Models_6Models_Model->tp_traverse(o, v, a) : 0) : __Pyx_call_next_tp_traverse(o, v, a, __pyx_tp_traverse_7PlexSim_6Models_8Circular_CCA)); if (e) return e;
   return 0;
 }
 
-static int __pyx_tp_clear_6Models_8Circular_CCA(PyObject *o) {
-  if (likely(__pyx_ptype_6Models_6Models_Model)) { if (__pyx_ptype_6Models_6Models_Model->tp_clear) __pyx_ptype_6Models_6Models_Model->tp_clear(o); } else __Pyx_call_next_tp_clear(o, __pyx_tp_clear_6Models_8Circular_CCA);
+static int __pyx_tp_clear_7PlexSim_6Models_8Circular_CCA(PyObject *o) {
+  if (likely(__pyx_ptype_6Models_6Models_Model)) { if (__pyx_ptype_6Models_6Models_Model->tp_clear) __pyx_ptype_6Models_6Models_Model->tp_clear(o); } else __Pyx_call_next_tp_clear(o, __pyx_tp_clear_7PlexSim_6Models_8Circular_CCA);
   return 0;
 }
 
-static PyObject *__pyx___dict__getter_6Models_8Circular_CCA(PyObject *o, CYTHON_UNUSED void *x) {
-  struct __pyx_obj_6Models_8Circular_CCA *p = (struct __pyx_obj_6Models_8Circular_CCA *)o;
+static PyObject *__pyx___dict__getter_7PlexSim_6Models_8Circular_CCA(PyObject *o, CYTHON_UNUSED void *x) {
+  struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *p = (struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *)o;
   if (unlikely(!p->__pyx_base.__dict__)){
     p->__pyx_base.__dict__ = PyDict_New();
   }
@@ -19847,13 +19847,13 @@ static PyObject *__pyx___dict__getter_6Models_8Circular_CCA(PyObject *o, CYTHON_
   return p->__pyx_base.__dict__;
 }
 
-static PyObject *__pyx_getprop_6Models_8Circular_3CCA_threshold(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_6Models_8Circular_3CCA_9threshold_1__get__(o);
+static PyObject *__pyx_getprop_7PlexSim_6Models_8Circular_3CCA_threshold(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_7PlexSim_6Models_8Circular_3CCA_9threshold_1__get__(o);
 }
 
-static int __pyx_setprop_6Models_8Circular_3CCA_threshold(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_7PlexSim_6Models_8Circular_3CCA_threshold(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_6Models_8Circular_3CCA_9threshold_3__set__(o, v);
+    return __pyx_pw_7PlexSim_6Models_8Circular_3CCA_9threshold_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -19861,42 +19861,42 @@ static int __pyx_setprop_6Models_8Circular_3CCA_threshold(PyObject *o, PyObject 
   }
 }
 
-static PyMethodDef __pyx_methods_6Models_8Circular_CCA[] = {
-  {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_8Circular_3CCA_5__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_8Circular_3CCA_7__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+static PyMethodDef __pyx_methods_7PlexSim_6Models_8Circular_CCA[] = {
+  {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_8Circular_3CCA_5__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_8Circular_3CCA_7__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
-static struct PyGetSetDef __pyx_getsets_6Models_8Circular_CCA[] = {
-  {(char *)"__dict__", __pyx___dict__getter_6Models_8Circular_CCA, 0, (char *)0, 0},
-  {(char *)"threshold", __pyx_getprop_6Models_8Circular_3CCA_threshold, __pyx_setprop_6Models_8Circular_3CCA_threshold, (char *)0, 0},
+static struct PyGetSetDef __pyx_getsets_7PlexSim_6Models_8Circular_CCA[] = {
+  {(char *)"__dict__", __pyx___dict__getter_7PlexSim_6Models_8Circular_CCA, 0, (char *)0, 0},
+  {(char *)"threshold", __pyx_getprop_7PlexSim_6Models_8Circular_3CCA_threshold, __pyx_setprop_7PlexSim_6Models_8Circular_3CCA_threshold, (char *)0, 0},
   {0, 0, 0, 0, 0}
 };
 #if CYTHON_COMPILING_IN_LIMITED_API
-static PyType_Slot __pyx_type_6Models_8Circular_CCA_slots[] = {
+static PyType_Slot __pyx_type_7PlexSim_6Models_8Circular_CCA_slots[] = {
   {Py_tp_getattro, (void *)PyObject_GenericGetAttr},
-  {Py_tp_traverse, (void *)__pyx_tp_traverse_6Models_8Circular_CCA},
-  {Py_tp_clear, (void *)__pyx_tp_clear_6Models_8Circular_CCA},
-  {Py_tp_methods, (void *)__pyx_methods_6Models_8Circular_CCA},
-  {Py_tp_getset, (void *)__pyx_getsets_6Models_8Circular_CCA},
-  {Py_tp_dictoffset, (void *)offsetof(struct __pyx_obj_6Models_8Circular_CCA, __pyx_base.__dict__)},
-  {Py_tp_init, (void *)__pyx_pw_6Models_8Circular_3CCA_1__init__},
-  {Py_tp_new, (void *)__pyx_tp_new_6Models_8Circular_CCA},
+  {Py_tp_traverse, (void *)__pyx_tp_traverse_7PlexSim_6Models_8Circular_CCA},
+  {Py_tp_clear, (void *)__pyx_tp_clear_7PlexSim_6Models_8Circular_CCA},
+  {Py_tp_methods, (void *)__pyx_methods_7PlexSim_6Models_8Circular_CCA},
+  {Py_tp_getset, (void *)__pyx_getsets_7PlexSim_6Models_8Circular_CCA},
+  {Py_tp_dictoffset, (void *)offsetof(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA, __pyx_base.__dict__)},
+  {Py_tp_init, (void *)__pyx_pw_7PlexSim_6Models_8Circular_3CCA_1__init__},
+  {Py_tp_new, (void *)__pyx_tp_new_7PlexSim_6Models_8Circular_CCA},
   {0, 0},
 };
-static PyType_Spec __pyx_type_6Models_8Circular_CCA_spec = {
-  "Models.Circular.CCA",
-  sizeof(struct __pyx_obj_6Models_8Circular_CCA),
+static PyType_Spec __pyx_type_7PlexSim_6Models_8Circular_CCA_spec = {
+  "PlexSim.Models.Circular.CCA",
+  sizeof(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
-  __pyx_type_6Models_8Circular_CCA_slots,
+  __pyx_type_7PlexSim_6Models_8Circular_CCA_slots,
 };
 #else
 
-static PyTypeObject __pyx_type_6Models_8Circular_CCA = {
+static PyTypeObject __pyx_type_7PlexSim_6Models_8Circular_CCA = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Circular.""CCA", /*tp_name*/
-  sizeof(struct __pyx_obj_6Models_8Circular_CCA), /*tp_basicsize*/
+  "PlexSim.Models.Circular.""CCA", /*tp_name*/
+  sizeof(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA), /*tp_basicsize*/
   0, /*tp_itemsize*/
   0, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
@@ -19925,23 +19925,23 @@ static PyTypeObject __pyx_type_6Models_8Circular_CCA = {
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   0, /*tp_doc*/
-  __pyx_tp_traverse_6Models_8Circular_CCA, /*tp_traverse*/
-  __pyx_tp_clear_6Models_8Circular_CCA, /*tp_clear*/
+  __pyx_tp_traverse_7PlexSim_6Models_8Circular_CCA, /*tp_traverse*/
+  __pyx_tp_clear_7PlexSim_6Models_8Circular_CCA, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_6Models_8Circular_CCA, /*tp_methods*/
+  __pyx_methods_7PlexSim_6Models_8Circular_CCA, /*tp_methods*/
   0, /*tp_members*/
-  __pyx_getsets_6Models_8Circular_CCA, /*tp_getset*/
+  __pyx_getsets_7PlexSim_6Models_8Circular_CCA, /*tp_getset*/
   0, /*tp_base*/
   0, /*tp_dict*/
   0, /*tp_descr_get*/
   0, /*tp_descr_set*/
-  offsetof(struct __pyx_obj_6Models_8Circular_CCA, __pyx_base.__dict__), /*tp_dictoffset*/
-  __pyx_pw_6Models_8Circular_3CCA_1__init__, /*tp_init*/
+  offsetof(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA, __pyx_base.__dict__), /*tp_dictoffset*/
+  __pyx_pw_7PlexSim_6Models_8Circular_3CCA_1__init__, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_6Models_8Circular_CCA, /*tp_new*/
+  __pyx_tp_new_7PlexSim_6Models_8Circular_CCA, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -20072,7 +20072,7 @@ static PyType_Slot __pyx_type___pyx_array_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_array_spec = {
-  "Models.Circular.array",
+  "PlexSim.Models.Circular.array",
   sizeof(struct __pyx_array_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE,
@@ -20118,7 +20118,7 @@ static PyBufferProcs __pyx_tp_as_buffer_array = {
 
 static PyTypeObject __pyx_type___pyx_array = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Circular.""array", /*tp_name*/
+  "PlexSim.Models.Circular.""array", /*tp_name*/
   sizeof(struct __pyx_array_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_array, /*tp_dealloc*/
@@ -20257,7 +20257,7 @@ static PyType_Slot __pyx_type___pyx_MemviewEnum_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
-  "Models.Circular.Enum",
+  "PlexSim.Models.Circular.Enum",
   sizeof(struct __pyx_MemviewEnum_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -20267,7 +20267,7 @@ static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
 
 static PyTypeObject __pyx_type___pyx_MemviewEnum = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Circular.""Enum", /*tp_name*/
+  "PlexSim.Models.Circular.""Enum", /*tp_name*/
   sizeof(struct __pyx_MemviewEnum_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_Enum, /*tp_dealloc*/
@@ -20520,7 +20520,7 @@ static PyType_Slot __pyx_type___pyx_memoryview_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryview_spec = {
-  "Models.Circular.memoryview",
+  "PlexSim.Models.Circular.memoryview",
   sizeof(struct __pyx_memoryview_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -20566,7 +20566,7 @@ static PyBufferProcs __pyx_tp_as_buffer_memoryview = {
 
 static PyTypeObject __pyx_type___pyx_memoryview = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Circular.""memoryview", /*tp_name*/
+  "PlexSim.Models.Circular.""memoryview", /*tp_name*/
   sizeof(struct __pyx_memoryview_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_memoryview, /*tp_dealloc*/
@@ -20715,7 +20715,7 @@ static PyType_Slot __pyx_type___pyx_memoryviewslice_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
-  "Models.Circular._memoryviewslice",
+  "PlexSim.Models.Circular._memoryviewslice",
   sizeof(struct __pyx_memoryviewslice_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -20725,7 +20725,7 @@ static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
 
 static PyTypeObject __pyx_type___pyx_memoryviewslice = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Circular.""_memoryviewslice", /*tp_name*/
+  "PlexSim.Models.Circular.""_memoryviewslice", /*tp_name*/
   sizeof(struct __pyx_memoryviewslice_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc__memoryviewslice, /*tp_dealloc*/
@@ -20846,11 +20846,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
   {0, __pyx_k_MemoryView_of_r_at_0x_x, sizeof(__pyx_k_MemoryView_of_r_at_0x_x), 0, 0, 1, 0},
   {0, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
-  {0, __pyx_k_Models_Circular, sizeof(__pyx_k_Models_Circular), 0, 0, 1, 1},
-  {0, __pyx_k_Models_Circular_pyx, sizeof(__pyx_k_Models_Circular_pyx), 0, 0, 1, 0},
   {0, __pyx_k_O, sizeof(__pyx_k_O), 0, 0, 0, 1},
   {0, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 1, 0, 0},
   {0, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
+  {0, __pyx_k_PlexSim_Models_Circular, sizeof(__pyx_k_PlexSim_Models_Circular), 0, 0, 1, 1},
+  {0, __pyx_k_PlexSim_Models_Circular_pyx, sizeof(__pyx_k_PlexSim_Models_Circular_pyx), 0, 0, 1, 0},
   {0, __pyx_k_Step_may_not_be_zero_axis_d, sizeof(__pyx_k_Step_may_not_be_zero_axis_d), 0, 0, 1, 0},
   {0, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
   {0, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
@@ -20981,11 +20981,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
   {&__pyx_kp_s_MemoryView_of_r_at_0x_x, __pyx_k_MemoryView_of_r_at_0x_x, sizeof(__pyx_k_MemoryView_of_r_at_0x_x), 0, 0, 1, 0},
   {&__pyx_kp_s_MemoryView_of_r_object, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
-  {&__pyx_n_s_Models_Circular, __pyx_k_Models_Circular, sizeof(__pyx_k_Models_Circular), 0, 0, 1, 1},
-  {&__pyx_kp_s_Models_Circular_pyx, __pyx_k_Models_Circular_pyx, sizeof(__pyx_k_Models_Circular_pyx), 0, 0, 1, 0},
   {&__pyx_n_b_O, __pyx_k_O, sizeof(__pyx_k_O), 0, 0, 0, 1},
   {&__pyx_kp_u_Out_of_bounds_on_buffer_access_a, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 1, 0, 0},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
+  {&__pyx_n_s_PlexSim_Models_Circular, __pyx_k_PlexSim_Models_Circular, sizeof(__pyx_k_PlexSim_Models_Circular), 0, 0, 1, 1},
+  {&__pyx_kp_s_PlexSim_Models_Circular_pyx, __pyx_k_PlexSim_Models_Circular_pyx, sizeof(__pyx_k_PlexSim_Models_Circular_pyx), 0, 0, 1, 0},
   {&__pyx_kp_s_Step_may_not_be_zero_axis_d, __pyx_k_Step_may_not_be_zero_axis_d, sizeof(__pyx_k_Step_may_not_be_zero_axis_d), 0, 0, 1, 0},
   {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
   {&__pyx_kp_s_Unable_to_convert_item_to_object, __pyx_k_Unable_to_convert_item_to_object, sizeof(__pyx_k_Unable_to_convert_item_to_object), 0, 0, 1, 0},
@@ -21162,7 +21162,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__8);
   __Pyx_GIVEREF(__pyx_slice__8);
 
-  /* "Models/Circular.pyx":57
+  /* "PlexSim/Models/Circular.pyx":57
  *             return self._states[node]
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
@@ -21172,7 +21172,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__11 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_nodesToUpdate); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__11);
   __Pyx_GIVEREF(__pyx_tuple__11);
-  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Models_Circular_pyx, __pyx_n_s_updateState, 57, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_codeobj__12 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__11, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_PlexSim_Models_Circular_pyx, __pyx_n_s_updateState, 57, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__12)) __PYX_ERR(0, 57, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
@@ -21315,11 +21315,11 @@ if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 1, __pyx_L1_error)
   if (__Pyx_InitString(__pyx_string_tab[23], &__pyx_n_s_MemoryError) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[24], &__pyx_kp_s_MemoryView_of_r_at_0x_x) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[25], &__pyx_kp_s_MemoryView_of_r_object) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[26], &__pyx_n_s_Models_Circular) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[27], &__pyx_kp_s_Models_Circular_pyx) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[28], &__pyx_n_b_O) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[29], &__pyx_kp_u_Out_of_bounds_on_buffer_access_a) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[30], &__pyx_n_s_PickleError) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[26], &__pyx_n_b_O) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[27], &__pyx_kp_u_Out_of_bounds_on_buffer_access_a) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[28], &__pyx_n_s_PickleError) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[29], &__pyx_n_s_PlexSim_Models_Circular) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[30], &__pyx_kp_s_PlexSim_Models_Circular_pyx) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[31], &__pyx_kp_s_Step_may_not_be_zero_axis_d) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[32], &__pyx_n_s_TypeError) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[33], &__pyx_kp_s_Unable_to_convert_item_to_object) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
@@ -21490,42 +21490,42 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_ptype_6Models_6Models_Model = __Pyx_ImportType(__pyx_t_1, "Models.Models", "Model", sizeof(struct __pyx_obj_6Models_6Models_Model), __Pyx_ImportType_CheckSize_Warn);
    if (!__pyx_ptype_6Models_6Models_Model) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_vtabptr_6Models_6Models_Model = (struct __pyx_vtabstruct_6Models_6Models_Model*)__Pyx_GetVtable(__pyx_ptype_6Models_6Models_Model); if (unlikely(!__pyx_vtabptr_6Models_6Models_Model)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_vtabptr_6Models_8Circular_CCA = &__pyx_vtable_6Models_8Circular_CCA;
-  __pyx_vtable_6Models_8Circular_CCA.__pyx_base = *__pyx_vtabptr_6Models_6Models_Model;
-  __pyx_vtable_6Models_8Circular_CCA.__pyx_base.updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_6Models_8Circular_3CCA_updateState;
-  __pyx_vtable_6Models_8Circular_CCA.__pyx_base._updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice))__pyx_f_6Models_8Circular_3CCA__updateState;
-  __pyx_vtable_6Models_8Circular_CCA._evolve = (long (*)(struct __pyx_obj_6Models_8Circular_CCA *, long))__pyx_f_6Models_8Circular_3CCA__evolve;
+  __pyx_vtabptr_7PlexSim_6Models_8Circular_CCA = &__pyx_vtable_7PlexSim_6Models_8Circular_CCA;
+  __pyx_vtable_7PlexSim_6Models_8Circular_CCA.__pyx_base = *__pyx_vtabptr_6Models_6Models_Model;
+  __pyx_vtable_7PlexSim_6Models_8Circular_CCA.__pyx_base.updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_7PlexSim_6Models_8Circular_3CCA_updateState;
+  __pyx_vtable_7PlexSim_6Models_8Circular_CCA.__pyx_base._updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice))__pyx_f_7PlexSim_6Models_8Circular_3CCA__updateState;
+  __pyx_vtable_7PlexSim_6Models_8Circular_CCA._evolve = (long (*)(struct __pyx_obj_7PlexSim_6Models_8Circular_CCA *, long))__pyx_f_7PlexSim_6Models_8Circular_3CCA__evolve;
   #if CYTHON_COMPILING_IN_LIMITED_API
   __pyx_t_2 = PyTuple_Pack(1, (PyObject *)__pyx_ptype_6Models_6Models_Model); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_type_6Models_8Circular_CCA = PyType_FromSpecWithBases(&__pyx_type_6Models_8Circular_CCA_spec, __pyx_t_2); if (unlikely(!__pyx_type_6Models_8Circular_CCA)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_type_7PlexSim_6Models_8Circular_CCA = PyType_FromSpecWithBases(&__pyx_type_7PlexSim_6Models_8Circular_CCA_spec, __pyx_t_2); if (unlikely(!__pyx_type_7PlexSim_6Models_8Circular_CCA)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
   #else
-  __pyx_type_6Models_8Circular_CCA.tp_dealloc = __pyx_ptype_6Models_6Models_Model->tp_dealloc;
-  __pyx_type_6Models_8Circular_CCA.tp_base = __pyx_ptype_6Models_6Models_Model;
-  if (__Pyx_PyType_Ready(&__pyx_type_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_type_7PlexSim_6Models_8Circular_CCA.tp_dealloc = __pyx_ptype_6Models_6Models_Model->tp_dealloc;
+  __pyx_type_7PlexSim_6Models_8Circular_CCA.tp_base = __pyx_ptype_6Models_6Models_Model;
+  if (__Pyx_PyType_Ready(&__pyx_type_7PlexSim_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #if PY_MAJOR_VERSION < 3
-  __pyx_type_6Models_8Circular_CCA.tp_print = 0;
+  __pyx_type_7PlexSim_6Models_8Circular_CCA.tp_print = 0;
   #endif
   #endif
   #if CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_SetVtable(__pyx_type_6Models_8Circular_CCA, __pyx_vtabptr_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7PlexSim_6Models_8Circular_CCA, __pyx_vtabptr_7PlexSim_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #else
-  if (__Pyx_SetVtable(__pyx_type_6Models_8Circular_CCA.tp_dict, __pyx_vtabptr_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
-  if (__Pyx_MergeVtables(&__pyx_type_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7PlexSim_6Models_8Circular_CCA.tp_dict, __pyx_vtabptr_7PlexSim_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_MergeVtables(&__pyx_type_7PlexSim_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #endif
   #if CYTHON_COMPILING_IN_LIMITED_API
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_CCA, __pyx_type_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_CCA, __pyx_type_7PlexSim_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #else
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_CCA, (PyObject *)&__pyx_type_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_CCA, (PyObject *)&__pyx_type_7PlexSim_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject*)&__pyx_type_7PlexSim_6Models_8Circular_CCA) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #endif
   #if CYTHON_COMPILING_IN_LIMITED_API
-  __pyx_ptype_6Models_8Circular_CCA = (PyTypeObject *)__pyx_type_6Models_8Circular_CCA;
+  __pyx_ptype_7PlexSim_6Models_8Circular_CCA = (PyTypeObject *)__pyx_type_7PlexSim_6Models_8Circular_CCA;
   #else
-  __pyx_ptype_6Models_8Circular_CCA = &__pyx_type_6Models_8Circular_CCA;
+  __pyx_ptype_7PlexSim_6Models_8Circular_CCA = &__pyx_type_7PlexSim_6Models_8Circular_CCA;
   #endif
   __pyx_vtabptr_array = &__pyx_vtable_array;
   __pyx_vtable_array.get_memview = (PyObject *(*)(struct __pyx_array_obj *))__pyx_array_get_memview;
@@ -21968,14 +21968,14 @@ if (!__Pyx_RefNanny) {
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_Models__Circular) {
+  if (__pyx_module_is_main_PlexSim__Models__Circular) {
     if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name_2, __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "Models.Circular")) {
-      if (unlikely((PyDict_SetItemString(modules, "Models.Circular", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "PlexSim.Models.Circular")) {
+      if (unlikely((PyDict_SetItemString(modules, "PlexSim.Models.Circular", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -21996,7 +21996,7 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "Models/Circular.pyx":3
+  /* "PlexSim/Models/Circular.pyx":3
  * # distutils: language = c++
  * from Models.Models cimport Model
  * import numpy as np             # <<<<<<<<<<<<<<
@@ -22008,7 +22008,7 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_1) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Models/Circular.pyx":10
+  /* "PlexSim/Models/Circular.pyx":10
  *                     graph,\
  *                     threshold = 0.,\
  *                     agentStates = [-1 ,1],\             # <<<<<<<<<<<<<<
@@ -22027,25 +22027,25 @@ if (!__Pyx_RefNanny) {
   __Pyx_GIVEREF(__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Models/Circular.pyx":57
+  /* "PlexSim/Models/Circular.pyx":57
  *             return self._states[node]
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
  *         return self._updateState(nodesToUpdate)
  *     @cython.boundscheck(False)
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_8Circular_3CCA_3updateState, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_CCA_updateState, NULL, __pyx_n_s_Models_Circular, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_8Circular_3CCA_3updateState, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_CCA_updateState, NULL, __pyx_n_s_PlexSim_Models_Circular, __pyx_d, ((PyObject *)__pyx_codeobj__12)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_6Models_8Circular_CCA->tp_dict, __pyx_n_s_updateState, __pyx_t_1) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7PlexSim_6Models_8Circular_CCA->tp_dict, __pyx_n_s_updateState, __pyx_t_1) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  PyType_Modified(__pyx_ptype_6Models_8Circular_CCA);
+  PyType_Modified(__pyx_ptype_7PlexSim_6Models_8Circular_CCA);
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self.dist,self.gen cannot be converted to a Python object for pickling"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_8Circular_3CCA_5__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_CCA___reduce_cython, NULL, __pyx_n_s_Models_Circular, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_8Circular_3CCA_5__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_CCA___reduce_cython, NULL, __pyx_n_s_PlexSim_Models_Circular, __pyx_d, ((PyObject *)__pyx_codeobj__14)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_reduce_cython, __pyx_t_1) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -22056,12 +22056,12 @@ if (!__Pyx_RefNanny) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self.dist,self.gen cannot be converted to a Python object for pickling"
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_8Circular_3CCA_7__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_CCA___setstate_cython, NULL, __pyx_n_s_Models_Circular, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_8Circular_3CCA_7__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_CCA___setstate_cython, NULL, __pyx_n_s_PlexSim_Models_Circular, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_setstate_cython, __pyx_t_1) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Models/Circular.pyx":1
+  /* "PlexSim/Models/Circular.pyx":1
  * # distutils: language = c++             # <<<<<<<<<<<<<<
  * from Models.Models cimport Model
  * import numpy as np
@@ -22231,13 +22231,13 @@ if (!__Pyx_RefNanny) {
   __Pyx_XDECREF(__pyx_t_1);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init Models.Circular", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init PlexSim.Models.Circular", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     #if !CYTHON_COMPILING_IN_LIMITED_API
     Py_CLEAR(__pyx_m);
     #endif
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init Models.Circular");
+    PyErr_SetString(PyExc_ImportError, "init PlexSim.Models.Circular");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

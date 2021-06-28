@@ -28,12 +28,12 @@
             "."
         ],
         "language": "c++",
-        "name": "Models.Potts",
+        "name": "PlexSim.Models.Potts",
         "sources": [
-            "Models/Potts.pyx"
+            "PlexSim/Models/Potts.pyx"
         ]
     },
-    "module_name": "Models.Potts"
+    "module_name": "PlexSim.Models.Potts"
 }
 END: Cython Metadata */
 
@@ -863,8 +863,8 @@ static CYTHON_INLINE float __PYX_NAN() {
   #endif
 #endif
 
-#define __PYX_HAVE__Models__Potts
-#define __PYX_HAVE_API__Models__Potts
+#define __PYX_HAVE__PlexSim__Models__Potts
+#define __PYX_HAVE_API__PlexSim__Models__Potts
 /* Early includes */
 #include <string.h>
 #include <stdio.h>
@@ -1177,7 +1177,7 @@ static const char *__pyx_filename;
 /* #### Code section: filename_table ### */
 
 static const char *__pyx_f[] = {
-  "Models/Potts.pyx",
+  "PlexSim/Models/Potts.pyx",
   "__init__.cython-30.pxd",
   "contextvars.pxd",
   "stringsource",
@@ -1513,7 +1513,7 @@ static CYTHON_INLINE __pyx_t_double_complex __pyx_t_double_complex_from_parts(do
 
 /*--- Type declarations ---*/
 struct __pyx_obj_6Models_6Models_Model;
-struct __pyx_obj_6Models_5Potts_Potts;
+struct __pyx_obj_7PlexSim_6Models_5Potts_Potts;
 struct __pyx_array_obj;
 struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
@@ -1593,16 +1593,16 @@ struct __pyx_t_6Models_6Models_Connection {
   std::vector<int>  neighbors;
   std::vector<double>  weights;
 };
-struct __pyx_opt_args_6Models_5Potts_5Potts_matchMagnetization;
+struct __pyx_opt_args_7PlexSim_6Models_5Potts_5Potts_matchMagnetization;
 
-/* "Models/Potts.pxd":25
+/* "PlexSim/Models/Potts.pxd":25
  *     cdef double hamiltonian(self, long x, long y) nogil
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\             # <<<<<<<<<<<<<<
  *                               np.ndarray temps  = *,\
  *                               int n             = *,\
  */
-struct __pyx_opt_args_6Models_5Potts_5Potts_matchMagnetization {
+struct __pyx_opt_args_7PlexSim_6Models_5Potts_5Potts_matchMagnetization {
   int __pyx_n;
   PyArrayObject *temps;
   int n;
@@ -1639,14 +1639,14 @@ struct __pyx_obj_6Models_6Models_Model {
 };
 
 
-/* "Models/Potts.pxd":9
+/* "PlexSim/Models/Potts.pxd":9
  * cimport numpy as np
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
  *     cdef:
  *         double[::1] _H
  */
-struct __pyx_obj_6Models_5Potts_Potts {
+struct __pyx_obj_7PlexSim_6Models_5Potts_Potts {
   struct __pyx_obj_6Models_6Models_Model __pyx_base;
   __Pyx_memviewslice _H;
   double _beta;
@@ -1753,7 +1753,7 @@ struct __pyx_vtabstruct_6Models_6Models_Model {
 static struct __pyx_vtabstruct_6Models_6Models_Model *__pyx_vtabptr_6Models_6Models_Model;
 
 
-/* "Models/Potts.pyx":19
+/* "PlexSim/Models/Potts.pyx":19
  * 
  * 
  * cdef class Potts(Model):             # <<<<<<<<<<<<<<
@@ -1761,14 +1761,14 @@ static struct __pyx_vtabstruct_6Models_6Models_Model *__pyx_vtabptr_6Models_6Mod
  *                         graph,\
  */
 
-struct __pyx_vtabstruct_6Models_5Potts_Potts {
+struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts {
   struct __pyx_vtabstruct_6Models_6Models_Model __pyx_base;
-  std::vector<double>  (*energy)(struct __pyx_obj_6Models_5Potts_Potts *, int, __Pyx_memviewslice);
-  double (*hamiltonian)(struct __pyx_obj_6Models_5Potts_Potts *, long, long);
-  PyArrayObject *(*matchMagnetization)(struct __pyx_obj_6Models_5Potts_Potts *, int __pyx_skip_dispatch, struct __pyx_opt_args_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args);
-  std::vector<double>  (*siteEnergy)(struct __pyx_obj_6Models_5Potts_Potts *, __Pyx_memviewslice, int __pyx_skip_dispatch);
+  std::vector<double>  (*energy)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, int, __Pyx_memviewslice);
+  double (*hamiltonian)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, long, long);
+  PyArrayObject *(*matchMagnetization)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, int __pyx_skip_dispatch, struct __pyx_opt_args_7PlexSim_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args);
+  std::vector<double>  (*siteEnergy)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, __Pyx_memviewslice, int __pyx_skip_dispatch);
 };
-static struct __pyx_vtabstruct_6Models_5Potts_Potts *__pyx_vtabptr_6Models_5Potts_Potts;
+static struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *__pyx_vtabptr_7PlexSim_6Models_5Potts_Potts;
 
 
 /* "View.MemoryView":109
@@ -2882,12 +2882,12 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 #endif
 
 /* #### Code section: module_declarations ### */
-static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts_updateState(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch); /* proto*/
-static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states, int __pyx_skip_dispatch); /* proto*/
-static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, int __pyx_v_node, __Pyx_memviewslice __pyx_v_states); /* proto*/
-static double __pyx_f_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, long __pyx_v_x, long __pyx_v_y); /* proto*/
-static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto*/
-static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, int __pyx_skip_dispatch, struct __pyx_opt_args_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args); /* proto*/
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_5Potts_5Potts_updateState(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch); /* proto*/
+static std::vector<double>  __pyx_f_7PlexSim_6Models_5Potts_5Potts_siteEnergy(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states, int __pyx_skip_dispatch); /* proto*/
+static std::vector<double>  __pyx_f_7PlexSim_6Models_5Potts_5Potts_energy(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, int __pyx_v_node, __Pyx_memviewslice __pyx_v_states); /* proto*/
+static double __pyx_f_7PlexSim_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, long __pyx_v_x, long __pyx_v_y); /* proto*/
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_5Potts_5Potts__updateState(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto*/
+static PyArrayObject *__pyx_f_7PlexSim_6Models_5Potts_5Potts_matchMagnetization(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, int __pyx_skip_dispatch, struct __pyx_opt_args_7PlexSim_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args); /* proto*/
 static CYTHON_INLINE PyObject *__pyx_f_5numpy_7ndarray_4base_base(PyArrayObject *__pyx_v_self); /* proto*/
 static CYTHON_INLINE PyArray_Descr *__pyx_f_5numpy_7ndarray_5descr_descr(PyArrayObject *__pyx_v_self); /* proto*/
 static CYTHON_INLINE int __pyx_f_5numpy_7ndarray_4ndim_ndim(PyArrayObject *__pyx_v_self); /* proto*/
@@ -3141,9 +3141,9 @@ static PyTypeObject *__pyx_ptype_6Models_6Models_Model = 0;
 #if !CYTHON_COMPILING_IN_LIMITED_API
 #endif
 
-/* Module declarations from "Models.Potts" */
+/* Module declarations from "PlexSim.Models.Potts" */
 #if !CYTHON_COMPILING_IN_LIMITED_API
-static PyTypeObject *__pyx_ptype_6Models_5Potts_Potts = 0;
+static PyTypeObject *__pyx_ptype_7PlexSim_6Models_5Potts_Potts = 0;
 static PyTypeObject *__pyx_array_type = 0;
 static PyTypeObject *__pyx_MemviewEnum_type = 0;
 static PyTypeObject *__pyx_memoryview_type = 0;
@@ -3197,11 +3197,11 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, 
 static __Pyx_TypeInfo __Pyx_TypeInfo_long = { "long", NULL, sizeof(long), { 0 }, 0, IS_UNSIGNED(long) ? 'U' : 'I', IS_UNSIGNED(long), 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_double = { "double", NULL, sizeof(double), { 0 }, 0, 'R', 0, 0 };
 /* #### Code section: before_global_var ### */
-#define __Pyx_MODULE_NAME "Models.Potts"
-extern int __pyx_module_is_main_Models__Potts;
-int __pyx_module_is_main_Models__Potts = 0;
+#define __Pyx_MODULE_NAME "PlexSim.Models.Potts"
+extern int __pyx_module_is_main_PlexSim__Models__Potts;
+int __pyx_module_is_main_PlexSim__Models__Potts = 0;
 
-/* Implementation of "Models.Potts" */
+/* Implementation of "PlexSim.Models.Potts" */
 /* #### Code section: global_var ### */
 static PyObject *__pyx_builtin_super;
 static PyObject *__pyx_builtin_range;
@@ -3328,7 +3328,6 @@ static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_PickleError[] = "PickleError";
 static const char __pyx_k_agentStates[] = "agentStates";
 static const char __pyx_k_updateState[] = "updateState";
-static const char __pyx_k_Models_Potts[] = "Models.Potts";
 static const char __pyx_k_initializing[] = "_initializing";
 static const char __pyx_k_is_coroutine[] = "_is_coroutine";
 static const char __pyx_k_pyx_checksum[] = "__pyx_checksum";
@@ -3347,7 +3346,6 @@ static const char __pyx_k_multiprocessing[] = "multiprocessing";
 static const char __pyx_k_number_of_nodes[] = "number_of_nodes";
 static const char __pyx_k_pyx_PickleError[] = "__pyx_PickleError";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
-static const char __pyx_k_Models_Potts_pyx[] = "Models/Potts.pyx";
 static const char __pyx_k_Potts___deepcopy[] = "Potts.__deepcopy__";
 static const char __pyx_k_Potts_siteEnergy[] = "Potts.siteEnergy";
 static const char __pyx_k_Potts_updateState[] = "Potts.updateState";
@@ -3357,6 +3355,7 @@ static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_matchMagnetization[] = "matchMagnetization";
 static const char __pyx_k_strided_and_direct[] = "<strided and direct>";
 static const char __pyx_k_Computing_mag_per_t[] = "Computing mag per t";
+static const char __pyx_k_PlexSim_Models_Potts[] = "PlexSim.Models.Potts";
 static const char __pyx_k_strided_and_indirect[] = "<strided and indirect>";
 static const char __pyx_k_Invalid_shape_in_axis[] = "Invalid shape in axis ";
 static const char __pyx_k_contiguous_and_direct[] = "<contiguous and direct>";
@@ -3364,6 +3363,7 @@ static const char __pyx_k_Cannot_index_with_type[] = "Cannot index with type '";
 static const char __pyx_k_MemoryView_of_r_object[] = "<MemoryView of %r object>";
 static const char __pyx_k_MemoryView_of_r_at_0x_x[] = "<MemoryView of %r at 0x%x>";
 static const char __pyx_k_contiguous_and_indirect[] = "<contiguous and indirect>";
+static const char __pyx_k_PlexSim_Models_Potts_pyx[] = "PlexSim/Models/Potts.pyx";
 static const char __pyx_k_Potts_matchMagnetization[] = "Potts.matchMagnetization";
 static const char __pyx_k_Dimension_d_is_not_direct[] = "Dimension %d is not direct";
 static const char __pyx_k_Index_out_of_bounds_axis_d[] = "Index out of bounds (axis %d)";
@@ -3414,11 +3414,11 @@ static PyObject *__pyx_kp_u_Invalid_shape_in_axis;
 static PyObject *__pyx_n_s_MemoryError;
 static PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
 static PyObject *__pyx_kp_s_MemoryView_of_r_object;
-static PyObject *__pyx_n_s_Models_Potts;
-static PyObject *__pyx_kp_s_Models_Potts_pyx;
 static PyObject *__pyx_n_b_O;
 static PyObject *__pyx_kp_u_Out_of_bounds_on_buffer_access_a;
 static PyObject *__pyx_n_s_PickleError;
+static PyObject *__pyx_n_s_PlexSim_Models_Potts;
+static PyObject *__pyx_kp_s_PlexSim_Models_Potts_pyx;
 static PyObject *__pyx_n_s_Potts;
 static PyObject *__pyx_n_s_Potts___deepcopy;
 static PyObject *__pyx_n_s_Potts___reduce;
@@ -3567,19 +3567,19 @@ static PyObject *__pyx_n_s_updateType;
 static PyObject *__pyx_n_s_zeros;
 #endif
 /* #### Code section: decls ### */
-static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_t, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_updateType, PyObject *__pyx_v_memorySize, PyObject *__pyx_v_delta, PyObject *__pyx_v_kwargs); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self); /* proto */
-static int __pyx_pf_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self); /* proto */
-static int __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyArrayObject *__pyx_v_temps, int __pyx_v_n, int __pyx_v_burninSamples); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_memo); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kwargs); /* proto */
+static int __pyx_pf_7PlexSim_6Models_5Potts_5Potts___init__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_t, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_updateType, PyObject *__pyx_v_memorySize, PyObject *__pyx_v_delta, PyObject *__pyx_v_kwargs); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self); /* proto */
+static int __pyx_pf_7PlexSim_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self); /* proto */
+static int __pyx_pf_7PlexSim_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyArrayObject *__pyx_v_temps, int __pyx_v_n, int __pyx_v_burninSamples); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_memo); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kwargs); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array___cinit__(struct __pyx_array_obj *__pyx_v_self, PyObject *__pyx_v_shape, Py_ssize_t __pyx_v_itemsize, PyObject *__pyx_v_format, PyObject *__pyx_v_mode, int __pyx_v_allocate_buffer); /* proto */
 static int __pyx_array___pyx_pf_15View_dot_MemoryView_5array_2__getbuffer__(struct __pyx_array_obj *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_array___pyx_pf_15View_dot_MemoryView_5array_4__dealloc__(struct __pyx_array_obj *__pyx_v_self); /* proto */
@@ -3621,7 +3621,7 @@ static void __pyx_memoryviewslice___pyx_pf_15View_dot_MemoryView_16_memoryviewsl
 static PyObject *__pyx_pf___pyx_memoryviewslice___reduce_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf___pyx_memoryviewslice_2__setstate_cython__(CYTHON_UNUSED struct __pyx_memoryviewslice_obj *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_15View_dot_MemoryView___pyx_unpickle_Enum(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_6Models_5Potts_Potts(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static PyObject *__pyx_tp_new_7PlexSim_6Models_5Potts_Potts(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_array(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_Enum(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static PyObject *__pyx_tp_new_memoryview(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3703,8 +3703,8 @@ typedef struct {
   PyTypeObject *__pyx_ptype_5numpy_character;
   PyTypeObject *__pyx_ptype_5numpy_ufunc;
   PyTypeObject *__pyx_ptype_6Models_6Models_Model;
-  PyTypeObject *__pyx_ptype_6Models_5Potts_Potts;
-  PyObject *__pyx_type_6Models_5Potts_Potts;
+  PyTypeObject *__pyx_ptype_7PlexSim_6Models_5Potts_Potts;
+  PyObject *__pyx_type_7PlexSim_6Models_5Potts_Potts;
   PyTypeObject *__pyx_array_type;
   PyObject *__pyx_type___pyx_array;
   PyTypeObject *__pyx_MemviewEnum_type;
@@ -3738,11 +3738,11 @@ typedef struct {
   PyObject *__pyx_n_s_MemoryError;
   PyObject *__pyx_kp_s_MemoryView_of_r_at_0x_x;
   PyObject *__pyx_kp_s_MemoryView_of_r_object;
-  PyObject *__pyx_n_s_Models_Potts;
-  PyObject *__pyx_kp_s_Models_Potts_pyx;
   PyObject *__pyx_n_b_O;
   PyObject *__pyx_kp_u_Out_of_bounds_on_buffer_access_a;
   PyObject *__pyx_n_s_PickleError;
+  PyObject *__pyx_n_s_PlexSim_Models_Potts;
+  PyObject *__pyx_kp_s_PlexSim_Models_Potts_pyx;
   PyObject *__pyx_n_s_Potts;
   PyObject *__pyx_n_s_Potts___deepcopy;
   PyObject *__pyx_n_s_Potts___reduce;
@@ -3978,8 +3978,8 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_ptype_5numpy_character);
   Py_CLEAR(clear_module_state->__pyx_ptype_5numpy_ufunc);
   Py_CLEAR(clear_module_state->__pyx_ptype_6Models_6Models_Model);
-  Py_CLEAR(clear_module_state->__pyx_ptype_6Models_5Potts_Potts);
-  Py_CLEAR(clear_module_state->__pyx_type_6Models_5Potts_Potts);
+  Py_CLEAR(clear_module_state->__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
+  Py_CLEAR(clear_module_state->__pyx_type_7PlexSim_6Models_5Potts_Potts);
   Py_CLEAR(clear_module_state->__pyx_array_type);
   Py_CLEAR(clear_module_state->__pyx_type___pyx_array);
   Py_CLEAR(clear_module_state->__pyx_MemviewEnum_type);
@@ -4013,11 +4013,11 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_MemoryError);
   Py_CLEAR(clear_module_state->__pyx_kp_s_MemoryView_of_r_at_0x_x);
   Py_CLEAR(clear_module_state->__pyx_kp_s_MemoryView_of_r_object);
-  Py_CLEAR(clear_module_state->__pyx_n_s_Models_Potts);
-  Py_CLEAR(clear_module_state->__pyx_kp_s_Models_Potts_pyx);
   Py_CLEAR(clear_module_state->__pyx_n_b_O);
   Py_CLEAR(clear_module_state->__pyx_kp_u_Out_of_bounds_on_buffer_access_a);
   Py_CLEAR(clear_module_state->__pyx_n_s_PickleError);
+  Py_CLEAR(clear_module_state->__pyx_n_s_PlexSim_Models_Potts);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_PlexSim_Models_Potts_pyx);
   Py_CLEAR(clear_module_state->__pyx_n_s_Potts);
   Py_CLEAR(clear_module_state->__pyx_n_s_Potts___deepcopy);
   Py_CLEAR(clear_module_state->__pyx_n_s_Potts___reduce);
@@ -4240,8 +4240,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_ptype_5numpy_character);
   Py_VISIT(traverse_module_state->__pyx_ptype_5numpy_ufunc);
   Py_VISIT(traverse_module_state->__pyx_ptype_6Models_6Models_Model);
-  Py_VISIT(traverse_module_state->__pyx_ptype_6Models_5Potts_Potts);
-  Py_VISIT(traverse_module_state->__pyx_type_6Models_5Potts_Potts);
+  Py_VISIT(traverse_module_state->__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
+  Py_VISIT(traverse_module_state->__pyx_type_7PlexSim_6Models_5Potts_Potts);
   Py_VISIT(traverse_module_state->__pyx_array_type);
   Py_VISIT(traverse_module_state->__pyx_type___pyx_array);
   Py_VISIT(traverse_module_state->__pyx_MemviewEnum_type);
@@ -4275,11 +4275,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_MemoryError);
   Py_VISIT(traverse_module_state->__pyx_kp_s_MemoryView_of_r_at_0x_x);
   Py_VISIT(traverse_module_state->__pyx_kp_s_MemoryView_of_r_object);
-  Py_VISIT(traverse_module_state->__pyx_n_s_Models_Potts);
-  Py_VISIT(traverse_module_state->__pyx_kp_s_Models_Potts_pyx);
   Py_VISIT(traverse_module_state->__pyx_n_b_O);
   Py_VISIT(traverse_module_state->__pyx_kp_u_Out_of_bounds_on_buffer_access_a);
   Py_VISIT(traverse_module_state->__pyx_n_s_PickleError);
+  Py_VISIT(traverse_module_state->__pyx_n_s_PlexSim_Models_Potts);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_PlexSim_Models_Potts_pyx);
   Py_VISIT(traverse_module_state->__pyx_n_s_Potts);
   Py_VISIT(traverse_module_state->__pyx_n_s_Potts___deepcopy);
   Py_VISIT(traverse_module_state->__pyx_n_s_Potts___reduce);
@@ -4499,8 +4499,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_ptype_5numpy_character __pyx_mstate_global->__pyx_ptype_5numpy_character
 #define __pyx_ptype_5numpy_ufunc __pyx_mstate_global->__pyx_ptype_5numpy_ufunc
 #define __pyx_ptype_6Models_6Models_Model __pyx_mstate_global->__pyx_ptype_6Models_6Models_Model
-#define __pyx_ptype_6Models_5Potts_Potts __pyx_mstate_global->__pyx_ptype_6Models_5Potts_Potts
-#define __pyx_type_6Models_5Potts_Potts __pyx_mstate_global->__pyx_type_6Models_5Potts_Potts
+#define __pyx_ptype_7PlexSim_6Models_5Potts_Potts __pyx_mstate_global->__pyx_ptype_7PlexSim_6Models_5Potts_Potts
+#define __pyx_type_7PlexSim_6Models_5Potts_Potts __pyx_mstate_global->__pyx_type_7PlexSim_6Models_5Potts_Potts
 #define __pyx_array_type __pyx_mstate_global->__pyx_array_type
 #define __pyx_type___pyx_array __pyx_mstate_global->__pyx_type___pyx_array
 #define __pyx_MemviewEnum_type __pyx_mstate_global->__pyx_MemviewEnum_type
@@ -4534,11 +4534,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_MemoryError __pyx_mstate_global->__pyx_n_s_MemoryError
 #define __pyx_kp_s_MemoryView_of_r_at_0x_x __pyx_mstate_global->__pyx_kp_s_MemoryView_of_r_at_0x_x
 #define __pyx_kp_s_MemoryView_of_r_object __pyx_mstate_global->__pyx_kp_s_MemoryView_of_r_object
-#define __pyx_n_s_Models_Potts __pyx_mstate_global->__pyx_n_s_Models_Potts
-#define __pyx_kp_s_Models_Potts_pyx __pyx_mstate_global->__pyx_kp_s_Models_Potts_pyx
 #define __pyx_n_b_O __pyx_mstate_global->__pyx_n_b_O
 #define __pyx_kp_u_Out_of_bounds_on_buffer_access_a __pyx_mstate_global->__pyx_kp_u_Out_of_bounds_on_buffer_access_a
 #define __pyx_n_s_PickleError __pyx_mstate_global->__pyx_n_s_PickleError
+#define __pyx_n_s_PlexSim_Models_Potts __pyx_mstate_global->__pyx_n_s_PlexSim_Models_Potts
+#define __pyx_kp_s_PlexSim_Models_Potts_pyx __pyx_mstate_global->__pyx_kp_s_PlexSim_Models_Potts_pyx
 #define __pyx_n_s_Potts __pyx_mstate_global->__pyx_n_s_Potts
 #define __pyx_n_s_Potts___deepcopy __pyx_mstate_global->__pyx_n_s_Potts___deepcopy
 #define __pyx_n_s_Potts___reduce __pyx_mstate_global->__pyx_n_s_Potts___reduce
@@ -4725,7 +4725,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #endif
 /* #### Code section: module_code ### */
 
-/* "Models/Potts.pyx":20
+/* "PlexSim/Models/Potts.pyx":20
  * 
  * cdef class Potts(Model):
  *     def __init__(self, \             # <<<<<<<<<<<<<<
@@ -4734,12 +4734,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
  */
 
 /* Python wrapper */
-static int __pyx_pw_6Models_5Potts_5Potts_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-PyDoc_STRVAR(__pyx_doc_6Models_5Potts_5Potts___init__, "\n        Potts model\n\n        default inputs see :Model:\n        Additional inputs\n        :delta: a modifier for how much the previous memory sizes influence the next state\n        ");
+static int __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+PyDoc_STRVAR(__pyx_doc_7PlexSim_6Models_5Potts_5Potts___init__, "\n        Potts model\n\n        default inputs see :Model:\n        Additional inputs\n        :delta: a modifier for how much the previous memory sizes influence the next state\n        ");
 #if CYTHON_COMPILING_IN_CPYTHON
-struct wrapperbase __pyx_wrapperbase_6Models_5Potts_5Potts___init__;
+struct wrapperbase __pyx_wrapperbase_7PlexSim_6Models_5Potts_5Potts___init__;
 #endif
-static int __pyx_pw_6Models_5Potts_5Potts_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_graph = 0;
   PyObject *__pyx_v_t = 0;
   PyObject *__pyx_v_agentStates = 0;
@@ -4876,11 +4876,11 @@ static int __pyx_pw_6Models_5Potts_5Potts_1__init__(PyObject *__pyx_v_self, PyOb
   __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 7, __pyx_nargs); __PYX_ERR(0, 20, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_DECREF(__pyx_v_kwargs); __pyx_v_kwargs = 0;
-  __Pyx_AddTraceback("Models.Potts.Potts.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts___init__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_graph, __pyx_v_t, __pyx_v_agentStates, __pyx_v_nudgeType, __pyx_v_updateType, __pyx_v_memorySize, __pyx_v_delta, __pyx_v_kwargs);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts___init__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_graph, __pyx_v_t, __pyx_v_agentStates, __pyx_v_nudgeType, __pyx_v_updateType, __pyx_v_memorySize, __pyx_v_delta, __pyx_v_kwargs);
 
   /* function exit code */
   __Pyx_DECREF(__pyx_v_kwargs);
@@ -4888,7 +4888,7 @@ static int __pyx_pw_6Models_5Potts_5Potts_1__init__(PyObject *__pyx_v_self, PyOb
   return __pyx_r;
 }
 
-static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_t, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_updateType, PyObject *__pyx_v_memorySize, PyObject *__pyx_v_delta, PyObject *__pyx_v_kwargs) {
+static int __pyx_pf_7PlexSim_6Models_5Potts_5Potts___init__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_graph, PyObject *__pyx_v_t, PyObject *__pyx_v_agentStates, PyObject *__pyx_v_nudgeType, PyObject *__pyx_v_updateType, PyObject *__pyx_v_memorySize, PyObject *__pyx_v_delta, PyObject *__pyx_v_kwargs) {
   PyArrayObject *__pyx_v_H = 0;
   PyObject *__pyx_v_node = NULL;
   PyObject *__pyx_v_nodeID = NULL;
@@ -4910,7 +4910,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "Models/Potts.pyx":36
+  /* "PlexSim/Models/Potts.pyx":36
  *         :delta: a modifier for how much the previous memory sizes influence the next state
  *         """
  *         super(Potts, self).__init__(**locals())             # <<<<<<<<<<<<<<
@@ -4919,9 +4919,9 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
  */
   __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 36, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_INCREF((PyObject *)__pyx_ptype_6Models_5Potts_Potts);
-  __Pyx_GIVEREF((PyObject *)__pyx_ptype_6Models_5Potts_Potts);
-  PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_ptype_6Models_5Potts_Potts));
+  __Pyx_INCREF((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
+  __Pyx_GIVEREF((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
+  PyTuple_SET_ITEM(__pyx_t_1, 0, ((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts));
   __Pyx_INCREF((PyObject *)__pyx_v_self);
   __Pyx_GIVEREF((PyObject *)__pyx_v_self);
   PyTuple_SET_ITEM(__pyx_t_1, 1, ((PyObject *)__pyx_v_self));
@@ -4977,7 +4977,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "Models/Potts.pyx":38
+  /* "PlexSim/Models/Potts.pyx":38
  *         super(Potts, self).__init__(**locals())
  * 
  *         cdef np.ndarray H  = np.zeros(self.graph.number_of_nodes(), float)             # <<<<<<<<<<<<<<
@@ -5039,7 +5039,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   __pyx_v_H = ((PyArrayObject *)__pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "Models/Potts.pyx":39
+  /* "PlexSim/Models/Potts.pyx":39
  * 
  *         cdef np.ndarray H  = np.zeros(self.graph.number_of_nodes(), float)
  *         for node, nodeID in self.mapping.items():             # <<<<<<<<<<<<<<
@@ -5070,7 +5070,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
     __Pyx_XDECREF_SET(__pyx_v_nodeID, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "Models/Potts.pyx":40
+    /* "PlexSim/Models/Potts.pyx":40
  *         cdef np.ndarray H  = np.zeros(self.graph.number_of_nodes(), float)
  *         for node, nodeID in self.mapping.items():
  *             H[nodeID] = self.graph.nodes()[node].get('H', 0)             # <<<<<<<<<<<<<<
@@ -5116,7 +5116,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "Models/Potts.pyx":42
+  /* "PlexSim/Models/Potts.pyx":42
  *             H[nodeID] = self.graph.nodes()[node].get('H', 0)
  *         # for some reason deepcopy works with this enabled...
  *         self.states = np.asarray(self.states.base).copy()             # <<<<<<<<<<<<<<
@@ -5180,7 +5180,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_states, __pyx_t_3) < 0) __PYX_ERR(0, 42, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "Models/Potts.pyx":43
+  /* "PlexSim/Models/Potts.pyx":43
  *         # for some reason deepcopy works with this enabled...
  *         self.states = np.asarray(self.states.base).copy()
  *         self.nudges = np.asarray(self.nudges.base).copy()             # <<<<<<<<<<<<<<
@@ -5244,7 +5244,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_nudges, __pyx_t_3) < 0) __PYX_ERR(0, 43, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "Models/Potts.pyx":46
+  /* "PlexSim/Models/Potts.pyx":46
  * 
  *         # specific model parameters
  *         self._H      = H             # <<<<<<<<<<<<<<
@@ -5257,7 +5257,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   __pyx_t_10.memview = NULL;
   __pyx_t_10.data = NULL;
 
-  /* "Models/Potts.pyx":48
+  /* "PlexSim/Models/Potts.pyx":48
  *         self._H      = H
  *         # self._beta = np.inf if temperature == 0 else 1 / temperature
  *         self.t       = t             # <<<<<<<<<<<<<<
@@ -5266,7 +5266,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
  */
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_t, __pyx_v_t) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":50
+  /* "PlexSim/Models/Potts.pyx":50
  *         self.t       = t
  * 
  *         self._delta  = delta             # <<<<<<<<<<<<<<
@@ -5276,7 +5276,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   __pyx_t_11 = __pyx_PyFloat_AsDouble(__pyx_v_delta); if (unlikely((__pyx_t_11 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L1_error)
   __pyx_v_self->_delta = __pyx_t_11;
 
-  /* "Models/Potts.pyx":20
+  /* "PlexSim/Models/Potts.pyx":20
  * 
  * cdef class Potts(Model):
  *     def __init__(self, \             # <<<<<<<<<<<<<<
@@ -5294,7 +5294,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_10, 1);
-  __Pyx_AddTraceback("Models.Potts.Potts.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_H);
@@ -5304,7 +5304,7 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":52
+/* "PlexSim/Models/Potts.pyx":52
  *         self._delta  = delta
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5313,20 +5313,20 @@ static int __pyx_pf_6Models_5Potts_5Potts___init__(struct __pyx_obj_6Models_5Pot
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_5delta_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_5delta_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_5delta_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_5delta_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_5delta___get__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_5delta___get__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5335,7 +5335,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Models/Potts.pyx":53
+  /* "PlexSim/Models/Potts.pyx":53
  * 
  *     @property
  *     def delta(self): return self._delta             # <<<<<<<<<<<<<<
@@ -5349,7 +5349,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":52
+  /* "PlexSim/Models/Potts.pyx":52
  *         self._delta  = delta
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5360,7 +5360,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Potts.Potts.delta.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.delta.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -5368,7 +5368,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":55
+/* "PlexSim/Models/Potts.pyx":55
  *     def delta(self): return self._delta
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5377,20 +5377,20 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_5delta___get__(struct __pyx_obj_
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_1H_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_1H_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_1H_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_1H_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_1H___get__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_1H___get__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5399,7 +5399,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_6Mod
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Models/Potts.pyx":56
+  /* "PlexSim/Models/Potts.pyx":56
  * 
  *     @property
  *     def H(self): return self._H             # <<<<<<<<<<<<<<
@@ -5414,7 +5414,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_6Mod
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":55
+  /* "PlexSim/Models/Potts.pyx":55
  *     def delta(self): return self._delta
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5425,7 +5425,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_6Mod
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Potts.Potts.H.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.H.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -5433,7 +5433,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_6Mod
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":58
+/* "PlexSim/Models/Potts.pyx":58
  *     def H(self): return self._H
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5442,20 +5442,20 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1H___get__(struct __pyx_obj_6Mod
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_4beta_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_4beta_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_4beta_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_4beta_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_4beta___get__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_4beta___get__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5464,7 +5464,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_6
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Models/Potts.pyx":59
+  /* "PlexSim/Models/Potts.pyx":59
  * 
  *     @property
  *     def beta(self): return self._beta             # <<<<<<<<<<<<<<
@@ -5478,7 +5478,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_6
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":58
+  /* "PlexSim/Models/Potts.pyx":58
  *     def H(self): return self._H
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5489,7 +5489,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_6
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Potts.Potts.beta.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.beta.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -5497,7 +5497,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_6
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":61
+/* "PlexSim/Models/Potts.pyx":61
  *     def beta(self): return self._beta
  * 
  *     @beta.setter             # <<<<<<<<<<<<<<
@@ -5506,20 +5506,20 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4beta___get__(struct __pyx_obj_6
  */
 
 /* Python wrapper */
-static int __pyx_pw_6Models_5Potts_5Potts_4beta_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_6Models_5Potts_5Potts_4beta_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_7PlexSim_6Models_5Potts_5Potts_4beta_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_7PlexSim_6Models_5Potts_5Potts_4beta_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_4beta_2__set__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_4beta_2__set__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_7PlexSim_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   double __pyx_t_1;
@@ -5528,7 +5528,7 @@ static int __pyx_pf_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_6Model
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Models/Potts.pyx":63
+  /* "PlexSim/Models/Potts.pyx":63
  *     @beta.setter
  *     def beta(self, value):
  *         self._beta = value             # <<<<<<<<<<<<<<
@@ -5538,7 +5538,7 @@ static int __pyx_pf_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_6Model
   __pyx_t_1 = __pyx_PyFloat_AsDouble(__pyx_v_value); if (unlikely((__pyx_t_1 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 63, __pyx_L1_error)
   __pyx_v_self->_beta = __pyx_t_1;
 
-  /* "Models/Potts.pyx":61
+  /* "PlexSim/Models/Potts.pyx":61
  *     def beta(self): return self._beta
  * 
  *     @beta.setter             # <<<<<<<<<<<<<<
@@ -5550,14 +5550,14 @@ static int __pyx_pf_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_6Model
   __pyx_r = 0;
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_AddTraceback("Models.Potts.Potts.beta.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.beta.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":65
+/* "PlexSim/Models/Potts.pyx":65
  *         self._beta = value
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5566,20 +5566,20 @@ static int __pyx_pf_6Models_5Potts_5Potts_4beta_2__set__(struct __pyx_obj_6Model
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_1t_1__get__(PyObject *__pyx_v_self); /*proto*/
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_1t_1__get__(PyObject *__pyx_v_self) {
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_1t_1__get__(PyObject *__pyx_v_self); /*proto*/
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_1t_1__get__(PyObject *__pyx_v_self) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__get__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_1t___get__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_1t___get__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5588,7 +5588,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_6Mod
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
 
-  /* "Models/Potts.pyx":67
+  /* "PlexSim/Models/Potts.pyx":67
  *     @property
  *     def t(self):
  *         return self._t             # <<<<<<<<<<<<<<
@@ -5602,7 +5602,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_6Mod
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":65
+  /* "PlexSim/Models/Potts.pyx":65
  *         self._beta = value
  * 
  *     @property             # <<<<<<<<<<<<<<
@@ -5613,7 +5613,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_6Mod
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Potts.Potts.t.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.t.__get__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -5621,7 +5621,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_6Mod
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":69
+/* "PlexSim/Models/Potts.pyx":69
  *         return self._t
  * 
  *     @t.setter             # <<<<<<<<<<<<<<
@@ -5630,20 +5630,20 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_1t___get__(struct __pyx_obj_6Mod
  */
 
 /* Python wrapper */
-static int __pyx_pw_6Models_5Potts_5Potts_1t_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
-static int __pyx_pw_6Models_5Potts_5Potts_1t_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1t_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value); /*proto*/
+static int __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1t_3__set__(PyObject *__pyx_v_self, PyObject *__pyx_v_value) {
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__set__ (wrapper)", 0);
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self), ((PyObject *)__pyx_v_value));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_1t_2__set__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self), ((PyObject *)__pyx_v_value));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value) {
+static int __pyx_pf_7PlexSim_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyObject *__pyx_v_value) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5655,7 +5655,7 @@ static int __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_6Models_5
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__set__", 0);
 
-  /* "Models/Potts.pyx":71
+  /* "PlexSim/Models/Potts.pyx":71
  *     @t.setter
  *     def t(self, value):
  *         self._t   = value             # <<<<<<<<<<<<<<
@@ -5664,7 +5664,7 @@ static int __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_6Models_5
  */
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_t_2, __pyx_v_value) < 0) __PYX_ERR(0, 71, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":72
+  /* "PlexSim/Models/Potts.pyx":72
  *     def t(self, value):
  *         self._t   = value
  *         self.beta = 1 / value if value != 0 else np.inf             # <<<<<<<<<<<<<<
@@ -5692,7 +5692,7 @@ static int __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_6Models_5
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_beta, __pyx_t_1) < 0) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":69
+  /* "PlexSim/Models/Potts.pyx":69
  *         return self._t
  * 
  *     @t.setter             # <<<<<<<<<<<<<<
@@ -5707,14 +5707,14 @@ static int __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_6Models_5
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("Models.Potts.Potts.t.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.t.__set__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":74
+/* "PlexSim/Models/Potts.pyx":74
  *         self.beta = 1 / value if value != 0 else np.inf
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
@@ -5722,14 +5722,14 @@ static int __pyx_pf_6Models_5Potts_5Potts_1t_2__set__(struct __pyx_obj_6Models_5
  * 
  */
 
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_3updateState(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_3updateState(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts_updateState(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch) {
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_5Potts_5Potts_updateState(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate, int __pyx_skip_dispatch) {
   __Pyx_memviewslice __pyx_r = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5754,7 +5754,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts_updateState(struct __pyx
       #endif
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_updateState); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_6Models_5Potts_5Potts_3updateState)) {
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_3updateState)) {
         if (unlikely(!__pyx_v_nodesToUpdate.memview)) { __Pyx_RaiseUnboundLocalError("nodesToUpdate"); __PYX_ERR(0, 74, __pyx_L1_error) }
         __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_nodesToUpdate, 1, (PyObject *(*)(char *)) __pyx_memview_get_long, (int (*)(char *, PyObject *)) __pyx_memview_set_long, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 74, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
@@ -5801,20 +5801,20 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts_updateState(struct __pyx
     #endif
   }
 
-  /* "Models/Potts.pyx":75
+  /* "PlexSim/Models/Potts.pyx":75
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):
  *         return self._updateState(nodesToUpdate)             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  __pyx_t_7 = ((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base._updateState(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self), __pyx_v_nodesToUpdate); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 75, __pyx_L1_error)
+  __pyx_t_7 = ((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base._updateState(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self), __pyx_v_nodesToUpdate); if (unlikely(!__pyx_t_7.memview)) __PYX_ERR(0, 75, __pyx_L1_error)
   __pyx_r = __pyx_t_7;
   __pyx_t_7.memview = NULL;
   __pyx_t_7.data = NULL;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":74
+  /* "PlexSim/Models/Potts.pyx":74
  *         self.beta = 1 / value if value != 0 else np.inf
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
@@ -5832,7 +5832,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts_updateState(struct __pyx
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_7, 1);
   __pyx_r.data = NULL;
   __pyx_r.memview = NULL;
-  __Pyx_AddTraceback("Models.Potts.Potts.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
   goto __pyx_L2;
   __pyx_L0:;
   if (unlikely(!__pyx_r.memview)) {
@@ -5844,15 +5844,15 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts_updateState(struct __pyx
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_3updateState(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_3updateState(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_5Potts_5Potts_3updateState = {"updateState", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_5Potts_3updateState, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_3updateState(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_5Potts_5Potts_3updateState = {"updateState", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_3updateState, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_3updateState(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -5907,18 +5907,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("updateState", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 74, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("Models.Potts.Potts.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_2updateState(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_nodesToUpdate);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_2updateState(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_nodesToUpdate);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   __Pyx_memviewslice __pyx_t_1 = { 0, 0, { 0 }, { 0 }, { 0 } };
@@ -5929,7 +5929,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_6M
   __Pyx_RefNannySetupContext("updateState", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_nodesToUpdate.memview)) { __Pyx_RaiseUnboundLocalError("nodesToUpdate"); __PYX_ERR(0, 74, __pyx_L1_error) }
-  __pyx_t_1 = __pyx_f_6Models_5Potts_5Potts_updateState(__pyx_v_self, __pyx_v_nodesToUpdate, 1); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_7PlexSim_6Models_5Potts_5Potts_updateState(__pyx_v_self, __pyx_v_nodesToUpdate, 1); if (unlikely(!__pyx_t_1.memview)) __PYX_ERR(0, 74, __pyx_L1_error)
   __pyx_t_2 = __pyx_memoryview_fromslice(__pyx_t_1, 1, (PyObject *(*)(char *)) __pyx_memview_get_long, (int (*)(char *, PyObject *)) __pyx_memview_set_long, 0);; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_1, 1);
@@ -5942,7 +5942,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_6M
   __pyx_L1_error:;
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_1, 1);
   __Pyx_XDECREF(__pyx_t_2);
-  __Pyx_AddTraceback("Models.Potts.Potts.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.updateState", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_nodesToUpdate, 1);
@@ -5951,7 +5951,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_6M
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":84
+/* "PlexSim/Models/Potts.pyx":84
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cpdef vector[double] siteEnergy(self, long[::1] states):             # <<<<<<<<<<<<<<
@@ -5959,14 +5959,14 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_2updateState(struct __pyx_obj_6M
  *             vector[double] siteEnergy
  */
 
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_5siteEnergy(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_5siteEnergy(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states, int __pyx_skip_dispatch) {
+static std::vector<double>  __pyx_f_7PlexSim_6Models_5Potts_5Potts_siteEnergy(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states, int __pyx_skip_dispatch) {
   std::vector<double>  __pyx_v_siteEnergy;
   int __pyx_v_node;
   double __pyx_v_Z;
@@ -5997,7 +5997,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
       #endif
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_siteEnergy); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_6Models_5Potts_5Potts_5siteEnergy)) {
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_5siteEnergy)) {
         __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v_states, 1, (PyObject *(*)(char *)) __pyx_memview_get_long, (int (*)(char *, PyObject *)) __pyx_memview_set_long, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_INCREF(__pyx_t_1);
@@ -6041,7 +6041,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
     #endif
   }
 
-  /* "Models/Potts.pyx":89
+  /* "PlexSim/Models/Potts.pyx":89
  *             int node
  *             double Z, energy
  *         for node in range(self._nNodes):             # <<<<<<<<<<<<<<
@@ -6053,7 +6053,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_node = __pyx_t_9;
 
-    /* "Models/Potts.pyx":90
+    /* "PlexSim/Models/Potts.pyx":90
  *             double Z, energy
  *         for node in range(self._nNodes):
  *             Z = self._adj[node].neighbors.size()             # <<<<<<<<<<<<<<
@@ -6062,16 +6062,16 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
  */
     __pyx_v_Z = (__pyx_v_self->__pyx_base._adj[__pyx_v_node]).neighbors.size();
 
-    /* "Models/Potts.pyx":91
+    /* "PlexSim/Models/Potts.pyx":91
  *         for node in range(self._nNodes):
  *             Z = self._adj[node].neighbors.size()
  *             energy = - self.energy(node, states)[0] / Z # just average             # <<<<<<<<<<<<<<
  *             siteEnergy.push_back(energy)
  *         return siteEnergy
  */
-    __pyx_v_energy = ((-(((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->energy(__pyx_v_self, __pyx_v_node, __pyx_v_states)[0])) / __pyx_v_Z);
+    __pyx_v_energy = ((-(((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->energy(__pyx_v_self, __pyx_v_node, __pyx_v_states)[0])) / __pyx_v_Z);
 
-    /* "Models/Potts.pyx":92
+    /* "PlexSim/Models/Potts.pyx":92
  *             Z = self._adj[node].neighbors.size()
  *             energy = - self.energy(node, states)[0] / Z # just average
  *             siteEnergy.push_back(energy)             # <<<<<<<<<<<<<<
@@ -6086,7 +6086,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
     }
   }
 
-  /* "Models/Potts.pyx":93
+  /* "PlexSim/Models/Potts.pyx":93
  *             energy = - self.energy(node, states)[0] / Z # just average
  *             siteEnergy.push_back(energy)
  *         return siteEnergy             # <<<<<<<<<<<<<<
@@ -6096,7 +6096,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
   __pyx_r = __pyx_v_siteEnergy;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":84
+  /* "PlexSim/Models/Potts.pyx":84
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cpdef vector[double] siteEnergy(self, long[::1] states):             # <<<<<<<<<<<<<<
@@ -6111,7 +6111,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_WriteUnraisable("Models.Potts.Potts.siteEnergy", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __Pyx_WriteUnraisable("PlexSim.Models.Potts.Potts.siteEnergy", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __Pyx_pretend_to_initialize(&__pyx_r);
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -6119,15 +6119,15 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_siteEnergy(struct __py
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_5siteEnergy(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_5siteEnergy(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_5Potts_5Potts_5siteEnergy = {"siteEnergy", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_5Potts_5siteEnergy, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_5siteEnergy(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_5Potts_5Potts_5siteEnergy = {"siteEnergy", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_5siteEnergy, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_5siteEnergy(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -6182,18 +6182,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("siteEnergy", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 84, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("Models.Potts.Potts.siteEnergy", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.siteEnergy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_4siteEnergy(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_states);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_4siteEnergy(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_states);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_states) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -6202,7 +6202,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_6Mo
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("siteEnergy", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_vector_to_py_double(__pyx_f_6Models_5Potts_5Potts_siteEnergy(__pyx_v_self, __pyx_v_states, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_t_1 = __pyx_convert_vector_to_py_double(__pyx_f_7PlexSim_6Models_5Potts_5Potts_siteEnergy(__pyx_v_self, __pyx_v_states, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -6211,7 +6211,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_6Mo
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Potts.Potts.siteEnergy", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.siteEnergy", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_states, 1);
@@ -6220,7 +6220,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_6Mo
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":102
+/* "PlexSim/Models/Potts.pyx":102
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef vector[double] energy(self, int node, long[::1] states) nogil:             # <<<<<<<<<<<<<<
@@ -6228,7 +6228,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_4siteEnergy(struct __pyx_obj_6Mo
  *             long neighbors = self._adj[node].neighbors.size()
  */
 
-static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, int __pyx_v_node, __Pyx_memviewslice __pyx_v_states) {
+static std::vector<double>  __pyx_f_7PlexSim_6Models_5Potts_5Potts_energy(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, int __pyx_v_node, __Pyx_memviewslice __pyx_v_states) {
   long __pyx_v_neighbors;
   long __pyx_v_neighbor;
   long __pyx_v_neighboridx;
@@ -6255,7 +6255,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   PyGILState_STATE __pyx_gilstate_save;
   #endif
 
-  /* "Models/Potts.pyx":104
+  /* "PlexSim/Models/Potts.pyx":104
  *     cdef vector[double] energy(self, int node, long[::1] states) nogil:
  *         cdef:
  *             long neighbors = self._adj[node].neighbors.size()             # <<<<<<<<<<<<<<
@@ -6264,7 +6264,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
  */
   __pyx_v_neighbors = (__pyx_v_self->__pyx_base._adj[__pyx_v_node]).neighbors.size();
 
-  /* "Models/Potts.pyx":115
+  /* "PlexSim/Models/Potts.pyx":115
  *         #   - energy of possible state
  *         #   - the possible state
  *         for possibleState in range(3):             # <<<<<<<<<<<<<<
@@ -6274,7 +6274,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   for (__pyx_t_1 = 0; __pyx_t_1 < 3; __pyx_t_1+=1) {
     __pyx_v_possibleState = __pyx_t_1;
 
-    /* "Models/Potts.pyx":116
+    /* "PlexSim/Models/Potts.pyx":116
  *         #   - the possible state
  *         for possibleState in range(3):
  *             energy.push_back(0)             # <<<<<<<<<<<<<<
@@ -6295,16 +6295,16 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
     }
   }
 
-  /* "Models/Potts.pyx":120
+  /* "PlexSim/Models/Potts.pyx":120
  * 
  *         # draw random new state
  *         cdef int testState = <int> (self.rand() * self._nStates)             # <<<<<<<<<<<<<<
  *         testState = self._agentStates[testState]
  * 
  */
-  __pyx_v_testState = ((int)(((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self)) * __pyx_v_self->__pyx_base._nStates));
+  __pyx_v_testState = ((int)(((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self)) * __pyx_v_self->__pyx_base._nStates));
 
-  /* "Models/Potts.pyx":121
+  /* "PlexSim/Models/Potts.pyx":121
  *         # draw random new state
  *         cdef int testState = <int> (self.rand() * self._nStates)
  *         testState = self._agentStates[testState]             # <<<<<<<<<<<<<<
@@ -6314,7 +6314,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   __pyx_t_2 = __pyx_v_testState;
   __pyx_v_testState = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._agentStates.data) + __pyx_t_2)) )));
 
-  /* "Models/Potts.pyx":123
+  /* "PlexSim/Models/Potts.pyx":123
  *         testState = self._agentStates[testState]
  * 
  *         energy[0] = self._H[node]             # <<<<<<<<<<<<<<
@@ -6324,7 +6324,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   __pyx_t_2 = __pyx_v_node;
   (__pyx_v_energy[0]) = (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_self->_H.data) + __pyx_t_2)) )));
 
-  /* "Models/Potts.pyx":124
+  /* "PlexSim/Models/Potts.pyx":124
  * 
  *         energy[0] = self._H[node]
  *         energy[1] = self._H[node]             # <<<<<<<<<<<<<<
@@ -6334,7 +6334,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   __pyx_t_2 = __pyx_v_node;
   (__pyx_v_energy[1]) = (*((double *) ( /* dim=0 */ ((char *) (((double *) __pyx_v_self->_H.data) + __pyx_t_2)) )));
 
-  /* "Models/Potts.pyx":125
+  /* "PlexSim/Models/Potts.pyx":125
  *         energy[0] = self._H[node]
  *         energy[1] = self._H[node]
  *         energy[2] = testState # keep track of possible new state             # <<<<<<<<<<<<<<
@@ -6343,7 +6343,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
  */
   (__pyx_v_energy[2]) = __pyx_v_testState;
 
-  /* "Models/Potts.pyx":129
+  /* "PlexSim/Models/Potts.pyx":129
  *         # maybe check all states? now just random, in the limit this would
  *         # result in an awful fit
  *         for neighboridx in range(neighbors):             # <<<<<<<<<<<<<<
@@ -6355,7 +6355,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_neighboridx = __pyx_t_4;
 
-    /* "Models/Potts.pyx":130
+    /* "PlexSim/Models/Potts.pyx":130
  *         # result in an awful fit
  *         for neighboridx in range(neighbors):
  *             neighbor   = self._adj[node].neighbors[neighboridx]             # <<<<<<<<<<<<<<
@@ -6364,7 +6364,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
  */
     __pyx_v_neighbor = ((__pyx_v_self->__pyx_base._adj[__pyx_v_node]).neighbors[__pyx_v_neighboridx]);
 
-    /* "Models/Potts.pyx":131
+    /* "PlexSim/Models/Potts.pyx":131
  *         for neighboridx in range(neighbors):
  *             neighbor   = self._adj[node].neighbors[neighboridx]
  *             weight     = self._adj[node].weights[neighboridx]             # <<<<<<<<<<<<<<
@@ -6373,7 +6373,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
  */
     __pyx_v_weight = ((__pyx_v_self->__pyx_base._adj[__pyx_v_node]).weights[__pyx_v_neighboridx]);
 
-    /* "Models/Potts.pyx":136
+    /* "PlexSim/Models/Potts.pyx":136
  *             # if testState == states[neighbor]:
  *                 # energy[1] += weight
  *             energy[0]  -= weight * self.hamiltonian(states[node], states[neighbor])             # <<<<<<<<<<<<<<
@@ -6383,9 +6383,9 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
     __pyx_t_5 = 0;
     __pyx_t_2 = __pyx_v_node;
     __pyx_t_6 = __pyx_v_neighbor;
-    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (__pyx_v_weight * ((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_2)) ))), (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_6)) ))))));
+    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (__pyx_v_weight * ((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_2)) ))), (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_6)) ))))));
 
-    /* "Models/Potts.pyx":137
+    /* "PlexSim/Models/Potts.pyx":137
  *                 # energy[1] += weight
  *             energy[0]  -= weight * self.hamiltonian(states[node], states[neighbor])
  *             energy[1]  -= weight * self.hamiltonian(testState, states[neighbor])             # <<<<<<<<<<<<<<
@@ -6394,10 +6394,10 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
  */
     __pyx_t_5 = 1;
     __pyx_t_6 = __pyx_v_neighbor;
-    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (__pyx_v_weight * ((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, __pyx_v_testState, (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_6)) ))))));
+    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (__pyx_v_weight * ((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, __pyx_v_testState, (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_6)) ))))));
   }
 
-  /* "Models/Potts.pyx":140
+  /* "PlexSim/Models/Potts.pyx":140
  *         # retrieve memory
  *         cdef int memTime
  *         for memTime in range(self._memorySize):             # <<<<<<<<<<<<<<
@@ -6409,7 +6409,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
     __pyx_v_memTime = __pyx_t_9;
 
-    /* "Models/Potts.pyx":142
+    /* "PlexSim/Models/Potts.pyx":142
  *         for memTime in range(self._memorySize):
  *             # check for current state
  *             energy[0] -= self.hamiltonian(states[node], self._memory[memTime, node]) * exp(-memTime * self._delta)             # <<<<<<<<<<<<<<
@@ -6420,9 +6420,9 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
     __pyx_t_6 = __pyx_v_node;
     __pyx_t_2 = __pyx_v_memTime;
     __pyx_t_10 = __pyx_v_node;
-    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_6)) ))), (*((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_self->__pyx_base._memory.data + __pyx_t_2 * __pyx_v_self->__pyx_base._memory.strides[0]) )) + __pyx_t_10)) )))) * exp(((-__pyx_v_memTime) * __pyx_v_self->_delta))));
+    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_states.data) + __pyx_t_6)) ))), (*((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_self->__pyx_base._memory.data + __pyx_t_2 * __pyx_v_self->__pyx_base._memory.strides[0]) )) + __pyx_t_10)) )))) * exp(((-__pyx_v_memTime) * __pyx_v_self->_delta))));
 
-    /* "Models/Potts.pyx":143
+    /* "PlexSim/Models/Potts.pyx":143
  *             # check for current state
  *             energy[0] -= self.hamiltonian(states[node], self._memory[memTime, node]) * exp(-memTime * self._delta)
  *             energy[1] -= self.hamiltonian(testState, self._memory[memTime, node]) * exp(-memTime * self._delta)             # <<<<<<<<<<<<<<
@@ -6432,10 +6432,10 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
     __pyx_t_5 = 1;
     __pyx_t_10 = __pyx_v_memTime;
     __pyx_t_2 = __pyx_v_node;
-    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, __pyx_v_testState, (*((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_self->__pyx_base._memory.data + __pyx_t_10 * __pyx_v_self->__pyx_base._memory.strides[0]) )) + __pyx_t_2)) )))) * exp(((-__pyx_v_memTime) * __pyx_v_self->_delta))));
+    (__pyx_v_energy[__pyx_t_5]) = ((__pyx_v_energy[__pyx_t_5]) - (((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->hamiltonian(__pyx_v_self, __pyx_v_testState, (*((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_self->__pyx_base._memory.data + __pyx_t_10 * __pyx_v_self->__pyx_base._memory.strides[0]) )) + __pyx_t_2)) )))) * exp(((-__pyx_v_memTime) * __pyx_v_self->_delta))));
   }
 
-  /* "Models/Potts.pyx":145
+  /* "PlexSim/Models/Potts.pyx":145
  *             energy[1] -= self.hamiltonian(testState, self._memory[memTime, node]) * exp(-memTime * self._delta)
  *         # with gil: print(energy)
  *         return energy             # <<<<<<<<<<<<<<
@@ -6445,7 +6445,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   __pyx_r = __pyx_v_energy;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":102
+  /* "PlexSim/Models/Potts.pyx":102
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef vector[double] energy(self, int node, long[::1] states) nogil:             # <<<<<<<<<<<<<<
@@ -6458,7 +6458,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   #ifdef WITH_THREAD
   __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
   #endif
-  __Pyx_WriteUnraisable("Models.Potts.Potts.energy", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __Pyx_WriteUnraisable("PlexSim.Models.Potts.Potts.energy", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __Pyx_pretend_to_initialize(&__pyx_r);
   #ifdef WITH_THREAD
   __Pyx_PyGILState_Release(__pyx_gilstate_save);
@@ -6467,7 +6467,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":146
+/* "PlexSim/Models/Potts.pyx":146
  *         # with gil: print(energy)
  *         return energy
  *     cdef double hamiltonian(self, long x, long y) nogil:             # <<<<<<<<<<<<<<
@@ -6475,7 +6475,7 @@ static std::vector<double>  __pyx_f_6Models_5Potts_5Potts_energy(struct __pyx_ob
  *         return cos(2 * pi  * (<double> x - <double> y) / <double> self._nStates)
  */
 
-static double __pyx_f_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, long __pyx_v_x, long __pyx_v_y) {
+static double __pyx_f_7PlexSim_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, long __pyx_v_x, long __pyx_v_y) {
   double __pyx_r;
   double __pyx_t_1;
   int __pyx_lineno = 0;
@@ -6485,7 +6485,7 @@ static double __pyx_f_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_6Models
   PyGILState_STATE __pyx_gilstate_save;
   #endif
 
-  /* "Models/Potts.pyx":148
+  /* "PlexSim/Models/Potts.pyx":148
  *     cdef double hamiltonian(self, long x, long y) nogil:
  *         # sanity checking
  *         return cos(2 * pi  * (<double> x - <double> y) / <double> self._nStates)             # <<<<<<<<<<<<<<
@@ -6506,7 +6506,7 @@ static double __pyx_f_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_6Models
   __pyx_r = cos((__pyx_t_1 / ((double)__pyx_v_self->__pyx_base._nStates)));
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":146
+  /* "PlexSim/Models/Potts.pyx":146
  *         # with gil: print(energy)
  *         return energy
  *     cdef double hamiltonian(self, long x, long y) nogil:             # <<<<<<<<<<<<<<
@@ -6519,7 +6519,7 @@ static double __pyx_f_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_6Models
   #ifdef WITH_THREAD
   __pyx_gilstate_save = __Pyx_PyGILState_Ensure();
   #endif
-  __Pyx_WriteUnraisable("Models.Potts.Potts.hamiltonian", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
+  __Pyx_WriteUnraisable("PlexSim.Models.Potts.Potts.hamiltonian", __pyx_clineno, __pyx_lineno, __pyx_filename, 1, 0);
   __pyx_r = 0;
   #ifdef WITH_THREAD
   __Pyx_PyGILState_Release(__pyx_gilstate_save);
@@ -6528,7 +6528,7 @@ static double __pyx_f_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_6Models
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":156
+/* "PlexSim/Models/Potts.pyx":156
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:             # <<<<<<<<<<<<<<
@@ -6536,7 +6536,7 @@ static double __pyx_f_6Models_5Potts_5Potts_hamiltonian(struct __pyx_obj_6Models
  *         """
  */
 
-static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
+static __Pyx_memviewslice __pyx_f_7PlexSim_6Models_5Potts_5Potts__updateState(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, __Pyx_memviewslice __pyx_v_nodesToUpdate) {
   int __pyx_v_nodes;
   long __pyx_v_node;
   long __pyx_v_nodeidx;
@@ -6554,7 +6554,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
   Py_ssize_t __pyx_t_8;
   Py_ssize_t __pyx_t_9;
 
-  /* "Models/Potts.pyx":164
+  /* "PlexSim/Models/Potts.pyx":164
  * 
  *         cdef:
  *             int nodes = nodesToUpdate.shape[0]             # <<<<<<<<<<<<<<
@@ -6563,7 +6563,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
  */
   __pyx_v_nodes = (__pyx_v_nodesToUpdate.shape[0]);
 
-  /* "Models/Potts.pyx":169
+  /* "PlexSim/Models/Potts.pyx":169
  *             int agentState
  *             double randomNumber
  *         for nodeidx in range(nodes):             # <<<<<<<<<<<<<<
@@ -6575,7 +6575,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_nodeidx = __pyx_t_3;
 
-    /* "Models/Potts.pyx":170
+    /* "PlexSim/Models/Potts.pyx":170
  *             double randomNumber
  *         for nodeidx in range(nodes):
  *             node         = nodesToUpdate[nodeidx]             # <<<<<<<<<<<<<<
@@ -6585,25 +6585,25 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
     __pyx_t_4 = __pyx_v_nodeidx;
     __pyx_v_node = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_nodesToUpdate.data) + __pyx_t_4)) )));
 
-    /* "Models/Potts.pyx":171
+    /* "PlexSim/Models/Potts.pyx":171
  *         for nodeidx in range(nodes):
  *             node         = nodesToUpdate[nodeidx]
  *             probs        = self.energy(node, self._states)             # <<<<<<<<<<<<<<
  *             randomNumber = self.rand()
  *             # with gil:
  */
-    __pyx_v_probs = ((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->energy(__pyx_v_self, __pyx_v_node, __pyx_v_self->__pyx_base._states);
+    __pyx_v_probs = ((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->energy(__pyx_v_self, __pyx_v_node, __pyx_v_self->__pyx_base._states);
 
-    /* "Models/Potts.pyx":172
+    /* "PlexSim/Models/Potts.pyx":172
  *             node         = nodesToUpdate[nodeidx]
  *             probs        = self.energy(node, self._states)
  *             randomNumber = self.rand()             # <<<<<<<<<<<<<<
  *             # with gil:
  *                 # print(probs)
  */
-    __pyx_v_randomNumber = ((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self));
+    __pyx_v_randomNumber = ((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->__pyx_base.rand(((struct __pyx_obj_6Models_6Models_Model *)__pyx_v_self));
 
-    /* "Models/Potts.pyx":175
+    /* "PlexSim/Models/Potts.pyx":175
  *             # with gil:
  *                 # print(probs)
  *             if randomNumber <= exp(- self._beta * (probs[1] - probs[0])):             # <<<<<<<<<<<<<<
@@ -6613,7 +6613,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
     __pyx_t_5 = ((__pyx_v_randomNumber <= exp(((-__pyx_v_self->_beta) * ((__pyx_v_probs[1]) - (__pyx_v_probs[0]))))) != 0);
     if (__pyx_t_5) {
 
-      /* "Models/Potts.pyx":176
+      /* "PlexSim/Models/Potts.pyx":176
  *                 # print(probs)
  *             if randomNumber <= exp(- self._beta * (probs[1] - probs[0])):
  *                 self._newstates[node] = <int> probs[2]             # <<<<<<<<<<<<<<
@@ -6623,7 +6623,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
       __pyx_t_4 = __pyx_v_node;
       *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._newstates.data) + __pyx_t_4)) )) = ((int)(__pyx_v_probs[2]));
 
-      /* "Models/Potts.pyx":175
+      /* "PlexSim/Models/Potts.pyx":175
  *             # with gil:
  *                 # print(probs)
  *             if randomNumber <= exp(- self._beta * (probs[1] - probs[0])):             # <<<<<<<<<<<<<<
@@ -6633,7 +6633,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
     }
   }
 
-  /* "Models/Potts.pyx":181
+  /* "PlexSim/Models/Potts.pyx":181
  *         cdef int memTime
  *         # repopulate buffer
  *         for node in range(self._nNodes):             # <<<<<<<<<<<<<<
@@ -6645,7 +6645,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_node = __pyx_t_3;
 
-    /* "Models/Potts.pyx":182
+    /* "PlexSim/Models/Potts.pyx":182
  *         # repopulate buffer
  *         for node in range(self._nNodes):
  *             self._states[node]    = self._newstates[node]             # <<<<<<<<<<<<<<
@@ -6656,7 +6656,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
     __pyx_t_6 = __pyx_v_node;
     *((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_6)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._newstates.data) + __pyx_t_4)) )));
 
-    /* "Models/Potts.pyx":183
+    /* "PlexSim/Models/Potts.pyx":183
  *         for node in range(self._nNodes):
  *             self._states[node]    = self._newstates[node]
  *             if self._memorySize:             # <<<<<<<<<<<<<<
@@ -6666,7 +6666,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
     __pyx_t_5 = (__pyx_v_self->__pyx_base._memorySize != 0);
     if (__pyx_t_5) {
 
-      /* "Models/Potts.pyx":184
+      /* "PlexSim/Models/Potts.pyx":184
  *             self._states[node]    = self._newstates[node]
  *             if self._memorySize:
  *                 for memTime in range(self._memorySize - 1, 0, -1):             # <<<<<<<<<<<<<<
@@ -6676,7 +6676,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
       for (__pyx_t_7 = (__pyx_v_self->__pyx_base._memorySize - 1); __pyx_t_7 > 0; __pyx_t_7-=1) {
         __pyx_v_memTime = __pyx_t_7;
 
-        /* "Models/Potts.pyx":186
+        /* "PlexSim/Models/Potts.pyx":186
  *                 for memTime in range(self._memorySize - 1, 0, -1):
  *                         # with gil: print(memTime)
  *                         self._memory[memTime, node] = self._memory[memTime - 1, node]             # <<<<<<<<<<<<<<
@@ -6690,7 +6690,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
         *((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_self->__pyx_base._memory.data + __pyx_t_8 * __pyx_v_self->__pyx_base._memory.strides[0]) )) + __pyx_t_9)) )) = (*((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_self->__pyx_base._memory.data + __pyx_t_4 * __pyx_v_self->__pyx_base._memory.strides[0]) )) + __pyx_t_6)) )));
       }
 
-      /* "Models/Potts.pyx":187
+      /* "PlexSim/Models/Potts.pyx":187
  *                         # with gil: print(memTime)
  *                         self._memory[memTime, node] = self._memory[memTime - 1, node]
  *                 self._memory[0, node] = self._states[node]             # <<<<<<<<<<<<<<
@@ -6702,7 +6702,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
       __pyx_t_9 = __pyx_v_node;
       *((long *) ( /* dim=1 */ ((char *) (((long *) ( /* dim=0 */ (__pyx_v_self->__pyx_base._memory.data + __pyx_t_4 * __pyx_v_self->__pyx_base._memory.strides[0]) )) + __pyx_t_9)) )) = (*((long *) ( /* dim=0 */ ((char *) (((long *) __pyx_v_self->__pyx_base._states.data) + __pyx_t_6)) )));
 
-      /* "Models/Potts.pyx":183
+      /* "PlexSim/Models/Potts.pyx":183
  *         for node in range(self._nNodes):
  *             self._states[node]    = self._newstates[node]
  *             if self._memorySize:             # <<<<<<<<<<<<<<
@@ -6712,7 +6712,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
     }
   }
 
-  /* "Models/Potts.pyx":188
+  /* "PlexSim/Models/Potts.pyx":188
  *                         self._memory[memTime, node] = self._memory[memTime - 1, node]
  *                 self._memory[0, node] = self._states[node]
  *         return self._states             # <<<<<<<<<<<<<<
@@ -6723,7 +6723,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
   __pyx_r = __pyx_v_self->__pyx_base._states;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":156
+  /* "PlexSim/Models/Potts.pyx":156
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cdef long[::1] _updateState(self, long[::1] nodesToUpdate) nogil:             # <<<<<<<<<<<<<<
@@ -6745,7 +6745,7 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":190
+/* "PlexSim/Models/Potts.pyx":190
  *         return self._states
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\             # <<<<<<<<<<<<<<
@@ -6753,14 +6753,14 @@ static __Pyx_memviewslice __pyx_f_6Models_5Potts_5Potts__updateState(struct __py
  *                               int n             = int(1e3),\
  */
 
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_7matchMagnetization(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_7matchMagnetization(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, int __pyx_skip_dispatch, struct __pyx_opt_args_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args) {
+static PyArrayObject *__pyx_f_7PlexSim_6Models_5Potts_5Potts_matchMagnetization(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, int __pyx_skip_dispatch, struct __pyx_opt_args_7PlexSim_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args) {
   PyArrayObject *__pyx_v_temps = __pyx_k__3;
   int __pyx_v_n = __pyx_k__4;
   int __pyx_v_burninSamples = ((int)0);
@@ -6774,7 +6774,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   CYTHON_UNUSED double __pyx_v_sus;
   int __pyx_v_threads;
   std::vector<PyObjectHolder>  __pyx_v_tmpHolder;
-  struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_tmp = 0;
+  struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_tmp = 0;
   PyObject *__pyx_v_modelsPy = 0;
   PyObject *__pyx_v_pbar = NULL;
   PyObject *__pyx_v_tmptr;
@@ -6825,7 +6825,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
       #endif
       __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_matchMagnetization); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_6Models_5Potts_5Potts_7matchMagnetization)) {
+      if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)(void*)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_7matchMagnetization)) {
         __Pyx_XDECREF((PyObject *)__pyx_r);
         __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_n); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 190, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_3);
@@ -6873,7 +6873,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
     #endif
   }
 
-  /* "Models/Potts.pyx":206
+  /* "PlexSim/Models/Potts.pyx":206
  *             """
  *             cdef:
  *                 double tcopy   = self.t # store current temp             # <<<<<<<<<<<<<<
@@ -6886,7 +6886,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_tcopy = __pyx_t_8;
 
-  /* "Models/Potts.pyx":207
+  /* "PlexSim/Models/Potts.pyx":207
  *             cdef:
  *                 double tcopy   = self.t # store current temp
  *                 np.ndarray results = np.zeros((2, temps.shape[0]))             # <<<<<<<<<<<<<<
@@ -6933,7 +6933,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __pyx_v_results = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":209
+  /* "PlexSim/Models/Potts.pyx":209
  *                 np.ndarray results = np.zeros((2, temps.shape[0]))
  *                 np.ndarray res, resi
  *                 int N = len(temps)             # <<<<<<<<<<<<<<
@@ -6943,7 +6943,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __pyx_t_9 = PyObject_Length(((PyObject *)__pyx_v_temps)); if (unlikely(__pyx_t_9 == ((Py_ssize_t)-1))) __PYX_ERR(0, 209, __pyx_L1_error)
   __pyx_v_N = __pyx_t_9;
 
-  /* "Models/Potts.pyx":212
+  /* "PlexSim/Models/Potts.pyx":212
  *                 int i, j
  *                 double t, avg, sus
  *                 int threads = mp.cpu_count()             # <<<<<<<<<<<<<<
@@ -6979,7 +6979,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_threads = __pyx_t_7;
 
-  /* "Models/Potts.pyx":216
+  /* "PlexSim/Models/Potts.pyx":216
  *                 Potts tmp
  *                 np.ndarray magres
  *                 list modelsPy = []             # <<<<<<<<<<<<<<
@@ -6991,7 +6991,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __pyx_v_modelsPy = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":219
+  /* "PlexSim/Models/Potts.pyx":219
  * 
  * 
  *             print("Computing mag per t")             # <<<<<<<<<<<<<<
@@ -7002,7 +7002,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":220
+  /* "PlexSim/Models/Potts.pyx":220
  * 
  *             print("Computing mag per t")
  *             pbar = tqdm(total = N)             # <<<<<<<<<<<<<<
@@ -7024,7 +7024,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __pyx_v_pbar = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "Models/Potts.pyx":226
+  /* "PlexSim/Models/Potts.pyx":226
  *             cdef PyObject *tmptr
  *             cdef int tid
  *             for i in range(threads):             # <<<<<<<<<<<<<<
@@ -7036,7 +7036,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
     __pyx_v_i = __pyx_t_11;
 
-    /* "Models/Potts.pyx":227
+    /* "PlexSim/Models/Potts.pyx":227
  *             cdef int tid
  *             for i in range(threads):
  *                 tmp = copy.deepcopy(self)             # <<<<<<<<<<<<<<
@@ -7068,11 +7068,11 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     }
-    if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_6Models_5Potts_Potts))))) __PYX_ERR(0, 227, __pyx_L1_error)
-    __Pyx_XDECREF_SET(__pyx_v_tmp, ((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_t_5));
+    if (!(likely(((__pyx_t_5) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_5, __pyx_ptype_7PlexSim_6Models_5Potts_Potts))))) __PYX_ERR(0, 227, __pyx_L1_error)
+    __Pyx_XDECREF_SET(__pyx_v_tmp, ((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_t_5));
     __pyx_t_5 = 0;
 
-    /* "Models/Potts.pyx":231
+    /* "PlexSim/Models/Potts.pyx":231
  *                 # tmp.burnin(burninSamples)
  *                 # tmp.seed += sample # enforce different seeds
  *                 modelsPy.append(tmp)             # <<<<<<<<<<<<<<
@@ -7081,7 +7081,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
  */
     __pyx_t_13 = __Pyx_PyList_Append(__pyx_v_modelsPy, ((PyObject *)__pyx_v_tmp)); if (unlikely(__pyx_t_13 == ((int)-1))) __PYX_ERR(0, 231, __pyx_L1_error)
 
-    /* "Models/Potts.pyx":232
+    /* "PlexSim/Models/Potts.pyx":232
  *                 # tmp.seed += sample # enforce different seeds
  *                 modelsPy.append(tmp)
  *                 tmpHolder.push_back(PyObjectHolder(<PyObject *> tmp))             # <<<<<<<<<<<<<<
@@ -7096,7 +7096,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
     }
   }
 
-  /* "Models/Potts.pyx":235
+  /* "PlexSim/Models/Potts.pyx":235
  * 
  * 
  *             for i in prange(N, nogil = True, schedule = 'static',\             # <<<<<<<<<<<<<<
@@ -7155,7 +7155,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                             __pyx_v_tid = ((int)0xbad0bad0);
                             __pyx_v_tmptr = ((PyObject *)1);
 
-                            /* "Models/Potts.pyx":238
+                            /* "PlexSim/Models/Potts.pyx":238
  *                             num_threads = threads):
  *                 # m = copy.deepcopy(self)
  *                 tid = threadid()             # <<<<<<<<<<<<<<
@@ -7169,7 +7169,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                             #endif
                             __pyx_v_tid = __pyx_t_12;
 
-                            /* "Models/Potts.pyx":239
+                            /* "PlexSim/Models/Potts.pyx":239
  *                 # m = copy.deepcopy(self)
  *                 tid = threadid()
  *                 tmptr = tmpHolder[tid].ptr             # <<<<<<<<<<<<<<
@@ -7179,7 +7179,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                             __pyx_t_14 = (__pyx_v_tmpHolder[__pyx_v_tid]).ptr;
                             __pyx_v_tmptr = __pyx_t_14;
 
-                            /* "Models/Potts.pyx":240
+                            /* "PlexSim/Models/Potts.pyx":240
  *                 tid = threadid()
  *                 tmptr = tmpHolder[tid].ptr
  *                 avg = 0             # <<<<<<<<<<<<<<
@@ -7188,7 +7188,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
  */
                             __pyx_v_avg = 0.0;
 
-                            /* "Models/Potts.pyx":241
+                            /* "PlexSim/Models/Potts.pyx":241
  *                 tmptr = tmpHolder[tid].ptr
  *                 avg = 0
  *                 sus = 0             # <<<<<<<<<<<<<<
@@ -7197,7 +7197,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
  */
                             __pyx_v_sus = 0.0;
 
-                            /* "Models/Potts.pyx":242
+                            /* "PlexSim/Models/Potts.pyx":242
  *                 avg = 0
  *                 sus = 0
  *                 with gil:             # <<<<<<<<<<<<<<
@@ -7210,7 +7210,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                 #endif
                                 /*try:*/ {
 
-                                  /* "Models/Potts.pyx":243
+                                  /* "PlexSim/Models/Potts.pyx":243
  *                 sus = 0
  *                 with gil:
  *                     t                  = temps[i]             # <<<<<<<<<<<<<<
@@ -7223,7 +7223,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
                                   __pyx_v_t = __pyx_t_8;
 
-                                  /* "Models/Potts.pyx":244
+                                  /* "PlexSim/Models/Potts.pyx":244
  *                 with gil:
  *                     t                  = temps[i]
  *                     (<Potts> tmptr).t  = t             # <<<<<<<<<<<<<<
@@ -7235,19 +7235,19 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_tmptr), __pyx_n_s_t, __pyx_t_5) < 0) __PYX_ERR(0, 244, __pyx_L15_error)
                                   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-                                  /* "Models/Potts.pyx":248
+                                  /* "PlexSim/Models/Potts.pyx":248
  *                     # (<Potts> tmptr).burnin(burninSamples)
  *                     # (<Potts> tmptr).reset
  *                     res        = (<Potts> tmptr).simulate(n)             # <<<<<<<<<<<<<<
  *                     # results[0, i] = np.array(self.siteEnergy(res[n-1])).sum()
  *                     mu = np.array([self.siteEnergy(resi) for resi in res])
  */
-                                  __pyx_t_5 = ((PyObject *)((struct __pyx_vtabstruct_6Models_5Potts_Potts *)((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_tmptr)->__pyx_base.__pyx_vtab)->__pyx_base.simulate(((struct __pyx_obj_6Models_6Models_Model *)((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_tmptr)), __pyx_v_n, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 248, __pyx_L15_error)
+                                  __pyx_t_5 = ((PyObject *)((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_tmptr)->__pyx_base.__pyx_vtab)->__pyx_base.simulate(((struct __pyx_obj_6Models_6Models_Model *)((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_tmptr)), __pyx_v_n, 0)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 248, __pyx_L15_error)
                                   __Pyx_GOTREF(__pyx_t_5);
                                   __Pyx_XDECREF_SET(__pyx_v_res, ((PyArrayObject *)__pyx_t_5));
                                   __pyx_t_5 = 0;
 
-                                  /* "Models/Potts.pyx":250
+                                  /* "PlexSim/Models/Potts.pyx":250
  *                     res        = (<Potts> tmptr).simulate(n)
  *                     # results[0, i] = np.array(self.siteEnergy(res[n-1])).sum()
  *                     mu = np.array([self.siteEnergy(resi) for resi in res])             # <<<<<<<<<<<<<<
@@ -7305,7 +7305,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                       __Pyx_XDECREF_SET(__pyx_7genexpr__pyx_v_resi, ((PyArrayObject *)__pyx_t_3));
                                       __pyx_t_3 = 0;
                                       __pyx_t_16 = __Pyx_PyObject_to_MemoryviewSlice_dc_long(((PyObject *)__pyx_7genexpr__pyx_v_resi), PyBUF_WRITABLE); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 250, __pyx_L19_error)
-                                      __pyx_t_3 = __pyx_convert_vector_to_py_double(((struct __pyx_vtabstruct_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->siteEnergy(__pyx_v_self, __pyx_t_16, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 250, __pyx_L19_error)
+                                      __pyx_t_3 = __pyx_convert_vector_to_py_double(((struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self->__pyx_base.__pyx_vtab)->siteEnergy(__pyx_v_self, __pyx_t_16, 0)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 250, __pyx_L19_error)
                                       __Pyx_GOTREF(__pyx_t_3);
                                       __PYX_XCLEAR_MEMVIEW(&__pyx_t_16, 1);
                                       __pyx_t_16.memview = NULL; __pyx_t_16.data = NULL;
@@ -7344,7 +7344,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                   __Pyx_XDECREF_SET(__pyx_v_mu, __pyx_t_5);
                                   __pyx_t_5 = 0;
 
-                                  /* "Models/Potts.pyx":252
+                                  /* "PlexSim/Models/Potts.pyx":252
  *                     mu = np.array([self.siteEnergy(resi) for resi in res])
  * 
  *                     results[0, i] = mu.mean()             # <<<<<<<<<<<<<<
@@ -7387,7 +7387,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
                                   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-                                  /* "Models/Potts.pyx":253
+                                  /* "PlexSim/Models/Potts.pyx":253
  * 
  *                     results[0, i] = mu.mean()
  *                     results[1, i] = (mu**2).mean()  - mu.mean()**2 * self._beta             # <<<<<<<<<<<<<<
@@ -7468,7 +7468,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
                                   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-                                  /* "Models/Potts.pyx":265
+                                  /* "PlexSim/Models/Potts.pyx":265
  *                     # results[0, i] = avg
  *                     # results[1, i] = sus
  *                     pbar.update(1)             # <<<<<<<<<<<<<<
@@ -7500,7 +7500,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
                                   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
                                 }
 
-                                /* "Models/Potts.pyx":242
+                                /* "PlexSim/Models/Potts.pyx":242
  *                 avg = 0
  *                 sus = 0
  *                 with gil:             # <<<<<<<<<<<<<<
@@ -7621,7 +7621,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
         #endif
       }
 
-      /* "Models/Potts.pyx":235
+      /* "PlexSim/Models/Potts.pyx":235
  * 
  * 
  *             for i in prange(N, nogil = True, schedule = 'static',\             # <<<<<<<<<<<<<<
@@ -7647,7 +7647,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
       }
   }
 
-  /* "Models/Potts.pyx":267
+  /* "PlexSim/Models/Potts.pyx":267
  *                     pbar.update(1)
  *             # print(results[0])
  *             self.t = tcopy # reset temp             # <<<<<<<<<<<<<<
@@ -7659,7 +7659,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_t, __pyx_t_4) < 0) __PYX_ERR(0, 267, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "Models/Potts.pyx":268
+  /* "PlexSim/Models/Potts.pyx":268
  *             # print(results[0])
  *             self.t = tcopy # reset temp
  *             return results             # <<<<<<<<<<<<<<
@@ -7671,7 +7671,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __pyx_r = __pyx_v_results;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":190
+  /* "PlexSim/Models/Potts.pyx":190
  *         return self._states
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\             # <<<<<<<<<<<<<<
@@ -7688,7 +7688,7 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_16, 1);
-  __Pyx_AddTraceback("Models.Potts.Potts.matchMagnetization", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.matchMagnetization", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_results);
@@ -7704,16 +7704,16 @@ static PyArrayObject *__pyx_f_6Models_5Potts_5Potts_matchMagnetization(struct __
 }
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_7matchMagnetization(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_7matchMagnetization(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-PyDoc_STRVAR(__pyx_doc_6Models_5Potts_5Potts_6matchMagnetization, "\n            Computes the magnetization as a function of temperatures\n            Input:\n                  :temps: a range of temperatures\n                  :n:     number of samples to simulate for\n                  :burninSamples: number of samples to throw away before sampling\n            Returns:\n                  :temps: the temperature range as input\n                  :mag:  the magnetization for t in temps\n                  :sus:  the magnetic susceptibility\n            ");
-static PyMethodDef __pyx_mdef_6Models_5Potts_5Potts_7matchMagnetization = {"matchMagnetization", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_5Potts_7matchMagnetization, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_6Models_5Potts_5Potts_6matchMagnetization};
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_7matchMagnetization(PyObject *__pyx_v_self, 
+PyDoc_STRVAR(__pyx_doc_7PlexSim_6Models_5Potts_5Potts_6matchMagnetization, "\n            Computes the magnetization as a function of temperatures\n            Input:\n                  :temps: a range of temperatures\n                  :n:     number of samples to simulate for\n                  :burninSamples: number of samples to throw away before sampling\n            Returns:\n                  :temps: the temperature range as input\n                  :mag:  the magnetization for t in temps\n                  :sus:  the magnetic susceptibility\n            ");
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_5Potts_5Potts_7matchMagnetization = {"matchMagnetization", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_7matchMagnetization, __Pyx_METH_FASTCALL|METH_KEYWORDS, __pyx_doc_7PlexSim_6Models_5Potts_5Potts_6matchMagnetization};
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_7matchMagnetization(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -7808,12 +7808,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("matchMagnetization", 0, 0, 3, __pyx_nargs); __PYX_ERR(0, 190, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("Models.Potts.Potts.matchMagnetization", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.matchMagnetization", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_temps), __pyx_ptype_5numpy_ndarray, 1, "temps", 0))) __PYX_ERR(0, 191, __pyx_L1_error)
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_6matchMagnetization(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_temps, __pyx_v_n, __pyx_v_burninSamples);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_6matchMagnetization(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_temps, __pyx_v_n, __pyx_v_burninSamples);
 
   /* function exit code */
   goto __pyx_L0;
@@ -7824,11 +7824,11 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, PyArrayObject *__pyx_v_temps, int __pyx_v_n, int __pyx_v_burninSamples) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, PyArrayObject *__pyx_v_temps, int __pyx_v_n, int __pyx_v_burninSamples) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  struct __pyx_opt_args_6Models_5Potts_5Potts_matchMagnetization __pyx_t_2;
+  struct __pyx_opt_args_7PlexSim_6Models_5Potts_5Potts_matchMagnetization __pyx_t_2;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -7838,7 +7838,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx
   __pyx_t_2.temps = __pyx_v_temps;
   __pyx_t_2.n = __pyx_v_n;
   __pyx_t_2.burninSamples = __pyx_v_burninSamples;
-  __pyx_t_1 = ((PyObject *)__pyx_vtabptr_6Models_5Potts_Potts->matchMagnetization(__pyx_v_self, 1, &__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_vtabptr_7PlexSim_6Models_5Potts_Potts->matchMagnetization(__pyx_v_self, 1, &__pyx_t_2)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7847,7 +7847,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("Models.Potts.Potts.matchMagnetization", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.matchMagnetization", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -7855,7 +7855,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":271
+/* "PlexSim/Models/Potts.pyx":271
  * 
  * 
  *     def __deepcopy__(self, memo):             # <<<<<<<<<<<<<<
@@ -7864,15 +7864,15 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_6matchMagnetization(struct __pyx
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_9__deepcopy__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_9__deepcopy__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_5Potts_5Potts_9__deepcopy__ = {"__deepcopy__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_5Potts_9__deepcopy__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_9__deepcopy__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_5Potts_5Potts_9__deepcopy__ = {"__deepcopy__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_9__deepcopy__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_9__deepcopy__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -7927,18 +7927,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__deepcopy__", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 271, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("Models.Potts.Potts.__deepcopy__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.__deepcopy__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_memo);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_8__deepcopy__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self), __pyx_v_memo);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_memo) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_memo) {
   PyObject *__pyx_v_tmp = NULL;
   PyObject *__pyx_8genexpr1__pyx_v_i = NULL;
   PyObject *__pyx_r = NULL;
@@ -7953,7 +7953,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__deepcopy__", 0);
 
-  /* "Models/Potts.pyx":272
+  /* "PlexSim/Models/Potts.pyx":272
  * 
  *     def __deepcopy__(self, memo):
  *         tmp = {i: getattr(self, i) for i in dir(self)}             # <<<<<<<<<<<<<<
@@ -8023,7 +8023,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6
   __pyx_v_tmp = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":273
+  /* "PlexSim/Models/Potts.pyx":273
  *     def __deepcopy__(self, memo):
  *         tmp = {i: getattr(self, i) for i in dir(self)}
  *         tmp = Potts(**tmp)             # <<<<<<<<<<<<<<
@@ -8037,13 +8037,13 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6
     __pyx_t_1 = __Pyx_PyObject_CallOneArg((PyObject*)&PyDict_Type, __pyx_v_tmp); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_6Models_5Potts_Potts), __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 273, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts), __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 273, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF_SET(__pyx_v_tmp, __pyx_t_3);
   __pyx_t_3 = 0;
 
-  /* "Models/Potts.pyx":275
+  /* "PlexSim/Models/Potts.pyx":275
  *         tmp = Potts(**tmp)
  *         # tmp.nudges = self.nudges.base
  *         return tmp             # <<<<<<<<<<<<<<
@@ -8055,7 +8055,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6
   __pyx_r = __pyx_v_tmp;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":271
+  /* "PlexSim/Models/Potts.pyx":271
  * 
  * 
  *     def __deepcopy__(self, memo):             # <<<<<<<<<<<<<<
@@ -8068,7 +8068,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("Models.Potts.Potts.__deepcopy__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.__deepcopy__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_tmp);
@@ -8078,7 +8078,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":277
+/* "PlexSim/Models/Potts.pyx":277
  *         return tmp
  * 
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
@@ -8087,15 +8087,15 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_8__deepcopy__(struct __pyx_obj_6
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_11__reduce__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_11__reduce__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_5Potts_5Potts_11__reduce__ = {"__reduce__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_5Potts_11__reduce__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_5Potts_5Potts_11__reduce__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_5Potts_5Potts_11__reduce__ = {"__reduce__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_11__reduce__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_5Potts_11__reduce__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -8112,14 +8112,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("__reduce__", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__reduce__", 0))) return NULL;
-  __pyx_r = __pyx_pf_6Models_5Potts_5Potts_10__reduce__(((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_v_self));
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_5Potts_10__reduce__(((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_self) {
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_self) {
   PyObject *__pyx_v_tmp = NULL;
   PyObject *__pyx_8genexpr2__pyx_v_i = NULL;
   PyObject *__pyx_r = NULL;
@@ -8134,7 +8134,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6M
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__reduce__", 0);
 
-  /* "Models/Potts.pyx":278
+  /* "PlexSim/Models/Potts.pyx":278
  * 
  *     def __reduce__(self):
  *         tmp = {i: getattr(self, i) for i in dir(self)}             # <<<<<<<<<<<<<<
@@ -8204,7 +8204,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6M
   __pyx_v_tmp = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":279
+  /* "PlexSim/Models/Potts.pyx":279
  *     def __reduce__(self):
  *         tmp = {i: getattr(self, i) for i in dir(self)}
  *         return (rebuild, tmp)             # <<<<<<<<<<<<<<
@@ -8226,7 +8226,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6M
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":277
+  /* "PlexSim/Models/Potts.pyx":277
  *         return tmp
  * 
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
@@ -8239,7 +8239,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6M
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("Models.Potts.Potts.__reduce__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.Potts.__reduce__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_tmp);
@@ -8249,7 +8249,7 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6M
   return __pyx_r;
 }
 
-/* "Models/Potts.pyx":283
+/* "PlexSim/Models/Potts.pyx":283
  * 
  * 
  * def rebuild(**kwargs):             # <<<<<<<<<<<<<<
@@ -8258,15 +8258,15 @@ static PyObject *__pyx_pf_6Models_5Potts_5Potts_10__reduce__(struct __pyx_obj_6M
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_6Models_5Potts_1rebuild(PyObject *__pyx_self, 
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_1rebuild(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_6Models_5Potts_1rebuild = {"rebuild", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_1rebuild, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_6Models_5Potts_1rebuild(PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_7PlexSim_6Models_5Potts_1rebuild = {"rebuild", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_1rebuild, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_7PlexSim_6Models_5Potts_1rebuild(PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -8293,7 +8293,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     if (unlikely(!__pyx_v_kwargs)) return NULL;
     __Pyx_GOTREF(__pyx_v_kwargs);
   }
-  __pyx_r = __pyx_pf_6Models_5Potts_rebuild(__pyx_self, __pyx_v_kwargs);
+  __pyx_r = __pyx_pf_7PlexSim_6Models_5Potts_rebuild(__pyx_self, __pyx_v_kwargs);
 
   /* function exit code */
   __Pyx_DECREF(__pyx_v_kwargs);
@@ -8301,8 +8301,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kwargs) {
-  struct __pyx_obj_6Models_5Potts_Potts *__pyx_v_tmp = 0;
+static PyObject *__pyx_pf_7PlexSim_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_kwargs) {
+  struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *__pyx_v_tmp = 0;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -8314,7 +8314,7 @@ static PyObject *__pyx_pf_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_s
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("rebuild", 0);
 
-  /* "Models/Potts.pyx":284
+  /* "PlexSim/Models/Potts.pyx":284
  * 
  * def rebuild(**kwargs):
  *     cdef Potts tmp = Potts(**kwargs)             # <<<<<<<<<<<<<<
@@ -8323,13 +8323,13 @@ static PyObject *__pyx_pf_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_s
  */
   __pyx_t_1 = PyDict_Copy(__pyx_v_kwargs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_6Models_5Potts_Potts), __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 284, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts), __pyx_empty_tuple, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 284, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_v_tmp = ((struct __pyx_obj_6Models_5Potts_Potts *)__pyx_t_2);
+  __pyx_v_tmp = ((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":285
+  /* "PlexSim/Models/Potts.pyx":285
  * def rebuild(**kwargs):
  *     cdef Potts tmp = Potts(**kwargs)
  *     tmp.nudges = kwargs.get('nudges').copy()             # <<<<<<<<<<<<<<
@@ -8363,7 +8363,7 @@ static PyObject *__pyx_pf_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_s
   if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_tmp), __pyx_n_s_nudges, __pyx_t_2) < 0) __PYX_ERR(0, 285, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":286
+  /* "PlexSim/Models/Potts.pyx":286
  *     cdef Potts tmp = Potts(**kwargs)
  *     tmp.nudges = kwargs.get('nudges').copy()
  *     return tmp             # <<<<<<<<<<<<<<
@@ -8373,7 +8373,7 @@ static PyObject *__pyx_pf_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_s
   __pyx_r = ((PyObject *)__pyx_v_tmp);
   goto __pyx_L0;
 
-  /* "Models/Potts.pyx":283
+  /* "PlexSim/Models/Potts.pyx":283
  * 
  * 
  * def rebuild(**kwargs):             # <<<<<<<<<<<<<<
@@ -8386,7 +8386,7 @@ static PyObject *__pyx_pf_6Models_5Potts_rebuild(CYTHON_UNUSED PyObject *__pyx_s
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("Models.Potts.rebuild", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("PlexSim.Models.Potts.rebuild", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_tmp);
@@ -23633,10 +23633,10 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
-static struct __pyx_vtabstruct_6Models_5Potts_Potts __pyx_vtable_6Models_5Potts_Potts;
+static struct __pyx_vtabstruct_7PlexSim_6Models_5Potts_Potts __pyx_vtable_7PlexSim_6Models_5Potts_Potts;
 
-static PyObject *__pyx_tp_new_6Models_5Potts_Potts(PyTypeObject *t, PyObject *a, PyObject *k) {
-  struct __pyx_obj_6Models_5Potts_Potts *p;
+static PyObject *__pyx_tp_new_7PlexSim_6Models_5Potts_Potts(PyTypeObject *t, PyObject *a, PyObject *k) {
+  struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *p;
   #if CYTHON_COMPILING_IN_LIMITED_API
   newfunc new_func = (newfunc)PyType_GetSlot(__pyx_ptype_6Models_6Models_Model, Py_tp_new);
   PyObject *o = new_func(t, a, k);
@@ -23644,16 +23644,16 @@ static PyObject *__pyx_tp_new_6Models_5Potts_Potts(PyTypeObject *t, PyObject *a,
   PyObject *o = __pyx_ptype_6Models_6Models_Model->tp_new(t, a, k);
   #endif
   if (unlikely(!o)) return 0;
-  p = ((struct __pyx_obj_6Models_5Potts_Potts *)o);
-  p->__pyx_base.__pyx_vtab = (struct __pyx_vtabstruct_6Models_6Models_Model*)__pyx_vtabptr_6Models_5Potts_Potts;
+  p = ((struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)o);
+  p->__pyx_base.__pyx_vtab = (struct __pyx_vtabstruct_6Models_6Models_Model*)__pyx_vtabptr_7PlexSim_6Models_5Potts_Potts;
   p->_H.data = NULL;
   p->_H.memview = NULL;
   return o;
 }
 
 #if !CYTHON_COMPILING_IN_LIMITED_API
-static void __pyx_tp_dealloc_6Models_5Potts_Potts(PyObject *o) {
-  struct __pyx_obj_6Models_5Potts_Potts *p = (struct __pyx_obj_6Models_5Potts_Potts *)o;
+static void __pyx_tp_dealloc_7PlexSim_6Models_5Potts_Potts(PyObject *o) {
+  struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *p = (struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)o;
   #if CYTHON_USE_TP_FINALIZE
   if (unlikely((PY_VERSION_HEX >= 0x03080000 || __Pyx_PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE)) && Py_TYPE(o)->tp_finalize) && !_PyGC_FINALIZED(o)) {
     if (PyObject_CallFinalizerFromDealloc(o)) return;
@@ -23663,23 +23663,23 @@ static void __pyx_tp_dealloc_6Models_5Potts_Potts(PyObject *o) {
   __PYX_XCLEAR_MEMVIEW(&p->_H, 1);
   p->_H.memview = NULL; p->_H.data = NULL;
   PyObject_GC_Track(o);
-  if (likely(__pyx_ptype_6Models_6Models_Model)) __pyx_ptype_6Models_6Models_Model->tp_dealloc(o); else __Pyx_call_next_tp_dealloc(o, __pyx_tp_dealloc_6Models_5Potts_Potts);
+  if (likely(__pyx_ptype_6Models_6Models_Model)) __pyx_ptype_6Models_6Models_Model->tp_dealloc(o); else __Pyx_call_next_tp_dealloc(o, __pyx_tp_dealloc_7PlexSim_6Models_5Potts_Potts);
 }
 #endif
 
-static int __pyx_tp_traverse_6Models_5Potts_Potts(PyObject *o, visitproc v, void *a) {
+static int __pyx_tp_traverse_7PlexSim_6Models_5Potts_Potts(PyObject *o, visitproc v, void *a) {
   int e;
-  e = ((likely(__pyx_ptype_6Models_6Models_Model)) ? ((__pyx_ptype_6Models_6Models_Model->tp_traverse) ? __pyx_ptype_6Models_6Models_Model->tp_traverse(o, v, a) : 0) : __Pyx_call_next_tp_traverse(o, v, a, __pyx_tp_traverse_6Models_5Potts_Potts)); if (e) return e;
+  e = ((likely(__pyx_ptype_6Models_6Models_Model)) ? ((__pyx_ptype_6Models_6Models_Model->tp_traverse) ? __pyx_ptype_6Models_6Models_Model->tp_traverse(o, v, a) : 0) : __Pyx_call_next_tp_traverse(o, v, a, __pyx_tp_traverse_7PlexSim_6Models_5Potts_Potts)); if (e) return e;
   return 0;
 }
 
-static int __pyx_tp_clear_6Models_5Potts_Potts(PyObject *o) {
-  if (likely(__pyx_ptype_6Models_6Models_Model)) { if (__pyx_ptype_6Models_6Models_Model->tp_clear) __pyx_ptype_6Models_6Models_Model->tp_clear(o); } else __Pyx_call_next_tp_clear(o, __pyx_tp_clear_6Models_5Potts_Potts);
+static int __pyx_tp_clear_7PlexSim_6Models_5Potts_Potts(PyObject *o) {
+  if (likely(__pyx_ptype_6Models_6Models_Model)) { if (__pyx_ptype_6Models_6Models_Model->tp_clear) __pyx_ptype_6Models_6Models_Model->tp_clear(o); } else __Pyx_call_next_tp_clear(o, __pyx_tp_clear_7PlexSim_6Models_5Potts_Potts);
   return 0;
 }
 
-static PyObject *__pyx___dict__getter_6Models_5Potts_Potts(PyObject *o, CYTHON_UNUSED void *x) {
-  struct __pyx_obj_6Models_5Potts_Potts *p = (struct __pyx_obj_6Models_5Potts_Potts *)o;
+static PyObject *__pyx___dict__getter_7PlexSim_6Models_5Potts_Potts(PyObject *o, CYTHON_UNUSED void *x) {
+  struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *p = (struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *)o;
   if (unlikely(!p->__pyx_base.__dict__)){
     p->__pyx_base.__dict__ = PyDict_New();
   }
@@ -23687,21 +23687,21 @@ static PyObject *__pyx___dict__getter_6Models_5Potts_Potts(PyObject *o, CYTHON_U
   return p->__pyx_base.__dict__;
 }
 
-static PyObject *__pyx_getprop_6Models_5Potts_5Potts_delta(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_6Models_5Potts_5Potts_5delta_1__get__(o);
+static PyObject *__pyx_getprop_7PlexSim_6Models_5Potts_5Potts_delta(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_7PlexSim_6Models_5Potts_5Potts_5delta_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_6Models_5Potts_5Potts_H(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_6Models_5Potts_5Potts_1H_1__get__(o);
+static PyObject *__pyx_getprop_7PlexSim_6Models_5Potts_5Potts_H(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1H_1__get__(o);
 }
 
-static PyObject *__pyx_getprop_6Models_5Potts_5Potts_beta(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_6Models_5Potts_5Potts_4beta_1__get__(o);
+static PyObject *__pyx_getprop_7PlexSim_6Models_5Potts_5Potts_beta(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_7PlexSim_6Models_5Potts_5Potts_4beta_1__get__(o);
 }
 
-static int __pyx_setprop_6Models_5Potts_5Potts_beta(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_7PlexSim_6Models_5Potts_5Potts_beta(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_6Models_5Potts_5Potts_4beta_3__set__(o, v);
+    return __pyx_pw_7PlexSim_6Models_5Potts_5Potts_4beta_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23709,13 +23709,13 @@ static int __pyx_setprop_6Models_5Potts_5Potts_beta(PyObject *o, PyObject *v, CY
   }
 }
 
-static PyObject *__pyx_getprop_6Models_5Potts_5Potts_t(PyObject *o, CYTHON_UNUSED void *x) {
-  return __pyx_pw_6Models_5Potts_5Potts_1t_1__get__(o);
+static PyObject *__pyx_getprop_7PlexSim_6Models_5Potts_5Potts_t(PyObject *o, CYTHON_UNUSED void *x) {
+  return __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1t_1__get__(o);
 }
 
-static int __pyx_setprop_6Models_5Potts_5Potts_t(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
+static int __pyx_setprop_7PlexSim_6Models_5Potts_5Potts_t(PyObject *o, PyObject *v, CYTHON_UNUSED void *x) {
   if (v) {
-    return __pyx_pw_6Models_5Potts_5Potts_1t_3__set__(o, v);
+    return __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1t_3__set__(o, v);
   }
   else {
     PyErr_SetString(PyExc_NotImplementedError, "__del__");
@@ -23723,47 +23723,47 @@ static int __pyx_setprop_6Models_5Potts_5Potts_t(PyObject *o, PyObject *v, CYTHO
   }
 }
 
-static PyMethodDef __pyx_methods_6Models_5Potts_Potts[] = {
-  {"__deepcopy__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_5Potts_9__deepcopy__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__reduce__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_6Models_5Potts_5Potts_11__reduce__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+static PyMethodDef __pyx_methods_7PlexSim_6Models_5Potts_Potts[] = {
+  {"__deepcopy__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_9__deepcopy__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__reduce__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_11__reduce__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 
-static struct PyGetSetDef __pyx_getsets_6Models_5Potts_Potts[] = {
-  {(char *)"__dict__", __pyx___dict__getter_6Models_5Potts_Potts, 0, (char *)0, 0},
-  {(char *)"delta", __pyx_getprop_6Models_5Potts_5Potts_delta, 0, (char *)0, 0},
-  {(char *)"H", __pyx_getprop_6Models_5Potts_5Potts_H, 0, (char *)0, 0},
-  {(char *)"beta", __pyx_getprop_6Models_5Potts_5Potts_beta, __pyx_setprop_6Models_5Potts_5Potts_beta, (char *)0, 0},
-  {(char *)"t", __pyx_getprop_6Models_5Potts_5Potts_t, __pyx_setprop_6Models_5Potts_5Potts_t, (char *)0, 0},
+static struct PyGetSetDef __pyx_getsets_7PlexSim_6Models_5Potts_Potts[] = {
+  {(char *)"__dict__", __pyx___dict__getter_7PlexSim_6Models_5Potts_Potts, 0, (char *)0, 0},
+  {(char *)"delta", __pyx_getprop_7PlexSim_6Models_5Potts_5Potts_delta, 0, (char *)0, 0},
+  {(char *)"H", __pyx_getprop_7PlexSim_6Models_5Potts_5Potts_H, 0, (char *)0, 0},
+  {(char *)"beta", __pyx_getprop_7PlexSim_6Models_5Potts_5Potts_beta, __pyx_setprop_7PlexSim_6Models_5Potts_5Potts_beta, (char *)0, 0},
+  {(char *)"t", __pyx_getprop_7PlexSim_6Models_5Potts_5Potts_t, __pyx_setprop_7PlexSim_6Models_5Potts_5Potts_t, (char *)0, 0},
   {0, 0, 0, 0, 0}
 };
 #if CYTHON_COMPILING_IN_LIMITED_API
-static PyType_Slot __pyx_type_6Models_5Potts_Potts_slots[] = {
+static PyType_Slot __pyx_type_7PlexSim_6Models_5Potts_Potts_slots[] = {
   {Py_tp_getattro, (void *)PyObject_GenericGetAttr},
-  {Py_tp_traverse, (void *)__pyx_tp_traverse_6Models_5Potts_Potts},
-  {Py_tp_clear, (void *)__pyx_tp_clear_6Models_5Potts_Potts},
-  {Py_tp_methods, (void *)__pyx_methods_6Models_5Potts_Potts},
-  {Py_tp_getset, (void *)__pyx_getsets_6Models_5Potts_Potts},
-  {Py_tp_dictoffset, (void *)offsetof(struct __pyx_obj_6Models_5Potts_Potts, __pyx_base.__dict__)},
-  {Py_tp_init, (void *)__pyx_pw_6Models_5Potts_5Potts_1__init__},
-  {Py_tp_new, (void *)__pyx_tp_new_6Models_5Potts_Potts},
+  {Py_tp_traverse, (void *)__pyx_tp_traverse_7PlexSim_6Models_5Potts_Potts},
+  {Py_tp_clear, (void *)__pyx_tp_clear_7PlexSim_6Models_5Potts_Potts},
+  {Py_tp_methods, (void *)__pyx_methods_7PlexSim_6Models_5Potts_Potts},
+  {Py_tp_getset, (void *)__pyx_getsets_7PlexSim_6Models_5Potts_Potts},
+  {Py_tp_dictoffset, (void *)offsetof(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts, __pyx_base.__dict__)},
+  {Py_tp_init, (void *)__pyx_pw_7PlexSim_6Models_5Potts_5Potts_1__init__},
+  {Py_tp_new, (void *)__pyx_tp_new_7PlexSim_6Models_5Potts_Potts},
   {0, 0},
 };
-static PyType_Spec __pyx_type_6Models_5Potts_Potts_spec = {
-  "Models.Potts.Potts",
-  sizeof(struct __pyx_obj_6Models_5Potts_Potts),
+static PyType_Spec __pyx_type_7PlexSim_6Models_5Potts_Potts_spec = {
+  "PlexSim.Models.Potts.Potts",
+  sizeof(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
-  __pyx_type_6Models_5Potts_Potts_slots,
+  __pyx_type_7PlexSim_6Models_5Potts_Potts_slots,
 };
 #else
 
-static PyTypeObject __pyx_type_6Models_5Potts_Potts = {
+static PyTypeObject __pyx_type_7PlexSim_6Models_5Potts_Potts = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Potts.""Potts", /*tp_name*/
-  sizeof(struct __pyx_obj_6Models_5Potts_Potts), /*tp_basicsize*/
+  "PlexSim.Models.Potts.""Potts", /*tp_name*/
+  sizeof(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_6Models_5Potts_Potts, /*tp_dealloc*/
+  __pyx_tp_dealloc_7PlexSim_6Models_5Potts_Potts, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
   0, /*tp_print*/
   #endif
@@ -23790,23 +23790,23 @@ static PyTypeObject __pyx_type_6Models_5Potts_Potts = {
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   0, /*tp_doc*/
-  __pyx_tp_traverse_6Models_5Potts_Potts, /*tp_traverse*/
-  __pyx_tp_clear_6Models_5Potts_Potts, /*tp_clear*/
+  __pyx_tp_traverse_7PlexSim_6Models_5Potts_Potts, /*tp_traverse*/
+  __pyx_tp_clear_7PlexSim_6Models_5Potts_Potts, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_6Models_5Potts_Potts, /*tp_methods*/
+  __pyx_methods_7PlexSim_6Models_5Potts_Potts, /*tp_methods*/
   0, /*tp_members*/
-  __pyx_getsets_6Models_5Potts_Potts, /*tp_getset*/
+  __pyx_getsets_7PlexSim_6Models_5Potts_Potts, /*tp_getset*/
   0, /*tp_base*/
   0, /*tp_dict*/
   0, /*tp_descr_get*/
   0, /*tp_descr_set*/
-  offsetof(struct __pyx_obj_6Models_5Potts_Potts, __pyx_base.__dict__), /*tp_dictoffset*/
-  __pyx_pw_6Models_5Potts_5Potts_1__init__, /*tp_init*/
+  offsetof(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts, __pyx_base.__dict__), /*tp_dictoffset*/
+  __pyx_pw_7PlexSim_6Models_5Potts_5Potts_1__init__, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_6Models_5Potts_Potts, /*tp_new*/
+  __pyx_tp_new_7PlexSim_6Models_5Potts_Potts, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -23937,7 +23937,7 @@ static PyType_Slot __pyx_type___pyx_array_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_array_spec = {
-  "Models.Potts.array",
+  "PlexSim.Models.Potts.array",
   sizeof(struct __pyx_array_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE,
@@ -23983,7 +23983,7 @@ static PyBufferProcs __pyx_tp_as_buffer_array = {
 
 static PyTypeObject __pyx_type___pyx_array = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Potts.""array", /*tp_name*/
+  "PlexSim.Models.Potts.""array", /*tp_name*/
   sizeof(struct __pyx_array_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_array, /*tp_dealloc*/
@@ -24122,7 +24122,7 @@ static PyType_Slot __pyx_type___pyx_MemviewEnum_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
-  "Models.Potts.Enum",
+  "PlexSim.Models.Potts.Enum",
   sizeof(struct __pyx_MemviewEnum_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -24132,7 +24132,7 @@ static PyType_Spec __pyx_type___pyx_MemviewEnum_spec = {
 
 static PyTypeObject __pyx_type___pyx_MemviewEnum = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Potts.""Enum", /*tp_name*/
+  "PlexSim.Models.Potts.""Enum", /*tp_name*/
   sizeof(struct __pyx_MemviewEnum_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_Enum, /*tp_dealloc*/
@@ -24385,7 +24385,7 @@ static PyType_Slot __pyx_type___pyx_memoryview_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryview_spec = {
-  "Models.Potts.memoryview",
+  "PlexSim.Models.Potts.memoryview",
   sizeof(struct __pyx_memoryview_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -24431,7 +24431,7 @@ static PyBufferProcs __pyx_tp_as_buffer_memoryview = {
 
 static PyTypeObject __pyx_type___pyx_memoryview = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Potts.""memoryview", /*tp_name*/
+  "PlexSim.Models.Potts.""memoryview", /*tp_name*/
   sizeof(struct __pyx_memoryview_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc_memoryview, /*tp_dealloc*/
@@ -24580,7 +24580,7 @@ static PyType_Slot __pyx_type___pyx_memoryviewslice_slots[] = {
   {0, 0},
 };
 static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
-  "Models.Potts._memoryviewslice",
+  "PlexSim.Models.Potts._memoryviewslice",
   sizeof(struct __pyx_memoryviewslice_obj),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
@@ -24590,7 +24590,7 @@ static PyType_Spec __pyx_type___pyx_memoryviewslice_spec = {
 
 static PyTypeObject __pyx_type___pyx_memoryviewslice = {
   PyVarObject_HEAD_INIT(0, 0)
-  "Models.Potts.""_memoryviewslice", /*tp_name*/
+  "PlexSim.Models.Potts.""_memoryviewslice", /*tp_name*/
   sizeof(struct __pyx_memoryviewslice_obj), /*tp_basicsize*/
   0, /*tp_itemsize*/
   __pyx_tp_dealloc__memoryviewslice, /*tp_dealloc*/
@@ -24710,11 +24710,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
   {0, __pyx_k_MemoryView_of_r_at_0x_x, sizeof(__pyx_k_MemoryView_of_r_at_0x_x), 0, 0, 1, 0},
   {0, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
-  {0, __pyx_k_Models_Potts, sizeof(__pyx_k_Models_Potts), 0, 0, 1, 1},
-  {0, __pyx_k_Models_Potts_pyx, sizeof(__pyx_k_Models_Potts_pyx), 0, 0, 1, 0},
   {0, __pyx_k_O, sizeof(__pyx_k_O), 0, 0, 0, 1},
   {0, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 1, 0, 0},
   {0, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
+  {0, __pyx_k_PlexSim_Models_Potts, sizeof(__pyx_k_PlexSim_Models_Potts), 0, 0, 1, 1},
+  {0, __pyx_k_PlexSim_Models_Potts_pyx, sizeof(__pyx_k_PlexSim_Models_Potts_pyx), 0, 0, 1, 0},
   {0, __pyx_k_Potts, sizeof(__pyx_k_Potts), 0, 0, 1, 1},
   {0, __pyx_k_Potts___deepcopy, sizeof(__pyx_k_Potts___deepcopy), 0, 0, 1, 1},
   {0, __pyx_k_Potts___reduce, sizeof(__pyx_k_Potts___reduce), 0, 0, 1, 1},
@@ -24887,11 +24887,11 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
   {&__pyx_kp_s_MemoryView_of_r_at_0x_x, __pyx_k_MemoryView_of_r_at_0x_x, sizeof(__pyx_k_MemoryView_of_r_at_0x_x), 0, 0, 1, 0},
   {&__pyx_kp_s_MemoryView_of_r_object, __pyx_k_MemoryView_of_r_object, sizeof(__pyx_k_MemoryView_of_r_object), 0, 0, 1, 0},
-  {&__pyx_n_s_Models_Potts, __pyx_k_Models_Potts, sizeof(__pyx_k_Models_Potts), 0, 0, 1, 1},
-  {&__pyx_kp_s_Models_Potts_pyx, __pyx_k_Models_Potts_pyx, sizeof(__pyx_k_Models_Potts_pyx), 0, 0, 1, 0},
   {&__pyx_n_b_O, __pyx_k_O, sizeof(__pyx_k_O), 0, 0, 0, 1},
   {&__pyx_kp_u_Out_of_bounds_on_buffer_access_a, __pyx_k_Out_of_bounds_on_buffer_access_a, sizeof(__pyx_k_Out_of_bounds_on_buffer_access_a), 0, 1, 0, 0},
   {&__pyx_n_s_PickleError, __pyx_k_PickleError, sizeof(__pyx_k_PickleError), 0, 0, 1, 1},
+  {&__pyx_n_s_PlexSim_Models_Potts, __pyx_k_PlexSim_Models_Potts, sizeof(__pyx_k_PlexSim_Models_Potts), 0, 0, 1, 1},
+  {&__pyx_kp_s_PlexSim_Models_Potts_pyx, __pyx_k_PlexSim_Models_Potts_pyx, sizeof(__pyx_k_PlexSim_Models_Potts_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_Potts, __pyx_k_Potts, sizeof(__pyx_k_Potts), 0, 0, 1, 1},
   {&__pyx_n_s_Potts___deepcopy, __pyx_k_Potts___deepcopy, sizeof(__pyx_k_Potts___deepcopy), 0, 0, 1, 1},
   {&__pyx_n_s_Potts___reduce, __pyx_k_Potts___reduce, sizeof(__pyx_k_Potts___reduce), 0, 0, 1, 1},
@@ -25065,7 +25065,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "Models/Potts.pyx":40
+  /* "PlexSim/Models/Potts.pyx":40
  *         cdef np.ndarray H  = np.zeros(self.graph.number_of_nodes(), float)
  *         for node, nodeID in self.mapping.items():
  *             H[nodeID] = self.graph.nodes()[node].get('H', 0)             # <<<<<<<<<<<<<<
@@ -25076,7 +25076,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
 
-  /* "Models/Potts.pyx":219
+  /* "PlexSim/Models/Potts.pyx":219
  * 
  * 
  *             print("Computing mag per t")             # <<<<<<<<<<<<<<
@@ -25134,7 +25134,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_slice__12);
   __Pyx_GIVEREF(__pyx_slice__12);
 
-  /* "Models/Potts.pyx":74
+  /* "PlexSim/Models/Potts.pyx":74
  *         self.beta = 1 / value if value != 0 else np.inf
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
@@ -25144,9 +25144,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__15 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_nodesToUpdate); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Models_Potts_pyx, __pyx_n_s_updateState, 74, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_PlexSim_Models_Potts_pyx, __pyx_n_s_updateState, 74, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 74, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":84
+  /* "PlexSim/Models/Potts.pyx":84
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cpdef vector[double] siteEnergy(self, long[::1] states):             # <<<<<<<<<<<<<<
@@ -25156,9 +25156,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__17 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_states); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__17);
   __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Models_Potts_pyx, __pyx_n_s_siteEnergy, 84, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_PlexSim_Models_Potts_pyx, __pyx_n_s_siteEnergy, 84, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 84, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":191
+  /* "PlexSim/Models/Potts.pyx":191
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\
  *                               np.ndarray temps  = np.logspace(-3, 2, 20),\             # <<<<<<<<<<<<<<
@@ -25169,7 +25169,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
 
-  /* "Models/Potts.pyx":190
+  /* "PlexSim/Models/Potts.pyx":190
  *         return self._states
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\             # <<<<<<<<<<<<<<
@@ -25179,9 +25179,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__20 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_temps, __pyx_n_s_n, __pyx_n_s_burninSamples); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
-  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(4, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Models_Potts_pyx, __pyx_n_s_matchMagnetization, 190, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_codeobj__21 = (PyObject*)__Pyx_PyCode_New(4, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__20, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_PlexSim_Models_Potts_pyx, __pyx_n_s_matchMagnetization, 190, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__21)) __PYX_ERR(0, 190, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":271
+  /* "PlexSim/Models/Potts.pyx":271
  * 
  * 
  *     def __deepcopy__(self, memo):             # <<<<<<<<<<<<<<
@@ -25191,9 +25191,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__22 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_memo, __pyx_n_s_tmp, __pyx_n_s_i); if (unlikely(!__pyx_tuple__22)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__22);
   __Pyx_GIVEREF(__pyx_tuple__22);
-  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Models_Potts_pyx, __pyx_n_s_deepcopy_2, 271, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_codeobj__23 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__22, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_PlexSim_Models_Potts_pyx, __pyx_n_s_deepcopy_2, 271, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__23)) __PYX_ERR(0, 271, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":277
+  /* "PlexSim/Models/Potts.pyx":277
  *         return tmp
  * 
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
@@ -25203,9 +25203,9 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__24 = PyTuple_Pack(3, __pyx_n_s_self, __pyx_n_s_tmp, __pyx_n_s_i); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 277, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__24);
   __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Models_Potts_pyx, __pyx_n_s_reduce, 277, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_codeobj__25 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 3, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__24, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_PlexSim_Models_Potts_pyx, __pyx_n_s_reduce, 277, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__25)) __PYX_ERR(0, 277, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":283
+  /* "PlexSim/Models/Potts.pyx":283
  * 
  * 
  * def rebuild(**kwargs):             # <<<<<<<<<<<<<<
@@ -25215,7 +25215,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __pyx_tuple__26 = PyTuple_Pack(2, __pyx_n_s_kwargs, __pyx_n_s_tmp); if (unlikely(!__pyx_tuple__26)) __PYX_ERR(0, 283, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__26);
   __Pyx_GIVEREF(__pyx_tuple__26);
-  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS|CO_VARKEYWORDS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_Models_Potts_pyx, __pyx_n_s_rebuild, 283, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_codeobj__27 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS|CO_VARKEYWORDS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__26, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_PlexSim_Models_Potts_pyx, __pyx_n_s_rebuild, 283, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__27)) __PYX_ERR(0, 283, __pyx_L1_error)
 
   /* "View.MemoryView":300
  *         return self.name
@@ -25338,11 +25338,11 @@ if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 1, __pyx_L1_error)
   if (__Pyx_InitString(__pyx_string_tab[22], &__pyx_n_s_MemoryError) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[23], &__pyx_kp_s_MemoryView_of_r_at_0x_x) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[24], &__pyx_kp_s_MemoryView_of_r_object) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[25], &__pyx_n_s_Models_Potts) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[26], &__pyx_kp_s_Models_Potts_pyx) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[27], &__pyx_n_b_O) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[28], &__pyx_kp_u_Out_of_bounds_on_buffer_access_a) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
-  if (__Pyx_InitString(__pyx_string_tab[29], &__pyx_n_s_PickleError) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[25], &__pyx_n_b_O) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[26], &__pyx_kp_u_Out_of_bounds_on_buffer_access_a) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[27], &__pyx_n_s_PickleError) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[28], &__pyx_n_s_PlexSim_Models_Potts) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
+  if (__Pyx_InitString(__pyx_string_tab[29], &__pyx_kp_s_PlexSim_Models_Potts_pyx) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[30], &__pyx_n_s_Potts) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[31], &__pyx_n_s_Potts___deepcopy) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
   if (__Pyx_InitString(__pyx_string_tab[32], &__pyx_n_s_Potts___reduce) < 0) __PYX_ERR(0, 1, __pyx_L1_error);
@@ -25558,51 +25558,51 @@ static int __Pyx_modinit_type_init_code(void) {
   __pyx_ptype_6Models_6Models_Model = __Pyx_ImportType(__pyx_t_1, "Models.Models", "Model", sizeof(struct __pyx_obj_6Models_6Models_Model), __Pyx_ImportType_CheckSize_Warn);
    if (!__pyx_ptype_6Models_6Models_Model) __PYX_ERR(0, 1, __pyx_L1_error)
   __pyx_vtabptr_6Models_6Models_Model = (struct __pyx_vtabstruct_6Models_6Models_Model*)__Pyx_GetVtable(__pyx_ptype_6Models_6Models_Model); if (unlikely(!__pyx_vtabptr_6Models_6Models_Model)) __PYX_ERR(0, 1, __pyx_L1_error)
-  __pyx_vtabptr_6Models_5Potts_Potts = &__pyx_vtable_6Models_5Potts_Potts;
-  __pyx_vtable_6Models_5Potts_Potts.__pyx_base = *__pyx_vtabptr_6Models_6Models_Model;
-  __pyx_vtable_6Models_5Potts_Potts.__pyx_base.updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_6Models_5Potts_5Potts_updateState;
-  __pyx_vtable_6Models_5Potts_Potts.__pyx_base._updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice))__pyx_f_6Models_5Potts_5Potts__updateState;
-  __pyx_vtable_6Models_5Potts_Potts.energy = (std::vector<double>  (*)(struct __pyx_obj_6Models_5Potts_Potts *, int, __Pyx_memviewslice))__pyx_f_6Models_5Potts_5Potts_energy;
-  __pyx_vtable_6Models_5Potts_Potts.hamiltonian = (double (*)(struct __pyx_obj_6Models_5Potts_Potts *, long, long))__pyx_f_6Models_5Potts_5Potts_hamiltonian;
-  __pyx_vtable_6Models_5Potts_Potts.matchMagnetization = (PyArrayObject *(*)(struct __pyx_obj_6Models_5Potts_Potts *, int __pyx_skip_dispatch, struct __pyx_opt_args_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args))__pyx_f_6Models_5Potts_5Potts_matchMagnetization;
-  __pyx_vtable_6Models_5Potts_Potts.siteEnergy = (std::vector<double>  (*)(struct __pyx_obj_6Models_5Potts_Potts *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_6Models_5Potts_5Potts_siteEnergy;
+  __pyx_vtabptr_7PlexSim_6Models_5Potts_Potts = &__pyx_vtable_7PlexSim_6Models_5Potts_Potts;
+  __pyx_vtable_7PlexSim_6Models_5Potts_Potts.__pyx_base = *__pyx_vtabptr_6Models_6Models_Model;
+  __pyx_vtable_7PlexSim_6Models_5Potts_Potts.__pyx_base.updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_7PlexSim_6Models_5Potts_5Potts_updateState;
+  __pyx_vtable_7PlexSim_6Models_5Potts_Potts.__pyx_base._updateState = (__Pyx_memviewslice (*)(struct __pyx_obj_6Models_6Models_Model *, __Pyx_memviewslice))__pyx_f_7PlexSim_6Models_5Potts_5Potts__updateState;
+  __pyx_vtable_7PlexSim_6Models_5Potts_Potts.energy = (std::vector<double>  (*)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, int, __Pyx_memviewslice))__pyx_f_7PlexSim_6Models_5Potts_5Potts_energy;
+  __pyx_vtable_7PlexSim_6Models_5Potts_Potts.hamiltonian = (double (*)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, long, long))__pyx_f_7PlexSim_6Models_5Potts_5Potts_hamiltonian;
+  __pyx_vtable_7PlexSim_6Models_5Potts_Potts.matchMagnetization = (PyArrayObject *(*)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, int __pyx_skip_dispatch, struct __pyx_opt_args_7PlexSim_6Models_5Potts_5Potts_matchMagnetization *__pyx_optional_args))__pyx_f_7PlexSim_6Models_5Potts_5Potts_matchMagnetization;
+  __pyx_vtable_7PlexSim_6Models_5Potts_Potts.siteEnergy = (std::vector<double>  (*)(struct __pyx_obj_7PlexSim_6Models_5Potts_Potts *, __Pyx_memviewslice, int __pyx_skip_dispatch))__pyx_f_7PlexSim_6Models_5Potts_5Potts_siteEnergy;
   #if CYTHON_COMPILING_IN_LIMITED_API
   __pyx_t_2 = PyTuple_Pack(1, (PyObject *)__pyx_ptype_6Models_6Models_Model); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 19, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_type_6Models_5Potts_Potts = PyType_FromSpecWithBases(&__pyx_type_6Models_5Potts_Potts_spec, __pyx_t_2); if (unlikely(!__pyx_type_6Models_5Potts_Potts)) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_type_7PlexSim_6Models_5Potts_Potts = PyType_FromSpecWithBases(&__pyx_type_7PlexSim_6Models_5Potts_Potts_spec, __pyx_t_2); if (unlikely(!__pyx_type_7PlexSim_6Models_5Potts_Potts)) __PYX_ERR(0, 19, __pyx_L1_error)
   __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
   #else
-  __pyx_type_6Models_5Potts_Potts.tp_base = __pyx_ptype_6Models_6Models_Model;
-  if (__Pyx_PyType_Ready(&__pyx_type_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  __pyx_type_7PlexSim_6Models_5Potts_Potts.tp_base = __pyx_ptype_6Models_6Models_Model;
+  if (__Pyx_PyType_Ready(&__pyx_type_7PlexSim_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
   #if PY_MAJOR_VERSION < 3
-  __pyx_type_6Models_5Potts_Potts.tp_print = 0;
+  __pyx_type_7PlexSim_6Models_5Potts_Potts.tp_print = 0;
   #endif
   #endif
   #if CYTHON_COMPILING_IN_CPYTHON
   {
-    PyObject *wrapper = PyObject_GetAttrString((PyObject *)&__pyx_type_6Models_5Potts_Potts, "__init__"); if (unlikely(!wrapper)) __PYX_ERR(0, 19, __pyx_L1_error)
+    PyObject *wrapper = PyObject_GetAttrString((PyObject *)&__pyx_type_7PlexSim_6Models_5Potts_Potts, "__init__"); if (unlikely(!wrapper)) __PYX_ERR(0, 19, __pyx_L1_error)
     if (__Pyx_IS_TYPE(wrapper, &PyWrapperDescr_Type)) {
-      __pyx_wrapperbase_6Models_5Potts_5Potts___init__ = *((PyWrapperDescrObject *)wrapper)->d_base;
-      __pyx_wrapperbase_6Models_5Potts_5Potts___init__.doc = __pyx_doc_6Models_5Potts_5Potts___init__;
-      ((PyWrapperDescrObject *)wrapper)->d_base = &__pyx_wrapperbase_6Models_5Potts_5Potts___init__;
+      __pyx_wrapperbase_7PlexSim_6Models_5Potts_5Potts___init__ = *((PyWrapperDescrObject *)wrapper)->d_base;
+      __pyx_wrapperbase_7PlexSim_6Models_5Potts_5Potts___init__.doc = __pyx_doc_7PlexSim_6Models_5Potts_5Potts___init__;
+      ((PyWrapperDescrObject *)wrapper)->d_base = &__pyx_wrapperbase_7PlexSim_6Models_5Potts_5Potts___init__;
     }
   }
   #endif
   #if CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_SetVtable(__pyx_type_6Models_5Potts_Potts, __pyx_vtabptr_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7PlexSim_6Models_5Potts_Potts, __pyx_vtabptr_7PlexSim_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
   #else
-  if (__Pyx_SetVtable(__pyx_type_6Models_5Potts_Potts.tp_dict, __pyx_vtabptr_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
-  if (__Pyx_MergeVtables(&__pyx_type_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (__Pyx_SetVtable(__pyx_type_7PlexSim_6Models_5Potts_Potts.tp_dict, __pyx_vtabptr_7PlexSim_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (__Pyx_MergeVtables(&__pyx_type_7PlexSim_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
   #endif
   #if CYTHON_COMPILING_IN_LIMITED_API
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Potts, __pyx_type_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Potts, __pyx_type_7PlexSim_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
   #else
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Potts, (PyObject *)&__pyx_type_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_Potts, (PyObject *)&__pyx_type_7PlexSim_6Models_5Potts_Potts) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
   #endif
   #if CYTHON_COMPILING_IN_LIMITED_API
-  __pyx_ptype_6Models_5Potts_Potts = (PyTypeObject *)__pyx_type_6Models_5Potts_Potts;
+  __pyx_ptype_7PlexSim_6Models_5Potts_Potts = (PyTypeObject *)__pyx_type_7PlexSim_6Models_5Potts_Potts;
   #else
-  __pyx_ptype_6Models_5Potts_Potts = &__pyx_type_6Models_5Potts_Potts;
+  __pyx_ptype_7PlexSim_6Models_5Potts_Potts = &__pyx_type_7PlexSim_6Models_5Potts_Potts;
   #endif
   __pyx_vtabptr_array = &__pyx_vtable_array;
   __pyx_vtable_array.get_memview = (PyObject *(*)(struct __pyx_array_obj *))__pyx_array_get_memview;
@@ -26058,14 +26058,14 @@ if (!__Pyx_RefNanny) {
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_Models__Potts) {
+  if (__pyx_module_is_main_PlexSim__Models__Potts) {
     if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name_2, __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "Models.Potts")) {
-      if (unlikely((PyDict_SetItemString(modules, "Models.Potts", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "PlexSim.Models.Potts")) {
+      if (unlikely((PyDict_SetItemString(modules, "PlexSim.Models.Potts", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -26086,7 +26086,7 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "Models/Potts.pyx":6
+  /* "PlexSim/Models/Potts.pyx":6
  * 
  * # from models cimport Model
  * import copy             # <<<<<<<<<<<<<<
@@ -26098,7 +26098,7 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_copy, __pyx_t_1) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":7
+  /* "PlexSim/Models/Potts.pyx":7
  * # from models cimport Model
  * import copy
  * from tqdm import tqdm             # <<<<<<<<<<<<<<
@@ -26119,7 +26119,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":8
+  /* "PlexSim/Models/Potts.pyx":8
  * import copy
  * from tqdm import tqdm
  * import multiprocessing as mp             # <<<<<<<<<<<<<<
@@ -26131,7 +26131,7 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_mp, __pyx_t_2) < 0) __PYX_ERR(0, 8, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":9
+  /* "PlexSim/Models/Potts.pyx":9
  * from tqdm import tqdm
  * import multiprocessing as mp
  * import numpy  as np             # <<<<<<<<<<<<<<
@@ -26143,7 +26143,7 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_2) < 0) __PYX_ERR(0, 9, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":23
+  /* "PlexSim/Models/Potts.pyx":23
  *                         graph,\
  *                         t = 1,\
  *                         agentStates = [0, 1],\             # <<<<<<<<<<<<<<
@@ -26162,33 +26162,33 @@ if (!__Pyx_RefNanny) {
   __Pyx_GIVEREF(__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":74
+  /* "PlexSim/Models/Potts.pyx":74
  *         self.beta = 1 / value if value != 0 else np.inf
  * 
  *     cpdef long[::1] updateState(self, long[::1] nodesToUpdate):             # <<<<<<<<<<<<<<
  *         return self._updateState(nodesToUpdate)
  * 
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_5Potts_5Potts_3updateState, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts_updateState, NULL, __pyx_n_s_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_5Potts_5Potts_3updateState, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts_updateState, NULL, __pyx_n_s_PlexSim_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__16)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_6Models_5Potts_Potts->tp_dict, __pyx_n_s_updateState, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts->tp_dict, __pyx_n_s_updateState, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  PyType_Modified(__pyx_ptype_6Models_5Potts_Potts);
+  PyType_Modified(__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
 
-  /* "Models/Potts.pyx":84
+  /* "PlexSim/Models/Potts.pyx":84
  *     @cython.initializedcheck(False)
  *     @cython.overflowcheck(False)
  *     cpdef vector[double] siteEnergy(self, long[::1] states):             # <<<<<<<<<<<<<<
  *         cdef:
  *             vector[double] siteEnergy
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_5Potts_5Potts_5siteEnergy, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts_siteEnergy, NULL, __pyx_n_s_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__18)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_5Potts_5Potts_5siteEnergy, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts_siteEnergy, NULL, __pyx_n_s_PlexSim_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__18)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_6Models_5Potts_Potts->tp_dict, __pyx_n_s_siteEnergy, __pyx_t_2) < 0) __PYX_ERR(0, 84, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts->tp_dict, __pyx_n_s_siteEnergy, __pyx_t_2) < 0) __PYX_ERR(0, 84, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  PyType_Modified(__pyx_ptype_6Models_5Potts_Potts);
+  PyType_Modified(__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
 
-  /* "Models/Potts.pyx":191
+  /* "PlexSim/Models/Potts.pyx":191
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\
  *                               np.ndarray temps  = np.logspace(-3, 2, 20),\             # <<<<<<<<<<<<<<
@@ -26208,7 +26208,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_GIVEREF((PyObject *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":192
+  /* "PlexSim/Models/Potts.pyx":192
  *     cpdef  np.ndarray matchMagnetization(self,\
  *                               np.ndarray temps  = np.logspace(-3, 2, 20),\
  *                               int n             = int(1e3),\             # <<<<<<<<<<<<<<
@@ -26221,7 +26221,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_k__4 = __pyx_t_3;
 
-  /* "Models/Potts.pyx":191
+  /* "PlexSim/Models/Potts.pyx":191
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\
  *                               np.ndarray temps  = np.logspace(-3, 2, 20),\             # <<<<<<<<<<<<<<
@@ -26241,7 +26241,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_GIVEREF((PyObject *)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "Models/Potts.pyx":192
+  /* "PlexSim/Models/Potts.pyx":192
  *     cpdef  np.ndarray matchMagnetization(self,\
  *                               np.ndarray temps  = np.logspace(-3, 2, 20),\
  *                               int n             = int(1e3),\             # <<<<<<<<<<<<<<
@@ -26254,7 +26254,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_k__4 = __pyx_t_3;
 
-  /* "Models/Potts.pyx":191
+  /* "PlexSim/Models/Potts.pyx":191
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\
  *                               np.ndarray temps  = np.logspace(-3, 2, 20),\             # <<<<<<<<<<<<<<
@@ -26271,7 +26271,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (!(likely(((__pyx_t_2) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_2, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 191, __pyx_L1_error)
 
-  /* "Models/Potts.pyx":192
+  /* "PlexSim/Models/Potts.pyx":192
  *     cpdef  np.ndarray matchMagnetization(self,\
  *                               np.ndarray temps  = np.logspace(-3, 2, 20),\
  *                               int n             = int(1e3),\             # <<<<<<<<<<<<<<
@@ -26285,7 +26285,7 @@ if (!__Pyx_RefNanny) {
   __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 192, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
 
-  /* "Models/Potts.pyx":190
+  /* "PlexSim/Models/Potts.pyx":190
  *         return self._states
  * 
  *     cpdef  np.ndarray matchMagnetization(self,\             # <<<<<<<<<<<<<<
@@ -26303,53 +26303,53 @@ if (!__Pyx_RefNanny) {
   PyTuple_SET_ITEM(__pyx_t_4, 2, __pyx_int_0);
   __pyx_t_2 = 0;
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_5Potts_5Potts_7matchMagnetization, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts_matchMagnetization, NULL, __pyx_n_s_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_5Potts_5Potts_7matchMagnetization, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts_matchMagnetization, NULL, __pyx_n_s_PlexSim_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__21)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_1, __pyx_t_4);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_6Models_5Potts_Potts->tp_dict, __pyx_n_s_matchMagnetization, __pyx_t_1) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts->tp_dict, __pyx_n_s_matchMagnetization, __pyx_t_1) < 0) __PYX_ERR(0, 190, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  PyType_Modified(__pyx_ptype_6Models_5Potts_Potts);
+  PyType_Modified(__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
 
-  /* "Models/Potts.pyx":271
+  /* "PlexSim/Models/Potts.pyx":271
  * 
  * 
  *     def __deepcopy__(self, memo):             # <<<<<<<<<<<<<<
  *         tmp = {i: getattr(self, i) for i in dir(self)}
  *         tmp = Potts(**tmp)
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_5Potts_5Potts_9__deepcopy__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts___deepcopy, NULL, __pyx_n_s_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_5Potts_5Potts_9__deepcopy__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts___deepcopy, NULL, __pyx_n_s_PlexSim_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__23)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_6Models_5Potts_Potts->tp_dict, __pyx_n_s_deepcopy_2, __pyx_t_1) < 0) __PYX_ERR(0, 271, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts->tp_dict, __pyx_n_s_deepcopy_2, __pyx_t_1) < 0) __PYX_ERR(0, 271, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  PyType_Modified(__pyx_ptype_6Models_5Potts_Potts);
+  PyType_Modified(__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
 
-  /* "Models/Potts.pyx":277
+  /* "PlexSim/Models/Potts.pyx":277
  *         return tmp
  * 
  *     def __reduce__(self):             # <<<<<<<<<<<<<<
  *         tmp = {i: getattr(self, i) for i in dir(self)}
  *         return (rebuild, tmp)
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_5Potts_5Potts_11__reduce__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts___reduce, NULL, __pyx_n_s_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_5Potts_5Potts_11__reduce__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_Potts___reduce, NULL, __pyx_n_s_PlexSim_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__25)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 277, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_6Models_5Potts_Potts->tp_dict, __pyx_n_s_reduce, __pyx_t_1) < 0) __PYX_ERR(0, 277, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_7PlexSim_6Models_5Potts_Potts->tp_dict, __pyx_n_s_reduce, __pyx_t_1) < 0) __PYX_ERR(0, 277, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  PyType_Modified(__pyx_ptype_6Models_5Potts_Potts);
+  PyType_Modified(__pyx_ptype_7PlexSim_6Models_5Potts_Potts);
 
-  /* "Models/Potts.pyx":283
+  /* "PlexSim/Models/Potts.pyx":283
  * 
  * 
  * def rebuild(**kwargs):             # <<<<<<<<<<<<<<
  *     cdef Potts tmp = Potts(**kwargs)
  *     tmp.nudges = kwargs.get('nudges').copy()
  */
-  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_6Models_5Potts_1rebuild, 0, __pyx_n_s_rebuild, NULL, __pyx_n_s_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 283, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CyFunction_New(&__pyx_mdef_7PlexSim_6Models_5Potts_1rebuild, 0, __pyx_n_s_rebuild, NULL, __pyx_n_s_PlexSim_Models_Potts, __pyx_d, ((PyObject *)__pyx_codeobj__27)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 283, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_rebuild, __pyx_t_1) < 0) __PYX_ERR(0, 283, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "Models/Potts.pyx":1
+  /* "PlexSim/Models/Potts.pyx":1
  * # distutils: language=c++             # <<<<<<<<<<<<<<
  * from Models.Models cimport Model
  * from libcpp.vector cimport vector
@@ -26521,13 +26521,13 @@ if (!__Pyx_RefNanny) {
   __Pyx_XDECREF(__pyx_t_4);
   if (__pyx_m) {
     if (__pyx_d) {
-      __Pyx_AddTraceback("init Models.Potts", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init PlexSim.Models.Potts", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     #if !CYTHON_COMPILING_IN_LIMITED_API
     Py_CLEAR(__pyx_m);
     #endif
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init Models.Potts");
+    PyErr_SetString(PyExc_ImportError, "init PlexSim.Models.Potts");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();

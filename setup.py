@@ -16,5 +16,5 @@ __version__             = '1.0'
 # clang seems faster on my machine
 from subprocess import run
 
-run('conda install -c conda-forge --file requirements.txt'.split())
+#run('conda install -c conda-forge --file requirements.txt'.split())
 import compile

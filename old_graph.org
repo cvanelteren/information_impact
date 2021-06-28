@@ -1,0 +1,17 @@
+
+#+begin_src jupyter-python
+from Plexsim.models import FastIsing
+
+#+end_src
+
+#+RESULTS:
+:RESULTS:
+# [goto error]
+: 
+: ModuleNotFoundErrorTraceback (most recent call last)
+: <ipython-input-136-923b1f7c1d10> in <module>
+: ----> 1 from Plexsim.models import FastIsing
+:       2 
+: 
+: ModuleNotFoundError: No module named 'Plexsim'
+:END:

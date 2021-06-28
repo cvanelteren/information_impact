@@ -10,8 +10,8 @@ add = []
 try:
     clangCheck = run("clang --version".split(), capture_output= True)
     if not clangCheck.returncode and 'fs4' not in os.uname().nodename:
-        os.environ['CXXFLAGS'] = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -fast-math -Ofast -std=c++11 -march=native"
-        os.environ['CC']       = "clang++ -Xclang -fopenmp -Wall -fno-wrapv -ffast-math -Ofast -std=c++11 -march=native"
+        os.environ['CXXFLAGS'] = "g++ -fopenmp -Wall -fno-wrapv -fast-math -Ofast -std=c++17 -march=native"
+        os.environ['CC']       = "g++ -fopenmp -Wall -fno-wrapv -ffast-math -Ofast -std=c++17 -march=native"
         add.append('-lomp') # clang openmp stuff
 except:
     pass
@@ -57,7 +57,6 @@ setup(\
             # annotate            = True,\ # set to true for performance html
             language_level      = 3,\
             compiler_directives = dict(\
-                                    fast_gil       = True,\
                                     # binding      = True,\
                                     # embedsignature = True,\
                                     ),\

@@ -1,0 +1,252 @@
+.gitignore
+.ignore
+1548025318.5751357.linregress.tex
+1548347769.6300871.linregress.tex
+Potts.ipynb
+TODO.md
+Untitled.ipynb
+__init__.py
+analyse.py
+analyse2.py
+analyse_multi.py
+build.sh
+common.py
+compile.py
+control.py
+control_run.py
+control_slurm.sh
+crap_graph10.pickle
+crap_graph2.pickle
+crap_graph60.pickle
+craph_graph.pickle
+craph_graph2.pickle
+craph_graph3.pickle
+dataConvert.py
+edge.list
+environment.yml
+fig_time_panel.py
+iex.py
+index.html
+main.py
+main.sh
+manual.md
+nb.tpl
+notes_rick.md
+perc.py
+percolation.pxd
+potts.pyd
+readme.md
+rerunthese.pickle
+rerunthese2.pickle
+run.py
+sensitivity.py
+setup.py
+single_run.py
+single_run.sh
+slurm.sh
+test.html
+test.pickle
+test.py
+testSRsmall.pickle
+test_graph.py
+test_sampling.py
+test_this.pickle
+throw.py
+todo.org
+try_again.pickle
+untitled0.py
+weird.png
+.ipynb_checkpoints/Advanced_example-checkpoint.ipynb
+.ipynb_checkpoints/Bootstrapping-checkpoint.ipynb
+.ipynb_checkpoints/Potts-checkpoint.ipynb
+.ipynb_checkpoints/Reverse calculation-checkpoint.ipynb
+.ipynb_checkpoints/Untitled-checkpoint.ipynb
+.ipynb_checkpoints/Untitled4-checkpoint.ipynb
+.ipynb_checkpoints/Untitled5-checkpoint.ipynb
+Examples/Control_T_1_N_3.pickle
+Examples/Nudge_T_1_N_3.pickle
+Examples/Pulse_T_1_N_3.pickle
+Examples/examplePulse.py
+Examples/showMulti.py
+Figures/.png
+Figures/Thumbs.db
+Graphs/External_min1_1.csv
+Graphs/Graph_min1_1.csv
+Graphs/Psycho network.ipynb
+Graphs/aves-barn-swallow-non-physical.edges
+Graphs/bn-cat-mixed-species_brain_1.edges
+Graphs/new.pickle
+Graphs/weighted_person-person_projection_anonymous_combined.graphml
+Models/Circular.cpp
+Models/Circular.pxd
+Models/Circular.pyx
+Models/FastIsing.cpp
+Models/FastIsing.pxd
+Models/FastIsing.pyx
+Models/Kuramoto.py
+Models/Models.cpp
+Models/Models.pxd
+Models/Models.pyx
+Models/Percolation.cpp
+Models/Percolation.pxd
+Models/Percolation.pyx
+Models/Potts.cpp
+Models/Potts.pxd
+Models/Potts.pyx
+Models/RBN.py
+Models/SIS.py
+Models/Schelling.pxd
+Models/Schelling.pyxx
+Models/XOR.py
+Models/__init__.py
+Models/artNet.py
+Models/mt19937.h
+Models/parallel.pxd
+Models/sir.py
+Models/vfastexp.h
+Notebooks/4statepotts.gif
+Notebooks/Advanced_example.ipynb
+Notebooks/Axelrod.ipynb
+Notebooks/Circular CA.ipynb
+Notebooks/Forced driver node.ipynb
+Notebooks/Intervention_illustration.ipynb
+Notebooks/Isomorphism test.ipynb
+Notebooks/KL-divergence and MI.ipynb
+Notebooks/Kite_tmp.ipynb
+Notebooks/MI_and_causal.html
+Notebooks/MI_and_causal.ipynb
+Notebooks/Notes on nudges.ipynb
+Notebooks/Percolation theory.ipynb
+Notebooks/Potts.ipynb
+Notebooks/Potts_explanation.ipynb
+Notebooks/Presentation.ipynb
+Notebooks/RNF.ipynb
+Notebooks/Schelling model.ipynb
+Notebooks/Simple_example.ipynb
+Notebooks/THIS.pickle
+Notebooks/Test_optimizing.ipynb
+Notebooks/Untitled.ipynb
+Notebooks/Untitled1.ipynb
+Notebooks/Untitled2.ipynb
+Notebooks/Untitled3.ipynb
+Notebooks/Untitled4.ipynb
+Notebooks/Untitled5.ipynb
+Notebooks/Untitled6.ipynb
+Notebooks/Untitled7.ipynb
+Notebooks/Untitled8.ipynb
+Notebooks/Untitled9.ipynb
+Notebooks/__init__.py
+Notebooks/callback.html
+Notebooks/codebase_overview.png
+Notebooks/crap_graph2.pickle
+Notebooks/crimes.ipynb
+Notebooks/dashboard.js
+Notebooks/dashboard_template.tpl
+Notebooks/database test.ipynb
+Notebooks/example_distribution.ipynb
+Notebooks/figure_out.ipynb
+Notebooks/graph.html
+Notebooks/histogram.html
+Notebooks/holoviews_tryout.ipynb
+Notebooks/ising_low.gif
+Notebooks/js_events.html
+Notebooks/js_on_change.html
+Notebooks/matplotlib_interactive_tryouts.ipynb
+Notebooks/nb.tpl
+Notebooks/phase.py
+Notebooks/presentation.ipynb
+Notebooks/random graphs dashboard.ipynb
+Notebooks/select.html
+Notebooks/sensitivity nudge tests.ipynb
+Notebooks/showrick.png
+Notebooks/summary_results_all.eps
+Notebooks/temp.html
+Notebooks/test.mp4
+Notebooks/test.py
+Notebooks/tree.dot
+Notebooks/tree.png
+Notebooks/vis.py
+Notebooks/.ipynb_checkpoints/Advanced_example-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Axelrod-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Circular CA-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Forced driver node-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Intervention_illustration-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Isomorphism test-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/KL-divergence and MI-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Kite_tmp-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/MI_and_causal-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Notes on nudges-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Percolation theory-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Potts-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Potts_explanation-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Presentation-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/RNF-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Reverse calculation-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Schelling model-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Simple_example-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Test_optimizing-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled1-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled2-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled3-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled4-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled5-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled6-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled7-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled8-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/Untitled9-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/crimes-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/database test-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/example_distribution-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/figure_out-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/holoviews_tryout-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/matplotlib_interactive_tryouts-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/presentation-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/random graphs dashboard-checkpoint.ipynb
+Notebooks/.ipynb_checkpoints/sensitivity nudge tests-checkpoint.ipynb
+Notebooks/old/Bootstrapping.ipynb
+Notebooks/old/Information theory Izhikevich tutorial.ipynb
+Notebooks/old/Kuramoto check.ipynb
+Notebooks/old/Kuramoto workbook.ipynb
+Notebooks/old/Reverse calculation.ipynb
+Notebooks/old/SIS.ipynb
+Notebooks/old/Strength in weak ties tests.ipynb
+Notebooks/old/TestingIfItWorks.ipynb
+Notebooks/old/Untitled.ipynb
+Notebooks/old/Untitled1.ipynb
+Notebooks/old/Week report  28 May.ipynb
+Notebooks/old/test ising model.ipynb
+PlexSim/Models/Circular.cpp
+PlexSim/Models/FastIsing.cpp
+PlexSim/Models/Models.cpp
+PlexSim/Models/Percolation.cpp
+PlexSim/Models/Potts.cpp
+Psycho/External_min1_1.csv
+Psycho/Graph_min1_1.csv
+Psycho/Psycho network.ipynb
+Psycho/new.pickle
+Toolbox/__init__.py
+Toolbox/infcy.cpp
+Toolbox/infcy.pxd
+Toolbox/infcy.pyx
+Toolbox/unstructured.h
+UNKNOWN.egg-info/PKG-INFO
+UNKNOWN.egg-info/SOURCES.txt
+UNKNOWN.egg-info/dependency_links.txt
+UNKNOWN.egg-info/not-zip-safe
+UNKNOWN.egg-info/top_level.txt
+Utils/IO.py
+Utils/__init__.py
+Utils/graph.py
+Utils/misc.py
+Utils/pipeline.py
+Utils/plotting.py
+Utils/proposalGraph.py
+Utils/stats.py
+bn/-home-casper-projects-it-.txt
+bn/-home-casper-projects-it-.txt 2
+bn/bn-cat-mixed-species_brain_1.edges
+test_code/main.py
+test_code/test_infcy.py
+test_code/test_loader.py
+test_code/test_models.py
