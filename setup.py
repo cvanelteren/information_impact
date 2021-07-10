@@ -9,7 +9,9 @@ import re, os
 from subprocess import run
 
 add = []
-compiler = "g++"
+compiler = "g++-10"
+os.environ['CXX'] = compiler
+os.environ["CC"] = compiler
 optFlag = "-Ofast"
 cppv = "2a"
 

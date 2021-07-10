@@ -1,6 +1,7 @@
 .gitignore
 .gitmodules
 MANIFEST.in
+__init__.py
 environment.yml
 manual.md
 readme.md
@@ -30,6 +31,13 @@ Graphs/weighted_person-person_projection_anonymous_combined.graphml
 Graphs/bn/-home-casper-projects-it-.txt
 Graphs/bn/-home-casper-projects-it-.txt 2
 Graphs/bn/bn-cat-mixed-species_brain_1.edges
+PlexSim/RBN.py
+PlexSim/SIS.py
+PlexSim/XOR.py
+PlexSim/__init__.py
+PlexSim/artNet.py
+PlexSim/kuramoto.py
+PlexSim/sir.py
 Psycho/External_min1_1.csv
 Psycho/Graph_min1_1.csv
 Psycho/Psycho network.ipynb
@@ -44,6 +52,8 @@ backup/main.py
 backup/main.sh
 backup/mainr.py
 backup/run.py
+bk/pottsis.c
+bk/prisoner.c
 core/infcy.cpp
 core/infcy.pxd
 core/infcy.pyx
@@ -55,6 +65,7 @@ imi/infcy.pxd
 imi/infcy.pyx
 imi/signal.cpp
 imi/signal.pxd
+imi/signal.pyx
 imi/tmp.txt
 imi.egg-info/PKG-INFO
 imi.egg-info/SOURCES.txt
@@ -89,6 +100,7 @@ imi/utils/stats.py
 imi/utils/utils.py
 imi/utils/.ob-jupyter/be728aedcb51b4fb84d6bcb56d496fc77530bb27.png
 imi/utils/.ob-jupyter/ed4bf838813d3c39d7152bd0433eba205735ab27.png
+slurm/.SRCINFO
 slurm/Task.py
 slurm/__init__.py
 slurm/do_task.py
@@ -99,6 +111,8 @@ slurm/readme.md
 slurm/run.py
 slurm/settings.bk
 slurm/settings.toml
+slurm/.ob-jupyter/73d7d4369dbde4c74b946c3c49a46d9baeb69b3f.png
+slurm/.ob-jupyter/ff5f408304cc055d3eebd10c8b74cfa67870c657.png
 slurm/configs/Potts_recursion1.py
 slurm/configs/Potts_recursion_center_focus.py
 slurm/configs/__init__.py

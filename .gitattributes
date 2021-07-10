@@ -1,0 +1,7 @@
+*.pyx linguist-language=C++
+*.pxd linguist-language=C++
+*.ipynb linguist-detectable=false
+Graphs/* linguist-vendored
+Psycho/* linguist-vendored
+data/* linguist-vendored
+Data/* linguist-vendored
