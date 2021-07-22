@@ -6,5 +6,5 @@ python run -c "settings.toml"
 file="./tasks.txt"
 while IFS= read -r line;
 do
-    sbatch -W ./run_single_task.sh "$line"
+    sbatch -W ./single_task.sh "$line"
 done < "$file"
