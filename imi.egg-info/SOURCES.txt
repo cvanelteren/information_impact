@@ -1,5 +1,7 @@
+.gitattributes
 .gitignore
 .gitmodules
+.projectile
 MANIFEST.in
 __init__.py
 environment.yml
@@ -8,6 +10,14 @@ readme.md
 requirements.txt
 setup.py
 test.py
+..bfg-report/2020-10-09/10-51-29/cache-stats.txt
+..bfg-report/2020-10-09/10-51-29/deleted-files.txt
+..bfg-report/2020-10-09/10-51-29/object-id-map.old-new.txt
+..bfg-report/2020-10-09/10-51-29/protected-dirt/e1d4d468-HEAD.csv
+..bfg-report/2020-10-09/10-54-17/protected-dirt/7039fcac-HEAD.csv
+.git.bfg-report/2020-04-30/10-28-51/cache-stats.txt
+.git.bfg-report/2020-04-30/10-28-51/deleted-files.txt
+.git.bfg-report/2020-04-30/10-28-51/object-id-map.old-new.txt
 .ipynb_checkpoints/Advanced_example-checkpoint.ipynb
 .ipynb_checkpoints/Bootstrapping-checkpoint.ipynb
 .ipynb_checkpoints/Potts-checkpoint.ipynb
@@ -15,6 +25,9 @@ test.py
 .ipynb_checkpoints/Untitled-checkpoint.ipynb
 .ipynb_checkpoints/Untitled4-checkpoint.ipynb
 .ipynb_checkpoints/Untitled5-checkpoint.ipynb
+.ob-jupyter/ac9c1c68ae1f3b7aa0cca933b4884f6eef95f0fc.png
+.ob-jupyter/be728aedcb51b4fb84d6bcb56d496fc77530bb27.png
+.ob-jupyter/cddde8c49f1f613837689b11e7f9aad73ed082c4.png
 Examples/Control_T_1_N_3.pickle
 Examples/Nudge_T_1_N_3.pickle
 Examples/Pulse_T_1_N_3.pickle
@@ -31,13 +44,6 @@ Graphs/weighted_person-person_projection_anonymous_combined.graphml
 Graphs/bn/-home-casper-projects-it-.txt
 Graphs/bn/-home-casper-projects-it-.txt 2
 Graphs/bn/bn-cat-mixed-species_brain_1.edges
-PlexSim/RBN.py
-PlexSim/SIS.py
-PlexSim/XOR.py
-PlexSim/__init__.py
-PlexSim/artNet.py
-PlexSim/kuramoto.py
-PlexSim/sir.py
 Psycho/External_min1_1.csv
 Psycho/Graph_min1_1.csv
 Psycho/Psycho network.ipynb
@@ -111,6 +117,7 @@ slurm/readme.md
 slurm/run.py
 slurm/settings.bk
 slurm/settings.toml
+slurm/simple_task.py
 slurm/.ob-jupyter/73d7d4369dbde4c74b946c3c49a46d9baeb69b3f.png
 slurm/.ob-jupyter/ff5f408304cc055d3eebd10c8b74cfa67870c657.png
 slurm/configs/Potts_recursion1.py
@@ -120,9 +127,9 @@ slurm/configs/barabasi_albert.py
 slurm/configs/powerlaw.py
 slurm/configs/powerlaw_graph.py
 slurm/experiments/__init__.py
+slurm/experiments/dummy.py
 slurm/experiments/kite.py
 slurm/experiments/psycho.py
-slurm/experiments/sample_experiment.py
 slurm/experiments/simple_connected.py
 slurm/experiments/sleep_experiment.py
 slurm/experiments/tipping.py

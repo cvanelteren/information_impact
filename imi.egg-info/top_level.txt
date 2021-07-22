@@ -1,3 +1,2 @@
-PlexSim
 imi
 slurm

@@ -13,4 +13,5 @@ psutil
 ## optionals
 jupyter
 pyprind
+click
 

@@ -9,5 +9,9 @@ Information toolbox for analyzing complex dynamical systems. The goal of the pac
 
 `python setup.py install` 
 
+Initialize plexsim
+`git submodule init`
+`git submodule update`
+
 # license
 This git repo is released under the GNU-GPLv3 license
