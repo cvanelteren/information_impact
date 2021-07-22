@@ -6,7 +6,6 @@
 #SBATCH -e %x-%j.err  # send stderr to errfile
 #SBATCH -t 48:00:00  # time requested in hour:minute:second
 #SBATCH --constraint=cpunode
-source activate
 
 echo $1
 srun python simple_task.py -r $1

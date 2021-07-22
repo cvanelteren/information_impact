@@ -91,9 +91,12 @@ class SimpleExperimentManager:
             task = pickle.load(task_file)
 
         output_file = SimpleExperimentManager.create_task_output_file(task)
+        print("Running task")
         results = task.run()
+        print("Saving")
         with open(output_file, "wb") as f:
             pickle.dump(results, f)
+        print("Done!")
 
     @staticmethod
     def create_task_output_file(task: Task) -> str:
