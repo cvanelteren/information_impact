@@ -60,7 +60,7 @@ class SimpleExperimentManager:
         else:
             print(f"Warning {experiment} not found!")
 
-            def create_tasks(self, worker: Worker) -> None:
+    def create_tasks(self, worker: Worker) -> None:
         """
         Puts all tasks of the worker into the task directory
         """

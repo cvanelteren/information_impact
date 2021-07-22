@@ -10,10 +10,13 @@ from subprocess import run
 
 add = []
 compiler = "g++-10"
+cppv = "20"
+if not "g14" in os.uname():
+    compiler = "g++"
+    cppv = "2a"
 os.environ['CXX'] = compiler
 os.environ["CC"] = compiler
 optFlag = "-Ofast"
-cppv = "2a"
 
 flags = (
     f"{optFlag} -march=native -std=c++{cppv} -flto "
