@@ -1,7 +1,7 @@
 #!/bin/sh
 # setup experiments
 source activate base
-python run -c "settings.toml"
+python simple_run.py -c "settings.toml"
 
 file="./tasks.txt"
 while IFS= read -r line;
