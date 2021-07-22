@@ -36,5 +36,6 @@
 #[experiments.tipping2]
 # [experiments.kite]
 #[experiments.psycho]
-[experiments.value_network_satisfaction]
+[experiments.dummy]
+# [experiments.value_network_satisfaction]
 # [experiments.value_stability]

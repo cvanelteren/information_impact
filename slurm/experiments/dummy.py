@@ -3,25 +3,26 @@ from slurm.Task import Task
 
 def setup(config: dict) -> list:
     tasks = []
-    for i in range(1):
+    for i in range(3):
         tasks.append(Experiment(config))
     return tasks
 
+
 class Experiment(Task):
-    def __init__(self, settings = {}, output_directory = "test_directory"):
-        super(Experiment, self).__init__(settings = settings,
-                                   output_directory = output_directory)
+    def __init__(self, settings={}, output_directory="test_directory"):
+        super(Experiment, self).__init__(
+            settings=settings, output_directory=output_directory
+        )
 
     def run(self):
-        return {"hello there" : "how do you do?"}
+        return {"hello there": "how do you do?"}
+
     def gen_id(self):
         return "test"
+
 
 # if __name__ == "__main__":
 #     tasks = setup(config)
 #     worker_settings = dict(id = id, deadline = deadline,
 #                            threshold = threshold)
 #     worker = Worker(tasks, **worker_settings)
-
-    
-
