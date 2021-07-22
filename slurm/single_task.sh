@@ -9,4 +9,4 @@
 source activate
 
 echo $1
-srun python simple_toml.py -r $1
+srun python simple_task.py -r $1
