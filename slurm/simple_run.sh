@@ -1,7 +1,4 @@
-#batch bullshit
-#
-
-
+#!/bin/sh
 # setup experiments
 source activate base
 python run -c "settings.toml"
