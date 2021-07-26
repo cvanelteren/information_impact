@@ -5,6 +5,7 @@
 MANIFEST.in
 __init__.py
 environment.yml
+license.txt
 manual.md
 readme.md
 requirements.txt
@@ -109,15 +110,20 @@ imi/utils/.ob-jupyter/ed4bf838813d3c39d7152bd0433eba205735ab27.png
 slurm/.SRCINFO
 slurm/Task.py
 slurm/__init__.py
+slurm/clean.sh
 slurm/do_task.py
 slurm/outline.png
 slurm/package-lock.json
 slurm/package.json
 slurm/readme.md
+slurm/requirements.txt
 slurm/run.py
 slurm/settings.bk
 slurm/settings.toml
 slurm/simple_task.py
+slurm/single_task.sh
+slurm/srun.sh
+slurm/tasks.txt
 slurm/.ob-jupyter/73d7d4369dbde4c74b946c3c49a46d9baeb69b3f.png
 slurm/.ob-jupyter/ff5f408304cc055d3eebd10c8b74cfa67870c657.png
 slurm/configs/Potts_recursion1.py
@@ -126,6 +132,7 @@ slurm/configs/__init__.py
 slurm/configs/barabasi_albert.py
 slurm/configs/powerlaw.py
 slurm/configs/powerlaw_graph.py
+slurm/data/test.pkl
 slurm/experiments/__init__.py
 slurm/experiments/dummy.py
 slurm/experiments/kite.py
@@ -151,6 +158,9 @@ slurm/shell/getData.sh
 slurm/shell/monitor.sh
 slurm/shell/run.sh
 slurm/shell/slurm_toml.sh
+slurm/tasks/1626942514.6376922-0-0.pkl
+slurm/tasks/1626942514.6376922-0-1.pkl
+slurm/tasks/1626942514.6376922-0-2.pkl
 slurm/tests/__init__.py
 slurm/tests/sample_experiment.py
 slurm/tests/sleep_experiment.py
