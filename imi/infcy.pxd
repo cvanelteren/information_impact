@@ -12,14 +12,14 @@ cdef class Simulator:
     cdef unordered_map[state_t, size_t] hist_map
 
     cpdef dict snapshots(self, size_t n_samples, size_t step=*,
-                         size_t n_jobs =*)
+                         int n_jobs =*)
 
-    cpdef dict running (self, \
-                        size_t n_samples,\
-                        size_t time_steps =*,\
-                        size_t steps = *,\
-                        bint center =*
-                        )
+    # cpdef dict running (self, \
+    #                     size_t n_samples,\
+    #                     size_t time_steps =*,\
+    #                     size_t steps = *,\
+    #                     bint center =*
+    #                     )
 
     cdef void bin_data(self, state_t[:, ::1] buffer,\
                        state_t[::1] target,\
@@ -29,9 +29,10 @@ cdef class Simulator:
 
     cpdef dict forward(self,\
                       # size_t n_samples =*,\
-                       dict snapshots,\
-                      size_t repeats =*,\
-                       np.ndarray time =*
+                       dict snapshots,
+                      size_t repeats =*,
+                       np.ndarray time =*,
+                       int n_jobs =*
                       )
 
     cpdef dict normalize(self,\

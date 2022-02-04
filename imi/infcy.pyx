@@ -1,4 +1,3 @@
-# cython: infer_types=True
 # distutils: language=c++
 # __author__ = 'Casper van Elteren'
 from tqdm import tqdm  # progress bar
@@ -48,7 +47,7 @@ cdef class Simulator:
             self.hist_map[i] = idx
 
     cpdef dict snapshots(self, size_t n_samples,
-                         size_t step=2, size_t n_jobs = -1):
+                         size_t step=2, int n_jobs = -1):
 #     if verbose:
         cdef state_t[::1] states
         # cdef double z = 1 # / <double> n_samples
@@ -66,17 +65,21 @@ cdef class Simulator:
         cdef:
             size_t nThreads = mp.cpu_count() - 1 if n_jobs == -1 else n_jobs
             SpawnVec models = self.model._spawn(nThreads)
-            node_id_t[:, :, ::1] r    = np.ndarray((nThreads, step, self.model.sampleSize), \
-                                                   dtype = np.uint)
+
+            # node_id_t[:, :, ::1] r    = np.ndarray(
+                            # (nThreads, step,
+                            # self.model.sampleSize),
+                                # dtype = np.uint)
 
 
         cdef size_t tid, s, i
         for i in prange(n_samples, nogil = True, num_threads = nThreads):
             tid = threadid()
-            r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
+            # r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
 
             for s in range(step):
-                (<Model> models[tid].ptr)._updateState(r[tid, s])
+                #(<Model> models[tid].ptr)._updateState(r[tid, s])
+                (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
 
             with gil:
                 tmp = tuple((<Model> models[tid].ptr).states)
@@ -89,53 +92,54 @@ cdef class Simulator:
         #     # self.model.reset()
         return snapshots
 
-    cpdef dict running(self,
-                       size_t n_samples,
-                       size_t time_steps=10,
-                       size_t steps=1,
-                       bint center=False):
-        """
-        Performs running window over :time_steps: for :n_samples: times separated with
-        :steps:.
-        :center: controls whether the buffer is centered, Default is that the last time index is the target state of the buffer.
-        """
+    # cpdef dict running(self,
+    #                    size_t n_samples,
+    #                    size_t time_steps=10,
+    #                    size_t steps=1,
+    #                    bint center=False):
+    #     """  Performs running  window over  :time_steps: for
+    #     :n_samples: times separated with :steps:.
 
-        # setup buffer
-        cdef:
-            tuple shape = (time_steps,
-                                            self.model.adj._nNodes,
-                                            self.model._nStates)
-            double[:, :, ::1] bin_buffer = np.zeros(shape)
-            state_t[:, ::1] buff = np.zeros(shape[:2], dtype=np.double)
+    #     :center:  controls whether  the buffer  is centered,
+    #     Default is  that the last  time index is  the target
+    #     state of the buffer. """
 
-        assert n_samples > time_steps, "time_steps needs to be bigger than number of samples"
-        # setup targets
-        cdef:
-            state_t[::1] target
-            size_t target_idx = time_steps // 2 if center else time_steps - 1
+    #     # setup buffer
+    #     cdef:
+    #         tuple shape = (time_steps,
+    #                                         self.model.adj._nNodes,
+    #                                         self.model._nStates)
+    #         double[:, :, ::1] bin_buffer = np.zeros(shape)
+    #         state_t[:, ::1] buff = np.zeros(shape[:2], dtype=np.double)
 
-        cdef dict conditional = {}, snapshots = {}
-        # start binning
-        # init sample
-        cdef size_t sample
-        cdef double z = 1/<double > n_samples
-        # init buffer
-        buff = self.model.simulate(time_steps)
-        for sample in range(n_samples):
-            target = buff[target_idx]
-            # obtain buffer or empty
-            bin_buffer = conditional.get(tuple(target), np.zeros(shape))
-            self.bin_data(buff, target, bin_buffer, 1)
+    #     assert n_samples > time_steps, "time_steps needs to be bigger than number of samples"
+    #     # setup targets
+    #     cdef:
+    #         state_t[::1] target
+    #         size_t target_idx = time_steps // 2 if center else time_steps - 1
 
-            conditional[tuple(target)] = conditional.get(
-                tuple(target), bin_buffer.base.copy())
-            snapshots[tuple(target)] = snapshots.get(tuple(target), 0) + 1.
+    #     cdef dict conditional = {}, snapshots = {}
+    #     # start binning
+    #     # init sample
+    #     cdef size_t sample
+    #     cdef double z = 1/<double > n_samples
+    #     # init buffer
+    #     buff = self.model.simulate(time_steps)
+    #     for sample in range(n_samples):
+    #         target = buff[target_idx]
+    #         # obtain buffer or empty
+    #         bin_buffer = conditional.get(tuple(target), np.zeros(shape))
+    #         self.bin_data(buff, target, bin_buffer, 1)
 
-            # roll buffers
-            buff = self.model.simulate(
-                time_steps * steps)[time_steps * steps - time_steps:, :]
+    #         conditional[tuple(target)] = conditional.get(
+    #             tuple(target), bin_buffer.base.copy())
+    #         snapshots[tuple(target)] = snapshots.get(tuple(target), 0) + 1.
 
-        return self.normalize(conditional, snapshots, True)
+    #         # roll buffers
+    #         buff = self.model.simulate(
+    #             time_steps * steps)[time_steps * steps - time_steps:, :]
+
+    #     return self.normalize(conditional, snapshots, True)
 
     cpdef dict normalize(self, dict conditional,
                          dict snapshots,
@@ -158,12 +162,12 @@ cdef class Simulator:
     cdef void bin_data(self,
                        state_t[:, ::1] buff,
                        state_t[::1] target,
-                       double[:, :, ::1] bin_buffer,
+                       double[:, :, ::1] &bin_buffer,
                        double Z=1) nogil:
 
         # reset
         cdef size_t idx
-        cdef size_t n = self.model.adj._nNodes
+        cdef size_t n = buff.shape[1]
         cdef size_t time_steps = buff.shape[0]
         # bin
         for t in range(time_steps):
@@ -176,13 +180,15 @@ cdef class Simulator:
                        dict snapshots,
                        size_t repeats=10,
                        np.ndarray time=np.arange(10),
+                       int n_jobs = -1,
                        ):
 
        from imi.utils.stats import check_allocation
        # setup buffers
+       #
+       cdef size_t cpus = mp.cpu_count() - 1
        cdef:
           size_t time_steps = len(time)
-          size_t cpus = mp.cpu_count() - 1
 
           state_t[:, :, ::1] thread_state = np.zeros((cpus, time_steps,
                                                       self.model.adj._nNodes),
@@ -202,7 +208,12 @@ cdef class Simulator:
 
           # shape of buffer
           tuple shape = (time_steps, self.model.nNodes, self.model.nStates)
-          dict conditional = {}
+
+
+       # prime state matrix
+       for idx, (k, v) in enumerate(snapshots.items()):
+           for ki in range(len(k)):
+                states[idx, ki] = k[ki]
 
        cdef size_t type_bytes = np.uintp().nbytes
        cdef size_t inner = repeats * time_steps
@@ -219,88 +230,138 @@ cdef class Simulator:
 
        # private variables
        cdef:
-          PyObject * ptr
+          # PyObject * ptr
           size_t state_idx, trial, step, tid, node, NODES = self.model.adj._nNodes
           tuple tuple_start_state
+          # hold temporarychanged states within a trial
           double[:, :, :, ::1] bin_buffer = np.zeros((cpus, *shape))
           double Z = 1 / <double > (repeats)
           unordered_map[size_t, size_t] store_idx
 
+       # which time steps to save
        for idx in range(len(time)):
            store_idx[time[idx]] = idx
-       pbar = ProgBar(nStates)
+       # pbar = ProgBar(nStates)
        # setup rngs
 
-       print("Ready")
        cdef size_t T = <size_t > (np.max(time) + 1)
        # cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype = np.uintp)
 
-       cdef vector[size_t] thread_counter
-       for tid in range(cpus):
-           thread_counter.push_back(0)
+       # cdef vector[size_t] thread_counter
+       # for tid in range(cpus):
+           # thread_counter.push_back(0)
         #    r.base[tid] = (<Model> models[tid].ptr)._sampleNodes(inner)
 
-       cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+       print("Sampling random numbers")
+       # cdef node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+       print("Done")
+       print(nStates)
        cdef unordered_map[node_id_t, weight_t]  copyNudge = self.model.nudges
        cdef size_t half = max((int(T * .5), 1))
-       print('>','>',  half)
-       
-       for state_idx in prange(nStates, nogil=True, num_threads=cpus):
-           tid = threadid()
-           start_state[tid] = states[state_idx]
 
-           with gil:
-               # get or reset buffer
-               bin_buffer.base[tid] = conditional.get(
-                   tuple(start_state[tid]), np.zeros(shape))
-               # start_state[tid] =  np.array(next(states)).reshape(-1, (< Model > models[tid].ptr).nNodes)
+       # starting of hot loop
 
-           # start binning
-           for trial in range(repeats):
-               # reset buffer
-               
-               for node in range(NODES):
-                   (< Model > models[tid].ptr)._states[node] = start_state[tid, node]
-                   if copyNudge.find(node) != copyNudge.end():
-                        (<Model> models[tid].ptr)._nudges[node] = copyNudge[node]
-                   thread_state[tid, 0, node] = start_state[tid, node]
+       # cdef dict conditional = {}
 
-               # with gil:
-               #      r.base[tid] = (< Model > models[tid].ptr)._sampleNodes(T)
+       cdef double[:, :, :, ::1] conditional = np.zeros((nStates, *shape)) # holder for probability decay
+       for state_idx in prange(nStates, nogil = True, num_threads = cpus,
+                              ):
+           continue
+           # tid = threadid()
+           # start_state[tid] = states[state_idx]
+           # for node in range(NODES):
+           #     bin_buffer[tid, node] = start_state[tid, node]
+           # # run trials
+           # for trial in range(repeats):
+           #     # reset buffer
+           #     for node in range(NODES):
+           #         (< Model > models[tid].ptr)._states[node] = start_state[tid, node]
+           #         if copyNudge.find(node) != copyNudge.end():
+           #                 (<Model> models[tid].ptr)._nudges[node] = copyNudge[node]
+           #         thread_state[tid, 0, node] = start_state[tid, node]
+           #     # # get random numbers
+           #     # r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
+           #     # simulate a trace
+           #     for step in range(1, T):
+           #             # store data
+           #         # (< Model > models[tid].ptr)._updateState(r[tid, step])
+           #         (< Model > models[tid].ptr)._updateState(
+           #             (<Model> models[tid].ptr)._sampleNodes(1)[0])
+           #         if step >= half:
+           #             (<Model> models[tid].ptr)._nudges.clear()
+           #         if store_idx.find(step) != store_idx.end():
+           #             for node in range(NODES):
+           #                     thread_state[tid, store_idx[step], node] = (<Model> models[tid].ptr)._states[node]
 
-               r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
-                # simulate a trace
-               for step in range(1, T):
-                    # store data
-                   (< Model > models[tid].ptr)._updateState(r[tid, step])
-                   if step >= half:
-                       (<Model> models[tid].ptr)._nudges.clear()
+           #     # bin buffer
+           #     # with gil:
+           #     self.bin_data(thread_state[tid], start_state[tid], \
+           #                         conditional[state_idx], Z)
 
-                   if store_idx.find(step) != store_idx.end():
-                       for node in range(NODES):
-                            thread_state[tid, store_idx[step], node] = (< Model > models[tid].ptr)._states[node]
+       print("Done with trials")
+       cdef dict python_condition = {}
+       cdef size_t zdx
+       for zdx in range(nStates):
+            s = tuple(states.base[zdx])
+            python_condition[s] = conditional.base[zdx].copy()
+       models.clear()
+       return self.normalize(python_condition, snapshots, False)
 
-                        # thread_counter[tid] = 0
+       # for state_idx in prange(nStates, nogil=True, num_threads=cpus):
+       #     tid = threadid()
+       #     start_state[tid] = states[state_idx]
 
-                        # thread_state[tid, store_idx[step]] = \
-                        # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
+       #     with gil:
+       #         # get or reset buffer
+       #         bin_buffer.base[tid] = conditional.get(
+       #             tuple(start_state[tid]), np.zeros(shape))
+       #         # start_state[tid] =  np.array(next(states)).reshape(-1, (< Model > models[tid].ptr).nNodes)
+
+       #     # start binning
+       #     for trial in range(repeats):
+       #         # reset buffer
+
+       #         for node in range(NODES):
+       #             (< Model > models[tid].ptr)._states[node] = start_state[tid, node]
+       #             if copyNudge.find(node) != copyNudge.end():
+       #                  (<Model> models[tid].ptr)._nudges[node] = copyNudge[node]
+       #             thread_state[tid, 0, node] = start_state[tid, node]
+
+       #         # with gil:
+       #         #      r.base[tid] = (< Model > models[tid].ptr)._sampleNodes(T)
+
+       #         r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
+       #          # simulate a trace
+       #         for step in range(1, T):
+       #              # store data
+       #             (< Model > models[tid].ptr)._updateState(r[tid, step])
+       #             if step >= half:
+       #                 (<Model> models[tid].ptr)._nudges.clear()
+
+       #             if store_idx.find(step) != store_idx.end():
+       #                 for node in range(NODES):
+       #                      thread_state[tid, store_idx[step], node] = (< Model > models[tid].ptr)._states[node]
+
+       #                  # thread_counter[tid] = 0
+
+       #                  # thread_state[tid, store_idx[step]] = \
+       #                  # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
 
 
-                        # thread_state[tid, store_idx[step]] = \
-                        # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
+       #                  # thread_state[tid, store_idx[step]] = \
+       #                  # (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
 
-                   # thread_counter[tid] += 1
+       #             # thread_counter[tid] += 1
 
-               # bin buffer
-               self.bin_data(thread_state[tid], start_state[tid], \
-                                 bin_buffer[tid], Z)
-           with gil:
-               conditional[tuple(start_state[tid])] = conditional.get(\
-                            tuple(start_state[tid]),  bin_buffer.base[tid].copy())
-               pbar.update(1)
-       # print("sanity check 2")
-       # return dict(conditional = conditional, snapshots = snapshots)
-       return self.normalize(conditional, snapshots, False)
+       #         # bin buffer
+       #         self.bin_data(thread_state[tid], start_state[tid], \
+       #                           bin_buffer[tid], Z)
+       #     with gil:
+       #         conditional[tuple(start_state[tid])] = conditional.get(\
+       #                      tuple(start_state[tid]),  bin_buffer.base[tid].copy())
+       #         pbar.update(1)
+
+       # return self.normalize(conditional, snapshots, False)
 
 
 # cdef struct Task:
