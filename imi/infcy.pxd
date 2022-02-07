@@ -29,10 +29,12 @@ cdef class Simulator:
 
     cpdef dict forward(self,\
                       # size_t n_samples =*,\
-                       dict snapshots,
+                      dict snapshots,
                       size_t repeats =*,
-                       np.ndarray time =*,
-                       int n_jobs =*
+                      np.ndarray time =*,
+                      int n_jobs =*,
+                      str schedule =*,
+                      object chunksize =*
                       )
 
     cpdef dict normalize(self,\

@@ -12,11 +12,11 @@ g = nx.karate_club_graph()
 g = nx.path_graph(1000)
 
 print(g)
-m = models.Potts(g, t=5)
+m = models.Potts(g, t=2)
 
 # print(m.sampleNodes(1).base)
-N = 10000
-M = 10000
+N = 1000
+M = 100
 import time
 
 

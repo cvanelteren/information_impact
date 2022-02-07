@@ -48,42 +48,32 @@ cdef class Simulator:
 
     cpdef dict snapshots(self, size_t n_samples,
                          size_t step=2, int n_jobs = -1):
-#     if verbose:
-        cdef state_t[::1] states
-        # cdef double z = 1 # / <double> n_samples
-        # cdef tuple tmp
-
         cdef tuple tmp
-        # need to add has function to unordered_map to access
-        # make the loop below fully nogil.
         cdef dict snapshots = {}
-        # cdef unordered_map[string, double] snapshots
-         
-        # for i in prange(n_samples):
-        #     states[tid] = (<models[tid].ptr)._updateState(r[tid])
-
         cdef:
             size_t nThreads = mp.cpu_count() - 1 if n_jobs == -1 else n_jobs
             SpawnVec models = self.model._spawn(nThreads)
 
-            # node_id_t[:, :, ::1] r    = np.ndarray(
-                            # (nThreads, step,
-                            # self.model.sampleSize),
-                                # dtype = np.uint)
+            node_id_t[:, :, ::1] r    = np.ndarray(
+                            (nThreads,
+                            step,
+                            self.model.sampleSize),
+                            dtype = np.uint)
 
+            vector[vector[double]] states
+            double Z = 1/<double>(n_samples)
 
         cdef size_t tid, s, i
-        for i in prange(n_samples, nogil = True, num_threads = nThreads):
+        for i in prange(n_samples, nogil = True,
+                        num_threads = nThreads,
+                        schedule = "static"):
             tid = threadid()
-            # r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
-
+            r[tid, :] = (<Model> models[tid].ptr)._sampleNodes(step)
             for s in range(step):
-                #(<Model> models[tid].ptr)._updateState(r[tid, s])
-                (<Model> models[tid].ptr)._updateState((<Model> models[tid].ptr)._sampleNodes(1)[0])
-
+                (<Model> models[tid].ptr)._updateState(r[tid, s])
             with gil:
                 tmp = tuple((<Model> models[tid].ptr).states)
-                snapshots[tmp] = snapshots.get(tmp, 0) + 1 / <double>(n_samples)
+                snapshots[tmp] = snapshots.get(tmp, 0) + Z
         
         #for i in range(n_samples):
         #     states = self.model.simulate(step + 1)[-1]
@@ -188,6 +178,8 @@ cdef class Simulator:
                        size_t repeats=10,
                        np.ndarray time=np.arange(10),
                        int n_jobs = -1,
+                       str schedule = "guided",
+                       object chunksize = None,
                        ):
 
        from imi.utils.stats import check_allocation
@@ -255,14 +247,12 @@ cdef class Simulator:
            double[:, :, :, ::1] conditional = np.zeros((nStates, *shape)) # holder for probability decay
            node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
 
-       print("Sampling random numbers")
-       for tid in range(cpus):
-           r[tid, :] = (<Model> models[tid].ptr)._sampleNodes(T)
-       print("Done")
-       print(NODES, states.shape,  thread_state.shape)
-       for state_idx in prange(nStates, nogil = True, num_threads = cpus,
-                               schedule = "dynamic",
-                               chunksize = 2):
+       print("Starting parallel runs")
+       for state_idx in prange(nStates,
+                               nogil = True,
+                               num_threads = cpus,
+                               schedule = "static",
+                               ):
 
            tid = threadid()
            # run trials
@@ -277,7 +267,7 @@ cdef class Simulator:
                    if copyNudge.find(node) != copyNudge.end():
                            (<Model> models[tid].ptr)._nudges[node] = copyNudge[node]
                # # get random numbers
-               # r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
+               r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
                # simulate a trace
                for step in range(1, T):
                    (< Model > models[tid].ptr)._updateState(r[tid, step, :])
