@@ -1,3 +1,4 @@
+# not a serious bench script, used for debugging mainly
 import matplotlib.pyplot as plt, cmasher as cmr, pandas as pd
 import numpy as np, os, sys, networkx as nx, warnings
 from plexsim import models
@@ -9,20 +10,23 @@ plt.style.use("fivethirtyeight spooky".split())
 g = nx.grid_graph((6, 6))
 g = nx.krackhardt_kite_graph()
 g = nx.karate_club_graph()
-g = nx.path_graph(1000)
+g = nx.path_graph(100)
 
 print(g)
 m = models.Potts(g, t=2)
 
 # print(m.sampleNodes(1).base)
 N = 1000
-M = 100
+M = 1000
 import time
 
 
 # print(m.simulate(M).shape)
 sim = infcy.Simulator(m)
 
+s = time.time()
+m.spawn()
+print(time.time() - s)
 s = time.time()
 snaps = sim.snapshots(N)
 print(time.time() - s)
