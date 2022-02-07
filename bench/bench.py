@@ -8,26 +8,33 @@ plt.style.use("fivethirtyeight spooky".split())
 
 g = nx.grid_graph((6, 6))
 g = nx.krackhardt_kite_graph()
-# g = nx.karate_club_graph()
+g = nx.karate_club_graph()
 g = nx.path_graph(1000)
 
 print(g)
-m = models.Potts(g, t=0.5, sampleSize=1)
-print(m.simulate(1000))
+m = models.Potts(g, t=5)
 
 # print(m.sampleNodes(1).base)
-N = 100
-M = 100
+N = 10000
+M = 10000
+import time
+
 
 # print(m.simulate(M).shape)
 sim = infcy.Simulator(m)
+
+s = time.time()
 snaps = sim.snapshots(N)
+print(time.time() - s)
 print("retrieved snaps")
-s = sim.forward(snaps, repeats=M, time=np.arange(20), n_jobs=1)["conditional"]
-px, mi = infcy.mutualInformation(s, snaps)
+
+s = time.time()
+S = sim.forward(snaps, repeats=M, time=np.arange(10), n_jobs=1)["conditional"]
+print(time.time() - s)
+px, mi = infcy.mutualInformation(S, snaps)
 fig, ax = plt.subplots()
 ax.plot(mi)
 fig.show()
 plt.show(block=1)
 
-print(mi)
+print(mi.sum(0))

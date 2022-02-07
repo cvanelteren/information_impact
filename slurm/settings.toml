@@ -37,5 +37,6 @@
 # [experiments.kite]
 #[experiments.psycho]
 # [experiments.dummy]
-[experiments.value_network_satisfaction]
+[experiments.valuenetwork_annealing]
+# [experiments.value_network_satisfaction]
 # [experiments.value_stability]

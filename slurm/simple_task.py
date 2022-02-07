@@ -8,6 +8,17 @@ from Task import Worker, Task
 import os, pickle, toml, time
 from datetime import datetime
 
+"""
+Instuctions:
+
+Experiments are first setup and put in the @tasks directory. A @tasks.txt is
+written which contains all the tasks to be run. Then the tasks are read from
+@tasks.txt.
+
+@srun.sh sets up all the tasks and read the @tasks.txt
+@single_task.sh runs the task.
+"""
+
 
 class SimpleExperimentManager:
     """
@@ -18,8 +29,8 @@ class SimpleExperimentManager:
     3. Decompose the tasks to separate pickle files
     """
 
-    task_dir = "./tasks"
-    data_dir = "./data"
+    task_dir = "tasks/"
+    data_dir = "data/"
 
     def __init__(self, config: str):
         # put workers here
@@ -32,7 +43,6 @@ class SimpleExperimentManager:
         # setup workers
         self.reader = toml.load(config)
         self.setup_workers(self.reader.get("experiments", {}))
-
         self.create_task_file()
 
     def setup_workers(self, experiments: dict) -> None:
@@ -51,7 +61,6 @@ class SimpleExperimentManager:
         )
         # fetch the run file
         if module := EXPERIMENTS.get(name):
-
             print(f"Loading {module}")
             config = dict(experiment_settings=config, worker_settings=worker_settings)
             worker = Worker(module, config)
@@ -78,10 +87,10 @@ class SimpleExperimentManager:
         Dumps txt containing all the jobs to be run
         """
         now = datetime.now()
-        fp = "./tasks.txt"
+        fp = "tasks.txt"
         print("Writing tasks to file")
         tmp = [f"{i}\n" for i in self.tasks]
-        with open(fp, "a") as f:
+        with open(fp, "w") as f:
             f.writelines(tmp)
         print("Done!")
 
@@ -91,6 +100,11 @@ class SimpleExperimentManager:
             task = pickle.load(task_file)
 
         output_file = SimpleExperimentManager.create_task_output_file(task)
+        data_dir = SimpleExperimentManager.data_dir
+        if data_dir not in output_file:
+            print(f"Added data dir {data_dir} to {output_file}")
+
+            output_file = os.path.join(data_dir, output_file)
         print("Running task")
         results = task.run()
         print("Saving")
@@ -100,9 +114,11 @@ class SimpleExperimentManager:
 
     @staticmethod
     def create_task_output_file(task: Task) -> str:
-        fp = os.path.join(SimpleExperimentManager.data_dir, f"{task.gen_id()}.pkl")
-        print(f"Created output file: \t{fp}")
-        return fp
+        task_path = f"{task.gen_id()}.pkl"
+        # fp = f"{task.gen_id()}"
+        # print(fp)
+        print(f"Created output file: \t{task_path}")
+        return task_path
 
 
 @click.command()

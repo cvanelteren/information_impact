@@ -8,4 +8,5 @@
 #SBATCH --constraint=cpunode
 
 echo $1
-srun python simple_task.py -r $1
+# srun python simple_task.py -r $1
+python simple_task.py -r $1

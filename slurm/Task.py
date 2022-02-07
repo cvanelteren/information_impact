@@ -5,6 +5,8 @@ class Task:
     def __init__(self, settings: dict, output_directory: str, *args, **kwargs):
         self.settings = settings
         self.output_directory = output_directory
+        os.makedirs(self.output_directory, exist_ok=True)
+        # print(f"Created {self.output_directory}")
 
     def run(self):
         assert False, "Needs to be implemented"

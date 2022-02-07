@@ -2,7 +2,7 @@
 # distutils: language=c++
 # __author__ = 'Casper van Elteren'
 import numpy as np
-cimport numpy as np
+cimport numpy as np; np.import_array()
 cimport cython
 import time
 from cython.parallel cimport parallel, prange, threadid
@@ -146,9 +146,9 @@ cdef class Simulator:
 
 
     cdef void bin_data(self, \
-                       state_t[:, ::1] buff,\
-                       state_t[::1] target,\
-                       double[:, :, ::1] bin_buffer,\
+                       state_t[:, ::1] &buff,\
+                       state_t[::1] &target,\
+                       double[:, :, ::1] &bin_buffer,\
                        size_t time_steps,\
                        double Z = 1) nogil:
 

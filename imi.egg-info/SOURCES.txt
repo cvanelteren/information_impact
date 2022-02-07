@@ -132,7 +132,6 @@ slurm/configs/__init__.py
 slurm/configs/barabasi_albert.py
 slurm/configs/powerlaw.py
 slurm/configs/powerlaw_graph.py
-slurm/data/test.pkl
 slurm/experiments/__init__.py
 slurm/experiments/dummy.py
 slurm/experiments/kite.py
@@ -141,10 +140,12 @@ slurm/experiments/simple_connected.py
 slurm/experiments/sleep_experiment.py
 slurm/experiments/tipping.py
 slurm/experiments/tipping2.py
+slurm/experiments/tipping_point_cascade.py
 slurm/experiments/value_network.py
 slurm/experiments/value_network_annealed.py
 slurm/experiments/value_network_satisfaction.py
 slurm/experiments/value_stability.py
+slurm/experiments/valuenetwork_annealing.py
 slurm/experiments/vc_simple.py
 slurm/experiments/.ob-jupyter/002ef869d62991164d7467a8214e604fefcbff69.png
 slurm/experiments/.ob-jupyter/6da74045110fb9e5c47c981a70a04dbd1bbd5560.png
@@ -158,9 +159,6 @@ slurm/shell/getData.sh
 slurm/shell/monitor.sh
 slurm/shell/run.sh
 slurm/shell/slurm_toml.sh
-slurm/tasks/1626942514.6376922-0-0.pkl
-slurm/tasks/1626942514.6376922-0-1.pkl
-slurm/tasks/1626942514.6376922-0-2.pkl
 slurm/tests/__init__.py
 slurm/tests/sample_experiment.py
 slurm/tests/sleep_experiment.py

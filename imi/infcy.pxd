@@ -21,9 +21,9 @@ cdef class Simulator:
     #                     bint center =*
     #                     )
 
-    cdef void bin_data(self, state_t[:, ::1] buffer,\
-                       state_t[::1] target,\
-                       double[:, :, ::1] bin_buffer, \
+    cdef void bin_data(self, state_t[:, ::1] &buffer,\
+                       const state_t[::1] &target,\
+                       double[:, :, ::1] &bin_buffer, \
                        double Z = *
     ) nogil
 
