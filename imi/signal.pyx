@@ -113,8 +113,83 @@ cpdef np.ndarray detect_tipping(double[::1] signal,
 #                 dist[bin_] = dist.get(bin_, 0) + 1
 #     return dist 
 
-            
-        
+cdef void move_buffer(state_t[:, ::1] &buffer) nogil:
+    # reshuffle the buffer around
+    cdef size_t t
+    for t in range(1, buffer.shape[0]):
+        buffer[t - 1, :] = buffer[t]
+
+cdef double get_mean(state_t[::1] buffer) nogil:
+    cdef double avg = 0
+    cdef size_t N = buffer.shape[0]
+    cdef size_t idx
+    for idx in range(N):
+        avg += buffer[idx]
+    avg = avg / (<double> (N))
+    return avg
+
+cpdef bin_data(state_t[:, ::1] &buffer, dict snapshots, double Z):
+    # bin snapshots
+    cdef size_t n = buffer.shape[0]
+    cdef tuple tmp
+    for t in range(n):
+        tmp = tuple(buffer[t])
+        snapshots[tmp] = snapshots.get(tmp, 0) + Z
+
+cdef bint check_threshold(state_t[::1] &buffer,
+                         double threshold,
+                         double allowance) nogil:
+    cdef double lower = threshold - allowance
+    cdef double upper = threshold + allowance
+    if  lower  <= get_mean(buffer)  <= upper:
+        return True
+    return False
+
+cdef size_t detect_peaks(state_t[:, ::1] &buffer,
+                         double threshold,
+                         double allowance) nogil:
+    cdef size_t idx, N = buffer.shape[0], peaks = 0
+
+    for idx in range(N):
+        if check_threshold(buffer[idx],
+                           threshold,
+                           allowance):
+            peaks += 1
+    return peaks
+cpdef tuple wait_tipping(Model m,
+                         double[::1] bins,
+                         size_t n_window  = 500,
+                         size_t n_tipping = 100,
+                         ):
+    #generate snapshots from tipping points
+
+    # assume using potts based model
+    cdef:
+        double allowance =  1.5/ (<double> (m.adj._nNodes))
+        double threshold = np.mean(m.agentStates)
+        state_t[:, ::1] buffer = np.zeros((n_window, m.adj._nNodes))
+        double Z = 1/(<double>(n_tipping))
+        size_t num_tip = 0
+        dict snapshots = {} # output
+        size_t counter = 0
+        size_t peaks
+    print(f"Looking for tipping with {threshold=} and {allowance=}")
+    while num_tip < n_tipping:
+        # update state
+        move_buffer(buffer)
+        buffer[-1, :] = m._updateState(m._sampleNodes(1)[0])
+        counter += 1
+        if check_threshold(buffer[-1], threshold, allowance):
+            peaks = detect_peaks(buffer, threshold, allowance)
+            print(peaks, end = "\r")
+            # if peaks <= 2:
+            bin_data(buffer, snapshots, Z)
+            num_tip += 1
+            print(f"Found {num_tip}", end = "\r")
+    print(f"Used {counter} samples")
+    return snapshots, counter
+
+
 cpdef tuple find_tipping(Model m,
                    double[::1] bins,
                    size_t n_samples,

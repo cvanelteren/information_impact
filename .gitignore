@@ -11,5 +11,7 @@ Data/*
 Results/*
 *.ipynb
 *.pickle
-*-egg
+*-gg-info
 *.cpp
+slurm/data
+slurm/experiments
