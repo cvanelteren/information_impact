@@ -160,12 +160,13 @@ cpdef tuple wait_tipping(Model m,
                          double[::1] bins,
                          size_t n_window  = 500,
                          size_t n_tipping = 100,
+                         double allowance = 1.0,
                          ):
     #generate snapshots from tipping points
 
     # assume using potts based model
+    allowance =  allowance/(<double> (m.adj._nNodes))
     cdef:
-        double allowance =  1.5/ (<double> (m.adj._nNodes))
         double threshold = np.mean(m.agentStates)
         state_t[:, ::1] buffer = np.zeros((n_window, m.adj._nNodes))
         double Z = 1/(<double>(n_tipping))
