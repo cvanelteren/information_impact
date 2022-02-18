@@ -174,6 +174,9 @@ cpdef tuple wait_tipping(Model m,
         dict snapshots = {} # output
         size_t counter = 0
         size_t peaks
+
+    # align all spins
+    m.states[:] = 1
     print(f"Looking for tipping with {threshold=} and {allowance=}")
     while num_tip < n_tipping:
         # update state
