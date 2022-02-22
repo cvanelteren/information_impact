@@ -9,7 +9,7 @@ import re, os
 from subprocess import run
 
 add = []
-compiler = "g++-10"
+compiler = "g++"
 cppv = "11"
 if not "g14" in os.uname():
     compiler = "g++"
