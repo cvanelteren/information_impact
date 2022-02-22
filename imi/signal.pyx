@@ -156,11 +156,19 @@ cdef size_t detect_peaks(state_t[:, ::1] &buffer,
                            allowance):
             peaks += 1
     return peaks
+
+cdef void equilibrate(Model m, double[::1] &p, size_t n_equilibrate = int(1e6)) nogil:
+    m._reset(p)
+    for _ in range(n_equilibrate):
+        m._updateState(m._sampleNodes(1)[0])
+
+
 cpdef tuple wait_tipping(Model m,
                          double[::1] bins,
                          size_t n_window  = 500,
                          size_t n_tipping = 100,
                          double allowance = 1.0,
+                         size_t n_equilibrate = int(1e6)
                          ):
     #generate snapshots from tipping points
 
@@ -172,26 +180,45 @@ cpdef tuple wait_tipping(Model m,
         double Z = 1/(<double>(n_tipping))
         size_t num_tip = 0
         dict snapshots = {} # output
-        size_t counter = 0
-        size_t peaks
+        size_t peaks, ti
+        size_t tid # threadid
+        double[::1] p = (np.ones(m.nStates) * 1 / (<double>(m.nStates))).cumsum()
 
-    # align all spins
-    m.states[:] = 1
     print(f"Looking for tipping with {threshold=} and {allowance=}")
-    while num_tip < n_tipping:
+    cdef double[::1] tips = np.zeros(n_tipping)
+    import mulitprocessing as mp
+    cdef size_t cpus = mp.cpu_count()
+    cdef size_t[::1] tip_counter = np.ones(cpus) * 3
+    cdef size_t[::1] loop_counter = np.ones(cpus) * 3
+    cdef size_t counter
+
+    cdef SpawnVec models = m._spawn()
+    for num_tip in prange(n_tipping, nogil = True):
+        tid = threadid()
+        # reset an equilibrate
+        # for allowance +- 1/nNodes this is the max
+        if tip_counter[tid] == 3:
+            equilibrate((<Model> models[tid].ptr), p, n_equilibrate)
+            loop_counter[tid] = 0
+            tip_counter[tid] = 0
         # update state
         move_buffer(buffer)
-        buffer[-1, :] = m._updateState(m._sampleNodes(1)[0])
-        counter += 1
+        buffer[-1, :] = (<Model> models[tid].ptr)._updateState(
+            (<Model> models[tid].ptr)._sampleNodes(1)[0])
+        loop_counter[tid] += 1
         if check_threshold(buffer[-1], threshold, allowance):
-            peaks = detect_peaks(buffer, threshold, allowance)
-            print(peaks, end = "\r")
-            # if peaks <= 2:
-            bin_data(buffer, snapshots, Z)
-            num_tip += 1
-            print(f"Found {num_tip}", end = "\r")
-    print(f"Used {counter} samples")
-    return snapshots, counter
+            # peaks = detect_peaks(buffer, threshold, allowance)
+            # print(peaks, end = "\r")
+
+            tips[num_tip] = loop_counter[tid]
+            tip_counter[tid] += 1
+            with gil:
+                bin_data(buffer, snapshots, Z)
+                counter = np.sum(tips)
+                print(f"Used {counter} samples")
+
+            # print(f"Found {num_tip}", end = "\r")
+    return snapshots, tips.base
 
 
 cpdef tuple find_tipping(Model m,
