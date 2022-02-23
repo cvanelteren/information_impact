@@ -36,7 +36,7 @@ cdef class Simulator:
             size_t nThreads = mp.cpu_count() - 1 if n_jobs == -1 else n_jobs
             SpawnVec models = self.model._spawn(nThreads)
 
-            node_id_t[:, :, ::1] r    = np.ndarray(
+            vector[vector[vector[node_id_t]]] r    = np.ndarray(
                             (nThreads,
                             step,
                             self.model.sampleSize),
@@ -50,9 +50,9 @@ cdef class Simulator:
                         num_threads = nThreads,
                         schedule = "static"):
             tid = threadid()
-            r[tid, :] = (<Model> models[tid].ptr)._sampleNodes(step)
+            r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
             for s in range(step):
-                (<Model> models[tid].ptr)._updateState(r[tid, s])
+                (<Model> models[tid].ptr)._updateState(r[tid][s])
             with gil:
                 tmp = tuple((<Model> models[tid].ptr).states)
                 snapshots[tmp] = snapshots.get(tmp, 0) + Z
@@ -227,7 +227,7 @@ cdef class Simulator:
            unordered_map[node_id_t, weight_t]  copyNudge = self.model.nudges
            size_t half = max((int(T * .5), 1))
            double[:, :, :, ::1] conditional = np.zeros((nStates, *shape)) # holder for probability decay
-           node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+           vector[vector[vector[node_id_t]]] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
 
        print("Starting parallel runs")
        for state_idx in prange(nStates,
@@ -252,7 +252,7 @@ cdef class Simulator:
                r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
                # simulate a trace
                for step in range(1, T):
-                   (< Model > models[tid].ptr)._updateState(r[tid, step, :])
+                   (< Model > models[tid].ptr)._updateState(r[tid][step])
                    # (< Model > models[tid].ptr)._updateState(
                        # (<Model> models[tid].ptr)._sampleNodes(1)[0])
                    # turn off nudge

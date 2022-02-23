@@ -113,30 +113,30 @@ cpdef np.ndarray detect_tipping(double[::1] signal,
 #                 dist[bin_] = dist.get(bin_, 0) + 1
 #     return dist 
 
-cdef void move_buffer(state_t[:, ::1] &buffer) nogil:
+cdef void move_buffer(vector[vector[state_t]] &buffer) nogil:
     # reshuffle the buffer around
     cdef size_t t
-    for t in range(1, buffer.shape[0]):
-        buffer[t - 1, :] = buffer[t]
+    for t in range(1, buffer.size()):
+        buffer[t - 1] = buffer[t]
 
-cdef double get_mean(state_t[::1] buffer) nogil:
+cdef double get_mean(vector[state_t] &buffer) nogil:
     cdef double avg = 0
-    cdef size_t N = buffer.shape[0]
+    cdef size_t N = buffer.size()
     cdef size_t idx
     for idx in range(N):
         avg += buffer[idx]
     avg = avg / (<double> (N))
     return avg
 
-cpdef bin_data(state_t[:, ::1] &buffer, dict snapshots, double Z):
+cpdef bin_data(vector[vector[state_t]] &buffer, dict snapshots, double Z):
     # bin snapshots
-    cdef size_t n = buffer.shape[0]
+    cdef size_t n = buffer.size()
     cdef tuple tmp
     for t in range(n):
         tmp = tuple(buffer[t])
         snapshots[tmp] = snapshots.get(tmp, 0) + Z
 
-cdef bint check_threshold(state_t[::1] &buffer,
+cdef bint check_threshold(vector[state_t] &buffer,
                          double threshold,
                          double allowance) nogil:
     cdef double lower = threshold - allowance
@@ -145,10 +145,10 @@ cdef bint check_threshold(state_t[::1] &buffer,
         return True
     return False
 
-cdef size_t detect_peaks(state_t[:, ::1] &buffer,
+cdef size_t detect_peaks(vector[vector[state_t]] &buffer,
                          double threshold,
                          double allowance) nogil:
-    cdef size_t idx, N = buffer.shape[0], peaks = 0
+    cdef size_t idx, N = buffer.size(), peaks = 0
 
     for idx in range(N):
         if check_threshold(buffer[idx],
@@ -157,10 +157,10 @@ cdef size_t detect_peaks(state_t[:, ::1] &buffer,
             peaks += 1
     return peaks
 
-cdef void equilibrate(Model m, double[::1] p, size_t n_equilibrate = int(1e3)) nogil:
-    with gil: m.reset()
-    for idx in range(n_equilibrate):
-        m._updateState(m._sampleNodes(1)[0])
+cdef void equilibrate(Model m, double[::1] &p, size_t n_equilibrate = int(1e3)) nogil:
+    with gil:
+        m.reset()
+    m._simulate(n_equilibrate)
 
 
 cpdef tuple wait_tipping(Model m,
@@ -184,7 +184,7 @@ cpdef tuple wait_tipping(Model m,
     cdef:
         size_t cpus = mp.cpu_count()
         double threshold = np.mean(m.agentStates)
-        state_t[:, :, ::1] buffer = np.zeros((cpus, n_window, m.adj._nNodes))
+        vector[vector[vector[state_t]]] buffer = np.zeros((cpus, n_window, m.adj._nNodes))
         double Z = 1/(<double>(n_tipping))
         dict snapshots = {} # output
         size_t peaks, ti, node, tid, num_tip = 0
@@ -192,29 +192,41 @@ cpdef tuple wait_tipping(Model m,
 
     print(f"Looking for tipping with {threshold=} and {allowance=}")
     cdef size_t[::1] tip_counter = np.ones(cpus, dtype = np.uintp) * 3
+
     cdef size_t[::1] loop_counter = np.zeros(cpus, dtype = np.uintp)
     cdef size_t counter = 0
 
     # start runs
     cdef unordered_map[size_t, vector[size_t]] tips
     cdef SpawnVec models = m._spawn(cpus)
+
+    print("Equilibrating models")
+    cdef size_t R = 10000
+    cdef size_t[::1] r_counter = np.zeros(cpus, dtype = np.uintp)
+    cdef vector[vector[vector[node_id_t]]] r = np.zeros((cpus, R, m.sampleSize), dtype = np.uintp)
+    cdef vector[state_t] tmp_state
+    for tid in prange(cpus, nogil = True):
+        equilibrate((<Model> models[tid].ptr), p, n_equilibrate)
+        r[tid] = (<Model> models[tid].ptr)._sampleNodes(R)
+
+    print("Starting to find tipping points")
     for num_tip in prange(n_tipping, nogil = True):
         tid = threadid()
         # reset an equilibrate
         # for allowance +- 1/nNodes this is the max
         #
-        equilibrate((<Model> models[tid].ptr), p, n_equilibrate)
         loop_counter[tid] = 0
         tip_counter[tid] = 0
-        while tip_counter[tid] < 3:
+        while tip_counter[tid] < 1:
             # update state
             move_buffer(buffer[tid])
-            buffer[tid, -1, :] = (<Model> models[tid].ptr)._updateState(
-                (<Model> models[tid].ptr)._sampleNodes(1)[0]
-            )
-
+            if r_counter[tid] == R:
+                r[tid] = (<Model> models[tid].ptr)._sampleNodes(R)
+                r_counter[tid] = 0
+            buffer[tid][n_window - 1] = (<Model> models[tid].ptr)._updateState(r[tid][r_counter[tid]])
             loop_counter[tid] += 1
-            if check_threshold(buffer[tid, -1], threshold, allowance):
+            r_counter[tid] += 1
+            if check_threshold(buffer[tid][n_window - 1], threshold, allowance):
                 # peaks = detect_peaks(buffer, threshold, allowance)
                 # print(peaks, end = "\r")
 

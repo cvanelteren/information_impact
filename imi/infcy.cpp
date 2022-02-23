@@ -1724,7 +1724,7 @@ struct __pyx_opt_args_7plexsim_6models_4base_5Model__spawn;
 struct __pyx_opt_args_7plexsim_6models_4base_5Model_reset;
 struct __pyx_opt_args_7plexsim_6models_4base_5Model_add_edge;
 
-/* "plexsim/models/base.pxd":88
+/* "plexsim/models/base.pxd":96
  * 
  * 
  *     cpdef list spawn(self, size_t n_jobs =*)             # <<<<<<<<<<<<<<
@@ -1736,7 +1736,7 @@ struct __pyx_opt_args_7plexsim_6models_4base_5Model_spawn {
   size_t n_jobs;
 };
 
-/* "plexsim/models/base.pxd":91
+/* "plexsim/models/base.pxd":99
  * 
  *     #TODO: move this into a separate function?
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)             # <<<<<<<<<<<<<<
@@ -1748,7 +1748,7 @@ struct __pyx_opt_args_7plexsim_6models_4base_5Model__spawn {
   size_t nThreads;
 };
 
-/* "plexsim/models/base.pxd":93
+/* "plexsim/models/base.pxd":101
  *     cdef SpawnVec _spawn(self, size_t nThreads=*)
  * 
  *     cpdef void reset(self, p =*)             # <<<<<<<<<<<<<<
@@ -1760,7 +1760,7 @@ struct __pyx_opt_args_7plexsim_6models_4base_5Model_reset {
   PyObject *p;
 };
 
-/* "plexsim/models/base.pxd":104
+/* "plexsim/models/base.pxd":112
  *     cdef double probability(self, state_t state, node_id_t node) nogil
  * 
  *     cpdef add_edge(self, node_id_t x, node_id_t y, double weight=*)             # <<<<<<<<<<<<<<
@@ -1917,14 +1917,14 @@ struct __pyx_obj_7plexsim_6models_4base_Model {
   PyObject_HEAD
   struct __pyx_vtabstruct_7plexsim_6models_4base_Model *__pyx_vtab;
   PyObject *ptr;
-  __Pyx_memviewslice _Model__states;
+  std::vector<__pyx_t_7plexsim_6models_5types_state_t>  _Model__states;
   __pyx_t_7plexsim_6models_5types_state_t *_states;
-  __Pyx_memviewslice _Model__newstates;
+  std::vector<__pyx_t_7plexsim_6models_5types_state_t>  _Model__newstates;
   __pyx_t_7plexsim_6models_5types_state_t *_newstates;
   int _last_written;
   int _use_mcmc;
-  __Pyx_memviewslice _agentStates;
-  __Pyx_memviewslice _memory;
+  std::vector<__pyx_t_7plexsim_6models_5types_state_t>  _agentStates;
+  std::vector<std::vector<__pyx_t_7plexsim_6models_5types_state_t> >  _memory;
   size_t _memorySize;
   size_t _memento;
   PyObject *_updateType;
@@ -2090,9 +2090,9 @@ static struct __pyx_vtabstruct_7plexsim_6models_7sampler_RandomGenerator *__pyx_
  */
 
 struct __pyx_vtabstruct_7plexsim_6models_7sampler_MCMC {
-  void (*recombination)(struct __pyx_obj_7plexsim_6models_7sampler_MCMC *, __Pyx_memviewslice, PyObject *);
-  void (*gibbs)(struct __pyx_obj_7plexsim_6models_7sampler_MCMC *, __Pyx_memviewslice, PyObject *);
-  void (*step)(struct __pyx_obj_7plexsim_6models_7sampler_MCMC *, __Pyx_memviewslice, PyObject *);
+  void (*recombination)(struct __pyx_obj_7plexsim_6models_7sampler_MCMC *, std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  &, PyObject *);
+  void (*gibbs)(struct __pyx_obj_7plexsim_6models_7sampler_MCMC *, std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  &, PyObject *);
+  void (*step)(struct __pyx_obj_7plexsim_6models_7sampler_MCMC *, std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  &, PyObject *);
   __pyx_t_7plexsim_6models_5types_state_t (*_sample_proposal)(struct __pyx_obj_7plexsim_6models_7sampler_MCMC *, PyObject *);
 };
 static struct __pyx_vtabstruct_7plexsim_6models_7sampler_MCMC *__pyx_vtabptr_7plexsim_6models_7sampler_MCMC;
@@ -2107,8 +2107,8 @@ static struct __pyx_vtabstruct_7plexsim_6models_7sampler_MCMC *__pyx_vtabptr_7pl
  */
 
 struct __pyx_vtabstruct_7plexsim_6models_4base_Model {
-  __Pyx_memviewslice (*updateState)(struct __pyx_obj_7plexsim_6models_4base_Model *, __Pyx_memviewslice, int __pyx_skip_dispatch);
-  __Pyx_memviewslice (*_updateState)(struct __pyx_obj_7plexsim_6models_4base_Model *, __Pyx_memviewslice);
+  std::vector<__pyx_t_7plexsim_6models_5types_state_t>  (*updateState)(struct __pyx_obj_7plexsim_6models_4base_Model *, std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  &, int __pyx_skip_dispatch);
+  std::vector<__pyx_t_7plexsim_6models_5types_state_t>  (*_updateState)(struct __pyx_obj_7plexsim_6models_4base_Model *, std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  &);
   void (*_set_state)(struct __pyx_obj_7plexsim_6models_4base_Model *, __pyx_t_7plexsim_6models_5types_node_id_t, __pyx_t_7plexsim_6models_5types_state_t);
   void (*_reset)(struct __pyx_obj_7plexsim_6models_4base_Model *, __Pyx_memviewslice);
   void (*_apply_nudge)(struct __pyx_obj_7plexsim_6models_4base_Model *, __pyx_t_7plexsim_6models_5types_node_id_t, __pyx_t_7plexsim_6models_5types_NudgesBackup *);
@@ -2117,9 +2117,10 @@ struct __pyx_vtabstruct_7plexsim_6models_4base_Model {
   void (*_step)(struct __pyx_obj_7plexsim_6models_4base_Model *, __pyx_t_7plexsim_6models_5types_node_id_t);
   void (*_hebbianUpdate)(struct __pyx_obj_7plexsim_6models_4base_Model *);
   double (*_learningFunction)(struct __pyx_obj_7plexsim_6models_4base_Model *, __pyx_t_7plexsim_6models_5types_node_id_t, __pyx_t_7plexsim_6models_5types_node_id_t);
-  __Pyx_memviewslice (*_sampleNodes)(struct __pyx_obj_7plexsim_6models_4base_Model *, size_t);
-  __Pyx_memviewslice (*sampleNodes)(struct __pyx_obj_7plexsim_6models_4base_Model *, size_t, int __pyx_skip_dispatch);
+  std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> >  (*_sampleNodes)(struct __pyx_obj_7plexsim_6models_4base_Model *, size_t);
+  std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> >  (*sampleNodes)(struct __pyx_obj_7plexsim_6models_4base_Model *, size_t, int __pyx_skip_dispatch);
   PyArrayObject *(*simulate)(struct __pyx_obj_7plexsim_6models_4base_Model *, size_t, int __pyx_skip_dispatch);
+  std::vector<std::vector<__pyx_t_7plexsim_6models_5types_state_t> >  (*_simulate)(struct __pyx_obj_7plexsim_6models_4base_Model *, size_t);
   PyArrayObject *(*simulate_mean)(struct __pyx_obj_7plexsim_6models_4base_Model *, size_t, int __pyx_skip_dispatch);
   PyObject *(*spawn)(struct __pyx_obj_7plexsim_6models_4base_Model *, int __pyx_skip_dispatch, struct __pyx_opt_args_7plexsim_6models_4base_5Model_spawn *__pyx_optional_args);
   __pyx_t_7plexsim_6models_5types_SpawnVec (*_spawn)(struct __pyx_obj_7plexsim_6models_4base_Model *, struct __pyx_opt_args_7plexsim_6models_4base_5Model__spawn *__pyx_optional_args);
@@ -3093,9 +3094,6 @@ static int __Pyx_ValidateAndInit_memviewslice(
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_dc_double(PyObject *, int writable_flag);
 
 /* ObjectToMemviewSlice.proto */
-static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_nn___pyx_t_7plexsim_6models_5types_node_id_t(PyObject *, int writable_flag);
-
-/* ObjectToMemviewSlice.proto */
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_nn___pyx_t_7plexsim_6models_5types_state_t(PyObject *, int writable_flag);
 
 /* ObjectToMemviewSlice.proto */
@@ -3646,6 +3644,9 @@ static PyObject *__pyx_f_3imi_5infcy_entropy(PyArrayObject *, int __pyx_skip_dis
 static PyObject *__pyx_f_3imi_5infcy___pyx_unpickle_Simulator__set_state(struct __pyx_obj_3imi_5infcy_Simulator *, PyObject *); /*proto*/
 static PyObject *__pyx_convert_unordered_map_to_py___pyx_t_7plexsim_6models_5types_state_t____size_t(std::unordered_map<__pyx_t_7plexsim_6models_5types_state_t,size_t>  const &); /*proto*/
 static std::unordered_map<__pyx_t_7plexsim_6models_5types_state_t,size_t>  __pyx_convert_unordered_map_from_py___pyx_t_7plexsim_6models_5types_state_t__and_size_t(PyObject *); /*proto*/
+static std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  __pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t(PyObject *); /*proto*/
+static std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> >  __pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___(PyObject *); /*proto*/
+static std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___(PyObject *); /*proto*/
 static std::unordered_map<__pyx_t_7plexsim_6models_5types_node_id_t,__pyx_t_7plexsim_6models_5types_weight_t>  __pyx_convert_unordered_map_from_py___pyx_t_7plexsim_6models_5types_node_id_t__and___pyx_t_7plexsim_6models_5types_weight_t(PyObject *); /*proto*/
 static int __pyx_array_allocate_buffer(struct __pyx_array_obj *); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char *, char *); /*proto*/
@@ -3684,7 +3685,6 @@ static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
 /* #### Code section: typeinfo ### */
 static __Pyx_TypeInfo __Pyx_TypeInfo_double = { "double", NULL, sizeof(double), { 0 }, 0, 'R', 0, 0 };
-static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7plexsim_6models_5types_node_id_t = { "node_id_t", NULL, sizeof(__pyx_t_7plexsim_6models_5types_node_id_t), { 0 }, 0, IS_UNSIGNED(__pyx_t_7plexsim_6models_5types_node_id_t) ? 'U' : 'I', IS_UNSIGNED(__pyx_t_7plexsim_6models_5types_node_id_t), 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7plexsim_6models_5types_state_t = { "state_t", NULL, sizeof(__pyx_t_7plexsim_6models_5types_state_t), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_7plexsim_6models_5types_state_t__const__ = { "const state_t", NULL, sizeof(__pyx_t_7plexsim_6models_5types_state_t const ), { 0 }, 0, 'R', 0, 0 };
 static __Pyx_TypeInfo __Pyx_TypeInfo_size_t = { "size_t", NULL, sizeof(size_t), { 0 }, 0, IS_UNSIGNED(size_t) ? 'U' : 'I', IS_UNSIGNED(size_t), 0 };
@@ -5736,7 +5736,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
   PyObject *__pyx_v_snapshots = 0;
   size_t __pyx_v_nThreads;
   __pyx_t_7plexsim_6models_5types_SpawnVec __pyx_v_models;
-  __Pyx_memviewslice __pyx_v_r = { 0, 0, { 0 }, { 0 }, { 0 } };
+  std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_v_r;
   double __pyx_v_Z;
   size_t __pyx_v_tid;
   size_t __pyx_v_s;
@@ -5755,16 +5755,12 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
   size_t __pyx_t_10;
   __pyx_t_7plexsim_6models_5types_SpawnVec __pyx_t_11;
   struct __pyx_opt_args_7plexsim_6models_4base_5Model__spawn __pyx_t_12;
-  __Pyx_memviewslice __pyx_t_13 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_t_13;
   size_t __pyx_t_14;
   PyObject *__pyx_t_15;
-  __Pyx_memviewslice __pyx_t_16 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_17 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  size_t __pyx_t_16;
+  size_t __pyx_t_17;
   size_t __pyx_t_18;
-  size_t __pyx_t_19;
-  size_t __pyx_t_20;
-  __Pyx_memviewslice __pyx_t_21 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_22 = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -5905,7 +5901,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
  *             size_t nThreads = mp.cpu_count() - 1 if n_jobs == -1 else n_jobs
  *             SpawnVec models = self.model._spawn(nThreads)             # <<<<<<<<<<<<<<
  * 
- *             node_id_t[:, :, ::1] r    = np.ndarray(
+ *             vector[vector[vector[node_id_t]]] r    = np.ndarray(
  */
   __pyx_t_12.__pyx_n = 1;
   __pyx_t_12.nThreads = __pyx_v_nThreads;
@@ -5914,7 +5910,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
 
   /* "imi/infcy.pyx":40
  * 
- *             node_id_t[:, :, ::1] r    = np.ndarray(
+ *             vector[vector[vector[node_id_t]]] r    = np.ndarray(
  *                             (nThreads,             # <<<<<<<<<<<<<<
  *                             step,
  *                             self.model.sampleSize),
@@ -5923,7 +5919,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
   __Pyx_GOTREF(__pyx_t_6);
 
   /* "imi/infcy.pyx":41
- *             node_id_t[:, :, ::1] r    = np.ndarray(
+ *             vector[vector[vector[node_id_t]]] r    = np.ndarray(
  *                             (nThreads,
  *                             step,             # <<<<<<<<<<<<<<
  *                             self.model.sampleSize),
@@ -5944,7 +5940,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
 
   /* "imi/infcy.pyx":40
  * 
- *             node_id_t[:, :, ::1] r    = np.ndarray(
+ *             vector[vector[vector[node_id_t]]] r    = np.ndarray(
  *                             (nThreads,             # <<<<<<<<<<<<<<
  *                             step,
  *                             self.model.sampleSize),
@@ -5964,7 +5960,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
   /* "imi/infcy.pyx":39
  *             SpawnVec models = self.model._spawn(nThreads)
  * 
- *             node_id_t[:, :, ::1] r    = np.ndarray(             # <<<<<<<<<<<<<<
+ *             vector[vector[vector[node_id_t]]] r    = np.ndarray(             # <<<<<<<<<<<<<<
  *                             (nThreads,
  *                             step,
  */
@@ -5994,7 +5990,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
   /* "imi/infcy.pyx":39
  *             SpawnVec models = self.model._spawn(nThreads)
  * 
- *             node_id_t[:, :, ::1] r    = np.ndarray(             # <<<<<<<<<<<<<<
+ *             vector[vector[vector[node_id_t]]] r    = np.ndarray(             # <<<<<<<<<<<<<<
  *                             (nThreads,
  *                             step,
  */
@@ -6002,11 +5998,9 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_nn___pyx_t_7plexsim_6models_5types_node_id_t(__pyx_t_6, PyBUF_WRITABLE); if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __pyx_t_13 = __pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___(__pyx_t_6); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_v_r = __pyx_t_13;
-  __pyx_t_13.memview = NULL;
-  __pyx_t_13.data = NULL;
+  __pyx_v_r = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_13);
 
   /* "imi/infcy.pyx":46
  * 
@@ -6050,7 +6044,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
             if (__pyx_t_14 > 0)
             {
                 #ifdef _OPENMP
-                #pragma omp parallel num_threads(__pyx_v_nThreads) private(__pyx_t_15, __pyx_t_18, __pyx_t_19, __pyx_t_20, __pyx_t_8) firstprivate(__pyx_t_16, __pyx_t_17, __pyx_t_2, __pyx_t_21, __pyx_t_22, __pyx_t_5, __pyx_t_6) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
+                #pragma omp parallel num_threads(__pyx_v_nThreads) private(__pyx_t_15, __pyx_t_16, __pyx_t_17, __pyx_t_18, __pyx_t_8) firstprivate(__pyx_t_2, __pyx_t_5, __pyx_t_6) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
                 #endif /* _OPENMP */
                 {
                     #ifdef _OPENMP
@@ -6074,7 +6068,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
  *                         num_threads = nThreads,
  *                         schedule = "static"):
  *             tid = threadid()             # <<<<<<<<<<<<<<
- *             r[tid, :] = (<Model> models[tid].ptr)._sampleNodes(step)
+ *             r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
  *             for s in range(step):
  */
                             #ifdef _OPENMP
@@ -6087,93 +6081,39 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_snapshots(struct __pyx_obj_3imi_
                             /* "imi/infcy.pyx":53
  *                         schedule = "static"):
  *             tid = threadid()
- *             r[tid, :] = (<Model> models[tid].ptr)._sampleNodes(step)             # <<<<<<<<<<<<<<
+ *             r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)             # <<<<<<<<<<<<<<
  *             for s in range(step):
- *                 (<Model> models[tid].ptr)._updateState(r[tid, s])
+ *                 (<Model> models[tid].ptr)._updateState(r[tid][s])
  */
                             __pyx_t_15 = (__pyx_v_models[__pyx_v_tid]).ptr;
-                            __pyx_t_16 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15)->__pyx_vtab)->_sampleNodes(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15), __pyx_v_step); if (unlikely(!__pyx_t_16.memview)) __PYX_ERR(0, 53, __pyx_L8_error)
-                            __pyx_t_17.data = __pyx_v_r.data;
-                            __pyx_t_17.memview = __pyx_v_r.memview;
-                            __PYX_INC_MEMVIEW(&__pyx_t_17, 0);
-                            {
-    Py_ssize_t __pyx_tmp_idx = __pyx_v_tid;
-        Py_ssize_t __pyx_tmp_shape = __pyx_v_r.shape[0];
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[0];
-        if (__pyx_tmp_idx < 0)
-            __pyx_tmp_idx += __pyx_tmp_shape;
-        __pyx_t_17.data += __pyx_tmp_idx * __pyx_tmp_stride;
-}
-
-__pyx_t_17.shape[0] = __pyx_v_r.shape[1];
-__pyx_t_17.strides[0] = __pyx_v_r.strides[1];
-    __pyx_t_17.suboffsets[0] = -1;
-
-__pyx_t_17.shape[1] = __pyx_v_r.shape[2];
-__pyx_t_17.strides[1] = __pyx_v_r.strides[2];
-    __pyx_t_17.suboffsets[1] = -1;
-
-if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_16, __pyx_t_17, 2, 2, 0) < 0))) __PYX_ERR(0, 53, __pyx_L8_error)
-                            __PYX_XCLEAR_MEMVIEW(&__pyx_t_17, 0);
-                            __pyx_t_17.memview = NULL; __pyx_t_17.data = NULL;
-                            __PYX_XCLEAR_MEMVIEW(&__pyx_t_16, 0);
-                            __pyx_t_16.memview = NULL; __pyx_t_16.data = NULL;
+                            (__pyx_v_r[__pyx_v_tid]) = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15)->__pyx_vtab)->_sampleNodes(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15), __pyx_v_step);
 
                             /* "imi/infcy.pyx":54
  *             tid = threadid()
- *             r[tid, :] = (<Model> models[tid].ptr)._sampleNodes(step)
+ *             r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
  *             for s in range(step):             # <<<<<<<<<<<<<<
- *                 (<Model> models[tid].ptr)._updateState(r[tid, s])
+ *                 (<Model> models[tid].ptr)._updateState(r[tid][s])
  *             with gil:
  */
-                            __pyx_t_18 = __pyx_v_step;
-                            __pyx_t_19 = __pyx_t_18;
-                            for (__pyx_t_20 = 0; __pyx_t_20 < __pyx_t_19; __pyx_t_20+=1) {
-                              __pyx_v_s = __pyx_t_20;
+                            __pyx_t_16 = __pyx_v_step;
+                            __pyx_t_17 = __pyx_t_16;
+                            for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
+                              __pyx_v_s = __pyx_t_18;
 
                               /* "imi/infcy.pyx":55
- *             r[tid, :] = (<Model> models[tid].ptr)._sampleNodes(step)
+ *             r[tid] = (<Model> models[tid].ptr)._sampleNodes(step)
  *             for s in range(step):
- *                 (<Model> models[tid].ptr)._updateState(r[tid, s])             # <<<<<<<<<<<<<<
+ *                 (<Model> models[tid].ptr)._updateState(r[tid][s])             # <<<<<<<<<<<<<<
  *             with gil:
  *                 tmp = tuple((<Model> models[tid].ptr).states)
  */
                               __pyx_t_15 = (__pyx_v_models[__pyx_v_tid]).ptr;
-                              __pyx_t_21.data = __pyx_v_r.data;
-                              __pyx_t_21.memview = __pyx_v_r.memview;
-                              __PYX_INC_MEMVIEW(&__pyx_t_21, 0);
-                              {
-    Py_ssize_t __pyx_tmp_idx = __pyx_v_tid;
-        Py_ssize_t __pyx_tmp_shape = __pyx_v_r.shape[0];
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[0];
-        if (__pyx_tmp_idx < 0)
-            __pyx_tmp_idx += __pyx_tmp_shape;
-        __pyx_t_21.data += __pyx_tmp_idx * __pyx_tmp_stride;
-}
-
-{
-    Py_ssize_t __pyx_tmp_idx = __pyx_v_s;
-        Py_ssize_t __pyx_tmp_shape = __pyx_v_r.shape[1];
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[1];
-        if (__pyx_tmp_idx < 0)
-            __pyx_tmp_idx += __pyx_tmp_shape;
-        __pyx_t_21.data += __pyx_tmp_idx * __pyx_tmp_stride;
-}
-
-__pyx_t_21.shape[0] = __pyx_v_r.shape[2];
-__pyx_t_21.strides[0] = __pyx_v_r.strides[2];
-    __pyx_t_21.suboffsets[0] = -1;
-
-__pyx_t_22 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15)->__pyx_vtab)->_updateState(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15), __pyx_t_21); if (unlikely(!__pyx_t_22.memview)) __PYX_ERR(0, 55, __pyx_L8_error)
-                              __PYX_XCLEAR_MEMVIEW(&__pyx_t_21, 0);
-                              __pyx_t_21.memview = NULL; __pyx_t_21.data = NULL;
-                              __PYX_XCLEAR_MEMVIEW(&__pyx_t_22, 0);
-                              __pyx_t_22.memview = NULL; __pyx_t_22.data = NULL;
+                              (void)(((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15)->__pyx_vtab)->_updateState(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_15), ((__pyx_v_r[__pyx_v_tid])[__pyx_v_s])));
                             }
 
                             /* "imi/infcy.pyx":56
  *             for s in range(step):
- *                 (<Model> models[tid].ptr)._updateState(r[tid, s])
+ *                 (<Model> models[tid].ptr)._updateState(r[tid][s])
  *             with gil:             # <<<<<<<<<<<<<<
  *                 tmp = tuple((<Model> models[tid].ptr).states)
  *                 snapshots[tmp] = snapshots.get(tmp, 0) + Z
@@ -6185,7 +6125,7 @@ __pyx_t_22 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct _
                                 /*try:*/ {
 
                                   /* "imi/infcy.pyx":57
- *                 (<Model> models[tid].ptr)._updateState(r[tid, s])
+ *                 (<Model> models[tid].ptr)._updateState(r[tid][s])
  *             with gil:
  *                 tmp = tuple((<Model> models[tid].ptr).states)             # <<<<<<<<<<<<<<
  *                 snapshots[tmp] = snapshots.get(tmp, 0) + Z
@@ -6221,7 +6161,7 @@ __pyx_t_22 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct _
 
                                 /* "imi/infcy.pyx":56
  *             for s in range(step):
- *                 (<Model> models[tid].ptr)._updateState(r[tid, s])
+ *                 (<Model> models[tid].ptr)._updateState(r[tid][s])
  *             with gil:             # <<<<<<<<<<<<<<
  *                 tmp = tuple((<Model> models[tid].ptr).states)
  *                 snapshots[tmp] = snapshots.get(tmp, 0) + Z
@@ -6286,15 +6226,7 @@ __pyx_t_22 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct _
                     #endif
                     #endif /* _OPENMP */
                     /* Clean up any temporaries */
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_16, 0);
-                    __pyx_t_16.memview = NULL; __pyx_t_16.data = NULL;
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_17, 0);
-                    __pyx_t_17.memview = NULL; __pyx_t_17.data = NULL;
                     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_21, 0);
-                    __pyx_t_21.memview = NULL; __pyx_t_21.data = NULL;
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_22, 0);
-                    __pyx_t_22.memview = NULL; __pyx_t_22.data = NULL;
                     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
                     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
                     #ifdef WITH_THREAD
@@ -6393,17 +6325,11 @@ __pyx_t_22 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct _
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_13, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_16, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_17, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_21, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_22, 1);
   __Pyx_AddTraceback("imi.infcy.Simulator.snapshots", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_tmp);
   __Pyx_XDECREF(__pyx_v_snapshots);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_v_r, 1);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -7178,7 +7104,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
   std::unordered_map<__pyx_t_7plexsim_6models_5types_node_id_t,__pyx_t_7plexsim_6models_5types_weight_t>  __pyx_v_copyNudge;
   size_t __pyx_v_half;
   __Pyx_memviewslice __pyx_v_conditional = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_v_r = { 0, 0, { 0 }, { 0 }, { 0 } };
+  std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_v_r;
   PyObject *__pyx_v_python_condition = 0;
   size_t __pyx_v_zdx;
   PyObject *__pyx_v_s = NULL;
@@ -7206,7 +7132,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
   long __pyx_t_19;
   int __pyx_t_20;
   __Pyx_memviewslice __pyx_t_21 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_22 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_t_22;
   size_t __pyx_t_23;
   size_t __pyx_t_24;
   size_t __pyx_t_25;
@@ -7220,16 +7146,13 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
   size_t __pyx_t_33;
   size_t __pyx_t_34;
   PyObject *__pyx_t_35;
-  __Pyx_memviewslice __pyx_t_36 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_37 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_38 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  size_t __pyx_t_36;
+  size_t __pyx_t_37;
+  size_t __pyx_t_38;
   size_t __pyx_t_39;
-  size_t __pyx_t_40;
-  size_t __pyx_t_41;
-  size_t __pyx_t_42;
-  __Pyx_memviewslice __pyx_t_43 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data __pyx_t_44;
-  struct __pyx_opt_args_3imi_5infcy_9Simulator_normalize __pyx_t_45;
+  __Pyx_memviewslice __pyx_t_40 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  struct __pyx_opt_args_3imi_5infcy_9Simulator_bin_data __pyx_t_41;
+  struct __pyx_opt_args_3imi_5infcy_9Simulator_normalize __pyx_t_42;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -7828,7 +7751,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
  *            unordered_map[node_id_t, weight_t]  copyNudge = self.model.nudges
  *            size_t half = max((int(T * .5), 1))             # <<<<<<<<<<<<<<
  *            double[:, :, :, ::1] conditional = np.zeros((nStates, *shape)) # holder for probability decay
- *            node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+ *            vector[vector[vector[node_id_t]]] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
  */
   __pyx_t_19 = 1;
   __pyx_t_3 = __Pyx_PyInt_FromDouble((__pyx_v_T * .5)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 228, __pyx_L1_error)
@@ -7857,7 +7780,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
  *            unordered_map[node_id_t, weight_t]  copyNudge = self.model.nudges
  *            size_t half = max((int(T * .5), 1))
  *            double[:, :, :, ::1] conditional = np.zeros((nStates, *shape)) # holder for probability decay             # <<<<<<<<<<<<<<
- *            node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+ *            vector[vector[vector[node_id_t]]] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
  * 
  */
   __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 229, __pyx_L1_error)
@@ -7911,7 +7834,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
   /* "imi/infcy.pyx":230
  *            size_t half = max((int(T * .5), 1))
  *            double[:, :, :, ::1] conditional = np.zeros((nStates, *shape)) # holder for probability decay
- *            node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)             # <<<<<<<<<<<<<<
+ *            vector[vector[vector[node_id_t]]] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)             # <<<<<<<<<<<<<<
  * 
  *        print("Starting parallel runs")
  */
@@ -7956,14 +7879,12 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_22 = __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_nn___pyx_t_7plexsim_6models_5types_node_id_t(__pyx_t_5, PyBUF_WRITABLE); if (unlikely(!__pyx_t_22.memview)) __PYX_ERR(0, 230, __pyx_L1_error)
+  __pyx_t_22 = __pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___(__pyx_t_5); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 230, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_v_r = __pyx_t_22;
-  __pyx_t_22.memview = NULL;
-  __pyx_t_22.data = NULL;
+  __pyx_v_r = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_22);
 
   /* "imi/infcy.pyx":232
- *            node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+ *            vector[vector[vector[node_id_t]]] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
  * 
  *        print("Starting parallel runs")             # <<<<<<<<<<<<<<
  *        for state_idx in prange(nStates,
@@ -8008,7 +7929,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
             if (__pyx_t_24 > 0)
             {
                 #ifdef _OPENMP
-                #pragma omp parallel num_threads(__pyx_v_cpus) private(__pyx_t_20, __pyx_t_25, __pyx_t_26, __pyx_t_27, __pyx_t_30, __pyx_t_31, __pyx_t_32, __pyx_t_33, __pyx_t_34, __pyx_t_35, __pyx_t_39, __pyx_t_40, __pyx_t_41, __pyx_t_42, __pyx_t_44, __pyx_t_7) firstprivate(__pyx_t_11, __pyx_t_28, __pyx_t_29, __pyx_t_36, __pyx_t_37, __pyx_t_38, __pyx_t_43) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
+                #pragma omp parallel num_threads(__pyx_v_cpus) private(__pyx_t_20, __pyx_t_25, __pyx_t_26, __pyx_t_27, __pyx_t_30, __pyx_t_31, __pyx_t_32, __pyx_t_33, __pyx_t_34, __pyx_t_35, __pyx_t_36, __pyx_t_37, __pyx_t_38, __pyx_t_39, __pyx_t_41, __pyx_t_7) firstprivate(__pyx_t_11, __pyx_t_28, __pyx_t_29, __pyx_t_40) private(__pyx_filename, __pyx_lineno, __pyx_clineno) shared(__pyx_parallel_why, __pyx_parallel_exc_type, __pyx_parallel_exc_value, __pyx_parallel_exc_tb)
                 #endif /* _OPENMP */
                 {
                     #ifdef _OPENMP
@@ -8185,38 +8106,13 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
  *                for step in range(1, T):
  */
                               __pyx_t_35 = (__pyx_v_models[__pyx_v_tid]).ptr;
-                              __pyx_t_36 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->__pyx_vtab)->_sampleNodes(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35), __pyx_v_T); if (unlikely(!__pyx_t_36.memview)) __PYX_ERR(0, 252, __pyx_L16_error)
-                              __pyx_t_37.data = __pyx_v_r.data;
-                              __pyx_t_37.memview = __pyx_v_r.memview;
-                              __PYX_INC_MEMVIEW(&__pyx_t_37, 0);
-                              {
-    Py_ssize_t __pyx_tmp_idx = __pyx_v_tid;
-        Py_ssize_t __pyx_tmp_shape = __pyx_v_r.shape[0];
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[0];
-        if (__pyx_tmp_idx < 0)
-            __pyx_tmp_idx += __pyx_tmp_shape;
-        __pyx_t_37.data += __pyx_tmp_idx * __pyx_tmp_stride;
-}
-
-__pyx_t_37.shape[0] = __pyx_v_r.shape[1];
-__pyx_t_37.strides[0] = __pyx_v_r.strides[1];
-    __pyx_t_37.suboffsets[0] = -1;
-
-__pyx_t_37.shape[1] = __pyx_v_r.shape[2];
-__pyx_t_37.strides[1] = __pyx_v_r.strides[2];
-    __pyx_t_37.suboffsets[1] = -1;
-
-if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_36, __pyx_t_37, 2, 2, 0) < 0))) __PYX_ERR(0, 252, __pyx_L16_error)
-                              __PYX_XCLEAR_MEMVIEW(&__pyx_t_37, 0);
-                              __pyx_t_37.memview = NULL; __pyx_t_37.data = NULL;
-                              __PYX_XCLEAR_MEMVIEW(&__pyx_t_36, 0);
-                              __pyx_t_36.memview = NULL; __pyx_t_36.data = NULL;
+                              (__pyx_v_r[__pyx_v_tid]) = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->__pyx_vtab)->_sampleNodes(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35), __pyx_v_T);
 
                               /* "imi/infcy.pyx":254
  *                r[tid] = (<Model> models[tid].ptr)._sampleNodes(T)
  *                # simulate a trace
  *                for step in range(1, T):             # <<<<<<<<<<<<<<
- *                    (< Model > models[tid].ptr)._updateState(r[tid, step, :])
+ *                    (< Model > models[tid].ptr)._updateState(r[tid][step])
  *                    # (< Model > models[tid].ptr)._updateState(
  */
                               __pyx_t_30 = __pyx_v_T;
@@ -8227,41 +8123,12 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_36, __pyx_t_37, 2, 2, 0) < 
                                 /* "imi/infcy.pyx":255
  *                # simulate a trace
  *                for step in range(1, T):
- *                    (< Model > models[tid].ptr)._updateState(r[tid, step, :])             # <<<<<<<<<<<<<<
+ *                    (< Model > models[tid].ptr)._updateState(r[tid][step])             # <<<<<<<<<<<<<<
  *                    # (< Model > models[tid].ptr)._updateState(
  *                        # (<Model> models[tid].ptr)._sampleNodes(1)[0])
  */
                                 __pyx_t_35 = (__pyx_v_models[__pyx_v_tid]).ptr;
-                                __pyx_t_38.data = __pyx_v_r.data;
-                                __pyx_t_38.memview = __pyx_v_r.memview;
-                                __PYX_INC_MEMVIEW(&__pyx_t_38, 0);
-                                {
-    Py_ssize_t __pyx_tmp_idx = __pyx_v_tid;
-        Py_ssize_t __pyx_tmp_shape = __pyx_v_r.shape[0];
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[0];
-        if (__pyx_tmp_idx < 0)
-            __pyx_tmp_idx += __pyx_tmp_shape;
-        __pyx_t_38.data += __pyx_tmp_idx * __pyx_tmp_stride;
-}
-
-{
-    Py_ssize_t __pyx_tmp_idx = __pyx_v_step;
-        Py_ssize_t __pyx_tmp_shape = __pyx_v_r.shape[1];
-    Py_ssize_t __pyx_tmp_stride = __pyx_v_r.strides[1];
-        if (__pyx_tmp_idx < 0)
-            __pyx_tmp_idx += __pyx_tmp_shape;
-        __pyx_t_38.data += __pyx_tmp_idx * __pyx_tmp_stride;
-}
-
-__pyx_t_38.shape[0] = __pyx_v_r.shape[2];
-__pyx_t_38.strides[0] = __pyx_v_r.strides[2];
-    __pyx_t_38.suboffsets[0] = -1;
-
-__pyx_t_29 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->__pyx_vtab)->_updateState(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35), __pyx_t_38); if (unlikely(!__pyx_t_29.memview)) __PYX_ERR(0, 255, __pyx_L16_error)
-                                __PYX_XCLEAR_MEMVIEW(&__pyx_t_38, 0);
-                                __pyx_t_38.memview = NULL; __pyx_t_38.data = NULL;
-                                __PYX_XCLEAR_MEMVIEW(&__pyx_t_29, 0);
-                                __pyx_t_29.memview = NULL; __pyx_t_29.data = NULL;
+                                (void)(((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->__pyx_vtab)->_updateState(((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35), ((__pyx_v_r[__pyx_v_tid])[__pyx_v_step])));
 
                                 /* "imi/infcy.pyx":259
  *                        # (<Model> models[tid].ptr)._sampleNodes(1)[0])
@@ -8311,8 +8178,8 @@ __pyx_t_29 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct _
  */
                                   __pyx_t_34 = __pyx_v_NODES;
                                   __pyx_t_33 = __pyx_t_34;
-                                  for (__pyx_t_39 = 0; __pyx_t_39 < __pyx_t_33; __pyx_t_39+=1) {
-                                    __pyx_v_node = __pyx_t_39;
+                                  for (__pyx_t_36 = 0; __pyx_t_36 < __pyx_t_33; __pyx_t_36+=1) {
+                                    __pyx_v_node = __pyx_t_36;
 
                                     /* "imi/infcy.pyx":264
  *                    if store_idx.find(step) != store_idx.end():
@@ -8322,10 +8189,10 @@ __pyx_t_29 = ((struct __pyx_vtabstruct_7plexsim_6models_4base_Model *)((struct _
  *                # bin buffer
  */
                                     __pyx_t_35 = (__pyx_v_models[__pyx_v_tid]).ptr;
-                                    __pyx_t_40 = __pyx_v_tid;
-                                    __pyx_t_41 = (__pyx_v_store_idx[__pyx_v_step]);
-                                    __pyx_t_42 = __pyx_v_node;
-                                    *((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=2 */ ((char *) (((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_thread_state.data + __pyx_t_40 * __pyx_v_thread_state.strides[0]) ) + __pyx_t_41 * __pyx_v_thread_state.strides[1]) )) + __pyx_t_42)) )) = (((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->_states[__pyx_v_node]);
+                                    __pyx_t_37 = __pyx_v_tid;
+                                    __pyx_t_38 = (__pyx_v_store_idx[__pyx_v_step]);
+                                    __pyx_t_39 = __pyx_v_node;
+                                    *((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=2 */ ((char *) (((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_thread_state.data + __pyx_t_37 * __pyx_v_thread_state.strides[0]) ) + __pyx_t_38 * __pyx_v_thread_state.strides[1]) )) + __pyx_t_39)) )) = (((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->_states[__pyx_v_node]);
                                   }
 
                                   /* "imi/infcy.pyx":262
@@ -8389,7 +8256,7 @@ __pyx_t_28.shape[0] = __pyx_v_states.shape[1];
 __pyx_t_28.strides[0] = __pyx_v_states.strides[1];
     __pyx_t_28.suboffsets[0] = -1;
 
-__pyx_t_43.data = __pyx_v_conditional.data;
+__pyx_t_40.data = __pyx_v_conditional.data;
 
                               /* "imi/infcy.pyx":269
  *                self.bin_data(thread_state[tid],
@@ -8398,30 +8265,30 @@ __pyx_t_43.data = __pyx_v_conditional.data;
  * 
  *        print("Done with trials")
  */
-                              __pyx_t_43.memview = __pyx_v_conditional.memview;
-                              __PYX_INC_MEMVIEW(&__pyx_t_43, 0);
+                              __pyx_t_40.memview = __pyx_v_conditional.memview;
+                              __PYX_INC_MEMVIEW(&__pyx_t_40, 0);
                               {
     Py_ssize_t __pyx_tmp_idx = __pyx_v_state_idx;
         Py_ssize_t __pyx_tmp_shape = __pyx_v_conditional.shape[0];
     Py_ssize_t __pyx_tmp_stride = __pyx_v_conditional.strides[0];
         if (__pyx_tmp_idx < 0)
             __pyx_tmp_idx += __pyx_tmp_shape;
-        __pyx_t_43.data += __pyx_tmp_idx * __pyx_tmp_stride;
+        __pyx_t_40.data += __pyx_tmp_idx * __pyx_tmp_stride;
 }
 
-__pyx_t_43.shape[0] = __pyx_v_conditional.shape[1];
-__pyx_t_43.strides[0] = __pyx_v_conditional.strides[1];
-    __pyx_t_43.suboffsets[0] = -1;
+__pyx_t_40.shape[0] = __pyx_v_conditional.shape[1];
+__pyx_t_40.strides[0] = __pyx_v_conditional.strides[1];
+    __pyx_t_40.suboffsets[0] = -1;
 
-__pyx_t_43.shape[1] = __pyx_v_conditional.shape[2];
-__pyx_t_43.strides[1] = __pyx_v_conditional.strides[2];
-    __pyx_t_43.suboffsets[1] = -1;
+__pyx_t_40.shape[1] = __pyx_v_conditional.shape[2];
+__pyx_t_40.strides[1] = __pyx_v_conditional.strides[2];
+    __pyx_t_40.suboffsets[1] = -1;
 
-__pyx_t_43.shape[2] = __pyx_v_conditional.shape[3];
-__pyx_t_43.strides[2] = __pyx_v_conditional.strides[3];
-    __pyx_t_43.suboffsets[2] = -1;
+__pyx_t_40.shape[2] = __pyx_v_conditional.shape[3];
+__pyx_t_40.strides[2] = __pyx_v_conditional.strides[3];
+    __pyx_t_40.suboffsets[2] = -1;
 
-__pyx_t_44.__pyx_n = 1;
+__pyx_t_41.__pyx_n = 1;
 
                               /* "imi/infcy.pyx":267
  * 
@@ -8430,14 +8297,14 @@ __pyx_t_44.__pyx_n = 1;
  *                             states[state_idx],
  *                             conditional[state_idx], Z)
  */
-                              __pyx_t_44.Z = __pyx_v_Z;
-                              ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->bin_data(__pyx_v_self, __pyx_t_11, __pyx_t_28, __pyx_t_43, &__pyx_t_44); 
+                              __pyx_t_41.Z = __pyx_v_Z;
+                              ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->bin_data(__pyx_v_self, __pyx_t_11, __pyx_t_28, __pyx_t_40, &__pyx_t_41); 
                               __PYX_XCLEAR_MEMVIEW(&__pyx_t_11, 0);
                               __pyx_t_11.memview = NULL; __pyx_t_11.data = NULL;
                               __PYX_XCLEAR_MEMVIEW(&__pyx_t_28, 0);
                               __pyx_t_28.memview = NULL; __pyx_t_28.data = NULL;
-                              __PYX_XCLEAR_MEMVIEW(&__pyx_t_43, 0);
-                              __pyx_t_43.memview = NULL; __pyx_t_43.data = NULL;
+                              __PYX_XCLEAR_MEMVIEW(&__pyx_t_40, 0);
+                              __pyx_t_40.memview = NULL; __pyx_t_40.data = NULL;
                             }
                             goto __pyx_L32;
                             __pyx_L16_error:;
@@ -8491,14 +8358,8 @@ __pyx_t_44.__pyx_n = 1;
                     __pyx_t_28.memview = NULL; __pyx_t_28.data = NULL;
                     __PYX_XCLEAR_MEMVIEW(&__pyx_t_29, 0);
                     __pyx_t_29.memview = NULL; __pyx_t_29.data = NULL;
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_36, 0);
-                    __pyx_t_36.memview = NULL; __pyx_t_36.data = NULL;
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_37, 0);
-                    __pyx_t_37.memview = NULL; __pyx_t_37.data = NULL;
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_38, 0);
-                    __pyx_t_38.memview = NULL; __pyx_t_38.data = NULL;
-                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_43, 0);
-                    __pyx_t_43.memview = NULL; __pyx_t_43.data = NULL;
+                    __PYX_XCLEAR_MEMVIEW(&__pyx_t_40, 0);
+                    __pyx_t_40.memview = NULL; __pyx_t_40.data = NULL;
                     #ifdef WITH_THREAD
                     __Pyx_PyGILState_Release(__pyx_gilstate_save);
                     #endif
@@ -8674,9 +8535,9 @@ __pyx_t_44.__pyx_n = 1;
  *        # for state_idx in prange(nStates, nogil=True, num_threads=cpus):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_45.__pyx_n = 1;
-  __pyx_t_45.running = 0;
-  __pyx_t_6 = ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->normalize(__pyx_v_self, __pyx_v_python_condition, __pyx_v_snapshots, 0, &__pyx_t_45); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 277, __pyx_L1_error)
+  __pyx_t_42.__pyx_n = 1;
+  __pyx_t_42.running = 0;
+  __pyx_t_6 = ((struct __pyx_vtabstruct_3imi_5infcy_Simulator *)__pyx_v_self->__pyx_vtab)->normalize(__pyx_v_self, __pyx_v_python_condition, __pyx_v_snapshots, 0, &__pyx_t_42); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 277, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __pyx_r = ((PyObject*)__pyx_t_6);
   __pyx_t_6 = 0;
@@ -8702,13 +8563,9 @@ __pyx_t_44.__pyx_n = 1;
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_11, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_14, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_21, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_22, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_28, 1);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_29, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_36, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_37, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_38, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_t_43, 1);
+  __PYX_XCLEAR_MEMVIEW(&__pyx_t_40, 1);
   __Pyx_AddTraceback("imi.infcy.Simulator.forward", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -8718,7 +8575,6 @@ __pyx_t_44.__pyx_n = 1;
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_states, 1);
   __Pyx_XDECREF(__pyx_v_shape);
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_conditional, 1);
-  __PYX_XCLEAR_MEMVIEW(&__pyx_v_r, 1);
   __Pyx_XDECREF(__pyx_v_python_condition);
   __Pyx_XDECREF(__pyx_v_s);
   __Pyx_XDECREF(__pyx_7genexpr__pyx_v_i);
@@ -13601,6 +13457,379 @@ static std::unordered_map<__pyx_t_7plexsim_6models_5types_state_t,size_t>  __pyx
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
+
+/* "vector.from_py":45
+ * 
+ * @cname("__pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t")
+ * cdef vector[X] __pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t(object o) except *:             # <<<<<<<<<<<<<<
+ *     cdef vector[X] v
+ *     for item in o:
+ */
+
+static std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  __pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t(PyObject *__pyx_v_o) {
+  std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  __pyx_v_v;
+  PyObject *__pyx_v_item = NULL;
+  std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  Py_ssize_t __pyx_t_2;
+  PyObject *(*__pyx_t_3)(PyObject *);
+  PyObject *__pyx_t_4 = NULL;
+  __pyx_t_7plexsim_6models_5types_node_id_t __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t", 0);
+
+  /* "vector.from_py":47
+ * cdef vector[X] __pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t(object o) except *:
+ *     cdef vector[X] v
+ *     for item in o:             # <<<<<<<<<<<<<<
+ *         v.push_back(<X>item)
+ *     return v
+ */
+  if (likely(PyList_CheckExact(__pyx_v_o)) || PyTuple_CheckExact(__pyx_v_o)) {
+    __pyx_t_1 = __pyx_v_o; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
+    __pyx_t_3 = NULL;
+  } else {
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_o); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 47, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 47, __pyx_L1_error)
+  }
+  for (;;) {
+    if (likely(!__pyx_t_3)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(1, 47, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 47, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      } else {
+        if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(1, 47, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 47, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      }
+    } else {
+      __pyx_t_4 = __pyx_t_3(__pyx_t_1);
+      if (unlikely(!__pyx_t_4)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(1, 47, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_4);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_item, __pyx_t_4);
+    __pyx_t_4 = 0;
+
+    /* "vector.from_py":48
+ *     cdef vector[X] v
+ *     for item in o:
+ *         v.push_back(<X>item)             # <<<<<<<<<<<<<<
+ *     return v
+ * 
+ */
+    __pyx_t_5 = __Pyx_PyInt_As_size_t(__pyx_v_item); if (unlikely((__pyx_t_5 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(1, 48, __pyx_L1_error)
+    try {
+      __pyx_v_v.push_back(((__pyx_t_7plexsim_6models_5types_node_id_t)__pyx_t_5));
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(1, 48, __pyx_L1_error)
+    }
+
+    /* "vector.from_py":47
+ * cdef vector[X] __pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t(object o) except *:
+ *     cdef vector[X] v
+ *     for item in o:             # <<<<<<<<<<<<<<
+ *         v.push_back(<X>item)
+ *     return v
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "vector.from_py":49
+ *     for item in o:
+ *         v.push_back(<X>item)
+ *     return v             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = __pyx_v_v;
+  goto __pyx_L0;
+
+  /* "vector.from_py":45
+ * 
+ * @cname("__pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t")
+ * cdef vector[X] __pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t(object o) except *:             # <<<<<<<<<<<<<<
+ *     cdef vector[X] v
+ *     for item in o:
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("vector.from_py.__pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_pretend_to_initialize(&__pyx_r);
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_item);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> >  __pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___(PyObject *__pyx_v_o) {
+  std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> >  __pyx_v_v;
+  PyObject *__pyx_v_item = NULL;
+  std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> >  __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  Py_ssize_t __pyx_t_2;
+  PyObject *(*__pyx_t_3)(PyObject *);
+  PyObject *__pyx_t_4 = NULL;
+  std::vector<__pyx_t_7plexsim_6models_5types_node_id_t>  __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___", 0);
+
+  /* "vector.from_py":47
+ * cdef vector[X] __pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___(object o) except *:
+ *     cdef vector[X] v
+ *     for item in o:             # <<<<<<<<<<<<<<
+ *         v.push_back(<X>item)
+ *     return v
+ */
+  if (likely(PyList_CheckExact(__pyx_v_o)) || PyTuple_CheckExact(__pyx_v_o)) {
+    __pyx_t_1 = __pyx_v_o; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
+    __pyx_t_3 = NULL;
+  } else {
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_o); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 47, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 47, __pyx_L1_error)
+  }
+  for (;;) {
+    if (likely(!__pyx_t_3)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(1, 47, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 47, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      } else {
+        if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(1, 47, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 47, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      }
+    } else {
+      __pyx_t_4 = __pyx_t_3(__pyx_t_1);
+      if (unlikely(!__pyx_t_4)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(1, 47, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_4);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_item, __pyx_t_4);
+    __pyx_t_4 = 0;
+
+    /* "vector.from_py":48
+ *     cdef vector[X] v
+ *     for item in o:
+ *         v.push_back(<X>item)             # <<<<<<<<<<<<<<
+ *     return v
+ * 
+ */
+    __pyx_t_5 = __pyx_convert_vector_from_py___pyx_t_7plexsim_6models_5types_node_id_t(__pyx_v_item); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 48, __pyx_L1_error)
+    try {
+      __pyx_v_v.push_back(((std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> )__pyx_t_5));
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(1, 48, __pyx_L1_error)
+    }
+
+    /* "vector.from_py":47
+ * cdef vector[X] __pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___(object o) except *:
+ *     cdef vector[X] v
+ *     for item in o:             # <<<<<<<<<<<<<<
+ *         v.push_back(<X>item)
+ *     return v
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "vector.from_py":49
+ *     for item in o:
+ *         v.push_back(<X>item)
+ *     return v             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = __pyx_v_v;
+  goto __pyx_L0;
+
+  /* "vector.from_py":45
+ * 
+ * @cname("__pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___")
+ * cdef vector[X] __pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___(object o) except *:             # <<<<<<<<<<<<<<
+ *     cdef vector[X] v
+ *     for item in o:
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("vector.from_py.__pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_pretend_to_initialize(&__pyx_r);
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_item);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___(PyObject *__pyx_v_o) {
+  std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_v_v;
+  PyObject *__pyx_v_item = NULL;
+  std::vector<std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > >  __pyx_r;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  Py_ssize_t __pyx_t_2;
+  PyObject *(*__pyx_t_3)(PyObject *);
+  PyObject *__pyx_t_4 = NULL;
+  std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> >  __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___", 0);
+
+  /* "vector.from_py":47
+ * cdef vector[X] __pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___(object o) except *:
+ *     cdef vector[X] v
+ *     for item in o:             # <<<<<<<<<<<<<<
+ *         v.push_back(<X>item)
+ *     return v
+ */
+  if (likely(PyList_CheckExact(__pyx_v_o)) || PyTuple_CheckExact(__pyx_v_o)) {
+    __pyx_t_1 = __pyx_v_o; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
+    __pyx_t_3 = NULL;
+  } else {
+    __pyx_t_2 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_o); if (unlikely(!__pyx_t_1)) __PYX_ERR(1, 47, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_3 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(1, 47, __pyx_L1_error)
+  }
+  for (;;) {
+    if (likely(!__pyx_t_3)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(1, 47, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 47, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      } else {
+        if (__pyx_t_2 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_4); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(1, 47, __pyx_L1_error)
+        #else
+        __pyx_t_4 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 47, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #endif
+      }
+    } else {
+      __pyx_t_4 = __pyx_t_3(__pyx_t_1);
+      if (unlikely(!__pyx_t_4)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(1, 47, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_4);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_item, __pyx_t_4);
+    __pyx_t_4 = 0;
+
+    /* "vector.from_py":48
+ *     cdef vector[X] v
+ *     for item in o:
+ *         v.push_back(<X>item)             # <<<<<<<<<<<<<<
+ *     return v
+ * 
+ */
+    __pyx_t_5 = __pyx_convert_vector_from_py_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e___(__pyx_v_item); if (unlikely(PyErr_Occurred())) __PYX_ERR(1, 48, __pyx_L1_error)
+    try {
+      __pyx_v_v.push_back(((std::vector<std::vector<__pyx_t_7plexsim_6models_5types_node_id_t> > )__pyx_t_5));
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(1, 48, __pyx_L1_error)
+    }
+
+    /* "vector.from_py":47
+ * cdef vector[X] __pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___(object o) except *:
+ *     cdef vector[X] v
+ *     for item in o:             # <<<<<<<<<<<<<<
+ *         v.push_back(<X>item)
+ *     return v
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "vector.from_py":49
+ *     for item in o:
+ *         v.push_back(<X>item)
+ *     return v             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __pyx_r = __pyx_v_v;
+  goto __pyx_L0;
+
+  /* "vector.from_py":45
+ * 
+ * @cname("__pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___")
+ * cdef vector[X] __pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___(object o) except *:             # <<<<<<<<<<<<<<
+ *     cdef vector[X] v
+ *     for item in o:
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_AddTraceback("vector.from_py.__pyx_convert_vector_from_py_std_3a__3a_vector_3c_std_3a__3a_vector_3c___pyx_t_7plexsim_6models_5types_node_id_t_3e____3e___", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_pretend_to_initialize(&__pyx_r);
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_item);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "map.from_py":205
+ * 
+ * @cname("__pyx_convert_unordered_map_from_py___pyx_t_7plexsim_6models_5types_node_id_t__and___pyx_t_7plexsim_6models_5types_weight_t")
+ * cdef map[X,Y] __pyx_convert_unordered_map_from_py___pyx_t_7plexsim_6models_5types_node_id_t__and___pyx_t_7plexsim_6models_5types_weight_t(object o) except *:             # <<<<<<<<<<<<<<
+ *     cdef dict d = o
+ *     cdef map[X,Y] m
+ */
 
 static std::unordered_map<__pyx_t_7plexsim_6models_5types_node_id_t,__pyx_t_7plexsim_6models_5types_weight_t>  __pyx_convert_unordered_map_from_py___pyx_t_7plexsim_6models_5types_node_id_t__and___pyx_t_7plexsim_6models_5types_weight_t(PyObject *__pyx_v_o) {
   PyObject *__pyx_v_d = 0;
@@ -28660,7 +28889,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
   /* "imi/infcy.pyx":232
- *            node_id_t[:, :, ::1] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
+ *            vector[vector[vector[node_id_t]]] r = np.zeros((cpus, T, self.model.sampleSize), dtype=np.uintp)
  * 
  *        print("Starting parallel runs")             # <<<<<<<<<<<<<<
  *        for state_idx in prange(nStates,
@@ -36078,29 +36307,6 @@ no_fail:
     retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
                                                  (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 2,
                                                  &__Pyx_TypeInfo_double, stack,
-                                                 &result, obj);
-    if (unlikely(retcode == -1))
-        goto __pyx_fail;
-    return result;
-__pyx_fail:
-    result.memview = NULL;
-    result.data = NULL;
-    return result;
-}
-
-/* ObjectToMemviewSlice */
-  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_d_d_dc_nn___pyx_t_7plexsim_6models_5types_node_id_t(PyObject *obj, int writable_flag) {
-    __Pyx_memviewslice result = { 0, 0, { 0 }, { 0 }, { 0 } };
-    __Pyx_BufFmt_StackElem stack[1];
-    int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_FOLLOW), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_FOLLOW), (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_CONTIG) };
-    int retcode;
-    if (obj == Py_None) {
-        result.memview = (struct __pyx_memoryview_obj *) Py_None;
-        return result;
-    }
-    retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, __Pyx_IS_C_CONTIG,
-                                                 (PyBUF_C_CONTIGUOUS | PyBUF_FORMAT) | writable_flag, 3,
-                                                 &__Pyx_TypeInfo_nn___pyx_t_7plexsim_6models_5types_node_id_t, stack,
                                                  &result, obj);
     if (unlikely(retcode == -1))
         goto __pyx_fail;
