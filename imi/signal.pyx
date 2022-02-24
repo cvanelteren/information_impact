@@ -205,16 +205,19 @@ cpdef tuple wait_tipping(Model m,
     cdef size_t[::1] r_counter = np.zeros(cpus, dtype = np.uintp)
     cdef vector[vector[vector[node_id_t]]] r = np.zeros((cpus, R, m.sampleSize), dtype = np.uintp)
     cdef vector[state_t] tmp_state
-    for tid in prange(cpus, nogil = True):
-        equilibrate((<Model> models[tid].ptr), p, n_equilibrate)
-        r[tid] = (<Model> models[tid].ptr)._sampleNodes(R)
+
+    # for tid in prange(cpus, nogil = True):
+        # equilibrate((<Model> models[tid].ptr), p, n_equilibrate)
+        # r[tid] = (<Model> models[tid].ptr)._sampleNodes(R)
+
 
     print("Starting to find tipping points")
     for num_tip in prange(n_tipping, nogil = True):
         tid = threadid()
+        equilibrate((<Model> models[tid].ptr), p, n_equilibrate)
+        r[tid] = (<Model> models[tid].ptr)._sampleNodes(R)
         # reset an equilibrate
         # for allowance +- 1/nNodes this is the max
-        #
         loop_counter[tid] = 0
         tip_counter[tid] = 0
         while tip_counter[tid] < 1:
@@ -235,7 +238,7 @@ cpdef tuple wait_tipping(Model m,
                 with gil:
                     bin_data(buffer[tid], snapshots, Z)
                     counter = counter + 1
-                    print(f"Completed {counter=} out of {n_tipping=}", end = "\r")
+                    print(f"Completed {counter=} out of {n_tipping=}", end = "\n")
 
             # print(f"Found {num_tip}", end = "\r")
     return snapshots, tips

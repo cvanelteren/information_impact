@@ -1918,9 +1918,9 @@ struct __pyx_obj_7plexsim_6models_4base_Model {
   struct __pyx_vtabstruct_7plexsim_6models_4base_Model *__pyx_vtab;
   PyObject *ptr;
   std::vector<__pyx_t_7plexsim_6models_5types_state_t>  _Model__states;
-  __pyx_t_7plexsim_6models_5types_state_t *_states;
+  std::vector<__pyx_t_7plexsim_6models_5types_state_t>  *_states;
   std::vector<__pyx_t_7plexsim_6models_5types_state_t>  _Model__newstates;
-  __pyx_t_7plexsim_6models_5types_state_t *_newstates;
+  std::vector<__pyx_t_7plexsim_6models_5types_state_t>  *_newstates;
   int _last_written;
   int _use_mcmc;
   std::vector<__pyx_t_7plexsim_6models_5types_state_t>  _agentStates;
@@ -7982,7 +7982,7 @@ static PyObject *__pyx_f_3imi_5infcy_9Simulator_forward(struct __pyx_obj_3imi_5i
  *                # reset buffer
  *                thread_state[tid, 0, :] = states[state_idx]             # <<<<<<<<<<<<<<
  *                for node in range(NODES):
- *                    (< Model > models[tid].ptr)._states[node] = states[state_idx, node]
+ *                    deref((< Model > models[tid].ptr)._states)[node] = states[state_idx, node]
  */
                               __pyx_t_28.data = __pyx_v_states.data;
                               __pyx_t_28.memview = __pyx_v_states.memview;
@@ -8035,7 +8035,7 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
  *                # reset buffer
  *                thread_state[tid, 0, :] = states[state_idx]
  *                for node in range(NODES):             # <<<<<<<<<<<<<<
- *                    (< Model > models[tid].ptr)._states[node] = states[state_idx, node]
+ *                    deref((< Model > models[tid].ptr)._states)[node] = states[state_idx, node]
  * 
  */
                               __pyx_t_30 = __pyx_v_NODES;
@@ -8046,14 +8046,14 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
                                 /* "imi/infcy.pyx":245
  *                thread_state[tid, 0, :] = states[state_idx]
  *                for node in range(NODES):
- *                    (< Model > models[tid].ptr)._states[node] = states[state_idx, node]             # <<<<<<<<<<<<<<
+ *                    deref((< Model > models[tid].ptr)._states)[node] = states[state_idx, node]             # <<<<<<<<<<<<<<
  * 
  *                # reset nudges if exist
  */
                                 __pyx_t_33 = __pyx_v_state_idx;
                                 __pyx_t_34 = __pyx_v_node;
                                 __pyx_t_35 = (__pyx_v_models[__pyx_v_tid]).ptr;
-                                (((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->_states[__pyx_v_node]) = (*((__pyx_t_7plexsim_6models_5types_state_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_7plexsim_6models_5types_state_t const  *) ( /* dim=0 */ (__pyx_v_states.data + __pyx_t_33 * __pyx_v_states.strides[0]) )) + __pyx_t_34)) )));
+                                ((*((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->_states)[__pyx_v_node]) = (*((__pyx_t_7plexsim_6models_5types_state_t const  *) ( /* dim=1 */ ((char *) (((__pyx_t_7plexsim_6models_5types_state_t const  *) ( /* dim=0 */ (__pyx_v_states.data + __pyx_t_33 * __pyx_v_states.strides[0]) )) + __pyx_t_34)) )));
                               }
 
                               /* "imi/infcy.pyx":248
@@ -8164,7 +8164,7 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
  *                    # store data
  *                    if store_idx.find(step) != store_idx.end():             # <<<<<<<<<<<<<<
  *                        for node in range(NODES):
- *                          thread_state[tid, store_idx[step], node] = (<Model> models[tid].ptr)._states[node]
+ *                          thread_state[tid, store_idx[step], node] = deref((<Model> models[tid].ptr)._states)[node]
  */
                                 __pyx_t_20 = ((__pyx_v_store_idx.find(__pyx_v_step) != __pyx_v_store_idx.end()) != 0);
                                 if (__pyx_t_20) {
@@ -8173,7 +8173,7 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
  *                    # store data
  *                    if store_idx.find(step) != store_idx.end():
  *                        for node in range(NODES):             # <<<<<<<<<<<<<<
- *                          thread_state[tid, store_idx[step], node] = (<Model> models[tid].ptr)._states[node]
+ *                          thread_state[tid, store_idx[step], node] = deref((<Model> models[tid].ptr)._states)[node]
  * 
  */
                                   __pyx_t_34 = __pyx_v_NODES;
@@ -8184,7 +8184,7 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
                                     /* "imi/infcy.pyx":264
  *                    if store_idx.find(step) != store_idx.end():
  *                        for node in range(NODES):
- *                          thread_state[tid, store_idx[step], node] = (<Model> models[tid].ptr)._states[node]             # <<<<<<<<<<<<<<
+ *                          thread_state[tid, store_idx[step], node] = deref((<Model> models[tid].ptr)._states)[node]             # <<<<<<<<<<<<<<
  * 
  *                # bin buffer
  */
@@ -8192,7 +8192,7 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
                                     __pyx_t_37 = __pyx_v_tid;
                                     __pyx_t_38 = (__pyx_v_store_idx[__pyx_v_step]);
                                     __pyx_t_39 = __pyx_v_node;
-                                    *((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=2 */ ((char *) (((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_thread_state.data + __pyx_t_37 * __pyx_v_thread_state.strides[0]) ) + __pyx_t_38 * __pyx_v_thread_state.strides[1]) )) + __pyx_t_39)) )) = (((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->_states[__pyx_v_node]);
+                                    *((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=2 */ ((char *) (((__pyx_t_7plexsim_6models_5types_state_t *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_thread_state.data + __pyx_t_37 * __pyx_v_thread_state.strides[0]) ) + __pyx_t_38 * __pyx_v_thread_state.strides[1]) )) + __pyx_t_39)) )) = ((*((struct __pyx_obj_7plexsim_6models_4base_Model *)__pyx_t_35)->_states)[__pyx_v_node]);
                                   }
 
                                   /* "imi/infcy.pyx":262
@@ -8200,7 +8200,7 @@ if (unlikely((__pyx_memoryview_copy_contents(__pyx_t_28, __pyx_t_29, 1, 1, 0) < 
  *                    # store data
  *                    if store_idx.find(step) != store_idx.end():             # <<<<<<<<<<<<<<
  *                        for node in range(NODES):
- *                          thread_state[tid, store_idx[step], node] = (<Model> models[tid].ptr)._states[node]
+ *                          thread_state[tid, store_idx[step], node] = deref((<Model> models[tid].ptr)._states)[node]
  */
                                 }
                               }

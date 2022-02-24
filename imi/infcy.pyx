@@ -242,7 +242,7 @@ cdef class Simulator:
                # reset buffer
                thread_state[tid, 0, :] = states[state_idx]
                for node in range(NODES):
-                   (< Model > models[tid].ptr)._states[node] = states[state_idx, node]
+                   deref((< Model > models[tid].ptr)._states)[node] = states[state_idx, node]
 
                # reset nudges if exist
                for node in range(NODES):
@@ -261,7 +261,7 @@ cdef class Simulator:
                    # store data
                    if store_idx.find(step) != store_idx.end():
                        for node in range(NODES):
-                         thread_state[tid, store_idx[step], node] = (<Model> models[tid].ptr)._states[node]
+                         thread_state[tid, store_idx[step], node] = deref((<Model> models[tid].ptr)._states)[node]
 
                # bin buffer
                self.bin_data(thread_state[tid],
