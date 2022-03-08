@@ -438,3 +438,31 @@ def KL(p1, p2):
     kl[np.isfinite(kl) == False] = 0 # remove x = 0
     return kl
 
+cpdef rank_data(double[::1] &x):
+    # prevent labeling non-uniques to the same bin
+    cdef np.ndarray ranks = np.argsort(x)
+    cdef np.ndarray output = np.zeros(len(x))
+    cdef size_t idx, jdx
+    for idx in range(x.size):
+        for jdx in range(ranks.size):
+            if x[idx] == x[ranks[jdx]]:
+                output[idx] = jdx
+                break
+    return output
+
+cpdef double permut_entropy(
+    double[::1] &x, int t, int tau = 1, bint normalize = False):
+    cdef size_t N = len(x)
+    if t > N:
+        raise "Window is larger than array"
+    cdef dict dist = {}
+    for idx in range(0, N - t, tau):
+        tmp = tuple(np.argsort((x[idx : idx + t])))
+        dist[tmp] = dist.get(tmp, 0) + 1
+
+    cdef double z = sum(dist.values())
+    dist = {k: v / z for k, v in dist.items()}
+    cdef double H = entropy(np.array(list(dist.values())))
+    if normalize:
+        H /= np.log2(np.math.factorial(t))
+    return H

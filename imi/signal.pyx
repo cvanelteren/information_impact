@@ -8,6 +8,7 @@ from scipy import signal as ssignal
 
 from plexsim.models.base cimport *
 from plexsim.models.types cimport *
+from cython.operator cimport dereference as deref
 
 from libcpp.vector cimport vector
 from libcpp.pair cimport pair
@@ -145,17 +146,23 @@ cdef bint check_threshold(vector[state_t] &buffer,
         return True
     return False
 
-cdef size_t detect_peaks(vector[vector[state_t]] &buffer,
+cpdef vector[size_t] detect_peaks(Model m,
+                         size_t N,
                          double threshold,
-                         double allowance) nogil:
-    cdef size_t idx, N = buffer.size(), peaks = 0
+                        double allowance, size_t burnin = 0) nogil:
+
+    cdef size_t idx
+    cdef vector[size_t] peaks
+    m._simulate(burnin)
 
     for idx in range(N):
-        if check_threshold(buffer[idx],
+        m._updateState(m._sampleNodes(1)[0])
+        if check_threshold(deref(m._states),
                            threshold,
                            allowance):
-            peaks += 1
+            peaks.push_back(idx)
     return peaks
+
 
 cdef void equilibrate(Model m, double[::1] &p, size_t n_equilibrate = int(1e3)) nogil:
     with gil:
@@ -238,7 +245,7 @@ cpdef tuple wait_tipping(Model m,
                 with gil:
                     bin_data(buffer[tid], snapshots, Z)
                     counter = counter + 1
-                    print(f"Completed {counter=} out of {n_tipping=}", end = "\n")
+                    # print(f"Completed {counter=} out of {n_tipping=}", end = "\n")
 
             # print(f"Found {num_tip}", end = "\r")
     return snapshots, tips
